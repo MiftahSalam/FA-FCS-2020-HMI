@@ -2,6 +2,7 @@
 #define FRAMEOSD_H
 
 #include <QFrame>
+#include <QDebug>
 
 namespace Ui {
 class FrameOSD;
