@@ -1,11 +1,19 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
 
+#include <QMessageBox>
+
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
+
+    connect(& mastertimer, SIGNAL(timeout()), ui->frameBottomOSD, SLOT(GyroTimerTimeOut()));
+    connect(& mastertimer, SIGNAL(timeout()), ui->frameBottomOSD, SLOT(GpsTimerTimeOut()));
+    connect(& mastertimer, SIGNAL(timeout()), ui->frameBottomOSD, SLOT(WindTimerTimeOut()));
+
+    mastertimer.start(1000);
 
     ui->gridLayout->removeWidget(ui->frameTDA);
     ui->gridLayout->removeWidget(ui->frameBottomGun);
@@ -33,4 +41,16 @@ MainWindow::MainWindow(QWidget *parent) :
 MainWindow::~MainWindow()
 {
     delete ui;
+}
+
+void MainWindow::on_pushButtonExit_clicked()
+{
+    QMessageBox::StandardButton clickedButton;
+    clickedButton = QMessageBox::question( this, "Shutdown", "Shutdown System?",
+                                           QMessageBox::Yes|QMessageBox::No );
+
+    if( clickedButton != QMessageBox::Yes )
+        return;
+
+    close();
 }

@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>265</width>
+    <width>266</width>
     <height>757</height>
    </rect>
   </property>
@@ -34,8 +34,8 @@
         <string notr="true">QGroupBox {
     border: 1px solid gray;
     border-color: yellow;
-    margin-top: 27px;
-    font-size: 14px;
+    margin-top: 29px;
+    font-size: 16px;
     border-bottom-left-radius: 15px;
     border-bottom-right-radius: 15px;
 }
@@ -412,8 +412,8 @@ QGroupBox::title {
         <string notr="true">QGroupBox {
     border: 1px solid gray;
     border-color: yellow;
-    margin-top: 27px;
-    font-size: 14px;
+    margin-top: 29px;
+    font-size: 16px;
     border-bottom-left-radius: 15px;
     border-bottom-right-radius: 15px;
 }
@@ -572,8 +572,8 @@ QGroupBox::title {
         <string notr="true">QGroupBox {
     border: 1px solid gray;
     border-color: yellow;
-    margin-top: 27px;
-    font-size: 14px;
+    margin-top: 29px;
+    font-size: 16px;
     border-bottom-left-radius: 15px;
     border-bottom-right-radius: 15px;
 }
@@ -708,8 +708,8 @@ QGroupBox::title {
         <string notr="true">QGroupBox {
     border: 1px solid gray;
     border-color: yellow;
-    margin-top: 27px;
-    font-size: 14px;
+    margin-top: 29px;
+    font-size: 16px;
     border-bottom-left-radius: 15px;
     border-bottom-right-radius: 15px;
 }

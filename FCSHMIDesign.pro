@@ -6,6 +6,8 @@
 
 QT       += core gui
 
+include($$PWD/qredis/qredis.pri)
+
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
 TARGET = FCSHMIDesign

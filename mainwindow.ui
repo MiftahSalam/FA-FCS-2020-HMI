@@ -15,7 +15,8 @@
   </property>
   <property name="styleSheet">
    <string notr="true">color: rgb(255, 255, 0);
-background-color: rgb(40, 40, 40);</string>
+background-color: rgb(40, 40, 40);
+</string>
   </property>
   <widget class="QWidget" name="centralWidget">
    <layout class="QGridLayout" name="gridLayout">
@@ -82,7 +83,7 @@ background-color: rgb(40, 40, 40);</string>
       </property>
       <layout class="QGridLayout" name="gridLayout_2">
        <item row="0" column="0">
-        <widget class="QPushButton" name="pushButton">
+        <widget class="QPushButton" name="pushButtonExit">
          <property name="sizePolicy">
           <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
            <horstretch>0</horstretch>
@@ -91,10 +92,15 @@ background-color: rgb(40, 40, 40);</string>
          </property>
          <property name="font">
           <font>
-           <pointsize>20</pointsize>
+           <family>DejaVu Sans</family>
+           <pointsize>30</pointsize>
            <weight>75</weight>
+           <italic>false</italic>
            <bold>true</bold>
           </font>
+         </property>
+         <property name="styleSheet">
+          <string notr="true">color: rgb(255, 0, 0);</string>
          </property>
          <property name="text">
           <string>Exit</string>
