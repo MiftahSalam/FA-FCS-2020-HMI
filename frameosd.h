@@ -6,6 +6,7 @@
 #include <QFrame>
 #include <QDebug>
 #include <QTimer>
+#include <QObject>
 
 struct InersiaData
 {
