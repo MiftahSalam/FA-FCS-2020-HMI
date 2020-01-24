@@ -12,6 +12,9 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(& mastertimer, SIGNAL(timeout()), ui->frameBottomOSD, SLOT(GyroTimerTimeOut()));
     connect(& mastertimer, SIGNAL(timeout()), ui->frameBottomOSD, SLOT(GpsTimerTimeOut()));
     connect(& mastertimer, SIGNAL(timeout()), ui->frameBottomOSD, SLOT(WindTimerTimeOut()));
+    connect(& mastertimer, SIGNAL(timeout()), ui->frameBottomOSD, SLOT(WeatherTimerTimeOut()));
+    connect(& mastertimer, SIGNAL(timeout()), ui->frameBottomOSD, SLOT(SpeedTimerTimeOut()));
+    connect(& mastertimer, SIGNAL(timeout()), ui->frameBottomOSD, SLOT(WaterSpeedTimerTimeOut()));
 
     mastertimer.start(1000);
 
