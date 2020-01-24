@@ -6,26 +6,7 @@
 #include <QFrame>
 #include <QDebug>
 #include <QTimer>
-#include <QObject>
 
-struct InersiaData
-{
-    QString heading;
-    QString roll;
-    QString picth;
-};
-
-struct GpsData
-{
-    QString latitude;
-    QString longitude;
-};
-
-struct WindData
-{
-    QString dir;
-    QString speed;
-};
 
 namespace Ui {
 class FrameOSD;
@@ -53,6 +34,25 @@ private slots:
     void on_pushButtonWindApply_clicked();
 
 private:
+    struct InersiaData
+    {
+        QString heading;
+        QString roll;
+        QString picth;
+    };
+
+    struct GpsData
+    {
+        QString latitude;
+        QString longitude;
+    };
+
+    struct WindData
+    {
+        QString dir;
+        QString speed;
+    };
+
     Ui::FrameOSD *ui;
     Redis *redisClient;
     InersiaData inersiadata;
