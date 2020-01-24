@@ -7,7 +7,6 @@
 #include <QDebug>
 #include <QTimer>
 
-
 namespace Ui {
 class FrameOSD;
 }
