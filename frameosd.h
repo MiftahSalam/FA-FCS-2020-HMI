@@ -33,6 +33,18 @@ private slots:
     void WindTimerTimeOut();
     void on_pushButtonWindApply_clicked();
 
+    void on_comboBoxWeatherMode_activated(int index);
+    void WeatherTimerTimeOut();
+    void on_pushButtonWeather_clicked();
+
+    void on_comboBoxSpeedMode_activated(int index);
+    void SpeedTimerTimeOut();
+    void on_pushButtonSpeedApply_clicked();
+
+    void on_comboBoxWaterMode_activated(int index);
+    void WaterSpeedTimerTimeOut();
+    void on_pushButtonWaterApply_clicked();
+
 private:
     struct InersiaData
     {
@@ -53,11 +65,33 @@ private:
         QString speed;
     };
 
+    struct WeatherData
+    {
+        QString temperature;
+        QString pressure;
+        QString humidity;
+    };
+
+    struct SpeedData
+    {
+        QString sog;
+        QString cog;
+    };
+
+    struct WaterSpeedData
+    {
+        QString speed;
+        QString course;
+    };
+
     Ui::FrameOSD *ui;
     Redis *redisClient;
     InersiaData inersiadata;
     GpsData gpsdata;
     WindData winddata;
+    WeatherData weatherdata;
+    SpeedData speeddata;
+    WaterSpeedData waterspeeddata;
 
     void GyroAutoModeUi();
     void GyroManualModeUi();
@@ -67,6 +101,15 @@ private:
 
     void WindAutoModeUi();
     void WindManualModeUi();
+
+    void WeatherAutoModeUi();
+    void WeatherManualModeUi();
+
+    void SpeedAutoModeUi();
+    void SpeedManualModeUi();
+
+    void WaterSpeedAutoModeUi();
+    void WaterSpeedManualModeUi();
 
 };
 
