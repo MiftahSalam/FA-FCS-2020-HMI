@@ -13,62 +13,121 @@ FrameOSD::FrameOSD(QWidget *parent) :
 {
     ui->setupUi(this);
 
-    redisClient = new Redis("tcp://127.0.0.1:6379");
+    redisClient = HMI_redisInit("127.0.0.1");
+    HMI_redisConnect(redisClient);
+
 
     QRegExp rxNumber(NUMBER_RX);
     QRegExpValidator *valiNumber = new QRegExpValidator(rxNumber, this);
 
-    // ==== Gyro ==== //
-    redisClient->set("inersia_mode", "auto");
-    GyroAutoModeUi();
-    ui->osdGryoComboBox->setCurrentIndex(1);
+    // ==== validator Gyro ==== //
     ui->osdGyroHeadingValue->setValidator(valiNumber);
     ui->osdGyroPitchValue->setValidator(valiNumber);
     ui->lineEditGyroRoll->setValidator(valiNumber);
 
-    // ==== GPS ==== //
-    redisClient->set("position_mode", "auto");
-    GpsAutoModeUi();
-    ui->comboBoxGPSMode->setCurrentIndex(1);
+    // ==== validator GPS ==== //
     ui->lineEditGpsLat->setValidator(valiNumber);
     ui->lineEditGpsLong->setValidator(valiNumber);
 
-    // ==== Wind ==== //
-    redisClient->set("wind_mode", "auto");
-    WindAutoModeUi();
-    ui->comboBoxWindMode->setCurrentIndex(1);
+    // ==== validator Wind ==== //
     ui->lineEditWindDir->setValidator(valiNumber);
     ui->lineEditWindSpeed->setValidator(valiNumber);
 
-    // ==== Weather ==== //
-    redisClient->set("weather_mode", "auto");
-    WeatherAutoModeUi();
-    ui->comboBoxWeatherMode->setCurrentIndex(1);
+    // ==== validator Weather ==== //
     ui->lineEditWeatherTemp->setValidator(valiNumber);
     ui->lineEditWeatherPress->setValidator(valiNumber);
     ui->lineEditWeatherHumidity->setValidator(valiNumber);
 
-    // ==== Speed ==== //
-    redisClient->set("speed_mode", "auto");
-    SpeedAutoModeUi();
-    ui->comboBoxSpeedMode->setCurrentIndex(1);
+    // ==== validator Speed ==== //
     ui->lineEditSpeedSOG->setValidator(valiNumber);
     ui->lineEditSpeedCOG->setValidator(valiNumber);
 
-    // ==== Water Speed ==== //
-    redisClient->set("waterspeed_mode", "auto");
-    WaterSpeedAutoModeUi();
-    ui->comboBoxWaterMode->setCurrentIndex(1);
+    // ==== validator Water Speed ==== //
     ui->lineEditWaterSOG->setValidator(valiNumber);
     ui->lineEditWaterCOG->setValidator(valiNumber);
+
+    if(HMI_isRedisValid(redisClient))
+    {
+        // ==== init redis mode Gyro ==== //
+        redisClient->reply = (redisReply*)redisCommand(redisClient->context,"SET inersia_mode auto");
+        freeReplyObject(redisClient->reply);
+
+        // ==== init redis mode GPS ==== //
+        redisClient->reply = (redisReply*)redisCommand(redisClient->context,"SET position_mode auto");
+        freeReplyObject(redisClient->reply);
+
+        // ==== init redis mode Wind ==== //
+        redisClient->reply = (redisReply*)redisCommand(redisClient->context,"SET wind_mode auto");
+        freeReplyObject(redisClient->reply);
+
+        // ==== init redis mode Weather ==== //
+        redisClient->reply = (redisReply*)redisCommand(redisClient->context,"SET weather_mode auto");
+        freeReplyObject(redisClient->reply);
+
+        // ==== init redis mode Speed ==== //
+        redisClient->reply = (redisReply*)redisCommand(redisClient->context,"SET speed_mode auto");
+        freeReplyObject(redisClient->reply);
+
+        // ==== init redis mode Water Speed ==== //
+        redisClient->reply = (redisReply*)redisCommand(redisClient->context,"SET waterspeed_mode auto");
+        freeReplyObject(redisClient->reply);
+
+        setEnabled(true);
+    }
+    else
+        setEnabled(false);
+
+    // ==== init value and mode Gyro ==== //
+    GyroAutoModeUi();
+
+    // ==== init value and mode GPS ==== //
+    GpsAutoModeUi();
+
+    // ==== init value and mode Wind ==== //
+    WindAutoModeUi();
+
+    // ==== init value and mode Weather ==== //
+    WeatherAutoModeUi();
+
+    // ==== init value and mode Speed ==== //
+    SpeedAutoModeUi();
+
+    // ==== init value and mode Water Speed ==== //
+    WaterSpeedAutoModeUi();
 
 }
 
 FrameOSD::~FrameOSD()
 {
+    qDebug()<<Q_FUNC_INFO;
+    if(HMI_isRedisValid(redisClient))
+        HMI_redisDeInit(redisClient);
+
     delete ui;
 }
 
+void FrameOSD::on_osdTimerTimeOut()
+{
+    GyroTimerTimeOut();
+    GpsTimerTimeOut();
+    WindTimerTimeOut();
+    WeatherTimerTimeOut();
+    SpeedTimerTimeOut();
+    WaterSpeedTimerTimeOut();
+
+    if(!HMI_isRedisValid(redisClient))
+    {
+        HMI_redisConnect(redisClient);
+        if(isEnabled())
+            setEnabled(false);
+    }
+    else
+    {
+        if(!isEnabled())
+            setEnabled(true);
+    }
+
+}
 
 // ==== Gyro ==== //
 
@@ -76,51 +135,72 @@ void FrameOSD::GyroAutoModeUi()
 {
     ui->pushButtonGyroApply->setEnabled(false);
     ui->pushButtonGyroApply->setStyleSheet("color: rgb(20, 20, 20);");
+
+    ui->osdGyroHeadingValue->setEnabled(false);
+    ui->osdGyroPitchValue->setEnabled(false);
+    ui->lineEditGyroRoll->setEnabled(false);
 }
 
 void FrameOSD::GyroManualModeUi()
 {
     ui->pushButtonGyroApply->setEnabled(true);
     ui->pushButtonGyroApply->setStyleSheet("");
+
     ui->osdGyroHeadingValue->setStyleSheet("color:white;");
     ui->lineEditGyroRoll->setStyleSheet("color:white;");
     ui->osdGyroPitchValue->setStyleSheet("color:white;");
+
+    ui->osdGyroHeadingValue->setEnabled(true);
+    ui->osdGyroPitchValue->setEnabled(true);
+    ui->lineEditGyroRoll->setEnabled(true);
 }
 
 void FrameOSD::GyroTimerTimeOut()
 {
-    auto inersia_mode = redisClient->get("inersia_mode");
-    QString inersiamode = QString::fromStdString(*inersia_mode);
-    qDebug() << Q_FUNC_INFO << inersiamode;
-
-    if(inersiamode == "auto")
+    if(HMI_isRedisValid(redisClient))
     {
-        if(redisClient->exists("inersia"))
+        redisClient->reply = (redisReply*)redisCommand(redisClient->context,"GET inersia_mode");
+
+        QString inersiamode = QString::fromUtf8((const char*)redisClient->reply->str,redisClient->reply->len);
+        qDebug() << Q_FUNC_INFO << inersiamode;
+
+        freeReplyObject(redisClient->reply);
+
+        if(inersiamode == "auto")
         {
-            ui->osdGyroHeadingValue->setStyleSheet("color:rgb(0, 255, 0);");
-            ui->lineEditGyroRoll->setStyleSheet("color:rgb(0, 255, 0);");
-            ui->osdGyroPitchValue->setStyleSheet("color:rgb(0, 255, 0);");
+            redisClient->reply = (redisReply*)redisCommand(redisClient->context,"EXISTS inersia");
+            bool key_exist = redisClient->reply->integer > 0;
 
-            std::vector<std::string> inersia;
-            inersia.reserve(3);
-            redisClient->hmget("inersia", {"heading", "roll", "pitch"}, std::back_inserter(inersia));
+            freeReplyObject(redisClient->reply);
 
-            inersiadata.heading = QString::fromStdString(inersia.at(0));
-            inersiadata.roll = QString::fromStdString(inersia.at(1));
-            inersiadata.picth = QString::fromStdString(inersia.at(2));
+            if(key_exist)
+            {
+                ui->osdGyroHeadingValue->setStyleSheet("color:rgb(0, 255, 0);");
+                ui->lineEditGyroRoll->setStyleSheet("color:rgb(0, 255, 0);");
+                ui->osdGyroPitchValue->setStyleSheet("color:rgb(0, 255, 0);");
 
-            qDebug() << Q_FUNC_INFO;
+                redisClient->reply = (redisReply*)redisCommand(redisClient->context,"HGETALL inersia");
 
-            ui->osdGyroHeadingValue->setText(inersiadata.heading);
-            ui->lineEditGyroRoll->setText(inersiadata.roll);
-            ui->osdGyroPitchValue->setText(inersiadata.picth);
+                if (redisClient->reply->type == REDIS_REPLY_ARRAY)
+                {
+                    inersiadata.heading = QString::fromUtf8((const char*)redisClient->reply->element[1]->str);
+                    inersiadata.roll = QString::fromUtf8((const char*)redisClient->reply->element[3]->str);
+                    inersiadata.picth = QString::fromUtf8((const char*)redisClient->reply->element[5]->str);
+                }
+                freeReplyObject(redisClient->reply);
+
+                ui->osdGyroHeadingValue->setText(inersiadata.heading);
+                ui->lineEditGyroRoll->setText(inersiadata.roll);
+                ui->osdGyroPitchValue->setText(inersiadata.picth);
+            }
+            else
+            {
+                ui->osdGyroHeadingValue->setStyleSheet("color: rgb(255, 0, 0);");
+                ui->lineEditGyroRoll->setStyleSheet("color: rgb(255, 0, 0);");
+                ui->osdGyroPitchValue->setStyleSheet("color: rgb(255, 0, 0);");
+            }
         }
-        else
-        {
-            ui->osdGyroHeadingValue->setStyleSheet("color: rgb(255, 0, 0);");
-            ui->lineEditGyroRoll->setStyleSheet("color: rgb(255, 0, 0);");
-            ui->osdGyroPitchValue->setStyleSheet("color: rgb(255, 0, 0);");
-        }
+
     }
     qDebug() << Q_FUNC_INFO;
 }
@@ -131,19 +211,23 @@ void FrameOSD::on_osdGryoComboBox_activated(int index)
 
     if (index)
     {
-        redisClient->set("inersia_mode", "auto");
-        ui->osdGyroHeadingValue->setEnabled(false);
-        ui->lineEditGyroRoll->setEnabled(false);
-        ui->osdGyroPitchValue->setEnabled(false);
+        if(HMI_isRedisValid(redisClient))
+        {
+            redisClient->reply = (redisReply*)redisCommand(redisClient->context,"SET inersia_mode auto");
+            qDebug()<<"SET: "<<redisClient->reply->str;
+            freeReplyObject(redisClient->reply);
+        }
 
         GyroAutoModeUi();
     }
     else
     {
-        redisClient->set("inersia_mode", "manual");
-        ui->osdGyroHeadingValue->setEnabled(true);
-        ui->lineEditGyroRoll->setEnabled(true);
-        ui->osdGyroPitchValue->setEnabled(true);
+        if(HMI_isRedisValid(redisClient))
+        {
+            redisClient->reply = (redisReply*)redisCommand(redisClient->context,"SET inersia_mode manual");
+            qDebug()<<"SET: "<<redisClient->reply->str;
+            freeReplyObject(redisClient->reply);
+        }
 
         GyroManualModeUi();
     }
@@ -175,14 +259,14 @@ void FrameOSD::on_pushButtonGyroApply_clicked()
         QMessageBox::critical(this, "fatal error pitch", "invalid input text" );
     }
 
-    std::unordered_map<std::string, std::string> data_map =
-    {
-        {"heading", heading.toStdString()},
-        {"roll", roll.toStdString()},
-        {"pitch", pitch.toStdString()},
-    };
+    redisClient->reply = (redisReply*)redisCommand(redisClient->context,"HMSET inersia heading %s roll %s pitch %s",
+                                                  heading.toUtf8().constData(),
+                                                  roll.toUtf8().constData(),
+                                                  pitch.toUtf8().constData()
+                                                  );
 
-    redisClient->hmset("inersia",data_map.begin(), data_map.end());
+    qDebug()<<"SET: "<<redisClient->reply->integer;
+    freeReplyObject(redisClient->reply);
 }
 
 // ==== GPS ==== //
@@ -203,53 +287,81 @@ void FrameOSD::GpsManualModeUi()
 
 void FrameOSD::GpsTimerTimeOut()
 {
-    auto position_mode = redisClient->get("position_mode");
-    QString positionmode = QString::fromStdString(*position_mode);
-    qDebug() << Q_FUNC_INFO << positionmode;
-
-    if(positionmode == "auto")
+    if(HMI_isRedisValid(redisClient))
     {
-        if(redisClient->exists("position"))
+        redisClient->reply = (redisReply*)redisCommand(redisClient->context,"GET position_mode");
+        qDebug()<<"GET: "<<redisClient->reply->str;
+
+        QString positionmode = QString::fromUtf8((const char*)redisClient->reply->str,redisClient->reply->len);
+        qDebug() << Q_FUNC_INFO << positionmode;
+
+        freeReplyObject(redisClient->reply);
+
+        if(positionmode == "auto")
         {
-            ui->lineEditGpsLat->setStyleSheet("color:rgb(0, 255, 0);");
-            ui->lineEditGpsLong->setStyleSheet("color:rgb(0, 255, 0);");
+            redisClient->reply = (redisReply*)redisCommand(redisClient->context,"EXISTS position");
+            bool key_exist = redisClient->reply->integer > 0;
+            qDebug()<<"GET: "<<redisClient->reply->integer;
 
-            std::vector<std::string> position;
-            position.reserve(2);
-            redisClient->hmget("position", {"latitude", "longitude"}, std::back_inserter(position));
+            freeReplyObject(redisClient->reply);
 
-            gpsdata.latitude = QString::fromStdString(position.at(0));
-            gpsdata.longitude = QString::fromStdString(position.at(1));
+            if(key_exist)
+            {
+                ui->lineEditGpsLat->setStyleSheet("color:rgb(0, 255, 0);");
+                ui->lineEditGpsLong->setStyleSheet("color:rgb(0, 255, 0);");
 
-            qDebug() << Q_FUNC_INFO;
+                redisClient->reply = (redisReply*)redisCommand(redisClient->context,"HGETALL position");
+                qDebug()<<"GET: "<<redisClient->reply->str;
 
-            ui->lineEditGpsLat->setText(gpsdata.latitude);
-            ui->lineEditGpsLong->setText(gpsdata.longitude);
+                if (redisClient->reply->type == REDIS_REPLY_ARRAY)
+                {
+                    gpsdata.latitude = QString::fromUtf8((const char*)redisClient->reply->element[1]->str);
+                    gpsdata.longitude = QString::fromUtf8((const char*)redisClient->reply->element[3]->str);
+                }
+                freeReplyObject(redisClient->reply);
+
+                ui->lineEditGpsLat->setText(gpsdata.latitude);
+                ui->lineEditGpsLong->setText(gpsdata.longitude);
+            }
+            else
+            {
+                ui->lineEditGpsLat->setStyleSheet("color: rgb(255, 0, 0);");
+                ui->lineEditGpsLong->setStyleSheet("color: rgb(255, 0, 0);");
+            }
         }
-        else
-        {
-            ui->lineEditGpsLat->setStyleSheet("color: rgb(255, 0, 0);");
-            ui->lineEditGpsLong->setStyleSheet("color: rgb(255, 0, 0);");
-        }
+
     }
     qDebug() << Q_FUNC_INFO;
 }
 
 void FrameOSD::on_comboBoxGPSMode_activated(int index)
 {
-    auto position_mode = redisClient->get("position_mode");
     qDebug() <<Q_FUNC_INFO;
 
     if (index)
     {
-        redisClient->set("position_mode", "auto");
+        if(HMI_isRedisValid(redisClient))
+        {
+            redisClient->reply = (redisReply*)redisCommand(redisClient->context,"SET position_mode auto");
+            qDebug()<<"SET: "<<redisClient->reply->str;
+            freeReplyObject(redisClient->reply);
+        }
+
         ui->lineEditGpsLat->setEnabled(false);
         ui->lineEditGpsLong->setEnabled(false);
+
         GpsAutoModeUi();
     }
     else
     {
-        redisClient->set("position_mode", "manual");
+        if(HMI_isRedisValid(redisClient))
+        {
+            redisClient->reply = (redisReply*)redisCommand(redisClient->context,"SET position_mode manual");
+            qDebug()<<"SET: "<<redisClient->reply->str;
+            freeReplyObject(redisClient->reply);
+
+        }
+
         ui->lineEditGpsLat->setEnabled(true);
         ui->lineEditGpsLong->setEnabled(true);
 
@@ -262,13 +374,14 @@ void FrameOSD::on_pushButtonGPSApply_clicked()
     QString latitude = ui->lineEditGpsLat->text();
     QString longitude = ui->lineEditGpsLong->text();
 
-    std::unordered_map<std::string, std::string> data_map =
-    {
-        {"latitude", latitude.toStdString()},
-        {"longitude", longitude.toStdString()},
-    };
+    redisClient->reply = (redisReply*)redisCommand(redisClient->context,"HMSET position latitude %s longitude %s",
+                                                  latitude.toUtf8().constData(),
+                                                  longitude.toUtf8().constData()
+                                                  );
 
-    redisClient->hmset("position",data_map.begin(), data_map.end());
+    qDebug()<<"SET: "<<redisClient->reply->integer;
+    freeReplyObject(redisClient->reply);
+
 }
 
 
@@ -290,35 +403,52 @@ void FrameOSD::WindManualModeUi()
 
 void FrameOSD::WindTimerTimeOut()
 {
-    auto wind_mode = redisClient->get("wind_mode");
-    QString windmode = QString::fromStdString(*wind_mode);
-    qDebug() << Q_FUNC_INFO << windmode;
-
-    if(windmode == "auto")
+    if(HMI_isRedisValid(redisClient))
     {
-        if(redisClient->exists("wind"))
+        redisClient->reply = (redisReply*)redisCommand(redisClient->context,"GET wind_mode");
+        qDebug()<<"GET: "<<redisClient->reply->str;
+
+        QString windmode = QString::fromUtf8((const char*)redisClient->reply->str,redisClient->reply->len);
+        qDebug() << Q_FUNC_INFO << windmode;
+
+        freeReplyObject(redisClient->reply);
+
+        if(windmode == "auto")
         {
-            ui->lineEditWindDir->setStyleSheet("color:rgb(0, 255, 0);");
-            ui->lineEditWindSpeed->setStyleSheet("color:rgb(0, 255, 0);");
+            redisClient->reply = (redisReply*)redisCommand(redisClient->context,"EXISTS wind");
+            bool key_exist = redisClient->reply->integer > 0;
+            qDebug()<<"GET: "<<redisClient->reply->integer;
 
-            std::vector<std::string> wind;
-            wind.reserve(2);
-            redisClient->hmget("wind", {"dir", "speed"}, std::back_inserter(wind));
+            freeReplyObject(redisClient->reply);
 
-            winddata.dir = QString::fromStdString(wind.at(0));
-            winddata.speed = QString::fromStdString(wind.at(1));
+            if(key_exist)
+            {
+                ui->lineEditWindDir->setStyleSheet("color:rgb(0, 255, 0);");
+                ui->lineEditWindSpeed->setStyleSheet("color:rgb(0, 255, 0);");
 
-            qDebug() << Q_FUNC_INFO;
+                redisClient->reply = (redisReply*)redisCommand(redisClient->context,"HGETALL wind");
+                qDebug()<<"GET: "<<redisClient->reply->str;
 
-            ui->lineEditWindDir->setText(winddata.dir);
-            ui->lineEditWindSpeed->setText(winddata.speed);
+                if (redisClient->reply->type == REDIS_REPLY_ARRAY)
+                {
+                    winddata.dir = QString::fromUtf8((const char*)redisClient->reply->element[1]->str);
+                    winddata.speed = QString::fromUtf8((const char*)redisClient->reply->element[3]->str);
+                }
+                freeReplyObject(redisClient->reply);
+
+                ui->lineEditWindDir->setText(winddata.dir);
+                ui->lineEditWindSpeed->setText(winddata.speed);
+            }
+            else
+            {
+                ui->lineEditWindDir->setStyleSheet("color: rgb(255, 0, 0);");
+                ui->lineEditWindSpeed->setStyleSheet("color: rgb(255, 0, 0);");
+            }
         }
-        else
-        {
-            ui->lineEditWindDir->setStyleSheet("color: rgb(255, 0, 0);");
-            ui->lineEditWindSpeed->setStyleSheet("color: rgb(255, 0, 0);");
-        }
+
     }
+
+
     qDebug() << Q_FUNC_INFO;
 }
 
@@ -328,7 +458,14 @@ void FrameOSD::on_comboBoxWindMode_activated(int index)
 
     if (index)
     {
-        redisClient->set("wind_mode", "auto");
+        if(HMI_isRedisValid(redisClient))
+        {
+            redisClient->reply = (redisReply*)redisCommand(redisClient->context,"SET wind_mode auto");
+            qDebug()<<"SET: "<<redisClient->reply->str;
+            freeReplyObject(redisClient->reply);
+
+        }
+
         ui->lineEditWindDir->setEnabled(false);
         ui->lineEditWindSpeed->setEnabled(false);
 
@@ -336,7 +473,13 @@ void FrameOSD::on_comboBoxWindMode_activated(int index)
     }
     else
     {
-        redisClient->set("wind_mode", "manual");
+        if(HMI_isRedisValid(redisClient))
+        {
+            redisClient->reply = (redisReply*)redisCommand(redisClient->context,"SET wind_mode manual");
+            qDebug()<<"SET: "<<redisClient->reply->str;
+            freeReplyObject(redisClient->reply);
+        }
+
         ui->lineEditWindDir->setEnabled(true);
         ui->lineEditWindSpeed->setEnabled(true);
 
@@ -349,13 +492,14 @@ void FrameOSD::on_pushButtonWindApply_clicked()
     QString dir = ui->lineEditWindDir->text();
     QString speed = ui->lineEditWindSpeed->text();
 
-    std::unordered_map<std::string, std::string> data_map =
-    {
-        {"dir", dir.toStdString()},
-        {"speed", speed.toStdString()},
-    };
+    redisClient->reply = (redisReply*)redisCommand(redisClient->context,"HMSET wind dir %s speed %s",
+                                                  dir.toUtf8().constData(),
+                                                  speed.toUtf8().constData()
+                                                  );
 
-    redisClient->hmset("wind",data_map.begin(), data_map.end());
+    qDebug()<<"SET: "<<redisClient->reply->integer;
+    freeReplyObject(redisClient->reply);
+
 }
 
 
@@ -378,39 +522,55 @@ void FrameOSD::WeatherManualModeUi()
 
 void FrameOSD::WeatherTimerTimeOut()
 {
-    auto weather_mode = redisClient->get("weather_mode");
-    QString weathermode = QString::fromStdString(*weather_mode);
-    qDebug() << Q_FUNC_INFO << weathermode;
-
-    if(weathermode == "auto")
+    if(HMI_isRedisValid(redisClient))
     {
-        if(redisClient->exists("weather"))
+        redisClient->reply = (redisReply*)redisCommand(redisClient->context,"GET weather_mode");
+        qDebug()<<"GET: "<<redisClient->reply->str;
+
+        QString weathermode = QString::fromUtf8((const char*)redisClient->reply->str,redisClient->reply->len);
+        qDebug() << Q_FUNC_INFO << weathermode;
+
+        freeReplyObject(redisClient->reply);
+
+        if(weathermode == "auto")
         {
-            ui->lineEditWeatherTemp->setStyleSheet("color:rgb(0, 255, 0);");
-            ui->lineEditWeatherPress->setStyleSheet("color:rgb(0, 255, 0);");
-            ui->lineEditWeatherHumidity->setStyleSheet("color:rgb(0, 255, 0);");
+            redisClient->reply = (redisReply*)redisCommand(redisClient->context,"EXISTS weather");
+            bool key_exist = redisClient->reply->integer > 0;
+            qDebug()<<"GET: "<<redisClient->reply->integer;
 
-            std::vector<std::string> weather;
-            weather.reserve(3);
-            redisClient->hmget("weather", {"temperature", "pressure", "humidity"}, std::back_inserter(weather));
+            freeReplyObject(redisClient->reply);
 
-            weatherdata.temperature = QString::fromStdString(weather.at(0));
-            weatherdata.pressure = QString::fromStdString(weather.at(1));
-            weatherdata.humidity = QString::fromStdString(weather.at(2));
+            if(key_exist)
+            {
+                ui->lineEditWeatherTemp->setStyleSheet("color:rgb(0, 255, 0);");
+                ui->lineEditWeatherPress->setStyleSheet("color:rgb(0, 255, 0);");
+                ui->lineEditWeatherHumidity->setStyleSheet("color:rgb(0, 255, 0);");
 
-            qDebug() << Q_FUNC_INFO;
+                redisClient->reply = (redisReply*)redisCommand(redisClient->context,"HGETALL weather");
+                qDebug()<<"GET: "<<redisClient->reply->str;
 
-            ui->lineEditWeatherTemp->setText(weatherdata.temperature);
-            ui->lineEditWeatherPress->setText(weatherdata.pressure);
-            ui->lineEditWeatherHumidity->setText(weatherdata.humidity);
+                if (redisClient->reply->type == REDIS_REPLY_ARRAY)
+                {
+                    weatherdata.temperature = QString::fromUtf8((const char*)redisClient->reply->element[1]->str);
+                    weatherdata.pressure = QString::fromUtf8((const char*)redisClient->reply->element[3]->str);
+                    weatherdata.humidity = QString::fromUtf8((const char*)redisClient->reply->element[5]->str);
+                }
+                freeReplyObject(redisClient->reply);
+
+                ui->lineEditWeatherTemp->setText(weatherdata.temperature);
+                ui->lineEditWeatherPress->setText(weatherdata.pressure);
+                ui->lineEditWeatherHumidity->setText(weatherdata.humidity);
+            }
+            else
+            {
+                ui->lineEditWeatherTemp->setStyleSheet("color: rgb(255, 0, 0);");
+                ui->lineEditWeatherPress->setStyleSheet("color: rgb(255, 0, 0);");
+                ui->lineEditWeatherHumidity->setStyleSheet("color: rgb(255, 0, 0);");
+            }
         }
-        else
-        {
-            ui->lineEditWeatherTemp->setStyleSheet("color: rgb(255, 0, 0);");
-            ui->lineEditWeatherPress->setStyleSheet("color: rgb(255, 0, 0);");
-            ui->lineEditWeatherHumidity->setStyleSheet("color: rgb(255, 0, 0);");
-        }
+
     }
+
     qDebug() << Q_FUNC_INFO;
 }
 
@@ -420,7 +580,13 @@ void FrameOSD::on_comboBoxWeatherMode_activated(int index)
 
     if (index)
     {
-        redisClient->set("weather_mode", "auto");
+        if(HMI_isRedisValid(redisClient))
+        {
+            redisClient->reply = (redisReply*)redisCommand(redisClient->context,"SET weather_mode auto");
+            qDebug()<<"SET: "<<redisClient->reply->str;
+            freeReplyObject(redisClient->reply);
+        }
+
         ui->lineEditWeatherTemp->setEnabled(false);
         ui->lineEditWeatherPress->setEnabled(false);
         ui->lineEditWeatherHumidity->setEnabled(false);
@@ -429,7 +595,13 @@ void FrameOSD::on_comboBoxWeatherMode_activated(int index)
     }
     else
     {
-        redisClient->set("weather_mode", "manual");
+        if(HMI_isRedisValid(redisClient))
+        {
+            redisClient->reply = (redisReply*)redisCommand(redisClient->context,"SET weather_mode manual");
+            qDebug()<<"SET: "<<redisClient->reply->str;
+            freeReplyObject(redisClient->reply);
+        }
+
         ui->lineEditWeatherTemp->setEnabled(true);
         ui->lineEditWeatherPress->setEnabled(true);
         ui->lineEditWeatherHumidity->setEnabled(true);
@@ -444,14 +616,14 @@ void FrameOSD::on_pushButtonWeather_clicked()
     QString pressure = ui->lineEditWeatherPress->text();
     QString humidity = ui->lineEditWeatherHumidity->text();
 
-    std::unordered_map<std::string, std::string> data_map =
-    {
-        {"temperature", temperature.toStdString()},
-        {"pressure", pressure.toStdString()},
-        {"humidity", humidity.toStdString()},
-    };
+    redisClient->reply = (redisReply*)redisCommand(redisClient->context,"HMSET weather temperature %s pressure %s humidity %s",
+                                                  temperature.toUtf8().constData(),
+                                                  pressure.toUtf8().constData(),
+                                                  humidity.toUtf8().constData()
+                                                  );
 
-    redisClient->hmset("weather",data_map.begin(), data_map.end());
+    qDebug()<<"SET: "<<redisClient->reply->integer;
+    freeReplyObject(redisClient->reply);
 }
 
 
@@ -473,35 +645,51 @@ void FrameOSD::SpeedManualModeUi()
 
 void FrameOSD::SpeedTimerTimeOut()
 {
-    auto speed_mode = redisClient->get("speed_mode");
-    QString speedmode = QString::fromStdString(*speed_mode);
-    qDebug() << Q_FUNC_INFO << speedmode;
-
-    if(speedmode == "auto")
+    if(HMI_isRedisValid(redisClient))
     {
-        if(redisClient->exists("speed"))
+        redisClient->reply = (redisReply*)redisCommand(redisClient->context,"GET speed_mode");
+        qDebug()<<"GET: "<<redisClient->reply->str;
+
+        QString speedmode = QString::fromUtf8((const char*)redisClient->reply->str,redisClient->reply->len);
+        qDebug() << Q_FUNC_INFO << speedmode;
+
+        freeReplyObject(redisClient->reply);
+
+        if(speedmode == "auto")
         {
-            ui->lineEditSpeedSOG->setStyleSheet("color:rgb(0, 255, 0);");
-            ui->lineEditSpeedCOG->setStyleSheet("color:rgb(0, 255, 0);");
+            redisClient->reply = (redisReply*)redisCommand(redisClient->context,"EXISTS speed");
+            bool key_exist = redisClient->reply->integer > 0;
+            qDebug()<<"GET: "<<redisClient->reply->integer;
 
-            std::vector<std::string> speed;
-            speed.reserve(2);
-            redisClient->hmget("speed", {"sog", "cog"}, std::back_inserter(speed));
+            freeReplyObject(redisClient->reply);
 
-            speeddata.sog = QString::fromStdString(speed.at(0));
-            speeddata.cog = QString::fromStdString(speed.at(1));
+            if(key_exist)
+            {
+                ui->lineEditSpeedSOG->setStyleSheet("color:rgb(0, 255, 0);");
+                ui->lineEditSpeedCOG->setStyleSheet("color:rgb(0, 255, 0);");
 
-            qDebug() << Q_FUNC_INFO;
+                redisClient->reply = (redisReply*)redisCommand(redisClient->context,"HGETALL speed");
+                qDebug()<<"GET: "<<redisClient->reply->str;
 
-            ui->lineEditSpeedSOG->setText(speeddata.sog);
-            ui->lineEditSpeedCOG->setText(speeddata.cog);
+                if (redisClient->reply->type == REDIS_REPLY_ARRAY)
+                {
+                    speeddata.sog = QString::fromUtf8((const char*)redisClient->reply->element[1]->str);
+                    speeddata.cog = QString::fromUtf8((const char*)redisClient->reply->element[3]->str);
+                }
+                freeReplyObject(redisClient->reply);
+
+                ui->lineEditSpeedSOG->setText(speeddata.sog);
+                ui->lineEditSpeedCOG->setText(speeddata.cog);
+            }
+            else
+            {
+                ui->lineEditSpeedSOG->setStyleSheet("color: rgb(255, 0, 0);");
+                ui->lineEditSpeedCOG->setStyleSheet("color: rgb(255, 0, 0);");
+            }
         }
-        else
-        {
-            ui->lineEditSpeedSOG->setStyleSheet("color: rgb(255, 0, 0);");
-            ui->lineEditSpeedCOG->setStyleSheet("color: rgb(255, 0, 0);");
-        }
+
     }
+
     qDebug() << Q_FUNC_INFO;
 }
 
@@ -511,7 +699,13 @@ void FrameOSD::on_comboBoxSpeedMode_activated(int index)
 
     if (index)
     {
-        redisClient->set("speed_mode", "auto");
+        if(HMI_isRedisValid(redisClient))
+        {
+            redisClient->reply = (redisReply*)redisCommand(redisClient->context,"SET speed_mode auto");
+            qDebug()<<"SET: "<<redisClient->reply->str;
+            freeReplyObject(redisClient->reply);
+        }
+
         ui->lineEditSpeedSOG->setEnabled(false);
         ui->lineEditSpeedCOG->setEnabled(false);
 
@@ -519,7 +713,13 @@ void FrameOSD::on_comboBoxSpeedMode_activated(int index)
     }
     else
     {
-        redisClient->set("speed_mode", "manual");
+        if(HMI_isRedisValid(redisClient))
+        {
+            redisClient->reply = (redisReply*)redisCommand(redisClient->context,"SET speed_mode manual");
+            qDebug()<<"SET: "<<redisClient->reply->str;
+            freeReplyObject(redisClient->reply);
+        }
+
         ui->lineEditSpeedSOG->setEnabled(true);
         ui->lineEditSpeedCOG->setEnabled(true);
 
@@ -532,13 +732,13 @@ void FrameOSD::on_pushButtonSpeedApply_clicked()
     QString sog = ui->lineEditSpeedSOG->text();
     QString cog = ui->lineEditSpeedCOG->text();
 
-    std::unordered_map<std::string, std::string> data_map =
-    {
-        {"sog", sog.toStdString()},
-        {"cog", cog.toStdString()},
-    };
+    redisClient->reply = (redisReply*)redisCommand(redisClient->context,"HMSET speed sog %s cog %s",
+                                                  sog.toUtf8().constData(),
+                                                  cog.toUtf8().constData()
+                                                  );
+    qDebug()<<"GET: "<<redisClient->reply->str;
+    freeReplyObject(redisClient->reply);
 
-    redisClient->hmset("speed",data_map.begin(), data_map.end());
 }
 
 
@@ -560,35 +760,51 @@ void FrameOSD::WaterSpeedManualModeUi()
 
 void FrameOSD::WaterSpeedTimerTimeOut()
 {
-    auto waterspeed_mode = redisClient->get("waterspeed_mode");
-    QString waterspeedmode = QString::fromStdString(*waterspeed_mode);
-    qDebug() << Q_FUNC_INFO << waterspeedmode;
-
-    if(waterspeedmode == "auto")
+    if(HMI_isRedisValid(redisClient))
     {
-        if(redisClient->exists("waterspeed"))
+        redisClient->reply = (redisReply*)redisCommand(redisClient->context,"GET waterspeed_mode");
+        qDebug()<<"GET: "<<redisClient->reply->str;
+
+        QString waterspeedmode = QString::fromUtf8((const char*)redisClient->reply->str,redisClient->reply->len);
+        qDebug() << Q_FUNC_INFO << waterspeedmode;
+
+        freeReplyObject(redisClient->reply);
+
+        if(waterspeedmode == "auto")
         {
-            ui->lineEditWaterSOG->setStyleSheet("color:rgb(0, 255, 0);");
-            ui->lineEditWaterCOG->setStyleSheet("color:rgb(0, 255, 0);");
+            redisClient->reply = (redisReply*)redisCommand(redisClient->context,"EXISTS waterspeed");
+            bool key_exist = redisClient->reply->integer > 0;
+            qDebug()<<"GET: "<<redisClient->reply->integer;
 
-            std::vector<std::string> waterspeed;
-            waterspeed.reserve(2);
-            redisClient->hmget("waterspeed", {"speed", "course"}, std::back_inserter(waterspeed));
+            freeReplyObject(redisClient->reply);
 
-            waterspeeddata.speed = QString::fromStdString(waterspeed.at(0));
-            waterspeeddata.course = QString::fromStdString(waterspeed.at(1));
+            if(key_exist)
+            {
+                ui->lineEditWaterSOG->setStyleSheet("color:rgb(0, 255, 0);");
+                ui->lineEditWaterCOG->setStyleSheet("color:rgb(0, 255, 0);");
 
-            qDebug() << Q_FUNC_INFO;
+                redisClient->reply = (redisReply*)redisCommand(redisClient->context,"HGETALL waterspeed");
+                qDebug()<<"GET: "<<redisClient->reply->str;
 
-            ui->lineEditWaterSOG->setText(waterspeeddata.speed);
-            ui->lineEditWaterCOG->setText(waterspeeddata.course);
+                if (redisClient->reply->type == REDIS_REPLY_ARRAY)
+                {
+                    waterspeeddata.speed = QString::fromUtf8((const char*)redisClient->reply->element[1]->str);
+                    waterspeeddata.course = QString::fromUtf8((const char*)redisClient->reply->element[3]->str);
+                }
+                freeReplyObject(redisClient->reply);
+
+                ui->lineEditWaterSOG->setText(waterspeeddata.speed);
+                ui->lineEditWaterCOG->setText(waterspeeddata.course);
+            }
+            else
+            {
+                ui->lineEditWaterSOG->setStyleSheet("color: rgb(255, 0, 0);");
+                ui->lineEditWaterCOG->setStyleSheet("color: rgb(255, 0, 0);");
+            }
         }
-        else
-        {
-            ui->lineEditWaterSOG->setStyleSheet("color: rgb(255, 0, 0);");
-            ui->lineEditWaterCOG->setStyleSheet("color: rgb(255, 0, 0);");
-        }
+
     }
+
     qDebug() << Q_FUNC_INFO;
 }
 
@@ -598,7 +814,13 @@ void FrameOSD::on_comboBoxWaterMode_activated(int index)
 
     if (index)
     {
-        redisClient->set("waterspeed_mode", "auto");
+        if(HMI_isRedisValid(redisClient))
+        {
+            redisClient->reply = (redisReply*)redisCommand(redisClient->context,"SET waterspeed_mode auto");
+            qDebug()<<"SET: "<<redisClient->reply->str;
+            freeReplyObject(redisClient->reply);
+        }
+
         ui->lineEditWaterSOG->setEnabled(false);
         ui->lineEditWaterCOG->setEnabled(false);
 
@@ -606,7 +828,13 @@ void FrameOSD::on_comboBoxWaterMode_activated(int index)
     }
     else
     {
-        redisClient->set("waterspeed_mode", "manual");
+        if(HMI_isRedisValid(redisClient))
+        {
+            redisClient->reply = (redisReply*)redisCommand(redisClient->context,"SET waterspeed_mode manual");
+            qDebug()<<"SET: "<<redisClient->reply->str;
+            freeReplyObject(redisClient->reply);
+        }
+
         ui->lineEditWaterSOG->setEnabled(true);
         ui->lineEditWaterCOG->setEnabled(true);
 
@@ -619,11 +847,10 @@ void FrameOSD::on_pushButtonWaterApply_clicked()
     QString speed = ui->lineEditWaterSOG->text();
     QString course = ui->lineEditWaterCOG->text();
 
-    std::unordered_map<std::string, std::string> data_map =
-    {
-        {"speed", speed.toStdString()},
-        {"course", course.toStdString()},
-    };
-
-    redisClient->hmset("waterspeed",data_map.begin(), data_map.end());
+    redisClient->reply = (redisReply*)redisCommand(redisClient->context,"HMSET waterspeed speed %s course %s",
+                                                  speed.toUtf8().constData(),
+                                                  course.toUtf8().constData()
+                                                  );
+    qDebug()<<"SET: "<<redisClient->reply->str;
+    freeReplyObject(redisClient->reply);
 }

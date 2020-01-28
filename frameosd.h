@@ -1,12 +1,11 @@
 #ifndef FRAMEOSD_H
 #define FRAMEOSD_H
 
-//#include <QMessageBox>
-#include <hiredis/hiredis.h>
-#include <redis++.h>
 #include <QFrame>
 #include <QDebug>
 #include <QTimer>
+
+#include "hmi_global.h"
 
 namespace Ui {
 class FrameOSD;
@@ -21,6 +20,8 @@ public:
     ~FrameOSD();
 
 private slots:
+    void on_osdTimerTimeOut();
+
     void on_osdGryoComboBox_activated(int index);
     void GyroTimerTimeOut();
     void on_pushButtonGyroApply_clicked();
@@ -84,8 +85,10 @@ private:
         QString course;
     };
 
+
+
     Ui::FrameOSD *ui;
-    Redis *redisClient;
+    HMIRedis *redisClient;
     InersiaData inersiadata;
     GpsData gpsdata;
     WindData winddata;
