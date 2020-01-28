@@ -29,3 +29,5 @@ FORMS    += mainwindow.ui \
     framegun.ui \
     frameosd.ui \
     framewap.ui
+
+unix:!macx: LIBS += -lhiredis

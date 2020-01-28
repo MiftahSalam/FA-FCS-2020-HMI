@@ -2,6 +2,7 @@
 #define FRAMEOSD_H
 
 //#include <QMessageBox>
+#include <hiredis/hiredis.h>
 #include <redis++.h>
 #include <QFrame>
 #include <QDebug>
