@@ -1,6 +1,12 @@
 #include "frameosd.h"
 #include "ui_frameosd.h"
 
+#include <QMessageBox>
+#include <QRegExpValidator>
+
+#define NUMBER_RX "[0-9.]+$"
+
+
 FrameOSD::FrameOSD(QWidget *parent) :
     QFrame(parent),
     ui(new Ui::FrameOSD)
@@ -9,35 +15,52 @@ FrameOSD::FrameOSD(QWidget *parent) :
 
     redisClient = new Redis("tcp://127.0.0.1:6379");
 
+    QRegExp rxNumber(NUMBER_RX);
+    QRegExpValidator *valiNumber = new QRegExpValidator(rxNumber, this);
+
     // ==== Gyro ==== //
     redisClient->set("inersia_mode", "auto");
     GyroAutoModeUi();
     ui->osdGryoComboBox->setCurrentIndex(1);
+    ui->osdGyroHeadingValue->setValidator(valiNumber);
+    ui->osdGyroPitchValue->setValidator(valiNumber);
+    ui->lineEditGyroRoll->setValidator(valiNumber);
 
     // ==== GPS ==== //
     redisClient->set("position_mode", "auto");
     GpsAutoModeUi();
     ui->comboBoxGPSMode->setCurrentIndex(1);
+    ui->lineEditGpsLat->setValidator(valiNumber);
+    ui->lineEditGpsLong->setValidator(valiNumber);
 
     // ==== Wind ==== //
     redisClient->set("wind_mode", "auto");
     WindAutoModeUi();
     ui->comboBoxWindMode->setCurrentIndex(1);
+    ui->lineEditWindDir->setValidator(valiNumber);
+    ui->lineEditWindSpeed->setValidator(valiNumber);
 
     // ==== Weather ==== //
     redisClient->set("weather_mode", "auto");
     WeatherAutoModeUi();
     ui->comboBoxWeatherMode->setCurrentIndex(1);
+    ui->lineEditWeatherTemp->setValidator(valiNumber);
+    ui->lineEditWeatherPress->setValidator(valiNumber);
+    ui->lineEditWeatherHumidity->setValidator(valiNumber);
 
     // ==== Speed ==== //
     redisClient->set("speed_mode", "auto");
     SpeedAutoModeUi();
     ui->comboBoxSpeedMode->setCurrentIndex(1);
+    ui->lineEditSpeedSOG->setValidator(valiNumber);
+    ui->lineEditSpeedCOG->setValidator(valiNumber);
 
     // ==== Water Speed ==== //
     redisClient->set("waterspeed_mode", "auto");
     WaterSpeedAutoModeUi();
     ui->comboBoxWaterMode->setCurrentIndex(1);
+    ui->lineEditWaterSOG->setValidator(valiNumber);
+    ui->lineEditWaterCOG->setValidator(valiNumber);
 
 }
 
@@ -131,6 +154,26 @@ void FrameOSD::on_pushButtonGyroApply_clicked()
     QString heading = ui->osdGyroHeadingValue->text();
     QString roll = ui->lineEditGyroRoll->text();
     QString pitch = ui->osdGyroPitchValue->text();
+
+    bool ok;
+    float heading_float =heading. toFloat(&ok);
+    float roll_float =roll. toFloat(&ok);
+    float pitch_float =roll. toFloat(&ok);
+
+    if ((heading_float < 0) || (heading_float > 360) )
+    {
+        QMessageBox::critical(this, "fatal error heading", "invalid input text" );
+    }
+
+    if ((roll_float < 0) || (roll_float > 360) )
+    {
+        QMessageBox::critical(this, "fatal error roll", "invalid input text" );
+    }
+
+    if ((pitch_float < 0) || (pitch_float > 360) )
+    {
+        QMessageBox::critical(this, "fatal error pitch", "invalid input text" );
+    }
 
     std::unordered_map<std::string, std::string> data_map =
     {
