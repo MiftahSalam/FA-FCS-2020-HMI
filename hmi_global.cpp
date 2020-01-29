@@ -2,14 +2,27 @@
 
 #include <string.h>
 
+int HMI_RedisExecute(HMIRedis *redis, const char *command)
+{
+    if(!HMI_isRedisValid(redis))
+        return 1; //redis context error
+
+    redis->reply = (redisReply*)redisCommand(redis->context,command);
+
+    if(redis->reply == NULL)
+        return 2; //redis reply error
+
+    return 0;
+}
+
 HMIRedis *HMI_redisInit(QString ip, int port, uint timeout)
 {
     HMIRedis *redis = new HMIRedis;
 
     redis->hostname = ip;
     redis->port = port;
-    redis->connect_timeout.tv_sec = timeout;
-    redis->connect_timeout.tv_usec = 0;
+    redis->connect_timeout.tv_sec = 0;
+    redis->connect_timeout.tv_usec = 1000*timeout;
 
     return redis;
 }

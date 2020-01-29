@@ -461,8 +461,8 @@ void FrameOSD::WindTimerTimeOut()
                     {
                         if (redisClient->reply->type == REDIS_REPLY_ARRAY)
                         {
-                            winddata.dir = QString::fromUtf8((const char*)redisClient->reply->element[1]->str);
-                            winddata.speed = QString::fromUtf8((const char*)redisClient->reply->element[3]->str);
+                            winddata.dir = QString::fromUtf8((const char*)redisClient->reply->element[3]->str);
+                            winddata.speed = QString::fromUtf8((const char*)redisClient->reply->element[1]->str);
                         }
                         freeReplyObject(redisClient->reply);
 
@@ -590,9 +590,9 @@ void FrameOSD::WeatherTimerTimeOut()
                     {
                         if (redisClient->reply->type == REDIS_REPLY_ARRAY)
                         {
-                            weatherdata.temperature = QString::fromUtf8((const char*)redisClient->reply->element[1]->str);
-                            weatherdata.pressure = QString::fromUtf8((const char*)redisClient->reply->element[3]->str);
-                            weatherdata.humidity = QString::fromUtf8((const char*)redisClient->reply->element[5]->str);
+                            weatherdata.temperature = QString::fromUtf8((const char*)redisClient->reply->element[5]->str);
+                            weatherdata.pressure = QString::fromUtf8((const char*)redisClient->reply->element[1]->str);
+                            weatherdata.humidity = QString::fromUtf8((const char*)redisClient->reply->element[3]->str);
                         }
                         freeReplyObject(redisClient->reply);
 
