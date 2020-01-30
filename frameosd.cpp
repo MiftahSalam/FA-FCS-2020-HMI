@@ -4,7 +4,7 @@
 #include <QMessageBox>
 #include <QRegExpValidator>
 
-#define NUMBER_RX "[0-9.]+$"
+#define NUMBER_RX "[0-9.-]+$"
 
 
 FrameOSD::FrameOSD(QWidget *parent) :
@@ -25,8 +25,8 @@ FrameOSD::FrameOSD(QWidget *parent) :
     ui->lineEditGyroRoll->setValidator(valiNumber);
 
     // ==== validator GPS ==== //
-    ui->lineEditGpsLat->setValidator(valiNumber);
-    ui->lineEditGpsLong->setValidator(valiNumber);
+   // ui->lineEditGpsLat->setValidator(valiNumber);
+   // ui->lineEditGpsLong->setValidator(valiNumber);
 
     // ==== validator Wind ==== //
     ui->lineEditWindDir->setValidator(valiNumber);
@@ -251,21 +251,21 @@ void FrameOSD::on_pushButtonGyroApply_clicked()
     bool ok;
     float heading_float =heading. toFloat(&ok);
     float roll_float =roll. toFloat(&ok);
-    float pitch_float =roll. toFloat(&ok);
+    float pitch_float =pitch. toFloat(&ok);
 
-    if ((heading_float < 0) || (heading_float > 360) )
+    if ((heading_float < 0) || (heading_float > 300) )
     {
-        QMessageBox::critical(this, "fatal error heading", "invalid input text" );
+        QMessageBox::critical(this, "Fatal Error Heading", "Invalid input text" );
     }
 
-    if ((roll_float < 0) || (roll_float > 360) )
+    if ((roll_float < -380) || (roll_float > 380) )
     {
-        QMessageBox::critical(this, "fatal error roll", "invalid input text" );
+        QMessageBox::critical(this, "Fatal Error roll", "Invalid input text" );
     }
 
-    if ((pitch_float < 0) || (pitch_float > 360) )
+    if ((pitch_float < -380) || (pitch_float > 380) )
     {
-        QMessageBox::critical(this, "fatal error pitch", "invalid input text" );
+        QMessageBox::critical(this, "Fatal Error pitch", "Invalid input text" );
     }
 
     redisClient->reply = (redisReply*)redisCommand(redisClient->context,"HMSET inersia heading %s roll %s pitch %s",
@@ -395,6 +395,20 @@ void FrameOSD::on_pushButtonGPSApply_clicked()
     QString latitude = ui->lineEditGpsLat->text();
     QString longitude = ui->lineEditGpsLong->text();
 
+    bool ok;
+    float latitude_float =latitude. toFloat(&ok);
+    float longitude_float =longitude. toFloat(&ok);
+
+    if ((latitude_float < 0) || (latitude_float > 360) )
+    {
+        QMessageBox::critical(this, "Fatal Error Latitude", "Invalid input text" );
+    }
+
+    if ((longitude_float < 0) || (longitude_float > 360) )
+    {
+        QMessageBox::critical(this, "Fatal Error Longitude", "Invalid input text" );
+    }
+
     redisClient->reply = (redisReply*)redisCommand(redisClient->context,"HMSET position latitude %s longitude %s",
                                                   latitude.toUtf8().constData(),
                                                   longitude.toUtf8().constData()
@@ -521,6 +535,20 @@ void FrameOSD::on_pushButtonWindApply_clicked()
 {
     QString dir = ui->lineEditWindDir->text();
     QString speed = ui->lineEditWindSpeed->text();
+
+    bool ok;
+    float dir_float =dir. toFloat(&ok);
+    float speed_float =speed. toFloat(&ok);
+
+    if ((dir_float < 0) || (dir_float > 350) )
+    {
+        QMessageBox::critical(this, "Fatal Error Direction", "Invalid input text" );
+    }
+
+    if ((speed_float < -150) || (speed_float > 150) )
+    {
+        QMessageBox::critical(this, "Fatal Error Speed", "Invalid input text" );
+    }
 
     redisClient->reply = (redisReply*)redisCommand(redisClient->context,"HMSET wind dir %s speed %s",
                                                   dir.toUtf8().constData(),
@@ -656,6 +684,26 @@ void FrameOSD::on_pushButtonWeather_clicked()
     QString pressure = ui->lineEditWeatherPress->text();
     QString humidity = ui->lineEditWeatherHumidity->text();
 
+    bool ok;
+    float temperature_float =temperature. toFloat(&ok);
+    float pressure_float =pressure. toFloat(&ok);
+    float humidity_float =humidity. toFloat(&ok);
+
+    if ((temperature_float < -273) || (temperature_float > 273) )
+    {
+        QMessageBox::critical(this, "Fatal Error Temperature", "Invalid input text" );
+    }
+
+    if ((pressure_float < 100) || (pressure_float > 10000) )
+    {
+        QMessageBox::critical(this, "Fatal Error Pressure", "Invalid input text" );
+    }
+
+    if ((humidity_float < 0) || (humidity_float > 100) )
+    {
+        QMessageBox::critical(this, "Fatal Error Humidity", "Invalid input text" );
+    }
+
     redisClient->reply = (redisReply*)redisCommand(redisClient->context,"HMSET weather temperature %s pressure %s humidity %s",
                                                   temperature.toUtf8().constData(),
                                                   pressure.toUtf8().constData(),
@@ -782,6 +830,20 @@ void FrameOSD::on_pushButtonSpeedApply_clicked()
     QString sog = ui->lineEditSpeedSOG->text();
     QString cog = ui->lineEditSpeedCOG->text();
 
+    bool ok;
+    float sog_float =sog. toFloat(&ok);
+    float cog_float =cog. toFloat(&ok);
+
+    if ((sog_float < -150) || (sog_float > 150) )
+    {
+        QMessageBox::critical(this, "Fatal Error SOG", "Invalid input text" );
+    }
+
+    if ((cog_float < 0) || (cog_float > 350) )
+    {
+        QMessageBox::critical(this, "Fatal Error COG", "Invalid input text" );
+    }
+
     redisClient->reply = (redisReply*)redisCommand(redisClient->context,"HMSET speed sog %s cog %s",
                                                   sog.toUtf8().constData(),
                                                   cog.toUtf8().constData()
@@ -906,6 +968,20 @@ void FrameOSD::on_pushButtonWaterApply_clicked()
 {
     QString speed = ui->lineEditWaterSOG->text();
     QString course = ui->lineEditWaterCOG->text();
+
+    bool ok;
+    float speed_float =speed. toFloat(&ok);
+    float course_float =course. toFloat(&ok);
+
+    if ((speed_float < -150) || (speed_float > 150) )
+    {
+        QMessageBox::critical(this, "Fatal Error Speed", "Invalid input text" );
+    }
+
+    if ((course_float < 0) || (course_float > 350) )
+    {
+        QMessageBox::critical(this, "Fatal Error Course", "Invalid input text" );
+    }
 
     redisClient->reply = (redisReply*)redisCommand(redisClient->context,"HMSET waterspeed speed %s course %s",
                                                   speed.toUtf8().constData(),
