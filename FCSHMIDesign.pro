@@ -30,4 +30,8 @@ FORMS    += mainwindow.ui \
     frameosd.ui \
     framewap.ui
 
-unix:!macx: LIBS += -lhiredis
+RESOURCES += \
+    hmi_fa_fcs.qrc
+
+DISTFILES += \
+    HMI_Syle.css

@@ -2,12 +2,15 @@
 <ui version="4.0">
  <class>FrameOSD</class>
  <widget class="QFrame" name="FrameOSD">
+  <property name="enabled">
+   <bool>true</bool>
+  </property>
   <property name="geometry">
    <rect>
     <x>0</x>
     <y>0</y>
     <width>1260</width>
-    <height>270</height>
+    <height>277</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -23,26 +26,7 @@
    <item row="0" column="0">
     <widget class="QGroupBox" name="groupBox">
      <property name="styleSheet">
-      <string notr="true">QGroupBox {
-    border: 1px solid gray;
-    border-color: rgb(196, 160, 0);
-    margin-top: 29px;
-    font-size: 16px;
-    border-bottom-left-radius: 15px;
-    border-bottom-right-radius: 15px;
-}
-
-QGroupBox::title {
-    subcontrol-origin: margin;
-    subcontrol-position: top center;
-    border-top-left-radius: 15px;
-    border-top-right-radius: 15px;
-    padding: 5px 150px;
-    color: rgb(255, 255, 0);
-	background-color: qlineargradient(x1:0, y1:0, x2:0, y2:1,
-                                      stop:0 #616161, stop: 0.5 #505050,
-                                      stop: 0.6 #434343, stop:1 #656565);
-}</string>
+      <string notr="true"/>
      </property>
      <property name="title">
       <string>Gyro</string>
@@ -101,10 +85,10 @@ QGroupBox::title {
             <item>
              <widget class="QLineEdit" name="osdGyroHeadingValue">
               <property name="styleSheet">
-               <string notr="true">color: rgb(255, 255, 255);</string>
+               <string notr="true"/>
               </property>
               <property name="text">
-               <string>23.1</string>
+               <string>0.0</string>
               </property>
              </widget>
             </item>
@@ -128,10 +112,10 @@ QGroupBox::title {
             <item>
              <widget class="QLineEdit" name="osdGyroPitchValue">
               <property name="styleSheet">
-               <string notr="true">color: rgb(255, 255, 255);</string>
+               <string notr="true"/>
               </property>
               <property name="text">
-               <string>-0.2</string>
+               <string>0.0</string>
               </property>
              </widget>
             </item>
@@ -155,10 +139,10 @@ QGroupBox::title {
             <item>
              <widget class="QLineEdit" name="lineEditGyroRoll">
               <property name="styleSheet">
-               <string notr="true">color: rgb(255, 255, 255);</string>
+               <string notr="true"/>
               </property>
               <property name="text">
-               <string>0.2</string>
+               <string>0.0</string>
               </property>
              </widget>
             </item>
@@ -179,6 +163,9 @@ QGroupBox::title {
           </item>
           <item>
            <widget class="QComboBox" name="osdGryoComboBox">
+            <property name="currentIndex">
+             <number>1</number>
+            </property>
             <item>
              <property name="text">
               <string>Manual</string>
@@ -197,6 +184,9 @@ QGroupBox::title {
       </item>
       <item row="1" column="0">
        <widget class="QPushButton" name="pushButtonGyroApply">
+        <property name="enabled">
+         <bool>false</bool>
+        </property>
         <property name="text">
          <string>Apply</string>
         </property>
@@ -208,26 +198,7 @@ QGroupBox::title {
    <item row="0" column="1">
     <widget class="QGroupBox" name="groupBox_2">
      <property name="styleSheet">
-      <string notr="true">QGroupBox {
-    border: 1px solid gray;
-    border-color: rgb(196, 160, 0);
-    margin-top: 29px;
-    font-size: 16px;
-    border-bottom-left-radius: 15px;
-    border-bottom-right-radius: 15px;
-}
-
-QGroupBox::title {
-    subcontrol-origin: margin;
-    subcontrol-position: top center;
-    border-top-left-radius: 15px;
-    border-top-right-radius: 15px;
-    padding: 5px 150px;
-    color: rgb(255, 255, 0);
-	background-color: qlineargradient(x1:0, y1:0, x2:0, y2:1,
-                                      stop:0 #616161, stop: 0.5 #505050,
-                                      stop: 0.6 #434343, stop:1 #656565);
-}</string>
+      <string notr="true"/>
      </property>
      <property name="title">
       <string>GPS</string>
@@ -274,20 +245,20 @@ QGroupBox::title {
           <item>
            <widget class="QLineEdit" name="lineEditGpsLat">
             <property name="styleSheet">
-             <string notr="true">color: rgb(0, 255, 0);</string>
+             <string notr="true"/>
             </property>
             <property name="text">
-             <string>07 32-20 S</string>
+             <string>0.0 S</string>
             </property>
            </widget>
           </item>
           <item>
            <widget class="QLineEdit" name="lineEditGpsLong">
             <property name="styleSheet">
-             <string notr="true">color: rgb(0, 255, 0);</string>
+             <string notr="true"/>
             </property>
             <property name="text">
-             <string>-102 12-03 W</string>
+             <string>0.0 W</string>
             </property>
            </widget>
           </item>
@@ -449,26 +420,7 @@ QGroupBox::title {
    <item row="0" column="2">
     <widget class="QGroupBox" name="groupBox_3">
      <property name="styleSheet">
-      <string notr="true">QGroupBox {
-    border: 1px solid gray;
-    border-color: rgb(196, 160, 0);
-    margin-top: 29px;
-    font-size: 16px;
-    border-bottom-left-radius: 15px;
-    border-bottom-right-radius: 15px;
-}
-
-QGroupBox::title {
-    subcontrol-origin: margin;
-    subcontrol-position: top center;
-    border-top-left-radius: 15px;
-    border-top-right-radius: 15px;
-    padding: 5px 150px;
-    color: rgb(255, 255, 0);
-	background-color: qlineargradient(x1:0, y1:0, x2:0, y2:1,
-                                      stop:0 #616161, stop: 0.5 #505050,
-                                      stop: 0.6 #434343, stop:1 #656565);
-}</string>
+      <string notr="true"/>
      </property>
      <property name="title">
       <string>Speed</string>
@@ -517,7 +469,7 @@ QGroupBox::title {
             <item>
              <widget class="QLineEdit" name="lineEditSpeedSOG">
               <property name="styleSheet">
-               <string notr="true">color: rgb(255, 0, 0);</string>
+               <string notr="true"/>
               </property>
               <property name="text">
                <string>0.0 </string>
@@ -544,10 +496,10 @@ QGroupBox::title {
             <item>
              <widget class="QLineEdit" name="lineEditSpeedCOG">
               <property name="styleSheet">
-               <string notr="true">color: rgb(255, 0, 0);</string>
+               <string notr="true"/>
               </property>
               <property name="text">
-               <string>324.1 </string>
+               <string>0.0</string>
               </property>
              </widget>
             </item>
@@ -606,26 +558,7 @@ QGroupBox::title {
    <item row="0" column="4">
     <widget class="QGroupBox" name="groupBox_5">
      <property name="styleSheet">
-      <string notr="true">QGroupBox {
-    border: 1px solid gray;
-    border-color: rgb(196, 160, 0);
-    margin-top: 29px;
-    font-size: 16px;
-    border-bottom-left-radius: 15px;
-    border-bottom-right-radius: 15px;
-}
-
-QGroupBox::title {
-    subcontrol-origin: margin;
-    subcontrol-position: top center;
-    border-top-left-radius: 15px;
-    border-top-right-radius: 15px;
-    padding: 5px 150px;
-    color: rgb(255, 255, 0);
-	background-color: qlineargradient(x1:0, y1:0, x2:0, y2:1,
-                                      stop:0 #616161, stop: 0.5 #505050,
-                                      stop: 0.6 #434343, stop:1 #656565);
-}</string>
+      <string notr="true"/>
      </property>
      <property name="title">
       <string>Wind</string>
@@ -674,10 +607,10 @@ QGroupBox::title {
             <item>
              <widget class="QLineEdit" name="lineEditWindSpeed">
               <property name="styleSheet">
-               <string notr="true">color: rgb(255, 0, 0);</string>
+               <string notr="true"/>
               </property>
               <property name="text">
-               <string>14.5 </string>
+               <string>0.0</string>
               </property>
              </widget>
             </item>
@@ -701,10 +634,10 @@ QGroupBox::title {
             <item>
              <widget class="QLineEdit" name="lineEditWindDir">
               <property name="styleSheet">
-               <string notr="true">color: rgb(255, 0, 0);</string>
+               <string notr="true"/>
               </property>
               <property name="text">
-               <string>119</string>
+               <string>0.0</string>
               </property>
              </widget>
             </item>
@@ -762,27 +695,11 @@ QGroupBox::title {
    </item>
    <item row="0" column="5">
     <widget class="QGroupBox" name="groupBox_6">
+     <property name="enabled">
+      <bool>true</bool>
+     </property>
      <property name="styleSheet">
-      <string notr="true">QGroupBox {
-    border: 1px solid gray;
-    border-color: rgb(196, 160, 0);
-    margin-top: 29px;
-    font-size: 16px;
-    border-bottom-left-radius: 15px;
-    border-bottom-right-radius: 15px;
-}
-
-QGroupBox::title {
-    subcontrol-origin: margin;
-    subcontrol-position: top center;
-    border-top-left-radius: 15px;
-    border-top-right-radius: 15px;
-    padding: 5px 150px;
-    color: rgb(255, 255, 0);
-	background-color: qlineargradient(x1:0, y1:0, x2:0, y2:1,
-                                      stop:0 #616161, stop: 0.5 #505050,
-                                      stop: 0.6 #434343, stop:1 #656565);
-}</string>
+      <string notr="true"/>
      </property>
      <property name="title">
       <string>Weather</string>
@@ -841,10 +758,10 @@ QGroupBox::title {
             <item>
              <widget class="QLineEdit" name="lineEditWeatherTemp">
               <property name="styleSheet">
-               <string notr="true">color: rgb(255, 255, 255);</string>
+               <string notr="true"/>
               </property>
               <property name="text">
-               <string>30.1</string>
+               <string>0.0</string>
               </property>
              </widget>
             </item>
@@ -885,10 +802,10 @@ QGroupBox::title {
             <item>
              <widget class="QLineEdit" name="lineEditWeatherPress">
               <property name="styleSheet">
-               <string notr="true">color: rgb(255, 255, 255);</string>
+               <string notr="true"/>
               </property>
               <property name="text">
-               <string>1002.2 mBar</string>
+               <string>0.0</string>
               </property>
              </widget>
             </item>
@@ -929,10 +846,10 @@ QGroupBox::title {
             <item>
              <widget class="QLineEdit" name="lineEditWeatherHumidity">
               <property name="styleSheet">
-               <string notr="true">color: rgb(255, 255, 255);</string>
+               <string notr="true"/>
               </property>
               <property name="text">
-               <string>87 %</string>
+               <string>0.0</string>
               </property>
              </widget>
             </item>
@@ -970,6 +887,9 @@ QGroupBox::title {
           </item>
           <item>
            <widget class="QComboBox" name="comboBoxWeatherMode">
+            <property name="currentIndex">
+             <number>1</number>
+            </property>
             <item>
              <property name="text">
               <string>Manual</string>
@@ -988,6 +908,9 @@ QGroupBox::title {
       </item>
       <item row="1" column="0">
        <widget class="QPushButton" name="pushButtonWeather">
+        <property name="enabled">
+         <bool>false</bool>
+        </property>
         <property name="text">
          <string>Apply</string>
         </property>
@@ -999,26 +922,7 @@ QGroupBox::title {
    <item row="0" column="3">
     <widget class="QGroupBox" name="groupBox_4">
      <property name="styleSheet">
-      <string notr="true">QGroupBox {
-    border: 1px solid gray;
-    border-color: rgb(196, 160, 0);
-    margin-top: 29px;
-    font-size: 16px;
-    border-bottom-left-radius: 15px;
-    border-bottom-right-radius: 15px;
-}
-
-QGroupBox::title {
-    subcontrol-origin: margin;
-    subcontrol-position: top center;
-    border-top-left-radius: 15px;
-    border-top-right-radius: 15px;
-    padding: 5px 150px;
-    color: rgb(255, 255, 0);
-	background-color: qlineargradient(x1:0, y1:0, x2:0, y2:1,
-                                      stop:0 #616161, stop: 0.5 #505050,
-                                      stop: 0.6 #434343, stop:1 #656565);
-}</string>
+      <string notr="true"/>
      </property>
      <property name="title">
       <string>Water Speed</string>
@@ -1067,10 +971,10 @@ QGroupBox::title {
             <item>
              <widget class="QLineEdit" name="lineEditWaterSOG">
               <property name="styleSheet">
-               <string notr="true">color: rgb(255, 0, 0);</string>
+               <string notr="true"/>
               </property>
               <property name="text">
-               <string>-1.3 </string>
+               <string>0.0</string>
               </property>
              </widget>
             </item>
@@ -1094,10 +998,10 @@ QGroupBox::title {
             <item>
              <widget class="QLineEdit" name="lineEditWaterCOG">
               <property name="styleSheet">
-               <string notr="true">color: rgb(255, 0, 0);</string>
+               <string notr="true"/>
               </property>
               <property name="text">
-               <string>43.1</string>
+               <string>0.0</string>
               </property>
              </widget>
             </item>

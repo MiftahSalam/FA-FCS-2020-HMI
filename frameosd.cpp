@@ -72,6 +72,16 @@ FrameOSD::~FrameOSD()
 
 // ==== Gyro ==== //
 
+void FrameOSD::on_osdTimerTimeOut()
+{
+    GyroTimerTimeOut();
+    GpsTimerTimeOut();
+    WindTimerTimeOut();
+    WeatherTimerTimeOut();
+    SpeedTimerTimeOut();
+    WaterSpeedTimerTimeOut();
+}
+
 void FrameOSD::GyroAutoModeUi()
 {
     ui->pushButtonGyroApply->setEnabled(false);

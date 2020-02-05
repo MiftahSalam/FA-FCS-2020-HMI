@@ -2,6 +2,9 @@
 <ui version="4.0">
  <class>FrameWAP</class>
  <widget class="QFrame" name="FrameWAP">
+  <property name="enabled">
+   <bool>false</bool>
+  </property>
   <property name="geometry">
    <rect>
     <x>0</x>
@@ -53,26 +56,7 @@
      <item>
       <widget class="QGroupBox" name="groupBoxWAP">
        <property name="styleSheet">
-        <string notr="true">QGroupBox {
-    border: 1px solid gray;
-    border-color: rgb(196, 160, 0);
-    margin-top: 29px;
-    font-size: 16px;
-    border-bottom-left-radius: 15px;
-    border-bottom-right-radius: 15px;
-}
-
-QGroupBox::title {
-    subcontrol-origin: margin;
-    subcontrol-position: top center;
-    border-top-left-radius: 15px;
-    border-top-right-radius: 15px;
-    padding: 5px 150px;
-    color: rgb(255, 255, 0);
-	background-color: qlineargradient(x1:0, y1:0, x2:0, y2:1,
-                                      stop:0 #616161, stop: 0.5 #505050,
-                                      stop: 0.6 #434343, stop:1 #656565);
-}</string>
+        <string notr="true"/>
        </property>
        <property name="title">
         <string>Weapon Assign</string>
@@ -164,26 +148,7 @@ QGroupBox::title {
      <item>
       <widget class="QGroupBox" name="groupBoxTrackEng">
        <property name="styleSheet">
-        <string notr="true">QGroupBox {
-    border: 1px solid gray;
-    border-color: rgb(196, 160, 0);
-    margin-top: 29px;
-    font-size: 16px;
-    border-bottom-left-radius: 15px;
-    border-bottom-right-radius: 15px;
-}
-
-QGroupBox::title {
-    subcontrol-origin: margin;
-    subcontrol-position: top center;
-    border-top-left-radius: 15px;
-    border-top-right-radius: 15px;
-    padding: 5px 150px;
-    color: rgb(255, 255, 0);
-	background-color: qlineargradient(x1:0, y1:0, x2:0, y2:1,
-                                      stop:0 #616161, stop: 0.5 #505050,
-                                      stop: 0.6 #434343, stop:1 #656565);
-}</string>
+        <string notr="true"/>
        </property>
        <property name="title">
         <string>Track Engagement</string>
@@ -334,26 +299,7 @@ QGroupBox::title {
       </size>
      </property>
      <property name="styleSheet">
-      <string notr="true">QGroupBox {
-    border: 1px solid gray;
-    border-color: rgb(196, 160, 0);
-    margin-top: 29px;
-    font-size: 16px;
-    border-bottom-left-radius: 15px;
-    border-bottom-right-radius: 15px;
-}
-
-QGroupBox::title {
-    subcontrol-origin: margin;
-    subcontrol-position: top center;
-    border-top-left-radius: 15px;
-    border-top-right-radius: 15px;
-    padding: 5px 150px;
-    color: rgb(255, 255, 0);
-	background-color: qlineargradient(x1:0, y1:0, x2:0, y2:1,
-                                      stop:0 #616161, stop: 0.5 #505050,
-                                      stop: 0.6 #434343, stop:1 #656565);
-}</string>
+      <string notr="true"/>
      </property>
      <property name="title">
       <string>Correction</string>
@@ -374,14 +320,7 @@ QGroupBox::title {
          </size>
         </property>
         <property name="styleSheet">
-         <string notr="true">QHeaderView::section {
-    background-color: qlineargradient(x1:0, y1:0, x2:0, y2:1,
-                                      stop:0 #616161, stop: 0.5 #505050,
-                                      stop: 0.6 #434343, stop:1 #656565);
-    color: yellow;
-    padding-left: 4px;
-    border: 1px solid #6c6c6c;
-}</string>
+         <string notr="true"/>
         </property>
         <property name="sizeAdjustPolicy">
          <enum>QAbstractScrollArea::AdjustToContents</enum>
@@ -498,26 +437,7 @@ QGroupBox::title {
    <item row="1" column="0">
     <widget class="QGroupBox" name="groupBoxEng">
      <property name="styleSheet">
-      <string notr="true">QGroupBox {
-    border: 1px solid gray;
-    border-color: rgb(196, 160, 0);
-    margin-top: 29px;
-    font-size: 16px;
-    border-bottom-left-radius: 15px;
-    border-bottom-right-radius: 15px;
-}
-
-QGroupBox::title {
-    subcontrol-origin: margin;
-    subcontrol-position: top left;
-    border-top-left-radius: 15px;
-    border-top-right-radius: 15px;
-    padding: 5px 150px;
-    color: rgb(255, 255, 0);
-	background-color: qlineargradient(x1:0, y1:0, x2:0, y2:1,
-                                      stop:0 #616161, stop: 0.5 #505050,
-                                      stop: 0.6 #434343, stop:1 #656565);
-}</string>
+      <string notr="true"/>
      </property>
      <property name="title">
       <string>Engagement Data</string>
@@ -532,14 +452,7 @@ QGroupBox::title {
          </sizepolicy>
         </property>
         <property name="styleSheet">
-         <string notr="true">QHeaderView::section {
-    background-color: qlineargradient(x1:0, y1:0, x2:0, y2:1,
-                                      stop:0 #616161, stop: 0.5 #505050,
-                                      stop: 0.6 #434343, stop:1 #656565);
-    color: yellow;
-    padding-left: 4px;
-    border: 1px solid #6c6c6c;
-}</string>
+         <string notr="true"/>
         </property>
         <property name="sizeAdjustPolicy">
          <enum>QAbstractScrollArea::AdjustToContents</enum>

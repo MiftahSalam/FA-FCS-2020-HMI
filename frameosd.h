@@ -1,8 +1,6 @@
 #ifndef FRAMEOSD_H
 #define FRAMEOSD_H
 
-//#include <QMessageBox>
-#include <hiredis/hiredis.h>
 #include <redis++.h>
 #include <QFrame>
 #include <QDebug>
@@ -21,6 +19,8 @@ public:
     ~FrameOSD();
 
 private slots:
+    void on_osdTimerTimeOut();
+
     void on_osdGryoComboBox_activated(int index);
     void GyroTimerTimeOut();
     void on_pushButtonGyroApply_clicked();
