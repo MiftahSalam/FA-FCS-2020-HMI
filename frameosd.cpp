@@ -20,45 +20,33 @@ FrameOSD::FrameOSD(QWidget *parent) :
 
     // ==== Gyro ==== //
     redisClient->set("inersia_mode", "auto");
-    GyroAutoModeUi();
-    ui->osdGryoComboBox->setCurrentIndex(1);
     ui->osdGyroHeadingValue->setValidator(valiNumber);
     ui->osdGyroPitchValue->setValidator(valiNumber);
     ui->lineEditGyroRoll->setValidator(valiNumber);
 
     // ==== GPS ==== //
     redisClient->set("position_mode", "auto");
-    GpsAutoModeUi();
-    ui->comboBoxGPSMode->setCurrentIndex(1);
     ui->lineEditGpsLat->setValidator(valiNumber);
     ui->lineEditGpsLong->setValidator(valiNumber);
 
     // ==== Wind ==== //
     redisClient->set("wind_mode", "auto");
-    WindAutoModeUi();
-    ui->comboBoxWindMode->setCurrentIndex(1);
     ui->lineEditWindDir->setValidator(valiNumber);
     ui->lineEditWindSpeed->setValidator(valiNumber);
 
     // ==== Weather ==== //
     redisClient->set("weather_mode", "auto");
-    WeatherAutoModeUi();
-    ui->comboBoxWeatherMode->setCurrentIndex(1);
     ui->lineEditWeatherTemp->setValidator(valiNumber);
     ui->lineEditWeatherPress->setValidator(valiNumber);
     ui->lineEditWeatherHumidity->setValidator(valiNumber);
 
     // ==== Speed ==== //
     redisClient->set("speed_mode", "auto");
-    SpeedAutoModeUi();
-    ui->comboBoxSpeedMode->setCurrentIndex(1);
     ui->lineEditSpeedSOG->setValidator(valiNumber);
     ui->lineEditSpeedCOG->setValidator(valiNumber);
 
     // ==== Water Speed ==== //
     redisClient->set("waterspeed_mode", "auto");
-    WaterSpeedAutoModeUi();
-    ui->comboBoxWaterMode->setCurrentIndex(1);
     ui->lineEditWaterSOG->setValidator(valiNumber);
     ui->lineEditWaterCOG->setValidator(valiNumber);
 
@@ -86,6 +74,9 @@ void FrameOSD::GyroAutoModeUi()
 {
     ui->pushButtonGyroApply->setEnabled(false);
     ui->pushButtonGyroApply->setStyleSheet("color: rgb(20, 20, 20);");
+    ui->osdGyroHeadingValue->setEnabled(false);
+    ui->osdGyroPitchValue->setEnabled(false);
+    ui->lineEditGyroRoll->setEnabled(false);
 }
 
 void FrameOSD::GyroManualModeUi()
@@ -95,6 +86,9 @@ void FrameOSD::GyroManualModeUi()
     ui->osdGyroHeadingValue->setStyleSheet("color:white;");
     ui->lineEditGyroRoll->setStyleSheet("color:white;");
     ui->osdGyroPitchValue->setStyleSheet("color:white;");
+    ui->osdGyroHeadingValue->setEnabled(true);
+    ui->osdGyroPitchValue->setEnabled(true);
+    ui->lineEditGyroRoll->setEnabled(true);
 }
 
 void FrameOSD::GyroTimerTimeOut()
@@ -201,6 +195,9 @@ void FrameOSD::GpsAutoModeUi()
 {
     ui->pushButtonGPSApply->setEnabled(false);
     ui->pushButtonGPSApply->setStyleSheet("color: rgb(20, 20, 20);");
+    ui->lineEditGpsLat->setEnabled(false);
+    ui->lineEditGpsLong->setEnabled(false);
+
 }
 
 void FrameOSD::GpsManualModeUi()
@@ -209,6 +206,8 @@ void FrameOSD::GpsManualModeUi()
     ui->pushButtonGPSApply->setStyleSheet("");
     ui->lineEditGpsLat->setStyleSheet("color:white;");
     ui->lineEditGpsLong->setStyleSheet("color:white;");
+    ui->lineEditGpsLat->setEnabled(true);
+    ui->lineEditGpsLong->setEnabled(true);
 }
 
 void FrameOSD::GpsTimerTimeOut()
@@ -288,6 +287,8 @@ void FrameOSD::WindAutoModeUi()
 {
     ui->pushButtonWindApply->setEnabled(false);
     ui->pushButtonWindApply->setStyleSheet("color: rgb(20, 20, 20);");
+    ui->lineEditWindSpeed->setEnabled(false);
+    ui->lineEditWindDir->setEnabled(false);
 }
 
 void FrameOSD::WindManualModeUi()
@@ -296,6 +297,8 @@ void FrameOSD::WindManualModeUi()
     ui->pushButtonWindApply->setStyleSheet("");
     ui->lineEditWindDir->setStyleSheet("color:white;");
     ui->lineEditWindSpeed->setStyleSheet("color:white;");
+    ui->lineEditWindSpeed->setEnabled(true);
+    ui->lineEditWindDir->setEnabled(true);
 }
 
 void FrameOSD::WindTimerTimeOut()
@@ -375,6 +378,9 @@ void FrameOSD::WeatherAutoModeUi()
 {
     ui->pushButtonWeather->setEnabled(false);
     ui->pushButtonWeather->setStyleSheet("color: rgb(20, 20, 20);");
+    ui->lineEditWeatherHumidity->setEnabled(false);
+    ui->lineEditWeatherPress->setEnabled(false);
+    ui->lineEditWeatherTemp->setEnabled(false);
 }
 
 void FrameOSD::WeatherManualModeUi()
@@ -384,6 +390,9 @@ void FrameOSD::WeatherManualModeUi()
     ui->lineEditWeatherTemp->setStyleSheet("color:white;");
     ui->lineEditWeatherPress->setStyleSheet("color:white;");
     ui->lineEditWeatherHumidity->setStyleSheet("color:white;");
+    ui->lineEditWeatherHumidity->setEnabled(true);
+    ui->lineEditWeatherPress->setEnabled(true);
+    ui->lineEditWeatherTemp->setEnabled(true);
 }
 
 void FrameOSD::WeatherTimerTimeOut()
@@ -471,6 +480,8 @@ void FrameOSD::SpeedAutoModeUi()
 {
     ui->pushButtonSpeedApply->setEnabled(false);
     ui->pushButtonSpeedApply->setStyleSheet("color: rgb(20, 20, 20);");
+    ui->lineEditSpeedCOG->setEnabled(false);
+    ui->lineEditSpeedSOG->setEnabled(false);
 }
 
 void FrameOSD::SpeedManualModeUi()
@@ -479,6 +490,8 @@ void FrameOSD::SpeedManualModeUi()
     ui->pushButtonSpeedApply->setStyleSheet("");
     ui->lineEditSpeedSOG->setStyleSheet("color:white;");
     ui->lineEditSpeedCOG->setStyleSheet("color:white;");
+    ui->lineEditSpeedCOG->setEnabled(true);
+    ui->lineEditSpeedSOG->setEnabled(true);
 }
 
 void FrameOSD::SpeedTimerTimeOut()
@@ -558,6 +571,8 @@ void FrameOSD::WaterSpeedAutoModeUi()
 {
     ui->pushButtonWaterApply->setEnabled(false);
     ui->pushButtonWaterApply->setStyleSheet("color: rgb(20, 20, 20);");
+    ui->lineEditWaterSOG->setEnabled(false);
+    ui->lineEditWaterCOG->setEnabled(false);
 }
 
 void FrameOSD::WaterSpeedManualModeUi()
@@ -566,6 +581,8 @@ void FrameOSD::WaterSpeedManualModeUi()
     ui->pushButtonWaterApply->setStyleSheet("");
     ui->lineEditWaterSOG->setStyleSheet("color:white;");
     ui->lineEditWaterCOG->setStyleSheet("color:white;");
+    ui->lineEditWaterSOG->setEnabled(true);
+    ui->lineEditWaterCOG->setEnabled(true);
 }
 
 void FrameOSD::WaterSpeedTimerTimeOut()

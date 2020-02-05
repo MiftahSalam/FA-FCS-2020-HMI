@@ -84,6 +84,9 @@
            <layout class="QHBoxLayout" name="horizontalLayout">
             <item>
              <widget class="QLineEdit" name="osdGyroHeadingValue">
+              <property name="enabled">
+               <bool>false</bool>
+              </property>
               <property name="styleSheet">
                <string notr="true"/>
               </property>
@@ -111,6 +114,9 @@
            <layout class="QHBoxLayout" name="horizontalLayout_2">
             <item>
              <widget class="QLineEdit" name="osdGyroPitchValue">
+              <property name="enabled">
+               <bool>false</bool>
+              </property>
               <property name="styleSheet">
                <string notr="true"/>
               </property>
@@ -138,6 +144,9 @@
            <layout class="QHBoxLayout" name="horizontalLayout_3">
             <item>
              <widget class="QLineEdit" name="lineEditGyroRoll">
+              <property name="enabled">
+               <bool>false</bool>
+              </property>
               <property name="styleSheet">
                <string notr="true"/>
               </property>
@@ -244,6 +253,9 @@
          <layout class="QVBoxLayout" name="verticalLayout_8">
           <item>
            <widget class="QLineEdit" name="lineEditGpsLat">
+            <property name="enabled">
+             <bool>false</bool>
+            </property>
             <property name="styleSheet">
              <string notr="true"/>
             </property>
@@ -254,6 +266,9 @@
           </item>
           <item>
            <widget class="QLineEdit" name="lineEditGpsLong">
+            <property name="enabled">
+             <bool>false</bool>
+            </property>
             <property name="styleSheet">
              <string notr="true"/>
             </property>
@@ -468,6 +483,9 @@
            <layout class="QHBoxLayout" name="horizontalLayout_5">
             <item>
              <widget class="QLineEdit" name="lineEditSpeedSOG">
+              <property name="enabled">
+               <bool>false</bool>
+              </property>
               <property name="styleSheet">
                <string notr="true"/>
               </property>
@@ -495,6 +513,9 @@
            <layout class="QHBoxLayout" name="horizontalLayout_8">
             <item>
              <widget class="QLineEdit" name="lineEditSpeedCOG">
+              <property name="enabled">
+               <bool>false</bool>
+              </property>
               <property name="styleSheet">
                <string notr="true"/>
               </property>
@@ -606,6 +627,9 @@
            <layout class="QHBoxLayout" name="horizontalLayout_9">
             <item>
              <widget class="QLineEdit" name="lineEditWindSpeed">
+              <property name="enabled">
+               <bool>false</bool>
+              </property>
               <property name="styleSheet">
                <string notr="true"/>
               </property>
@@ -633,6 +657,9 @@
            <layout class="QHBoxLayout" name="horizontalLayout_14">
             <item>
              <widget class="QLineEdit" name="lineEditWindDir">
+              <property name="enabled">
+               <bool>false</bool>
+              </property>
               <property name="styleSheet">
                <string notr="true"/>
               </property>
@@ -757,6 +784,9 @@
            <layout class="QHBoxLayout" name="horizontalLayout_10">
             <item>
              <widget class="QLineEdit" name="lineEditWeatherTemp">
+              <property name="enabled">
+               <bool>false</bool>
+              </property>
               <property name="styleSheet">
                <string notr="true"/>
               </property>
@@ -801,6 +831,9 @@
            <layout class="QHBoxLayout" name="horizontalLayout_16">
             <item>
              <widget class="QLineEdit" name="lineEditWeatherPress">
+              <property name="enabled">
+               <bool>false</bool>
+              </property>
               <property name="styleSheet">
                <string notr="true"/>
               </property>
@@ -845,6 +878,9 @@
            <layout class="QHBoxLayout" name="horizontalLayout_17">
             <item>
              <widget class="QLineEdit" name="lineEditWeatherHumidity">
+              <property name="enabled">
+               <bool>false</bool>
+              </property>
               <property name="styleSheet">
                <string notr="true"/>
               </property>
@@ -970,6 +1006,9 @@
            <layout class="QHBoxLayout" name="horizontalLayout_7">
             <item>
              <widget class="QLineEdit" name="lineEditWaterSOG">
+              <property name="enabled">
+               <bool>false</bool>
+              </property>
               <property name="styleSheet">
                <string notr="true"/>
               </property>
@@ -997,6 +1036,9 @@
            <layout class="QHBoxLayout" name="horizontalLayout_12">
             <item>
              <widget class="QLineEdit" name="lineEditWaterCOG">
+              <property name="enabled">
+               <bool>false</bool>
+              </property>
               <property name="styleSheet">
                <string notr="true"/>
               </property>
