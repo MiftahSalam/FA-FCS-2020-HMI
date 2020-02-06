@@ -4,7 +4,7 @@
 #include <QMessageBox>
 #include <QRegExpValidator>
 
-#define NUMBER_RX "[0-9.]+$"
+#define NUMBER_RX "[0-9.-]+$"
 
 
 FrameOSD::FrameOSD(QWidget *parent) :
@@ -18,35 +18,104 @@ FrameOSD::FrameOSD(QWidget *parent) :
     QRegExp rxNumber(NUMBER_RX);
     QRegExpValidator *valiNumber = new QRegExpValidator(rxNumber, this);
 
+    // ==== validator Gyro ==== //
+    ui->osdGyroHeadingValue->setValidator(valiNumber);
+    ui->osdGyroPitchValue->setValidator(valiNumber);
+    ui->lineEditGyroRoll->setValidator(valiNumber);
+
+    // ==== validator GPS ==== //
+   // ui->lineEditGpsLat->setValidator(valiNumber);
+   // ui->lineEditGpsLong->setValidator(valiNumber);
+
+    // ==== validator Wind ==== //
+    ui->lineEditWindDir->setValidator(valiNumber);
+    ui->lineEditWindSpeed->setValidator(valiNumber);
+
+    // ==== validator Weather ==== //
+    ui->lineEditWeatherTemp->setValidator(valiNumber);
+    ui->lineEditWeatherPress->setValidator(valiNumber);
+    ui->lineEditWeatherHumidity->setValidator(valiNumber);
+
+    // ==== validator Speed ==== //
+    ui->lineEditSpeedSOG->setValidator(valiNumber);
+    ui->lineEditSpeedCOG->setValidator(valiNumber);
+
+    // ==== validator Water Speed ==== //
+    ui->lineEditWaterSOG->setValidator(valiNumber);
+    ui->lineEditWaterCOG->setValidator(valiNumber);
+
+    bool status;
     // ==== Gyro ==== //
-    redisClient->set("inersia_mode", "auto");
+    try
+    {
+        status = redisClient->set("inersia_mode", "auto");
+    }
+    catch (Error e)
+    {
+        qDebug() << "Gyro " << e.what();
+    }
     ui->osdGyroHeadingValue->setValidator(valiNumber);
     ui->osdGyroPitchValue->setValidator(valiNumber);
     ui->lineEditGyroRoll->setValidator(valiNumber);
 
     // ==== GPS ==== //
-    redisClient->set("position_mode", "auto");
+    try
+    {
+        status = redisClient->set("position_mode", "auto");
+    }
+    catch (Error e)
+    {
+        qDebug() << "GPS" << e.what();
+    }
     ui->lineEditGpsLat->setValidator(valiNumber);
     ui->lineEditGpsLong->setValidator(valiNumber);
 
     // ==== Wind ==== //
-    redisClient->set("wind_mode", "auto");
+    try
+    {
+        status = redisClient->set("wind_mode", "auto");
+    }
+    catch (Error e)
+    {
+        qDebug() << "Wind" << e.what();
+    }
     ui->lineEditWindDir->setValidator(valiNumber);
     ui->lineEditWindSpeed->setValidator(valiNumber);
 
     // ==== Weather ==== //
-    redisClient->set("weather_mode", "auto");
+    try
+    {
+        status = redisClient->set("weather_mode", "auto");
+    }
+    catch (Error e)
+    {
+        qDebug() << "Weather" << e.what();
+    }
     ui->lineEditWeatherTemp->setValidator(valiNumber);
     ui->lineEditWeatherPress->setValidator(valiNumber);
     ui->lineEditWeatherHumidity->setValidator(valiNumber);
 
     // ==== Speed ==== //
-    redisClient->set("speed_mode", "auto");
+    try
+    {
+        status = redisClient->set("speed_mode", "auto");
+    }
+    catch (Error e)
+    {
+        qDebug() << "Speed" << e.what();
+    }
     ui->lineEditSpeedSOG->setValidator(valiNumber);
     ui->lineEditSpeedCOG->setValidator(valiNumber);
 
     // ==== Water Speed ==== //
-    redisClient->set("waterspeed_mode", "auto");
+    try
+    {
+        status = redisClient->set("waterspeed_mode", "auto");
+    }
+    catch (Error e)
+    {
+        qDebug() << "Speed" << e.what();
+    }
     ui->lineEditWaterSOG->setValidator(valiNumber);
     ui->lineEditWaterCOG->setValidator(valiNumber);
 
@@ -93,13 +162,32 @@ void FrameOSD::GyroManualModeUi()
 
 void FrameOSD::GyroTimerTimeOut()
 {
-    auto inersia_mode = redisClient->get("inersia_mode");
-    QString inersiamode = QString::fromStdString(*inersia_mode);
+    QString inersiamode ;
+    try
+    {
+         auto inersia_mode = redisClient->get("inersia_mode");
+         inersiamode = QString::fromStdString(*inersia_mode);
+    }
+    catch (Error e)
+    {
+        qDebug() << "Gyro " <<  e.what();
+    }
+
     qDebug() << Q_FUNC_INFO << inersiamode;
 
     if(inersiamode == "auto")
     {
-        if(redisClient->exists("inersia"))
+        bool status = false;
+        try
+        {
+            status = redisClient->exists("inersia");
+        }
+        catch (Error e)
+        {
+            qDebug() << "Gyro " <<  e.what();
+        }
+
+        if(status)
         {
             ui->osdGyroHeadingValue->setStyleSheet("color:rgb(0, 255, 0);");
             ui->lineEditGyroRoll->setStyleSheet("color:rgb(0, 255, 0);");
@@ -131,11 +219,18 @@ void FrameOSD::GyroTimerTimeOut()
 
 void FrameOSD::on_osdGryoComboBox_activated(int index)
 {
-    qDebug () <<Q_FUNC_INFO;
-
     if (index)
     {
-        redisClient->set("inersia_mode", "auto");
+        bool status;
+        try
+        {
+            status = redisClient->set("inersia_mode", "auto");
+        }
+        catch (Error e)
+        {
+            qDebug() << "Gyro " <<  e.what();
+        }
+
         ui->osdGyroHeadingValue->setEnabled(false);
         ui->lineEditGyroRoll->setEnabled(false);
         ui->osdGyroPitchValue->setEnabled(false);
@@ -144,7 +239,16 @@ void FrameOSD::on_osdGryoComboBox_activated(int index)
     }
     else
     {
-        redisClient->set("inersia_mode", "manual");
+        bool status;
+        try
+        {
+            status = redisClient->set("inersia_mode", "manual");
+        }
+        catch (Error e)
+        {
+            qDebug() << "Gyro " <<  e.what();
+        }
+
         ui->osdGyroHeadingValue->setEnabled(true);
         ui->lineEditGyroRoll->setEnabled(true);
         ui->osdGyroPitchValue->setEnabled(true);
@@ -162,21 +266,24 @@ void FrameOSD::on_pushButtonGyroApply_clicked()
     bool ok;
     float heading_float =heading. toFloat(&ok);
     float roll_float =roll. toFloat(&ok);
-    float pitch_float =roll. toFloat(&ok);
+    float pitch_float =pitch. toFloat(&ok);
 
-    if ((heading_float < 0) || (heading_float > 360) )
+    if ((heading_float < 0) || (heading_float > 300) )
     {
-        QMessageBox::critical(this, "fatal error heading", "invalid input text" );
+        QMessageBox::critical(this, "Fatal Error Heading", "Invalid input text" );
+        return;
     }
 
-    if ((roll_float < 0) || (roll_float > 360) )
+    if ((roll_float < -380) || (roll_float > 380) )
     {
-        QMessageBox::critical(this, "fatal error roll", "invalid input text" );
+        QMessageBox::critical(this, "Fatal Error roll", "Invalid input text" );
+        return;
     }
 
-    if ((pitch_float < 0) || (pitch_float > 360) )
+    if ((pitch_float < -380) || (pitch_float > 380) )
     {
-        QMessageBox::critical(this, "fatal error pitch", "invalid input text" );
+        QMessageBox::critical(this, "Fatal Error pitch", "Invalid input text" );
+        return;
     }
 
     std::unordered_map<std::string, std::string> data_map =
@@ -186,8 +293,17 @@ void FrameOSD::on_pushButtonGyroApply_clicked()
         {"pitch", pitch.toStdString()},
     };
 
-    redisClient->hmset("inersia",data_map.begin(), data_map.end());
+
+    try
+    {
+        redisClient->hmset("inersia",data_map.begin(), data_map.end());
+    }
+    catch (Error e)
+    {
+        qDebug() << "Gyro " <<  e.what();
+    }
 }
+
 
 // ==== GPS ==== //
 
@@ -212,13 +328,32 @@ void FrameOSD::GpsManualModeUi()
 
 void FrameOSD::GpsTimerTimeOut()
 {
-    auto position_mode = redisClient->get("position_mode");
-    QString positionmode = QString::fromStdString(*position_mode);
+    QString positionmode;
+    try
+    {
+        auto position_mode = redisClient->get("position_mode");
+        positionmode = QString::fromStdString(*position_mode);
+    }
+    catch (Error e)
+    {
+        qDebug() << "GPS " <<  e.what();
+    }
+
     qDebug() << Q_FUNC_INFO << positionmode;
 
     if(positionmode == "auto")
     {
-        if(redisClient->exists("position"))
+        bool status = false;
+        try
+        {
+            status = redisClient->exists("position");
+        }
+        catch (Error e)
+        {
+            qDebug() << "GPS" << e.what();
+        }
+
+        if(status)
         {
             ui->lineEditGpsLat->setStyleSheet("color:rgb(0, 255, 0);");
             ui->lineEditGpsLong->setStyleSheet("color:rgb(0, 255, 0);");
@@ -246,19 +381,35 @@ void FrameOSD::GpsTimerTimeOut()
 
 void FrameOSD::on_comboBoxGPSMode_activated(int index)
 {
-    auto position_mode = redisClient->get("position_mode");
-    qDebug() <<Q_FUNC_INFO;
-
     if (index)
     {
-        redisClient->set("position_mode", "auto");
+        bool status;
+        try
+        {
+            status = redisClient->set("position_mode", "auto");
+        }
+        catch (Error e)
+        {
+            qDebug() << "GPS " <<  e.what();
+        }
+
         ui->lineEditGpsLat->setEnabled(false);
         ui->lineEditGpsLong->setEnabled(false);
+
         GpsAutoModeUi();
     }
     else
     {
-        redisClient->set("position_mode", "manual");
+        bool status;
+        try
+        {
+            status = redisClient->set("position_mode", "manual");
+        }
+        catch (Error e)
+        {
+            qDebug() << "GPS" << e.what();
+        }
+
         ui->lineEditGpsLat->setEnabled(true);
         ui->lineEditGpsLong->setEnabled(true);
 
@@ -271,13 +422,37 @@ void FrameOSD::on_pushButtonGPSApply_clicked()
     QString latitude = ui->lineEditGpsLat->text();
     QString longitude = ui->lineEditGpsLong->text();
 
+    bool ok;
+    float latitude_float =latitude. toFloat(&ok);
+    float longitude_float =longitude. toFloat(&ok);
+
+    if ((latitude_float < 0) || (latitude_float > 360) )
+    {
+        QMessageBox::critical(this, "Fatal Error Latitude", "Invalid input text" );
+        return;
+    }
+
+    if ((longitude_float < 0) || (longitude_float > 360) )
+    {
+        QMessageBox::critical(this, "Fatal Error Longitude", "Invalid input text" );
+        return;
+    }
+
     std::unordered_map<std::string, std::string> data_map =
     {
         {"latitude", latitude.toStdString()},
         {"longitude", longitude.toStdString()},
     };
 
-    redisClient->hmset("position",data_map.begin(), data_map.end());
+
+    try
+    {
+        redisClient->hmset("position",data_map.begin(), data_map.end());
+    }
+    catch (Error e)
+    {
+        qDebug() << "GPS" << e.what();
+    }
 }
 
 
@@ -303,13 +478,32 @@ void FrameOSD::WindManualModeUi()
 
 void FrameOSD::WindTimerTimeOut()
 {
-    auto wind_mode = redisClient->get("wind_mode");
-    QString windmode = QString::fromStdString(*wind_mode);
+    QString windmode;
+    try
+    {
+        auto wind_mode = redisClient->get("wind_mode");
+        windmode = QString::fromStdString(*wind_mode);
+    }
+    catch (Error e)
+    {
+        qDebug() << "Wind " <<  e.what();
+    }
+
     qDebug() << Q_FUNC_INFO << windmode;
 
     if(windmode == "auto")
     {
-        if(redisClient->exists("wind"))
+        bool status = false;
+        try
+        {
+            status = redisClient->exists("wind");
+        }
+        catch (Error e)
+        {
+            qDebug() << "Wind " <<  e.what();
+        }
+
+        if(status)
         {
             ui->lineEditWindDir->setStyleSheet("color:rgb(0, 255, 0);");
             ui->lineEditWindSpeed->setStyleSheet("color:rgb(0, 255, 0);");
@@ -337,11 +531,18 @@ void FrameOSD::WindTimerTimeOut()
 
 void FrameOSD::on_comboBoxWindMode_activated(int index)
 {
-    qDebug () <<Q_FUNC_INFO;
-
     if (index)
     {
-        redisClient->set("wind_mode", "auto");
+        bool status;
+        try
+        {
+            status = redisClient->set("wind_mode", "auto");
+        }
+        catch (Error e)
+        {
+            qDebug() << "Wind " <<  e.what();
+        }
+
         ui->lineEditWindDir->setEnabled(false);
         ui->lineEditWindSpeed->setEnabled(false);
 
@@ -349,7 +550,16 @@ void FrameOSD::on_comboBoxWindMode_activated(int index)
     }
     else
     {
-        redisClient->set("wind_mode", "manual");
+        bool status;
+        try
+        {
+            status = redisClient->set("wind_mode", "manual");
+        }
+        catch (Error e)
+        {
+            qDebug() << "Wind " <<  e.what();
+        }
+
         ui->lineEditWindDir->setEnabled(true);
         ui->lineEditWindSpeed->setEnabled(true);
 
@@ -362,13 +572,37 @@ void FrameOSD::on_pushButtonWindApply_clicked()
     QString dir = ui->lineEditWindDir->text();
     QString speed = ui->lineEditWindSpeed->text();
 
+    bool ok;
+    float dir_float =dir. toFloat(&ok);
+    float speed_float =speed. toFloat(&ok);
+
+    if ((dir_float < 0) || (dir_float > 350) )
+    {
+        QMessageBox::critical(this, "Fatal Error Direction", "Invalid input text" );
+        return;
+    }
+
+    if ((speed_float < -150) || (speed_float > 150) )
+    {
+        QMessageBox::critical(this, "Fatal Error Speed", "Invalid input text" );
+        return;
+    }
+
     std::unordered_map<std::string, std::string> data_map =
     {
         {"dir", dir.toStdString()},
         {"speed", speed.toStdString()},
     };
 
-    redisClient->hmset("wind",data_map.begin(), data_map.end());
+
+    try
+    {
+        redisClient->hmset("wind",data_map.begin(), data_map.end());
+    }
+    catch (Error e)
+    {
+        qDebug() << "Wind " <<  e.what();
+    }
 }
 
 
@@ -397,13 +631,32 @@ void FrameOSD::WeatherManualModeUi()
 
 void FrameOSD::WeatherTimerTimeOut()
 {
-    auto weather_mode = redisClient->get("weather_mode");
-    QString weathermode = QString::fromStdString(*weather_mode);
+    QString weathermode;
+    try
+    {
+        auto weather_mode = redisClient->get("weather_mode");
+        weathermode = QString::fromStdString(*weather_mode);
+    }
+    catch (Error e)
+    {
+        qDebug() << "Weather " <<  e.what();
+    }
+
     qDebug() << Q_FUNC_INFO << weathermode;
 
     if(weathermode == "auto")
     {
-        if(redisClient->exists("weather"))
+        bool status = false;
+        try
+        {
+            status = redisClient->exists("weather");
+        }
+        catch (Error e)
+        {
+            qDebug() << "Weather" << e.what();
+        }
+
+        if(status)
         {
             ui->lineEditWeatherTemp->setStyleSheet("color:rgb(0, 255, 0);");
             ui->lineEditWeatherPress->setStyleSheet("color:rgb(0, 255, 0);");
@@ -435,11 +688,18 @@ void FrameOSD::WeatherTimerTimeOut()
 
 void FrameOSD::on_comboBoxWeatherMode_activated(int index)
 {
-    qDebug () <<Q_FUNC_INFO;
-
     if (index)
     {
-        redisClient->set("weather_mode", "auto");
+        bool status;
+        try
+        {
+            status = redisClient->set("weather_mode", "auto");
+        }
+        catch (Error e)
+        {
+            qDebug() << "Weather " <<  e.what();
+        }
+
         ui->lineEditWeatherTemp->setEnabled(false);
         ui->lineEditWeatherPress->setEnabled(false);
         ui->lineEditWeatherHumidity->setEnabled(false);
@@ -448,7 +708,16 @@ void FrameOSD::on_comboBoxWeatherMode_activated(int index)
     }
     else
     {
-        redisClient->set("weather_mode", "manual");
+        bool status;
+        try
+        {
+            status = redisClient->set("weather_mode", "manual");
+        }
+        catch (Error e)
+        {
+            qDebug() << "Weather " <<  e.what();
+        }
+
         ui->lineEditWeatherTemp->setEnabled(true);
         ui->lineEditWeatherPress->setEnabled(true);
         ui->lineEditWeatherHumidity->setEnabled(true);
@@ -463,6 +732,29 @@ void FrameOSD::on_pushButtonWeather_clicked()
     QString pressure = ui->lineEditWeatherPress->text();
     QString humidity = ui->lineEditWeatherHumidity->text();
 
+    bool ok;
+    float temperature_float =temperature. toFloat(&ok);
+    float pressure_float =pressure. toFloat(&ok);
+    float humidity_float =humidity. toFloat(&ok);
+
+    if ((temperature_float < -273) || (temperature_float > 273) )
+    {
+        QMessageBox::critical(this, "Fatal Error Temperature", "Invalid input text" );
+        return;
+    }
+
+    if ((pressure_float < 100) || (pressure_float > 10000) )
+    {
+        QMessageBox::critical(this, "Fatal Error Pressure", "Invalid input text" );
+        return;
+    }
+
+    if ((humidity_float < 0) || (humidity_float > 100) )
+    {
+        QMessageBox::critical(this, "Fatal Error Humidity", "Invalid input text" );
+        return;
+    }
+
     std::unordered_map<std::string, std::string> data_map =
     {
         {"temperature", temperature.toStdString()},
@@ -470,7 +762,15 @@ void FrameOSD::on_pushButtonWeather_clicked()
         {"humidity", humidity.toStdString()},
     };
 
-    redisClient->hmset("weather",data_map.begin(), data_map.end());
+
+    try
+    {
+        redisClient->hmset("weather",data_map.begin(), data_map.end());
+    }
+    catch (Error e)
+    {
+        qDebug() << "Weather " <<  e.what();
+    }
 }
 
 
@@ -496,13 +796,32 @@ void FrameOSD::SpeedManualModeUi()
 
 void FrameOSD::SpeedTimerTimeOut()
 {
-    auto speed_mode = redisClient->get("speed_mode");
-    QString speedmode = QString::fromStdString(*speed_mode);
+    QString speedmode;
+    try
+    {
+        auto speed_mode = redisClient->get("speed_mode");
+        speedmode = QString::fromStdString(*speed_mode);
+    }
+    catch (Error e)
+    {
+        qDebug() << "Speed " <<  e.what();
+    }
+
     qDebug() << Q_FUNC_INFO << speedmode;
 
     if(speedmode == "auto")
     {
-        if(redisClient->exists("speed"))
+        bool status = false;
+        try
+        {
+            status = redisClient->exists("speed");
+        }
+        catch (Error e)
+        {
+            qDebug() << "Speed" << e.what();
+        }
+
+        if(status)
         {
             ui->lineEditSpeedSOG->setStyleSheet("color:rgb(0, 255, 0);");
             ui->lineEditSpeedCOG->setStyleSheet("color:rgb(0, 255, 0);");
@@ -530,11 +849,18 @@ void FrameOSD::SpeedTimerTimeOut()
 
 void FrameOSD::on_comboBoxSpeedMode_activated(int index)
 {
-    qDebug () <<Q_FUNC_INFO;
-
     if (index)
     {
-        redisClient->set("speed_mode", "auto");
+        bool status;
+        try
+        {
+            status = redisClient->set("speed_mode", "auto");
+        }
+        catch (Error e)
+        {
+            qDebug() << "Speed " <<  e.what();
+        }
+
         ui->lineEditSpeedSOG->setEnabled(false);
         ui->lineEditSpeedCOG->setEnabled(false);
 
@@ -542,7 +868,16 @@ void FrameOSD::on_comboBoxSpeedMode_activated(int index)
     }
     else
     {
-        redisClient->set("speed_mode", "manual");
+        bool status;
+        try
+        {
+            status = redisClient->set("speed_mode", "manual");
+        }
+        catch (Error e)
+        {
+            qDebug() << "Speed " <<  e.what();
+        }
+
         ui->lineEditSpeedSOG->setEnabled(true);
         ui->lineEditSpeedCOG->setEnabled(true);
 
@@ -555,13 +890,37 @@ void FrameOSD::on_pushButtonSpeedApply_clicked()
     QString sog = ui->lineEditSpeedSOG->text();
     QString cog = ui->lineEditSpeedCOG->text();
 
+    bool ok;
+    float sog_float =sog. toFloat(&ok);
+    float cog_float =cog. toFloat(&ok);
+
+    if ((sog_float < -150) || (sog_float > 150) )
+    {
+        QMessageBox::critical(this, "Fatal Error SOG", "Invalid input text" );
+        return;
+    }
+
+    if ((cog_float < 0) || (cog_float > 350) )
+    {
+        QMessageBox::critical(this, "Fatal Error COG", "Invalid input text" );
+        return;
+    }
+
     std::unordered_map<std::string, std::string> data_map =
     {
         {"sog", sog.toStdString()},
         {"cog", cog.toStdString()},
     };
 
-    redisClient->hmset("speed",data_map.begin(), data_map.end());
+
+    try
+    {
+        redisClient->hmset("speed",data_map.begin(), data_map.end());
+    }
+    catch (Error e)
+    {
+        qDebug() << "Speed " <<  e.what();
+    }
 }
 
 
@@ -587,13 +946,32 @@ void FrameOSD::WaterSpeedManualModeUi()
 
 void FrameOSD::WaterSpeedTimerTimeOut()
 {
-    auto waterspeed_mode = redisClient->get("waterspeed_mode");
-    QString waterspeedmode = QString::fromStdString(*waterspeed_mode);
+    QString waterspeedmode;
+    try
+    {
+        auto waterspeed_mode = redisClient->get("waterspeed_mode");
+        waterspeedmode = QString::fromStdString(*waterspeed_mode);
+    }
+    catch (Error e)
+    {
+        qDebug() << "WaterSpeed " <<  e.what();
+    }
+
     qDebug() << Q_FUNC_INFO << waterspeedmode;
 
     if(waterspeedmode == "auto")
     {
-        if(redisClient->exists("waterspeed"))
+        bool status = false;
+        try
+        {
+            status = redisClient->exists("waterspeed");
+        }
+        catch (Error e)
+        {
+            qDebug() << "WaterSpeed" << e.what();
+        }
+
+        if(status)
         {
             ui->lineEditWaterSOG->setStyleSheet("color:rgb(0, 255, 0);");
             ui->lineEditWaterCOG->setStyleSheet("color:rgb(0, 255, 0);");
@@ -625,7 +1003,16 @@ void FrameOSD::on_comboBoxWaterMode_activated(int index)
 
     if (index)
     {
-        redisClient->set("waterspeed_mode", "auto");
+        bool status;
+        try
+        {
+            status = redisClient->set("waterspeed_mode", "auto");
+        }
+        catch (Error e)
+        {
+            qDebug() << "WaterSpeed " <<  e.what();
+        }
+
         ui->lineEditWaterSOG->setEnabled(false);
         ui->lineEditWaterCOG->setEnabled(false);
 
@@ -633,7 +1020,16 @@ void FrameOSD::on_comboBoxWaterMode_activated(int index)
     }
     else
     {
-        redisClient->set("waterspeed_mode", "manual");
+        bool status;
+        try
+        {
+            status = redisClient->set("waterspeed_mode", "manual");
+        }
+        catch (Error e)
+        {
+            qDebug() << "WaterSpeed " <<  e.what();
+        }
+
         ui->lineEditWaterSOG->setEnabled(true);
         ui->lineEditWaterCOG->setEnabled(true);
 
@@ -646,11 +1042,35 @@ void FrameOSD::on_pushButtonWaterApply_clicked()
     QString speed = ui->lineEditWaterSOG->text();
     QString course = ui->lineEditWaterCOG->text();
 
+    bool ok;
+    float speed_float =speed. toFloat(&ok);
+    float course_float =course. toFloat(&ok);
+
+    if ((speed_float < -150) || (speed_float > 150) )
+    {
+        QMessageBox::critical(this, "Fatal Error Speed", "Invalid input text" );
+        return;
+    }
+
+    if ((course_float < 0) || (course_float > 350) )
+    {
+        QMessageBox::critical(this, "Fatal Error Course", "Invalid input text" );
+        return;
+    }
+
     std::unordered_map<std::string, std::string> data_map =
     {
         {"speed", speed.toStdString()},
         {"course", course.toStdString()},
     };
 
-    redisClient->hmset("waterspeed",data_map.begin(), data_map.end());
+
+    try
+    {
+        redisClient->hmset("waterspeed",data_map.begin(), data_map.end());
+    }
+    catch (Error e)
+    {
+        qDebug() << "WaterSpeed " <<  e.what();
+    }
 }
