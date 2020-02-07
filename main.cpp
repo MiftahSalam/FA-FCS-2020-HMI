@@ -18,6 +18,15 @@ int main(int argc, char *argv[])
     a.setStyleSheet( appStyle );
 
     QSettings config(QSettings::IniFormat,QSettings::UserScope,"hmi_config");
+    QFile file(config.fileName());
+
+    if(!file.exists())
+    {
+        qDebug()<<"init config file";
+
+        config.setValue("Redis/osd","tcp://192.168.1.240:6379");
+
+    }
 
     MainWindow w;
 
