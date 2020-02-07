@@ -25,14 +25,14 @@ int main(int argc, char *argv[])
         qDebug()<<"init config file";
 
         config.setValue("Redis/osd","tcp://192.168.1.240:6379");
-
     }
 
     MainWindow w;
 
     QPixmap pixmap(":/logofcs.png");
-    pixmap = pixmap.scaled(300,100);
+    pixmap = pixmap.scaled(600,200);
     splash = new QSplashScreen(pixmap);
+    splash->setStyleSheet("font-size: 20px;");
 
     w.setConfig(config);
     w.showFullScreen();
