@@ -2,6 +2,7 @@
 #include <QApplication>
 #include <QFile>
 #include <QDebug>
+#include <QSettings>
 
 QString loadStylesheetFile( const QString &path );
 
@@ -13,7 +14,11 @@ int main(int argc, char *argv[])
     a.setStyle("plastique");
     a.setStyleSheet( appStyle );
 
+    QString app_dir_path = a.applicationDirPath();
+    QSettings config(app_dir_path+"/hmi_config.conf", QSettings::IniFormat);
+
     MainWindow w;
+    w.setConfig(config);
     w.showFullScreen();
 
     return a.exec();

@@ -13,8 +13,6 @@ FrameOSD::FrameOSD(QWidget *parent) :
 {
     ui->setupUi(this);
 
-    redisClient = new Redis("tcp://127.0.0.1:6379");
-
     QRegExp rxNumber(NUMBER_RX);
     QRegExpValidator *valiNumber = new QRegExpValidator(rxNumber, this);
 
@@ -44,78 +42,30 @@ FrameOSD::FrameOSD(QWidget *parent) :
     ui->lineEditWaterSOG->setValidator(valiNumber);
     ui->lineEditWaterCOG->setValidator(valiNumber);
 
-    bool status;
-    // ==== Gyro ==== //
-    try
-    {
-        status = redisClient->set("inersia_mode", "auto");
-    }
-    catch (Error e)
-    {
-        qDebug() << "Gyro " << e.what();
-    }
+
+    // ==== redisClient validator Gyro ==== //
     ui->osdGyroHeadingValue->setValidator(valiNumber);
     ui->osdGyroPitchValue->setValidator(valiNumber);
     ui->lineEditGyroRoll->setValidator(valiNumber);
 
-    // ==== GPS ==== //
-    try
-    {
-        status = redisClient->set("position_mode", "auto");
-    }
-    catch (Error e)
-    {
-        qDebug() << "GPS" << e.what();
-    }
+    // ==== redisClient validator GPS ==== //
     ui->lineEditGpsLat->setValidator(valiNumber);
     ui->lineEditGpsLong->setValidator(valiNumber);
 
-    // ==== Wind ==== //
-    try
-    {
-        status = redisClient->set("wind_mode", "auto");
-    }
-    catch (Error e)
-    {
-        qDebug() << "Wind" << e.what();
-    }
+    // ==== redisClient validator Wind ==== //
     ui->lineEditWindDir->setValidator(valiNumber);
     ui->lineEditWindSpeed->setValidator(valiNumber);
 
-    // ==== Weather ==== //
-    try
-    {
-        status = redisClient->set("weather_mode", "auto");
-    }
-    catch (Error e)
-    {
-        qDebug() << "Weather" << e.what();
-    }
+    // ==== redisClient validator Weather ==== //
     ui->lineEditWeatherTemp->setValidator(valiNumber);
     ui->lineEditWeatherPress->setValidator(valiNumber);
     ui->lineEditWeatherHumidity->setValidator(valiNumber);
 
-    // ==== Speed ==== //
-    try
-    {
-        status = redisClient->set("speed_mode", "auto");
-    }
-    catch (Error e)
-    {
-        qDebug() << "Speed" << e.what();
-    }
+    // ==== redisClient validator Speed ==== //
     ui->lineEditSpeedSOG->setValidator(valiNumber);
     ui->lineEditSpeedCOG->setValidator(valiNumber);
 
-    // ==== Water Speed ==== //
-    try
-    {
-        status = redisClient->set("waterspeed_mode", "auto");
-    }
-    catch (Error e)
-    {
-        qDebug() << "Speed" << e.what();
-    }
+    // ==== redisClient validator Water Speed ==== //
     ui->lineEditWaterSOG->setValidator(valiNumber);
     ui->lineEditWaterCOG->setValidator(valiNumber);
 
@@ -126,8 +76,76 @@ FrameOSD::~FrameOSD()
     delete ui;
 }
 
+void FrameOSD::setConfig(QString Config)
+{
+    this->Config=Config;
+    qDebug() <<this->Config;
 
-// ==== Gyro ==== //
+    redisClient = new Redis(this->Config.toStdString());
+
+    bool status;
+    status = false;
+
+    // ==== Gyro ==== //
+    try
+    {
+        status = redisClient->set("inersia_mode", "auto");
+    }
+    catch (Error e)
+    {
+        qDebug() << "Gyro " << e.what();
+    }
+
+    // ==== GPS ==== //
+    try
+    {
+        status = redisClient->set("position_mode", "auto");
+    }
+    catch (Error e)
+    {
+        qDebug() << "GPS" << e.what();
+    }
+
+    // ==== Wind ==== //
+    try
+    {
+        status = redisClient->set("wind_mode", "auto");
+    }
+    catch (Error e)
+    {
+        qDebug() << "Wind" << e.what();
+    }
+
+    // ==== Weather ==== //
+    try
+    {
+        status = redisClient->set("weather_mode", "auto");
+    }
+    catch (Error e)
+    {
+        qDebug() << "Weather" << e.what();
+    }
+
+    // ==== Speed ==== //
+    try
+    {
+        status = redisClient->set("speed_mode", "auto");
+    }
+    catch (Error e)
+    {
+        qDebug() << "Speed" << e.what();
+    }
+
+    // ==== Water Speed ==== //
+    try
+    {
+        status = redisClient->set("waterspeed_mode", "auto");
+    }
+    catch (Error e)
+    {
+        qDebug() << "Speed" << e.what();
+    }
+}
 
 void FrameOSD::on_osdTimerTimeOut()
 {
@@ -139,6 +157,8 @@ void FrameOSD::on_osdTimerTimeOut()
     WaterSpeedTimerTimeOut();
 }
 
+
+// ==== Gyro ==== //
 void FrameOSD::GyroAutoModeUi()
 {
     ui->pushButtonGyroApply->setEnabled(false);
@@ -293,7 +313,6 @@ void FrameOSD::on_pushButtonGyroApply_clicked()
         {"pitch", pitch.toStdString()},
     };
 
-
     try
     {
         redisClient->hmset("inersia",data_map.begin(), data_map.end());
@@ -306,7 +325,6 @@ void FrameOSD::on_pushButtonGyroApply_clicked()
 
 
 // ==== GPS ==== //
-
 void FrameOSD::GpsAutoModeUi()
 {
     ui->pushButtonGPSApply->setEnabled(false);
@@ -444,7 +462,6 @@ void FrameOSD::on_pushButtonGPSApply_clicked()
         {"longitude", longitude.toStdString()},
     };
 
-
     try
     {
         redisClient->hmset("position",data_map.begin(), data_map.end());
@@ -457,7 +474,6 @@ void FrameOSD::on_pushButtonGPSApply_clicked()
 
 
 // ==== Wind ==== //
-
 void FrameOSD::WindAutoModeUi()
 {
     ui->pushButtonWindApply->setEnabled(false);
@@ -594,7 +610,6 @@ void FrameOSD::on_pushButtonWindApply_clicked()
         {"speed", speed.toStdString()},
     };
 
-
     try
     {
         redisClient->hmset("wind",data_map.begin(), data_map.end());
@@ -607,7 +622,6 @@ void FrameOSD::on_pushButtonWindApply_clicked()
 
 
 // ==== Weather ==== //
-
 void FrameOSD::WeatherAutoModeUi()
 {
     ui->pushButtonWeather->setEnabled(false);
@@ -762,7 +776,6 @@ void FrameOSD::on_pushButtonWeather_clicked()
         {"humidity", humidity.toStdString()},
     };
 
-
     try
     {
         redisClient->hmset("weather",data_map.begin(), data_map.end());
@@ -775,7 +788,6 @@ void FrameOSD::on_pushButtonWeather_clicked()
 
 
 // ==== Speed ==== //
-
 void FrameOSD::SpeedAutoModeUi()
 {
     ui->pushButtonSpeedApply->setEnabled(false);
@@ -912,7 +924,6 @@ void FrameOSD::on_pushButtonSpeedApply_clicked()
         {"cog", cog.toStdString()},
     };
 
-
     try
     {
         redisClient->hmset("speed",data_map.begin(), data_map.end());
@@ -925,7 +936,6 @@ void FrameOSD::on_pushButtonSpeedApply_clicked()
 
 
 // ==== Water Speed ==== //
-
 void FrameOSD::WaterSpeedAutoModeUi()
 {
     ui->pushButtonWaterApply->setEnabled(false);
@@ -1004,6 +1014,7 @@ void FrameOSD::on_comboBoxWaterMode_activated(int index)
     if (index)
     {
         bool status;
+        status = false;
         try
         {
             status = redisClient->set("waterspeed_mode", "auto");
@@ -1021,6 +1032,7 @@ void FrameOSD::on_comboBoxWaterMode_activated(int index)
     else
     {
         bool status;
+        status = false;
         try
         {
             status = redisClient->set("waterspeed_mode", "manual");
@@ -1063,7 +1075,6 @@ void FrameOSD::on_pushButtonWaterApply_clicked()
         {"speed", speed.toStdString()},
         {"course", course.toStdString()},
     };
-
 
     try
     {

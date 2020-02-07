@@ -5,6 +5,7 @@
 #include <QFrame>
 #include <QDebug>
 #include <QTimer>
+#include <QSettings>
 
 namespace Ui {
 class FrameOSD;
@@ -17,6 +18,7 @@ class FrameOSD : public QFrame
 public:
     explicit FrameOSD(QWidget *parent = 0);
     ~FrameOSD();
+    void setConfig (QString Config);
 
 private slots:
     void on_osdTimerTimeOut();
@@ -92,6 +94,7 @@ private:
     WeatherData weatherdata;
     SpeedData speeddata;
     WaterSpeedData waterspeeddata;
+    QString Config;
 
     void GyroAutoModeUi();
     void GyroManualModeUi();

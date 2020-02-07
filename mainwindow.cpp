@@ -52,3 +52,10 @@ void MainWindow::on_pushButtonExit_clicked()
 
     close();
 }
+
+void MainWindow::setConfig(QSettings &Config)
+{
+    QString osd = Config.value("Redis/osd", "192.168.1.2").toString();
+    qDebug() << osd ;
+    ui->frameBottomOSD->setConfig(osd);
+}
