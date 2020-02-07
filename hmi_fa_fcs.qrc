@@ -1,5 +1,6 @@
 <RCC>
     <qresource prefix="/">
         <file>HMI_Syle.css</file>
+        <file>logofcs.png</file>
     </qresource>
 </RCC>

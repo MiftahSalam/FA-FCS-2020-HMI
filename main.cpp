@@ -1,10 +1,13 @@
 #include "mainwindow.h"
+#include "global.h"
+
 #include <QApplication>
 #include <QFile>
 #include <QDebug>
 #include <QSettings>
 
 QString loadStylesheetFile( const QString &path );
+QSplashScreen *splash;
 
 int main(int argc, char *argv[])
 {
@@ -14,10 +17,14 @@ int main(int argc, char *argv[])
     a.setStyle("plastique");
     a.setStyleSheet( appStyle );
 
-    QString app_dir_path = a.applicationDirPath();
-    QSettings config(app_dir_path+"/hmi_config.conf", QSettings::IniFormat);
+    QSettings config(QSettings::IniFormat,QSettings::UserScope,"hmi_config");
 
     MainWindow w;
+
+    QPixmap pixmap(":/logofcs.png");
+    pixmap = pixmap.scaled(300,100);
+    splash = new QSplashScreen(pixmap);
+
     w.setConfig(config);
     w.showFullScreen();
 

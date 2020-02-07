@@ -95,6 +95,7 @@ private:
     SpeedData speeddata;
     WaterSpeedData waterspeeddata;
     QString Config;
+    QString curStatusString;
 
     void GyroAutoModeUi();
     void GyroManualModeUi();

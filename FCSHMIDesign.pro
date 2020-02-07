@@ -23,7 +23,8 @@ SOURCES += main.cpp\
 HEADERS  += mainwindow.h \
     framegun.h \
     frameosd.h \
-    framewap.h
+    framewap.h \
+    global.h
 
 FORMS    += mainwindow.ui \
     framegun.ui \
@@ -34,4 +35,5 @@ RESOURCES += \
     hmi_fa_fcs.qrc
 
 DISTFILES += \
-    HMI_Syle.css
+    HMI_Syle.css \
+    logofcs.png

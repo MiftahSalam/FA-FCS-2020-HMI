@@ -1,5 +1,6 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
+#include "global.h"
 
 #include <QMessageBox>
 
@@ -9,7 +10,7 @@ MainWindow::MainWindow(QWidget *parent) :
 {
     ui->setupUi(this);
 
-    connect(& mastertimer, SIGNAL(timeout()), ui->frameBottomOSD, SLOT(on_osdTimerTimeOut()));
+    connect(&mastertimer, SIGNAL(timeout()), ui->frameBottomOSD, SLOT(on_osdTimerTimeOut()));
 
     mastertimer.start(1000);
 
@@ -55,7 +56,12 @@ void MainWindow::on_pushButtonExit_clicked()
 
 void MainWindow::setConfig(QSettings &Config)
 {
+    splash->show();
+
     QString osd = Config.value("Redis/osd", "192.168.1.2").toString();
-    qDebug() << osd ;
+
+    splash->showMessage("Setting up osd database connection...",Qt::AlignCenter);
     ui->frameBottomOSD->setConfig(osd);
+
+    splash->finish(this);
 }

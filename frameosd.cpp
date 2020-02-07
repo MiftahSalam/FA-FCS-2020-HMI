@@ -1,5 +1,7 @@
 #include "frameosd.h"
 #include "ui_frameosd.h"
+#include "global.h"
+#include "unistd.h"
 
 #include <QMessageBox>
 #include <QRegExpValidator>
@@ -20,10 +22,6 @@ FrameOSD::FrameOSD(QWidget *parent) :
     ui->osdGyroHeadingValue->setValidator(valiNumber);
     ui->osdGyroPitchValue->setValidator(valiNumber);
     ui->lineEditGyroRoll->setValidator(valiNumber);
-
-    // ==== validator GPS ==== //
-   // ui->lineEditGpsLat->setValidator(valiNumber);
-   // ui->lineEditGpsLong->setValidator(valiNumber);
 
     // ==== validator Wind ==== //
     ui->lineEditWindDir->setValidator(valiNumber);
@@ -78,10 +76,20 @@ FrameOSD::~FrameOSD()
 
 void FrameOSD::setConfig(QString Config)
 {
-    this->Config=Config;
-    qDebug() <<this->Config;
+    this->Config = Config;
+    qDebug() <<Q_FUNC_INFO<<"Redis config"<<this->Config;
 
-    redisClient = new Redis(this->Config.toStdString());
+    try
+    {
+        redisClient = new Redis(this->Config.toStdString());
+    }
+    catch (Error e)
+    {
+        splash->showMessage("OSD Setup error\n\nDatabase error: " + QString(e.what()) + "\n\nApplication now will clossing ",Qt::AlignCenter);
+        sleep(3);
+        splash->finish(this);
+        qApp->exit();
+    }
 
     bool status;
     status = false;
@@ -90,65 +98,93 @@ void FrameOSD::setConfig(QString Config)
     try
     {
         status = redisClient->set("inersia_mode", "auto");
+        curStatusString = "";
     }
     catch (Error e)
     {
-        qDebug() << "Gyro " << e.what();
+        curStatusString = e.what();
+        qDebug() << "Gyro " << curStatusString;
     }
 
     // ==== GPS ==== //
     try
     {
         status = redisClient->set("position_mode", "auto");
+        curStatusString = "";
     }
     catch (Error e)
     {
-        qDebug() << "GPS" << e.what();
+        curStatusString = e.what();
+        qDebug() << "GPS" << curStatusString;
     }
 
     // ==== Wind ==== //
     try
     {
         status = redisClient->set("wind_mode", "auto");
+        curStatusString = "";
     }
     catch (Error e)
     {
-        qDebug() << "Wind" << e.what();
+        curStatusString = e.what();
+        qDebug() << "Wind" << curStatusString;
     }
 
     // ==== Weather ==== //
     try
     {
         status = redisClient->set("weather_mode", "auto");
+        curStatusString = "";
     }
     catch (Error e)
     {
-        qDebug() << "Weather" << e.what();
+        curStatusString = e.what();
+        qDebug() << "Weather" << curStatusString;
     }
 
     // ==== Speed ==== //
     try
     {
         status = redisClient->set("speed_mode", "auto");
+        curStatusString = "";
     }
     catch (Error e)
     {
-        qDebug() << "Speed" << e.what();
+        curStatusString = e.what();
+        qDebug() << "Speed" << curStatusString;
     }
 
     // ==== Water Speed ==== //
     try
     {
         status = redisClient->set("waterspeed_mode", "auto");
+        curStatusString = "";
     }
     catch (Error e)
     {
-        qDebug() << "Speed" << e.what();
+        curStatusString = e.what();
+        qDebug() << "Speed" << curStatusString;
     }
+
+    qDebug() << "curStatusString" << curStatusString;
 }
 
 void FrameOSD::on_osdTimerTimeOut()
 {
+    if(!curStatusString.isEmpty())
+    {
+        if(curStatusString.contains("refuse"))
+        {
+            if(isEnabled())
+                setEnabled(false);
+        }
+    }
+    else
+    {
+        if(!isEnabled())
+            setEnabled(true);
+    }
+
     GyroTimerTimeOut();
     GpsTimerTimeOut();
     WindTimerTimeOut();
@@ -187,13 +223,15 @@ void FrameOSD::GyroTimerTimeOut()
     {
          auto inersia_mode = redisClient->get("inersia_mode");
          inersiamode = QString::fromStdString(*inersia_mode);
+         curStatusString = "";
     }
     catch (Error e)
     {
-        qDebug() << "Gyro " <<  e.what();
+        curStatusString = e.what();
+        qDebug() << Q_FUNC_INFO <<  curStatusString;
     }
 
-    qDebug() << Q_FUNC_INFO << inersiamode;
+    //qDebug() << Q_FUNC_INFO << inersiamode;
 
     if(inersiamode == "auto")
     {
@@ -201,10 +239,12 @@ void FrameOSD::GyroTimerTimeOut()
         try
         {
             status = redisClient->exists("inersia");
+            curStatusString = "";
         }
         catch (Error e)
         {
-            qDebug() << "Gyro " <<  e.what();
+            curStatusString = e.what();
+            qDebug() << Q_FUNC_INFO <<  curStatusString;
         }
 
         if(status)
@@ -215,17 +255,27 @@ void FrameOSD::GyroTimerTimeOut()
 
             std::vector<std::string> inersia;
             inersia.reserve(3);
-            redisClient->hmget("inersia", {"heading", "roll", "pitch"}, std::back_inserter(inersia));
 
-            inersiadata.heading = QString::fromStdString(inersia.at(0));
-            inersiadata.roll = QString::fromStdString(inersia.at(1));
-            inersiadata.picth = QString::fromStdString(inersia.at(2));
+            try
+            {
+                redisClient->hmget("inersia", {"heading", "roll", "pitch"}, std::back_inserter(inersia));
 
-            qDebug() << Q_FUNC_INFO;
+                curStatusString = "";
 
-            ui->osdGyroHeadingValue->setText(inersiadata.heading);
-            ui->lineEditGyroRoll->setText(inersiadata.roll);
-            ui->osdGyroPitchValue->setText(inersiadata.picth);
+                inersiadata.heading = QString::fromStdString(inersia.at(0));
+                inersiadata.roll = QString::fromStdString(inersia.at(1));
+                inersiadata.picth = QString::fromStdString(inersia.at(2));
+
+                ui->osdGyroHeadingValue->setText(inersiadata.heading);
+                ui->lineEditGyroRoll->setText(inersiadata.roll);
+                ui->osdGyroPitchValue->setText(inersiadata.picth);
+            }
+            catch (Error e)
+            {
+                curStatusString = e.what();
+                qDebug() << Q_FUNC_INFO <<  curStatusString;
+            }
+
         }
         else
         {
@@ -234,46 +284,48 @@ void FrameOSD::GyroTimerTimeOut()
             ui->osdGyroPitchValue->setStyleSheet("color: rgb(255, 0, 0);");
         }
     }
-    qDebug() << Q_FUNC_INFO;
+    //qDebug() << Q_FUNC_INFO;
 }
 
 void FrameOSD::on_osdGryoComboBox_activated(int index)
 {
     if (index)
     {
-        bool status;
         try
         {
-            status = redisClient->set("inersia_mode", "auto");
+            redisClient->set("inersia_mode", "auto");
+            curStatusString = "";
+
+            ui->osdGyroHeadingValue->setEnabled(false);
+            ui->lineEditGyroRoll->setEnabled(false);
+            ui->osdGyroPitchValue->setEnabled(false);
+
+            GyroAutoModeUi();
         }
         catch (Error e)
         {
-            qDebug() << "Gyro " <<  e.what();
+            curStatusString = e.what();
+            qDebug() << Q_FUNC_INFO <<  curStatusString;
         }
-
-        ui->osdGyroHeadingValue->setEnabled(false);
-        ui->lineEditGyroRoll->setEnabled(false);
-        ui->osdGyroPitchValue->setEnabled(false);
-
-        GyroAutoModeUi();
     }
     else
     {
-        bool status;
         try
         {
-            status = redisClient->set("inersia_mode", "manual");
+            redisClient->set("inersia_mode", "manual");
+            curStatusString = "";
+
+            ui->osdGyroHeadingValue->setEnabled(true);
+            ui->lineEditGyroRoll->setEnabled(true);
+            ui->osdGyroPitchValue->setEnabled(true);
+
+            GyroManualModeUi();
         }
         catch (Error e)
         {
-            qDebug() << "Gyro " <<  e.what();
+            curStatusString = e.what();
+            qDebug() << Q_FUNC_INFO <<  curStatusString;
         }
-
-        ui->osdGyroHeadingValue->setEnabled(true);
-        ui->lineEditGyroRoll->setEnabled(true);
-        ui->osdGyroPitchValue->setEnabled(true);
-
-        GyroManualModeUi();
     }
 }
 
@@ -284,25 +336,25 @@ void FrameOSD::on_pushButtonGyroApply_clicked()
     QString pitch = ui->osdGyroPitchValue->text();
 
     bool ok;
-    float heading_float =heading. toFloat(&ok);
+    float heading_float = heading. toFloat(&ok);
     float roll_float =roll. toFloat(&ok);
     float pitch_float =pitch. toFloat(&ok);
 
     if ((heading_float < 0) || (heading_float > 300) )
     {
-        QMessageBox::critical(this, "Fatal Error Heading", "Invalid input text" );
+        QMessageBox::critical(this, "Fatal Error", "Invalid heading input" );
         return;
     }
 
-    if ((roll_float < -380) || (roll_float > 380) )
+    if ((roll_float < -30) || (roll_float > 30) )
     {
-        QMessageBox::critical(this, "Fatal Error roll", "Invalid input text" );
+        QMessageBox::critical(this, "Fatal Error", "Invalid roll input" );
         return;
     }
 
-    if ((pitch_float < -380) || (pitch_float > 380) )
+    if ((pitch_float < -30) || (pitch_float > 30) )
     {
-        QMessageBox::critical(this, "Fatal Error pitch", "Invalid input text" );
+        QMessageBox::critical(this, "Fatal Error", "Invalid pitch input" );
         return;
     }
 
@@ -316,10 +368,12 @@ void FrameOSD::on_pushButtonGyroApply_clicked()
     try
     {
         redisClient->hmset("inersia",data_map.begin(), data_map.end());
+        curStatusString = "";
     }
     catch (Error e)
     {
-        qDebug() << "Gyro " <<  e.what();
+        curStatusString = e.what();
+        qDebug() << Q_FUNC_INFO <<  curStatusString;
     }
 }
 
@@ -351,13 +405,15 @@ void FrameOSD::GpsTimerTimeOut()
     {
         auto position_mode = redisClient->get("position_mode");
         positionmode = QString::fromStdString(*position_mode);
+        curStatusString = "";
     }
     catch (Error e)
     {
-        qDebug() << "GPS " <<  e.what();
+        curStatusString = e.what();
+        qDebug() << Q_FUNC_INFO <<  curStatusString;
     }
 
-    qDebug() << Q_FUNC_INFO << positionmode;
+    //qDebug() << Q_FUNC_INFO << positionmode;
 
     if(positionmode == "auto")
     {
@@ -365,10 +421,12 @@ void FrameOSD::GpsTimerTimeOut()
         try
         {
             status = redisClient->exists("position");
+            curStatusString = "";
         }
         catch (Error e)
         {
-            qDebug() << "GPS" << e.what();
+            curStatusString = e.what();
+            qDebug() << Q_FUNC_INFO <<  curStatusString;
         }
 
         if(status)
@@ -378,15 +436,23 @@ void FrameOSD::GpsTimerTimeOut()
 
             std::vector<std::string> position;
             position.reserve(2);
-            redisClient->hmget("position", {"latitude", "longitude"}, std::back_inserter(position));
 
-            gpsdata.latitude = QString::fromStdString(position.at(0));
-            gpsdata.longitude = QString::fromStdString(position.at(1));
+            try
+            {
+                redisClient->hmget("position", {"latitude", "longitude"}, std::back_inserter(position));
+                curStatusString = "";
 
-            qDebug() << Q_FUNC_INFO;
+                gpsdata.latitude = QString::fromStdString(position.at(0));
+                gpsdata.longitude = QString::fromStdString(position.at(1));
 
-            ui->lineEditGpsLat->setText(gpsdata.latitude);
-            ui->lineEditGpsLong->setText(gpsdata.longitude);
+                ui->lineEditGpsLat->setText(gpsdata.latitude);
+                ui->lineEditGpsLong->setText(gpsdata.longitude);
+            }
+            catch (Error e)
+            {
+                curStatusString = e.what();
+                qDebug() << Q_FUNC_INFO <<  curStatusString;
+            }
         }
         else
         {
@@ -394,55 +460,61 @@ void FrameOSD::GpsTimerTimeOut()
             ui->lineEditGpsLong->setStyleSheet("color: rgb(255, 0, 0);");
         }
     }
-    qDebug() << Q_FUNC_INFO;
+//    qDebug() << Q_FUNC_INFO;
 }
 
 void FrameOSD::on_comboBoxGPSMode_activated(int index)
 {
     if (index)
     {
-        bool status;
         try
         {
-            status = redisClient->set("position_mode", "auto");
+            redisClient->set("position_mode", "auto");
+            curStatusString = "";
+
+            ui->lineEditGpsLat->setEnabled(false);
+            ui->lineEditGpsLong->setEnabled(false);
+
+            GpsAutoModeUi();
         }
         catch (Error e)
         {
-            qDebug() << "GPS " <<  e.what();
+            curStatusString = e.what();
+            qDebug() << Q_FUNC_INFO <<  curStatusString;
         }
-
-        ui->lineEditGpsLat->setEnabled(false);
-        ui->lineEditGpsLong->setEnabled(false);
-
-        GpsAutoModeUi();
     }
     else
     {
-        bool status;
         try
         {
-            status = redisClient->set("position_mode", "manual");
+            redisClient->set("position_mode", "manual");
+            curStatusString = "";
+
+            ui->lineEditGpsLat->setEnabled(true);
+            ui->lineEditGpsLong->setEnabled(true);
+
+            GpsManualModeUi();
         }
         catch (Error e)
         {
-            qDebug() << "GPS" << e.what();
+            curStatusString = e.what();
+            qDebug() << Q_FUNC_INFO <<  curStatusString;
         }
-
-        ui->lineEditGpsLat->setEnabled(true);
-        ui->lineEditGpsLong->setEnabled(true);
-
-        GpsManualModeUi();
     }
 }
 
+/*Validator masih belum sesuai*/
 void FrameOSD::on_pushButtonGPSApply_clicked()
 {
     QString latitude = ui->lineEditGpsLat->text();
     QString longitude = ui->lineEditGpsLong->text();
 
     bool ok;
-    float latitude_float =latitude. toFloat(&ok);
-    float longitude_float =longitude. toFloat(&ok);
+    float latitude_float = latitude.toFloat(&ok);
+    float longitude_float = longitude.toFloat(&ok);
+
+    QMessageBox::critical(this, "Fatal Error", "Invalid input latitude.\nExample : 07 23'43'' S" );
+    QMessageBox::critical(this, "Fatal Error", "Invalid input longitude.\nExample : 107 23'43'' W" );
 
     if ((latitude_float < 0) || (latitude_float > 360) )
     {
@@ -465,10 +537,12 @@ void FrameOSD::on_pushButtonGPSApply_clicked()
     try
     {
         redisClient->hmset("position",data_map.begin(), data_map.end());
+        curStatusString = "";
     }
     catch (Error e)
     {
-        qDebug() << "GPS" << e.what();
+        curStatusString = e.what();
+        qDebug() << Q_FUNC_INFO <<  curStatusString;
     }
 }
 
@@ -499,13 +573,15 @@ void FrameOSD::WindTimerTimeOut()
     {
         auto wind_mode = redisClient->get("wind_mode");
         windmode = QString::fromStdString(*wind_mode);
+        curStatusString = "";
     }
     catch (Error e)
     {
-        qDebug() << "Wind " <<  e.what();
+        curStatusString = e.what();
+        qDebug() << Q_FUNC_INFO <<  curStatusString;
     }
 
-    qDebug() << Q_FUNC_INFO << windmode;
+//    qDebug() << Q_FUNC_INFO << windmode;
 
     if(windmode == "auto")
     {
@@ -513,10 +589,13 @@ void FrameOSD::WindTimerTimeOut()
         try
         {
             status = redisClient->exists("wind");
+            curStatusString = "";
         }
         catch (Error e)
         {
             qDebug() << "Wind " <<  e.what();
+            curStatusString = e.what();
+            qDebug() << Q_FUNC_INFO <<  curStatusString;
         }
 
         if(status)
@@ -526,15 +605,24 @@ void FrameOSD::WindTimerTimeOut()
 
             std::vector<std::string> wind;
             wind.reserve(2);
-            redisClient->hmget("wind", {"dir", "speed"}, std::back_inserter(wind));
 
-            winddata.dir = QString::fromStdString(wind.at(0));
-            winddata.speed = QString::fromStdString(wind.at(1));
+            try
+            {
+                redisClient->hmget("wind", {"dir", "speed"}, std::back_inserter(wind));
 
-            qDebug() << Q_FUNC_INFO;
+                curStatusString = "";
 
-            ui->lineEditWindDir->setText(winddata.dir);
-            ui->lineEditWindSpeed->setText(winddata.speed);
+                winddata.dir = QString::fromStdString(wind.at(0));
+                winddata.speed = QString::fromStdString(wind.at(1));
+
+                ui->lineEditWindDir->setText(winddata.dir);
+                ui->lineEditWindSpeed->setText(winddata.speed);
+            }
+            catch (Error e)
+            {
+                curStatusString = e.what();
+                qDebug() << Q_FUNC_INFO <<  curStatusString;
+            }
         }
         else
         {
@@ -542,44 +630,46 @@ void FrameOSD::WindTimerTimeOut()
             ui->lineEditWindSpeed->setStyleSheet("color: rgb(255, 0, 0);");
         }
     }
-    qDebug() << Q_FUNC_INFO;
+//    qDebug() << Q_FUNC_INFO;
 }
 
 void FrameOSD::on_comboBoxWindMode_activated(int index)
 {
     if (index)
     {
-        bool status;
         try
         {
-            status = redisClient->set("wind_mode", "auto");
+            redisClient->set("wind_mode", "auto");
+            curStatusString = "";
+
+            ui->lineEditWindDir->setEnabled(false);
+            ui->lineEditWindSpeed->setEnabled(false);
+
+            WindAutoModeUi();
         }
         catch (Error e)
         {
-            qDebug() << "Wind " <<  e.what();
+            curStatusString = e.what();
+            qDebug() << Q_FUNC_INFO <<  curStatusString;
         }
-
-        ui->lineEditWindDir->setEnabled(false);
-        ui->lineEditWindSpeed->setEnabled(false);
-
-        WindAutoModeUi();
     }
     else
     {
-        bool status;
         try
         {
-            status = redisClient->set("wind_mode", "manual");
+            redisClient->set("wind_mode", "manual");
+            curStatusString = "";
+
+            ui->lineEditWindDir->setEnabled(true);
+            ui->lineEditWindSpeed->setEnabled(true);
+
+            WindManualModeUi();
         }
         catch (Error e)
         {
-            qDebug() << "Wind " <<  e.what();
+            curStatusString = e.what();
+            qDebug() << Q_FUNC_INFO <<  curStatusString;
         }
-
-        ui->lineEditWindDir->setEnabled(true);
-        ui->lineEditWindSpeed->setEnabled(true);
-
-        WindManualModeUi();
     }
 }
 
@@ -589,18 +679,18 @@ void FrameOSD::on_pushButtonWindApply_clicked()
     QString speed = ui->lineEditWindSpeed->text();
 
     bool ok;
-    float dir_float =dir. toFloat(&ok);
-    float speed_float =speed. toFloat(&ok);
+    float dir_float = dir.toFloat(&ok);
+    float speed_float =speed.toFloat(&ok);
 
-    if ((dir_float < 0) || (dir_float > 350) )
+    if ((dir_float < 0) || (dir_float > 360) )
     {
-        QMessageBox::critical(this, "Fatal Error Direction", "Invalid input text" );
+        QMessageBox::critical(this, "Fatal Error", "Invalid direction input" );
         return;
     }
 
     if ((speed_float < -150) || (speed_float > 150) )
     {
-        QMessageBox::critical(this, "Fatal Error Speed", "Invalid input text" );
+        QMessageBox::critical(this, "Fatal Error", "Invalid speed input" );
         return;
     }
 
@@ -613,10 +703,12 @@ void FrameOSD::on_pushButtonWindApply_clicked()
     try
     {
         redisClient->hmset("wind",data_map.begin(), data_map.end());
+        curStatusString = "";
     }
     catch (Error e)
     {
-        qDebug() << "Wind " <<  e.what();
+        curStatusString = e.what();
+        qDebug() << Q_FUNC_INFO <<  curStatusString;
     }
 }
 
@@ -650,13 +742,15 @@ void FrameOSD::WeatherTimerTimeOut()
     {
         auto weather_mode = redisClient->get("weather_mode");
         weathermode = QString::fromStdString(*weather_mode);
+        curStatusString = "";
     }
     catch (Error e)
     {
-        qDebug() << "Weather " <<  e.what();
+        curStatusString = e.what();
+        qDebug() << Q_FUNC_INFO <<  curStatusString;
     }
 
-    qDebug() << Q_FUNC_INFO << weathermode;
+//    qDebug() << Q_FUNC_INFO << weathermode;
 
     if(weathermode == "auto")
     {
@@ -664,10 +758,12 @@ void FrameOSD::WeatherTimerTimeOut()
         try
         {
             status = redisClient->exists("weather");
+            curStatusString = "";
         }
         catch (Error e)
         {
-            qDebug() << "Weather" << e.what();
+            curStatusString = e.what();
+            qDebug() << Q_FUNC_INFO <<  curStatusString;
         }
 
         if(status)
@@ -678,17 +774,26 @@ void FrameOSD::WeatherTimerTimeOut()
 
             std::vector<std::string> weather;
             weather.reserve(3);
-            redisClient->hmget("weather", {"temperature", "pressure", "humidity"}, std::back_inserter(weather));
 
-            weatherdata.temperature = QString::fromStdString(weather.at(0));
-            weatherdata.pressure = QString::fromStdString(weather.at(1));
-            weatherdata.humidity = QString::fromStdString(weather.at(2));
+            try
+            {
+                redisClient->hmget("weather", {"temperature", "pressure", "humidity"}, std::back_inserter(weather));
 
-            qDebug() << Q_FUNC_INFO;
+                weatherdata.temperature = QString::fromStdString(weather.at(0));
+                weatherdata.pressure = QString::fromStdString(weather.at(1));
+                weatherdata.humidity = QString::fromStdString(weather.at(2));
 
-            ui->lineEditWeatherTemp->setText(weatherdata.temperature);
-            ui->lineEditWeatherPress->setText(weatherdata.pressure);
-            ui->lineEditWeatherHumidity->setText(weatherdata.humidity);
+                ui->lineEditWeatherTemp->setText(weatherdata.temperature);
+                ui->lineEditWeatherPress->setText(weatherdata.pressure);
+                ui->lineEditWeatherHumidity->setText(weatherdata.humidity);
+
+                curStatusString = "";
+            }
+            catch (Error e)
+            {
+                curStatusString = e.what();
+                qDebug() << Q_FUNC_INFO <<  curStatusString;
+            }
         }
         else
         {
@@ -697,46 +802,49 @@ void FrameOSD::WeatherTimerTimeOut()
             ui->lineEditWeatherHumidity->setStyleSheet("color: rgb(255, 0, 0);");
         }
     }
-    qDebug() << Q_FUNC_INFO;
+//    qDebug() << Q_FUNC_INFO;
 }
 
 void FrameOSD::on_comboBoxWeatherMode_activated(int index)
 {
     if (index)
     {
-        bool status;
         try
         {
-            status = redisClient->set("weather_mode", "auto");
+            redisClient->set("weather_mode", "auto");
+            curStatusString = "";
+
+            ui->lineEditWeatherTemp->setEnabled(false);
+            ui->lineEditWeatherPress->setEnabled(false);
+            ui->lineEditWeatherHumidity->setEnabled(false);
+
+            WeatherAutoModeUi();
         }
         catch (Error e)
         {
-            qDebug() << "Weather " <<  e.what();
+            curStatusString = e.what();
+            qDebug() << Q_FUNC_INFO <<  curStatusString;
         }
 
-        ui->lineEditWeatherTemp->setEnabled(false);
-        ui->lineEditWeatherPress->setEnabled(false);
-        ui->lineEditWeatherHumidity->setEnabled(false);
-
-        WeatherAutoModeUi();
     }
     else
     {
-        bool status;
         try
         {
-            status = redisClient->set("weather_mode", "manual");
+            redisClient->set("weather_mode", "manual");
+            curStatusString = "";
+
+            ui->lineEditWeatherTemp->setEnabled(true);
+            ui->lineEditWeatherPress->setEnabled(true);
+            ui->lineEditWeatherHumidity->setEnabled(true);
+
+            WeatherManualModeUi();
         }
         catch (Error e)
         {
-            qDebug() << "Weather " <<  e.what();
+            curStatusString = e.what();
+            qDebug() << Q_FUNC_INFO <<  curStatusString;
         }
-
-        ui->lineEditWeatherTemp->setEnabled(true);
-        ui->lineEditWeatherPress->setEnabled(true);
-        ui->lineEditWeatherHumidity->setEnabled(true);
-
-        WeatherManualModeUi();
     }
 }
 
@@ -753,19 +861,19 @@ void FrameOSD::on_pushButtonWeather_clicked()
 
     if ((temperature_float < -273) || (temperature_float > 273) )
     {
-        QMessageBox::critical(this, "Fatal Error Temperature", "Invalid input text" );
+        QMessageBox::critical(this, "Fatal Error", "Invalid temperature input" );
         return;
     }
 
     if ((pressure_float < 100) || (pressure_float > 10000) )
     {
-        QMessageBox::critical(this, "Fatal Error Pressure", "Invalid input text" );
+        QMessageBox::critical(this, "Fatal Error", "Invalid pressure input" );
         return;
     }
 
     if ((humidity_float < 0) || (humidity_float > 100) )
     {
-        QMessageBox::critical(this, "Fatal Error Humidity", "Invalid input text" );
+        QMessageBox::critical(this, "Fatal Error ", "Invalid humidity input" );
         return;
     }
 
@@ -779,10 +887,12 @@ void FrameOSD::on_pushButtonWeather_clicked()
     try
     {
         redisClient->hmset("weather",data_map.begin(), data_map.end());
+        curStatusString = "";
     }
     catch (Error e)
     {
-        qDebug() << "Weather " <<  e.what();
+        curStatusString = e.what();
+        qDebug() << Q_FUNC_INFO <<  curStatusString;
     }
 }
 
@@ -813,13 +923,15 @@ void FrameOSD::SpeedTimerTimeOut()
     {
         auto speed_mode = redisClient->get("speed_mode");
         speedmode = QString::fromStdString(*speed_mode);
+        curStatusString = "";
     }
     catch (Error e)
     {
-        qDebug() << "Speed " <<  e.what();
+        curStatusString = e.what();
+        qDebug() << Q_FUNC_INFO <<  curStatusString;
     }
 
-    qDebug() << Q_FUNC_INFO << speedmode;
+//    qDebug() << Q_FUNC_INFO << speedmode;
 
     if(speedmode == "auto")
     {
@@ -827,10 +939,12 @@ void FrameOSD::SpeedTimerTimeOut()
         try
         {
             status = redisClient->exists("speed");
+            curStatusString = "";
         }
         catch (Error e)
         {
-            qDebug() << "Speed" << e.what();
+            curStatusString = e.what();
+            qDebug() << Q_FUNC_INFO <<  curStatusString;
         }
 
         if(status)
@@ -840,15 +954,24 @@ void FrameOSD::SpeedTimerTimeOut()
 
             std::vector<std::string> speed;
             speed.reserve(2);
-            redisClient->hmget("speed", {"sog", "cog"}, std::back_inserter(speed));
 
-            speeddata.sog = QString::fromStdString(speed.at(0));
-            speeddata.cog = QString::fromStdString(speed.at(1));
+            try
+            {
+                redisClient->hmget("speed", {"sog", "cog"}, std::back_inserter(speed));
 
-            qDebug() << Q_FUNC_INFO;
+                speeddata.sog = QString::fromStdString(speed.at(0));
+                speeddata.cog = QString::fromStdString(speed.at(1));
 
-            ui->lineEditSpeedSOG->setText(speeddata.sog);
-            ui->lineEditSpeedCOG->setText(speeddata.cog);
+                ui->lineEditSpeedSOG->setText(speeddata.sog);
+                ui->lineEditSpeedCOG->setText(speeddata.cog);
+
+                curStatusString = "";
+            }
+            catch (Error e)
+            {
+                curStatusString = e.what();
+                qDebug() << Q_FUNC_INFO <<  curStatusString;
+            }
         }
         else
         {
@@ -856,44 +979,46 @@ void FrameOSD::SpeedTimerTimeOut()
             ui->lineEditSpeedCOG->setStyleSheet("color: rgb(255, 0, 0);");
         }
     }
-    qDebug() << Q_FUNC_INFO;
+//    qDebug() << Q_FUNC_INFO;
 }
 
 void FrameOSD::on_comboBoxSpeedMode_activated(int index)
 {
     if (index)
     {
-        bool status;
         try
         {
-            status = redisClient->set("speed_mode", "auto");
+            redisClient->set("speed_mode", "auto");
+            curStatusString = "";
+
+            ui->lineEditSpeedSOG->setEnabled(false);
+            ui->lineEditSpeedCOG->setEnabled(false);
+
+            SpeedAutoModeUi();
         }
         catch (Error e)
         {
-            qDebug() << "Speed " <<  e.what();
+            curStatusString = e.what();
+            qDebug() << Q_FUNC_INFO <<  curStatusString;
         }
-
-        ui->lineEditSpeedSOG->setEnabled(false);
-        ui->lineEditSpeedCOG->setEnabled(false);
-
-        SpeedAutoModeUi();
     }
     else
     {
-        bool status;
         try
         {
-            status = redisClient->set("speed_mode", "manual");
+            redisClient->set("speed_mode", "manual");
+            curStatusString = "";
+
+            ui->lineEditSpeedSOG->setEnabled(true);
+            ui->lineEditSpeedCOG->setEnabled(true);
+
+            SpeedManualModeUi();
         }
         catch (Error e)
         {
-            qDebug() << "Speed " <<  e.what();
+            curStatusString = e.what();
+            qDebug() << Q_FUNC_INFO <<  curStatusString;
         }
-
-        ui->lineEditSpeedSOG->setEnabled(true);
-        ui->lineEditSpeedCOG->setEnabled(true);
-
-        SpeedManualModeUi();
     }
 }
 
@@ -908,13 +1033,13 @@ void FrameOSD::on_pushButtonSpeedApply_clicked()
 
     if ((sog_float < -150) || (sog_float > 150) )
     {
-        QMessageBox::critical(this, "Fatal Error SOG", "Invalid input text" );
+        QMessageBox::critical(this, "Fatal Error", "Invalid SOG input" );
         return;
     }
 
-    if ((cog_float < 0) || (cog_float > 350) )
+    if ((cog_float < 0) || (cog_float > 360) )
     {
-        QMessageBox::critical(this, "Fatal Error COG", "Invalid input text" );
+        QMessageBox::critical(this, "Fatal Error", "Invalid COG input text" );
         return;
     }
 
@@ -927,10 +1052,12 @@ void FrameOSD::on_pushButtonSpeedApply_clicked()
     try
     {
         redisClient->hmset("speed",data_map.begin(), data_map.end());
+        curStatusString = "";
     }
     catch (Error e)
     {
-        qDebug() << "Speed " <<  e.what();
+        curStatusString = e.what();
+        qDebug() << Q_FUNC_INFO <<  curStatusString;
     }
 }
 
@@ -961,13 +1088,15 @@ void FrameOSD::WaterSpeedTimerTimeOut()
     {
         auto waterspeed_mode = redisClient->get("waterspeed_mode");
         waterspeedmode = QString::fromStdString(*waterspeed_mode);
+        curStatusString = "";
     }
     catch (Error e)
     {
-        qDebug() << "WaterSpeed " <<  e.what();
+        curStatusString = e.what();
+        qDebug() << Q_FUNC_INFO <<  curStatusString;
     }
 
-    qDebug() << Q_FUNC_INFO << waterspeedmode;
+//    qDebug() << Q_FUNC_INFO << waterspeedmode;
 
     if(waterspeedmode == "auto")
     {
@@ -975,10 +1104,12 @@ void FrameOSD::WaterSpeedTimerTimeOut()
         try
         {
             status = redisClient->exists("waterspeed");
+            curStatusString = "";
         }
         catch (Error e)
         {
-            qDebug() << "WaterSpeed" << e.what();
+            curStatusString = e.what();
+            qDebug() << Q_FUNC_INFO <<  curStatusString;
         }
 
         if(status)
@@ -988,15 +1119,23 @@ void FrameOSD::WaterSpeedTimerTimeOut()
 
             std::vector<std::string> waterspeed;
             waterspeed.reserve(2);
-            redisClient->hmget("waterspeed", {"speed", "course"}, std::back_inserter(waterspeed));
 
-            waterspeeddata.speed = QString::fromStdString(waterspeed.at(0));
-            waterspeeddata.course = QString::fromStdString(waterspeed.at(1));
+            try
+            {
+                redisClient->hmget("waterspeed", {"speed", "course"}, std::back_inserter(waterspeed));
+                curStatusString = "";
 
-            qDebug() << Q_FUNC_INFO;
+                waterspeeddata.speed = QString::fromStdString(waterspeed.at(0));
+                waterspeeddata.course = QString::fromStdString(waterspeed.at(1));
 
-            ui->lineEditWaterSOG->setText(waterspeeddata.speed);
-            ui->lineEditWaterCOG->setText(waterspeeddata.course);
+                ui->lineEditWaterSOG->setText(waterspeeddata.speed);
+                ui->lineEditWaterCOG->setText(waterspeeddata.course);
+            }
+            catch (Error e)
+            {
+                curStatusString = e.what();
+                qDebug() << Q_FUNC_INFO <<  curStatusString;
+            }
         }
         else
         {
@@ -1004,7 +1143,7 @@ void FrameOSD::WaterSpeedTimerTimeOut()
             ui->lineEditWaterCOG->setStyleSheet("color: rgb(255, 0, 0);");
         }
     }
-    qDebug() << Q_FUNC_INFO;
+//    qDebug() << Q_FUNC_INFO;
 }
 
 void FrameOSD::on_comboBoxWaterMode_activated(int index)
@@ -1013,39 +1152,39 @@ void FrameOSD::on_comboBoxWaterMode_activated(int index)
 
     if (index)
     {
-        bool status;
-        status = false;
         try
         {
-            status = redisClient->set("waterspeed_mode", "auto");
+            redisClient->set("waterspeed_mode", "auto");
+            curStatusString = "";
+
+            ui->lineEditWaterSOG->setEnabled(false);
+            ui->lineEditWaterCOG->setEnabled(false);
+
+            WaterSpeedAutoModeUi();
         }
         catch (Error e)
         {
-            qDebug() << "WaterSpeed " <<  e.what();
+            curStatusString = e.what();
+            qDebug() << Q_FUNC_INFO <<  curStatusString;
         }
-
-        ui->lineEditWaterSOG->setEnabled(false);
-        ui->lineEditWaterCOG->setEnabled(false);
-
-        WaterSpeedAutoModeUi();
     }
     else
     {
-        bool status;
-        status = false;
         try
         {
-            status = redisClient->set("waterspeed_mode", "manual");
+            redisClient->set("waterspeed_mode", "manual");
+            curStatusString = "";
+
+            ui->lineEditWaterSOG->setEnabled(true);
+            ui->lineEditWaterCOG->setEnabled(true);
+
+            WaterSpeedManualModeUi();
         }
         catch (Error e)
         {
-            qDebug() << "WaterSpeed " <<  e.what();
+            curStatusString = e.what();
+            qDebug() << Q_FUNC_INFO <<  curStatusString;
         }
-
-        ui->lineEditWaterSOG->setEnabled(true);
-        ui->lineEditWaterCOG->setEnabled(true);
-
-        WaterSpeedManualModeUi();
     }
 }
 
@@ -1060,13 +1199,13 @@ void FrameOSD::on_pushButtonWaterApply_clicked()
 
     if ((speed_float < -150) || (speed_float > 150) )
     {
-        QMessageBox::critical(this, "Fatal Error Speed", "Invalid input text" );
+        QMessageBox::critical(this, "Fatal Error", "Invalid water speed input" );
         return;
     }
 
-    if ((course_float < 0) || (course_float > 350) )
+    if ((course_float < 0) || (course_float > 360) )
     {
-        QMessageBox::critical(this, "Fatal Error Course", "Invalid input text" );
+        QMessageBox::critical(this, "Fatal Error", "Invalid water course input text" );
         return;
     }
 
@@ -1079,9 +1218,11 @@ void FrameOSD::on_pushButtonWaterApply_clicked()
     try
     {
         redisClient->hmset("waterspeed",data_map.begin(), data_map.end());
+        curStatusString = "";
     }
     catch (Error e)
     {
-        qDebug() << "WaterSpeed " <<  e.what();
+        curStatusString = e.what();
+        qDebug() << Q_FUNC_INFO <<  curStatusString;
     }
 }
