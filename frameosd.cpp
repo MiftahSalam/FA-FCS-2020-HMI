@@ -1063,6 +1063,7 @@ void FrameOSD::on_comboBoxWeatherMode_activated(int index)
     }
 }
 
+
 void FrameOSD::on_pushButtonWeather_clicked()
 {
     QString temperature = ui->lineEditWeatherTemp->text();
