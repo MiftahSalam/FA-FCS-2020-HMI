@@ -2,6 +2,7 @@
 #include "ui_frameosd.h"
 #include "global.h"
 #include "unistd.h"
+#include "math.h"
 
 #include <QMessageBox>
 #include <QRegExpValidator>
@@ -47,8 +48,8 @@ FrameOSD::FrameOSD(QWidget *parent) :
     ui->lineEditGyroRoll->setValidator(valiNumber);
 
     // ==== redisClient validator GPS ==== //
-    ui->lineEditGpsLat->setValidator(valiNumber);
-    ui->lineEditGpsLong->setValidator(valiNumber);
+  //  ui->lineEditGpsLat->setValidator(valiNumber);
+   // ui->lineEditGpsLong->setValidator(valiNumber);
 
     // ==== redisClient validator Wind ==== //
     ui->lineEditWindDir->setValidator(valiNumber);
@@ -332,13 +333,29 @@ void FrameOSD::on_osdGryoComboBox_activated(int index)
 void FrameOSD::on_pushButtonGyroApply_clicked()
 {
     QString heading = ui->osdGyroHeadingValue->text();
+    if(heading.size()<2)
+    {
+        QMessageBox::critical(this, "Fatal Error Heading", "Invalid input value" );
+        return;
+    }
     QString roll = ui->lineEditGyroRoll->text();
+    if(roll.size()<2)
+    {
+        QMessageBox::critical(this, "Fatal Error Roll", "Invalid input value" );
+        return;
+    }
     QString pitch = ui->osdGyroPitchValue->text();
+    if(pitch.size()<2)
+    {
+        QMessageBox::critical(this, "Fatal Error Pitch", "Invalid input value" );
+        return;
+    }
 
     bool ok;
     float heading_float = heading. toFloat(&ok);
     float roll_float =roll. toFloat(&ok);
     float pitch_float =pitch. toFloat(&ok);
+
 
     if ((heading_float < 0) || (heading_float > 300) )
     {
@@ -445,8 +462,71 @@ void FrameOSD::GpsTimerTimeOut()
                 gpsdata.latitude = QString::fromStdString(position.at(0));
                 gpsdata.longitude = QString::fromStdString(position.at(1));
 
-                ui->lineEditGpsLat->setText(gpsdata.latitude);
-                ui->lineEditGpsLong->setText(gpsdata.longitude);
+               // ==== Float latitude ====
+               float lat_float = gpsdata.latitude.toFloat();
+               QString tanda_latitude;
+               if (lat_float < 0)
+                   tanda_latitude = "S";
+               else
+                  tanda_latitude = "N";
+               lat_float = fabs(lat_float);
+               float deg = floor(lat_float);
+               float min = lat_float - deg ;
+                     min = min * 60;
+                     min = floor(min);
+               float sec = (lat_float - deg - (min / 60.0)) * 3600.0;
+
+               qDebug() << deg << lat_float << gpsdata.latitude << min << sec << tanda_latitude;
+
+               QString deg_string = QString::number(deg,'f', 0);
+               if (deg_string.size() < 2)
+                   deg_string.prepend("0");
+
+               QString min_string = QString::number(min,'f', 0);
+               if (min_string.size() < 2)
+                   min_string.prepend("0");
+
+               QString sec_string = QString::number(sec, 'f', 0);
+               if (sec_string.size() <2)
+                   sec_string.prepend("0");
+
+               QString latitude_string = deg_string + "-" + min_string + "'" + sec_string + "''" + tanda_latitude;
+
+
+               // ==== Float Longitude ====
+               float long_float = gpsdata.longitude.toFloat();
+               QString tanda_longitude;
+               if (long_float < 0)
+                   tanda_longitude = "W";
+               else
+                   tanda_longitude = "E";
+               long_float = fabs(long_float);
+               float degg = floor(long_float);
+               float minn = long_float - degg ;
+                     minn = minn * 60;
+                     minn = floor(minn);
+               float secc = (long_float - degg - (minn / 60.0)) * 3600.0;
+
+               qDebug() << degg << long_float << gpsdata.longitude << minn << secc << tanda_longitude;
+
+               QString degg_string = QString::number(degg,'f', 0);
+               if (degg_string.size() < 3)
+                   degg_string.prepend("0");
+               if (degg_string.size() < 3)
+                   degg_string.prepend("0");
+
+               QString minn_string = QString::number(minn,'f', 0);
+               if (minn_string.size() < 2)
+                   minn_string.prepend("0");
+
+               QString secc_string = QString::number(secc, 'f', 0);
+               if (secc_string.size() <2)
+                   secc_string.prepend("0");
+
+               QString longitude_string = degg_string + "-" + minn_string + "'" + secc_string + "''" + tanda_longitude;
+
+                ui->lineEditGpsLat->setText(latitude_string);
+                ui->lineEditGpsLong->setText(longitude_string);
             }
             catch (Error e)
             {
@@ -503,35 +583,160 @@ void FrameOSD::on_comboBoxGPSMode_activated(int index)
     }
 }
 
-/*Validator masih belum sesuai*/
 void FrameOSD::on_pushButtonGPSApply_clicked()
 {
-    QString latitude = ui->lineEditGpsLat->text();
-    QString longitude = ui->lineEditGpsLong->text();
+    // ==== Float latitude ====
+    QString lat_str_trimmed = ui->lineEditGpsLat->text();
+    lat_str_trimmed.remove(" ");
+    qDebug()<<Q_FUNC_INFO<<"before trimm"<<ui->lineEditGpsLat->text()<<"after trimm"<<lat_str_trimmed;
+
+    QString str = lat_str_trimmed;
+    QStringList list1 = str.split("-");
+
+    if(list1.size()<2)
+    {
+        QMessageBox::critical(this, "Fatal Error Latitude", "Invalid input value" );
+        return;
+    }
+
+    QString deg = list1.at(0);
+    QStringList list2 = list1.at(1).split("'");
+
+    if(list2.size()<4)
+    {
+        QMessageBox::critical(this, "Fatal Error Latitude", "Invalid input value" );
+        return;
+    }
+
+    qDebug() << list1 << list2;
+
+    QString min = list2.at(0);
+    QString sec = list2.at(1);
+    QString sign = list2.at(3);
+
+    qDebug() << deg  <<min <<sec <<sign;
 
     bool ok;
-    float latitude_float = latitude.toFloat(&ok);
-    float longitude_float = longitude.toFloat(&ok);
-
-    QMessageBox::critical(this, "Fatal Error", "Invalid input latitude.\nExample : 07 23'43'' S" );
-    QMessageBox::critical(this, "Fatal Error", "Invalid input longitude.\nExample : 107 23'43'' W" );
-
-    if ((latitude_float < 0) || (latitude_float > 360) )
+    float valuedeg = deg.toFloat(&ok);
+    if (!ok)
     {
-        QMessageBox::critical(this, "Fatal Error Latitude", "Invalid input text" );
+        QMessageBox::critical(this, "Fatal Error Latitude", "Invalid degree input value.\nValid input : 00-90" );
         return;
     }
 
-    if ((longitude_float < 0) || (longitude_float > 360) )
+    float valuemin = min.toFloat(&ok)/60.0;
+    if (!ok)
     {
-        QMessageBox::critical(this, "Fatal Error Longitude", "Invalid input text" );
+        QMessageBox::critical(this, "Fatal Error Latitude", "Invalid minute input value.\nValid input : 00-60" );
         return;
     }
+
+    float valuesec = sec.toFloat()/3600.0;
+    if (!ok)
+    {
+        QMessageBox::critical(this, "Fatal Error Latitude", "Invalid second input value.\nValid input : 00-96" );
+        return;
+    }
+
+    float valueLat = valuedeg+valuemin+valuesec;
+
+    if(sign == "S")
+        valueLat *= -1.0;
+    else if((sign != "S") && (sign != "N"))
+    {
+        QMessageBox::critical(this, "Fatal Error Latitude", "Invalid orientation input value.\nValid input : S/N" );
+        return;
+    }
+
+    if ((valueLat < -90) || (valueLat > 90) )
+    {
+        QMessageBox::critical(this, "Fatal Error Latitude", "Invalid input : out of range" );
+        return;
+    }
+
+    qDebug() << Q_FUNC_INFO<<valuedeg << valuemin <<valuesec <<valueLat;
+
+    // ==== Float longitude ====
+
+    QString long_str_trimmed = ui->lineEditGpsLong->text();
+    long_str_trimmed.remove(" ");
+    qDebug()<<Q_FUNC_INFO<<"before trimm"<<ui->lineEditGpsLong->text()<<"after trimm"<<long_str_trimmed;
+
+    QString str1 = long_str_trimmed;
+    QStringList long_list1 = str1.split("-");
+
+    if(long_list1.size()<2)
+    {
+        QMessageBox::critical(this, "Fatal Error Longitude", "Invalid input value" );
+        return;
+    }
+
+    QString degg = long_list1.at(0);
+    QStringList long_list2 = long_list1.at(1).split("'");
+
+    if(long_list2.size()<4)
+    {
+        QMessageBox::critical(this, "Fatal Error Longitude", "Invalid input value" );
+        return;
+    }
+
+    qDebug() << long_list1 << long_list2;
+
+    QString minn = long_list2.at(0);
+    QString secc = long_list2.at(1);
+    QString signn = long_list2.at(3);
+
+    qDebug() <<degg  <<minn <<secc <<signn;
+
+    bool ok1;
+    float valuedegg = degg.toFloat(&ok1);
+    if (!ok1)
+    {
+        QMessageBox::critical(this, "Fatal Error Longitude", "Invalid degree input value.\nValid input : 00-180" );
+        return;
+    }
+
+    float valueminn = minn.toFloat()/60.0;
+    if (!ok1)
+    {
+        QMessageBox::critical(this, "Fatal Error Longitude", "Invalid minute input value.\nValid input : 00-60" );
+        return;
+    }
+
+    float valuesecc = secc.toFloat()/3600.0;
+    if (!ok)
+    {
+        QMessageBox::critical(this, "Fatal Error Longitude", "Invalid second input value.\nValid input : 00-96" );
+        return;
+    }
+
+    float valueLong = valuedegg+valueminn+valuesecc;
+
+    if(signn == "W")
+        valueLong *= -1.0;
+    else if ((signn != "W") && (signn != "E"))
+    {
+        QMessageBox::critical(this, "Fatal Error Longitude", "Invalid orientation input value.\nValid input : W/E" );
+        return;
+    }
+
+    if ((valueLong < -180) || (valueLong > 180) )
+    {
+        QMessageBox::critical(this, "Fatal Error Longitude", "Invalid input : out of range" );
+        return;
+    }
+
+    qDebug() << Q_FUNC_INFO<<valuedegg << valueminn <<valuesecc <<valueLong;
+
+    QString valueLatStr = QString::number(valueLat);
+    QString valueLongStr = QString::number(valueLong);
+
+    qDebug() << valueLatStr << valueLongStr;
 
     std::unordered_map<std::string, std::string> data_map =
     {
-        {"latitude", latitude.toStdString()},
-        {"longitude", longitude.toStdString()},
+        {"latitude", valueLatStr.toStdString()},
+        {"longitude", valueLongStr.toStdString()},
     };
 
     try
@@ -676,7 +881,17 @@ void FrameOSD::on_comboBoxWindMode_activated(int index)
 void FrameOSD::on_pushButtonWindApply_clicked()
 {
     QString dir = ui->lineEditWindDir->text();
+    if(dir.size()<2)
+    {
+        QMessageBox::critical(this, "Fatal Error Dir", "Invalid input value" );
+        return;
+    }
     QString speed = ui->lineEditWindSpeed->text();
+    if(speed.size()<2)
+    {
+        QMessageBox::critical(this, "Fatal Error Heading", "Invalid input value" );
+        return;
+    }
 
     bool ok;
     float dir_float = dir.toFloat(&ok);
@@ -851,8 +1066,23 @@ void FrameOSD::on_comboBoxWeatherMode_activated(int index)
 void FrameOSD::on_pushButtonWeather_clicked()
 {
     QString temperature = ui->lineEditWeatherTemp->text();
+    if(temperature.size()<2)
+    {
+        QMessageBox::critical(this, "Fatal Error Temperature", "Invalid input value" );
+        return;
+    }
     QString pressure = ui->lineEditWeatherPress->text();
+    if(pressure.size()<2)
+    {
+        QMessageBox::critical(this, "Fatal Error Pressure", "Invalid input value" );
+        return;
+    }
     QString humidity = ui->lineEditWeatherHumidity->text();
+    if(humidity.size()<2)
+    {
+        QMessageBox::critical(this, "Fatal Error Humidity", "Invalid input value" );
+        return;
+    }
 
     bool ok;
     float temperature_float =temperature. toFloat(&ok);
@@ -1025,7 +1255,17 @@ void FrameOSD::on_comboBoxSpeedMode_activated(int index)
 void FrameOSD::on_pushButtonSpeedApply_clicked()
 {
     QString sog = ui->lineEditSpeedSOG->text();
+    if(sog.size()<2)
+    {
+        QMessageBox::critical(this, "Fatal Error SpeedSOG", "Invalid input value" );
+        return;
+    }
     QString cog = ui->lineEditSpeedCOG->text();
+    if(cog.size()<2)
+    {
+        QMessageBox::critical(this, "Fatal Error SpeedCOG", "Invalid input value" );
+        return;
+    }
 
     bool ok;
     float sog_float =sog. toFloat(&ok);
@@ -1191,7 +1431,17 @@ void FrameOSD::on_comboBoxWaterMode_activated(int index)
 void FrameOSD::on_pushButtonWaterApply_clicked()
 {
     QString speed = ui->lineEditWaterSOG->text();
+    if(speed.size()<2)
+    {
+        QMessageBox::critical(this, "Fatal Error SOG", "Invalid input value" );
+        return;
+    }
     QString course = ui->lineEditWaterCOG->text();
+    if(course.size()<2)
+    {
+        QMessageBox::critical(this, "Fatal Error COG", "Invalid input value" );
+        return;
+    }
 
     bool ok;
     float speed_float =speed. toFloat(&ok);
