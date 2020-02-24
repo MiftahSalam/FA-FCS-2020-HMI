@@ -21,6 +21,7 @@ public:
 
 private slots:
     void on_pushButtonExit_clicked();
+    void on_timeout();
 
 private:
     Ui::MainWindow *ui;

@@ -22,7 +22,7 @@
   <widget class="QWidget" name="centralWidget">
    <layout class="QGridLayout" name="gridLayout">
     <item row="0" column="0">
-     <widget class="QFrame" name="frameTDA">
+     <widget class="FrameTDA" name="frameTDA">
       <property name="frameShape">
        <enum>QFrame::Box</enum>
       </property>
@@ -141,6 +141,12 @@
    <class>FrameWAP</class>
    <extends>QFrame</extends>
    <header>framewap.h</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>FrameTDA</class>
+   <extends>QFrame</extends>
+   <header>frametda.h</header>
    <container>1</container>
   </customwidget>
  </customwidgets>

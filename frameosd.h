@@ -19,6 +19,7 @@ public:
     explicit FrameOSD(QWidget *parent = 0);
     ~FrameOSD();
     void setConfig (QString Config);
+    QString getHeading() const;
 
 private slots:
     void on_osdTimerTimeOut();
