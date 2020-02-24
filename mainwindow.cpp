@@ -11,6 +11,7 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->setupUi(this);
 
     connect(&mastertimer, SIGNAL(timeout()), ui->frameBottomOSD, SLOT(on_osdTimerTimeOut()));
+    connect(&mastertimer, SIGNAL(timeout()), this, SLOT(on_timeout()));
 
     mastertimer.start(1000);
 
@@ -35,6 +36,11 @@ MainWindow::MainWindow(QWidget *parent) :
     */
 //    qDebug()<<ui->gridLayout_2->columnCount()<<ui->gridLayout_2->rowCount();
 
+}
+
+void MainWindow::on_timeout()
+{
+    ui->frameTDA->setHeading(ui->frameBottomOSD->getHeading());
 }
 
 MainWindow::~MainWindow()

@@ -48,8 +48,8 @@ FrameOSD::FrameOSD(QWidget *parent) :
     ui->lineEditGyroRoll->setValidator(valiNumber);
 
     // ==== redisClient validator GPS ==== //
-  //  ui->lineEditGpsLat->setValidator(valiNumber);
-   // ui->lineEditGpsLong->setValidator(valiNumber);
+    // ui->lineEditGpsLat->setValidator(valiNumber);
+    // ui->lineEditGpsLong->setValidator(valiNumber);
 
     // ==== redisClient validator Wind ==== //
     ui->lineEditWindDir->setValidator(valiNumber);
@@ -73,6 +73,11 @@ FrameOSD::FrameOSD(QWidget *parent) :
 FrameOSD::~FrameOSD()
 {
     delete ui;
+}
+
+QString FrameOSD::getHeading() const
+{
+    return inersiadata.heading;
 }
 
 void FrameOSD::setConfig(QString Config)
@@ -321,6 +326,31 @@ void FrameOSD::on_osdGryoComboBox_activated(int index)
             ui->osdGyroPitchValue->setEnabled(true);
 
             GyroManualModeUi();
+
+            try
+            {
+                bool key_exist = redisClient->exists("inersia");
+
+                if(!key_exist)
+                {
+                    std::unordered_map<std::string, std::string> data_map =
+                    {
+                        {"heading", "0.0"},
+                        {"roll", "0.0"},
+                        {"pitch", "0.0"},
+                    };
+
+                    redisClient->hmset("inersia",data_map.begin(), data_map.end());
+                }
+                else
+                    redisClient->persist("inersia");
+
+            }
+            catch (Error e)
+            {
+                curStatusString = e.what();
+                qDebug() << Q_FUNC_INFO <<  curStatusString;
+            }
         }
         catch (Error e)
         {
@@ -333,47 +363,50 @@ void FrameOSD::on_osdGryoComboBox_activated(int index)
 void FrameOSD::on_pushButtonGyroApply_clicked()
 {
     QString heading = ui->osdGyroHeadingValue->text();
-    if(heading.size()<2)
-    {
-        QMessageBox::critical(this, "Fatal Error Heading", "Invalid input value" );
-        return;
-    }
     QString roll = ui->lineEditGyroRoll->text();
-    if(roll.size()<2)
-    {
-        QMessageBox::critical(this, "Fatal Error Roll", "Invalid input value" );
-        return;
-    }
     QString pitch = ui->osdGyroPitchValue->text();
-    if(pitch.size()<2)
-    {
-        QMessageBox::critical(this, "Fatal Error Pitch", "Invalid input value" );
-        return;
-    }
 
     bool ok;
-    float heading_float = heading. toFloat(&ok);
-    float roll_float =roll. toFloat(&ok);
-    float pitch_float =pitch. toFloat(&ok);
 
-
-    if ((heading_float < 0) || (heading_float > 300) )
+    float heading_float = heading.toFloat(&ok);
+    if(!ok)
     {
-        QMessageBox::critical(this, "Fatal Error", "Invalid heading input" );
+        QMessageBox::critical(this, "Fatal Error Heading", "Invalid input value\nValid input range : 0 - 360" );
+        return;
+    }
+    if ((heading_float < 0) || (heading_float > 360) )
+    {
+        QMessageBox::critical(this, "Fatal Error", "Invalid heading input\nValid input range : 0 - 360" );
         return;
     }
 
+    float roll_float = roll.toFloat(&ok);
+    if(!ok)
+    {
+        QMessageBox::critical(this, "Fatal Error Roll", "Invalid input value\nValid input range : -30 to 30" );
+        return;
+    }
     if ((roll_float < -30) || (roll_float > 30) )
     {
-        QMessageBox::critical(this, "Fatal Error", "Invalid roll input" );
+        QMessageBox::critical(this, "Fatal Error", "Invalid roll input\nValid input range : -30 to 30" );
         return;
     }
 
-    if ((pitch_float < -30) || (pitch_float > 30) )
+    float pitch_float = pitch.toFloat(&ok);
+    if(!ok)
     {
-        QMessageBox::critical(this, "Fatal Error", "Invalid pitch input" );
+        QMessageBox::critical(this, "Fatal Error Pitch", "Invalid input value\nValid input range : -30 to 30" );
         return;
     }
+    if ((pitch_float < -30) || (pitch_float > 30) )
+    {
+        QMessageBox::critical(this, "Fatal Error", "Invalid pitch input\nValid input range : -30 to 30" );
+        return;
+    }
+
+    inersiadata.heading = heading;
+    inersiadata.roll = roll;
+    inersiadata.picth = pitch;
 
     std::unordered_map<std::string, std::string> data_map =
     {
@@ -625,16 +658,16 @@ void FrameOSD::on_pushButtonGPSApply_clicked()
     }
 
     float valuemin = min.toFloat(&ok)/60.0;
-    if (!ok)
+    if ((!ok) || (valuemin > 1))
     {
         QMessageBox::critical(this, "Fatal Error Latitude", "Invalid minute input value.\nValid input : 00-60" );
         return;
     }
 
-    float valuesec = sec.toFloat()/3600.0;
-    if (!ok)
+    float valuesec = sec.toFloat(&ok)/3600.0;
+    if ((!ok) || (valuesec > (1.0/60.0)))
     {
-        QMessageBox::critical(this, "Fatal Error Latitude", "Invalid second input value.\nValid input : 00-96" );
+        QMessageBox::critical(this, "Fatal Error Latitude", "Invalid second input value.\nValid input : 00-60" );
         return;
     }
 
@@ -697,16 +730,16 @@ void FrameOSD::on_pushButtonGPSApply_clicked()
     }
 
     float valueminn = minn.toFloat()/60.0;
-    if (!ok1)
+    if ((!ok) || (valueminn > 1))
     {
         QMessageBox::critical(this, "Fatal Error Longitude", "Invalid minute input value.\nValid input : 00-60" );
         return;
     }
 
     float valuesecc = secc.toFloat()/3600.0;
-    if (!ok)
+    if ((!ok) || (valuesecc > (1.0/60.0)))
     {
-        QMessageBox::critical(this, "Fatal Error Longitude", "Invalid second input value.\nValid input : 00-96" );
+        QMessageBox::critical(this, "Fatal Error Longitude", "Invalid second input value.\nValid input : 00-60" );
         return;
     }
 
@@ -851,6 +884,7 @@ void FrameOSD::on_comboBoxWindMode_activated(int index)
             ui->lineEditWindSpeed->setEnabled(false);
 
             WindAutoModeUi();
+
         }
         catch (Error e)
         {
@@ -869,6 +903,30 @@ void FrameOSD::on_comboBoxWindMode_activated(int index)
             ui->lineEditWindSpeed->setEnabled(true);
 
             WindManualModeUi();
+
+            try
+            {
+                bool key_exist = redisClient->exists("wind");
+
+                if(!key_exist)
+                {
+                    std::unordered_map<std::string, std::string> data_map =
+                    {
+                        {"dir", "0.0"},
+                        {"speed", "0.0"},
+                    };
+
+                    redisClient->hmset("wind",data_map.begin(), data_map.end());
+                }
+                else
+                    redisClient->persist("wind");
+
+            }
+            catch (Error e)
+            {
+                curStatusString = e.what();
+                qDebug() << Q_FUNC_INFO <<  curStatusString;
+            }
         }
         catch (Error e)
         {
@@ -881,31 +939,31 @@ void FrameOSD::on_comboBoxWindMode_activated(int index)
 void FrameOSD::on_pushButtonWindApply_clicked()
 {
     QString dir = ui->lineEditWindDir->text();
-    if(dir.size()<2)
-    {
-        QMessageBox::critical(this, "Fatal Error Dir", "Invalid input value" );
-        return;
-    }
     QString speed = ui->lineEditWindSpeed->text();
-    if(speed.size()<2)
-    {
-        QMessageBox::critical(this, "Fatal Error Heading", "Invalid input value" );
-        return;
-    }
 
     bool ok;
-    float dir_float = dir.toFloat(&ok);
-    float speed_float =speed.toFloat(&ok);
 
+    float dir_float = dir.toFloat(&ok);
+    if(!ok)
+    {
+        QMessageBox::critical(this, "Fatal Error Dir", "Invalid input value\nValid input range : 0 - 360" );
+        return;
+    }
     if ((dir_float < 0) || (dir_float > 360) )
     {
-        QMessageBox::critical(this, "Fatal Error", "Invalid direction input" );
+        QMessageBox::critical(this, "Fatal Error", "Invalid dir value\nValid input range : 0 - 360" );
         return;
     }
 
+    float speed_float =speed.toFloat(&ok);
+    if(!ok)
+    {
+        QMessageBox::critical(this, "Fatal Error Speed", "Invalid input value\nValid input range : -150 to 150" );
+        return;
+    }
     if ((speed_float < -150) || (speed_float > 150) )
     {
-        QMessageBox::critical(this, "Fatal Error", "Invalid speed input" );
+        QMessageBox::critical(this, "Fatal Error", "Invalid speed input\nValid input range : -150 to 150" );
         return;
     }
 
@@ -1040,7 +1098,6 @@ void FrameOSD::on_comboBoxWeatherMode_activated(int index)
             curStatusString = e.what();
             qDebug() << Q_FUNC_INFO <<  curStatusString;
         }
-
     }
     else
     {
@@ -1054,6 +1111,31 @@ void FrameOSD::on_comboBoxWeatherMode_activated(int index)
             ui->lineEditWeatherHumidity->setEnabled(true);
 
             WeatherManualModeUi();
+
+            try
+            {
+                bool key_exist = redisClient->exists("weather");
+
+                if(!key_exist)
+                {
+                    std::unordered_map<std::string, std::string> data_map =
+                    {
+                        {"temperature", "0.0"},
+                        {"pressure", "0.0"},
+                        {"humidity", "0.0"},
+                    };
+
+                    redisClient->hmset("weather",data_map.begin(), data_map.end());
+                }
+                else
+                    redisClient->persist("weather");
+
+            }
+            catch (Error e)
+            {
+                curStatusString = e.what();
+                qDebug() << Q_FUNC_INFO <<  curStatusString;
+            }
         }
         catch (Error e)
         {
@@ -1067,44 +1149,45 @@ void FrameOSD::on_comboBoxWeatherMode_activated(int index)
 void FrameOSD::on_pushButtonWeather_clicked()
 {
     QString temperature = ui->lineEditWeatherTemp->text();
-    if(temperature.size()<2)
-    {
-        QMessageBox::critical(this, "Fatal Error Temperature", "Invalid input value" );
-        return;
-    }
     QString pressure = ui->lineEditWeatherPress->text();
-    if(pressure.size()<2)
-    {
-        QMessageBox::critical(this, "Fatal Error Pressure", "Invalid input value" );
-        return;
-    }
     QString humidity = ui->lineEditWeatherHumidity->text();
-    if(humidity.size()<2)
-    {
-        QMessageBox::critical(this, "Fatal Error Humidity", "Invalid input value" );
-        return;
-    }
 
     bool ok;
-    float temperature_float =temperature. toFloat(&ok);
-    float pressure_float =pressure. toFloat(&ok);
-    float humidity_float =humidity. toFloat(&ok);
 
+    float temperature_float =temperature. toFloat(&ok);
+    if(!ok)
+    {
+        QMessageBox::critical(this, "Fatal Error Temperature", "Invalid input value\nValid input range : -273 to 273" );
+        return;
+    }
     if ((temperature_float < -273) || (temperature_float > 273) )
     {
-        QMessageBox::critical(this, "Fatal Error", "Invalid temperature input" );
+        QMessageBox::critical(this, "Fatal Error", "Invalid temperature input\nValid input range : -273 to 273" );
         return;
     }
 
+    float pressure_float =pressure. toFloat(&ok);
+    if(!ok)
+    {
+        QMessageBox::critical(this, "Fatal Error Pressure", "Invalid input value\nValid input range : 100 - 1000" );
+        return;
+    }
     if ((pressure_float < 100) || (pressure_float > 10000) )
     {
-        QMessageBox::critical(this, "Fatal Error", "Invalid pressure input" );
+        QMessageBox::critical(this, "Fatal Error", "Invalid Pressure input\nValid input range : 100 - 1000" );
+        return;
+    }
+
+    float humidity_float =humidity. toFloat(&ok);
+    if(!ok)
+    {
+        QMessageBox::critical(this, "Fatal Error Humidity", "Invalid input value\nValid input range : 0 - 100" );
         return;
     }
 
     if ((humidity_float < 0) || (humidity_float > 100) )
     {
-        QMessageBox::critical(this, "Fatal Error ", "Invalid humidity input" );
+        QMessageBox::critical(this, "Fatal Error", "Invalid humidity input\nValid input range : 0 - 100" );
         return;
     }
 
@@ -1244,6 +1327,30 @@ void FrameOSD::on_comboBoxSpeedMode_activated(int index)
             ui->lineEditSpeedCOG->setEnabled(true);
 
             SpeedManualModeUi();
+
+            try
+            {
+                bool key_exist = redisClient->exists("speed");
+
+                if(!key_exist)
+                {
+                    std::unordered_map<std::string, std::string> data_map =
+                    {
+                        {"sog", "0.0"},
+                        {"cog", "0.0"},
+                    };
+
+                    redisClient->hmset("speed",data_map.begin(), data_map.end());
+                }
+                else
+                    redisClient->persist("speed");
+
+            }
+            catch (Error e)
+            {
+                curStatusString = e.what();
+                qDebug() << Q_FUNC_INFO <<  curStatusString;
+            }
         }
         catch (Error e)
         {
@@ -1256,31 +1363,31 @@ void FrameOSD::on_comboBoxSpeedMode_activated(int index)
 void FrameOSD::on_pushButtonSpeedApply_clicked()
 {
     QString sog = ui->lineEditSpeedSOG->text();
-    if(sog.size()<2)
-    {
-        QMessageBox::critical(this, "Fatal Error SpeedSOG", "Invalid input value" );
-        return;
-    }
     QString cog = ui->lineEditSpeedCOG->text();
-    if(cog.size()<2)
-    {
-        QMessageBox::critical(this, "Fatal Error SpeedCOG", "Invalid input value" );
-        return;
-    }
 
     bool ok;
-    float sog_float =sog. toFloat(&ok);
-    float cog_float =cog. toFloat(&ok);
 
+    float sog_float =sog. toFloat(&ok);
+    if(!ok)
+    {
+        QMessageBox::critical(this, "Fatal Error SOG", "Invalid input value\nValid input range : -150 to 150" );
+        return;
+    }
     if ((sog_float < -150) || (sog_float > 150) )
     {
-        QMessageBox::critical(this, "Fatal Error", "Invalid SOG input" );
+        QMessageBox::critical(this, "Fatal Error", "Invalid sog input\nValid input range : -150 to 150" );
         return;
     }
 
+    float cog_float =cog. toFloat(&ok);
+    if(!ok)
+    {
+        QMessageBox::critical(this, "Fatal Error COG", "Invalid input value\nValid input range : 0 - 360" );
+        return;
+    }
     if ((cog_float < 0) || (cog_float > 360) )
     {
-        QMessageBox::critical(this, "Fatal Error", "Invalid COG input text" );
+        QMessageBox::critical(this, "Fatal Error", "Invalid cog input\nValid input range : 0 - 360" );
         return;
     }
 
@@ -1420,6 +1527,30 @@ void FrameOSD::on_comboBoxWaterMode_activated(int index)
             ui->lineEditWaterCOG->setEnabled(true);
 
             WaterSpeedManualModeUi();
+
+            try
+            {
+                bool key_exist = redisClient->exists("waterspeed");
+
+                if(!key_exist)
+                {
+                    std::unordered_map<std::string, std::string> data_map =
+                    {
+                        {"speed", "0.0"},
+                        {"course", "0.0"},
+                    };
+
+                    redisClient->hmset("waterspeed",data_map.begin(), data_map.end());
+                }
+                else
+                    redisClient->persist("waterspeed");
+
+            }
+            catch (Error e)
+            {
+                curStatusString = e.what();
+                qDebug() << Q_FUNC_INFO <<  curStatusString;
+            }
         }
         catch (Error e)
         {
@@ -1432,31 +1563,31 @@ void FrameOSD::on_comboBoxWaterMode_activated(int index)
 void FrameOSD::on_pushButtonWaterApply_clicked()
 {
     QString speed = ui->lineEditWaterSOG->text();
-    if(speed.size()<2)
-    {
-        QMessageBox::critical(this, "Fatal Error SOG", "Invalid input value" );
-        return;
-    }
     QString course = ui->lineEditWaterCOG->text();
-    if(course.size()<2)
-    {
-        QMessageBox::critical(this, "Fatal Error COG", "Invalid input value" );
-        return;
-    }
 
     bool ok;
-    float speed_float =speed. toFloat(&ok);
-    float course_float =course. toFloat(&ok);
 
+    float speed_float =speed. toFloat(&ok);
+    if(!ok)
+    {
+        QMessageBox::critical(this, "Fatal Error SOG", "Invalid input value\nValid input range : -150 - 150" );
+        return;
+    }
     if ((speed_float < -150) || (speed_float > 150) )
     {
-        QMessageBox::critical(this, "Fatal Error", "Invalid water speed input" );
+        QMessageBox::critical(this, "Fatal Error", "Invalid cog input\nValid input range : -150 - 150" );
         return;
     }
 
+    float course_float =course. toFloat(&ok);
+    if(!ok)
+    {
+        QMessageBox::critical(this, "Fatal Error COG", "Invalid input value\nValid input range : 0 - 360" );
+        return;
+    }
     if ((course_float < 0) || (course_float > 360) )
     {
-        QMessageBox::critical(this, "Fatal Error", "Invalid water course input text" );
+        QMessageBox::critical(this, "Fatal Error", "Invalid cog input\nValid input range : 0 - 360" );
         return;
     }
 

@@ -18,18 +18,21 @@ SOURCES += main.cpp\
         mainwindow.cpp \
     framegun.cpp \
     frameosd.cpp \
-    framewap.cpp
+    framewap.cpp \
+    frametda.cpp
 
 HEADERS  += mainwindow.h \
     framegun.h \
     frameosd.h \
     framewap.h \
-    global.h
+    global.h \
+    frametda.h
 
 FORMS    += mainwindow.ui \
     framegun.ui \
     frameosd.ui \
-    framewap.ui
+    framewap.ui \
+    frametda.ui
 
 RESOURCES += \
     hmi_fa_fcs.qrc
