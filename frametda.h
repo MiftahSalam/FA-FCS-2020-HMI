@@ -4,6 +4,7 @@
 #include <QFrame>
 #include <QTimer>
 #include <QPainter>
+#include <QStatusBar>
 
 namespace Ui {
 class FrameTDA;
@@ -26,6 +27,8 @@ private slots:
 private:
     Ui::FrameTDA *ui;
     QTimer *timer;
+
+    QStatusBar *statusBarSelectedTrack;
 
     float currentHeading;
 };

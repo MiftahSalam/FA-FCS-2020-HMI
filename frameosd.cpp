@@ -607,6 +607,29 @@ void FrameOSD::on_comboBoxGPSMode_activated(int index)
             ui->lineEditGpsLong->setEnabled(true);
 
             GpsManualModeUi();
+            try
+            {
+                bool key_exist = redisClient->exists("position");
+
+                if(!key_exist)
+                {
+                    std::unordered_map<std::string, std::string> data_map =
+                    {
+                        {"latitude", "0.0"},
+                        {"longitude", "0.0"},
+                    };
+
+                    redisClient->hmset("position",data_map.begin(), data_map.end());
+                }
+                else
+                    redisClient->persist("position");
+
+            }
+            catch (Error e)
+            {
+                curStatusString = e.what();
+                qDebug() << Q_FUNC_INFO <<  curStatusString;
+            }
         }
         catch (Error e)
         {
