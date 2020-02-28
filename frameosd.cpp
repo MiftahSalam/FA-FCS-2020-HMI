@@ -509,7 +509,7 @@ void FrameOSD::GpsTimerTimeOut()
                      min = floor(min);
                float sec = (lat_float - deg - (min / 60.0)) * 3600.0;
 
-               qDebug() << deg << lat_float << gpsdata.latitude << min << sec << tanda_latitude;
+//               qDebug() << deg << lat_float << gpsdata.latitude << min << sec << tanda_latitude;
 
                QString deg_string = QString::number(deg,'f', 0);
                if (deg_string.size() < 2)
@@ -540,7 +540,7 @@ void FrameOSD::GpsTimerTimeOut()
                      minn = floor(minn);
                float secc = (long_float - degg - (minn / 60.0)) * 3600.0;
 
-               qDebug() << degg << long_float << gpsdata.longitude << minn << secc << tanda_longitude;
+//               qDebug() << degg << long_float << gpsdata.longitude << minn << secc << tanda_longitude;
 
                QString degg_string = QString::number(degg,'f', 0);
                if (degg_string.size() < 3)
@@ -644,7 +644,7 @@ void FrameOSD::on_pushButtonGPSApply_clicked()
     // ==== Float latitude ====
     QString lat_str_trimmed = ui->lineEditGpsLat->text();
     lat_str_trimmed.remove(" ");
-    qDebug()<<Q_FUNC_INFO<<"before trimm"<<ui->lineEditGpsLat->text()<<"after trimm"<<lat_str_trimmed;
+//    qDebug()<<Q_FUNC_INFO<<"before trimm"<<ui->lineEditGpsLat->text()<<"after trimm"<<lat_str_trimmed;
 
     QString str = lat_str_trimmed;
     QStringList list1 = str.split("-");
@@ -664,13 +664,13 @@ void FrameOSD::on_pushButtonGPSApply_clicked()
         return;
     }
 
-    qDebug() << list1 << list2;
+//    qDebug() << list1 << list2;
 
     QString min = list2.at(0);
     QString sec = list2.at(1);
     QString sign = list2.at(3);
 
-    qDebug() << deg  <<min <<sec <<sign;
+//    qDebug() << deg  <<min <<sec <<sign;
 
     bool ok;
     float valuedeg = deg.toFloat(&ok);
@@ -710,13 +710,13 @@ void FrameOSD::on_pushButtonGPSApply_clicked()
         return;
     }
 
-    qDebug() << Q_FUNC_INFO<<valuedeg << valuemin <<valuesec <<valueLat;
+//    qDebug() << Q_FUNC_INFO<<valuedeg << valuemin <<valuesec <<valueLat;
 
     // ==== Float longitude ====
 
     QString long_str_trimmed = ui->lineEditGpsLong->text();
     long_str_trimmed.remove(" ");
-    qDebug()<<Q_FUNC_INFO<<"before trimm"<<ui->lineEditGpsLong->text()<<"after trimm"<<long_str_trimmed;
+//    qDebug()<<Q_FUNC_INFO<<"before trimm"<<ui->lineEditGpsLong->text()<<"after trimm"<<long_str_trimmed;
 
     QString str1 = long_str_trimmed;
     QStringList long_list1 = str1.split("-");
@@ -736,13 +736,13 @@ void FrameOSD::on_pushButtonGPSApply_clicked()
         return;
     }
 
-    qDebug() << long_list1 << long_list2;
+//    qDebug() << long_list1 << long_list2;
 
     QString minn = long_list2.at(0);
     QString secc = long_list2.at(1);
     QString signn = long_list2.at(3);
 
-    qDebug() <<degg  <<minn <<secc <<signn;
+//    qDebug() <<degg  <<minn <<secc <<signn;
 
     bool ok1;
     float valuedegg = degg.toFloat(&ok1);
@@ -782,12 +782,12 @@ void FrameOSD::on_pushButtonGPSApply_clicked()
         return;
     }
 
-    qDebug() << Q_FUNC_INFO<<valuedegg << valueminn <<valuesecc <<valueLong;
+//    qDebug() << Q_FUNC_INFO<<valuedegg << valueminn <<valuesecc <<valueLong;
 
     QString valueLatStr = QString::number(valueLat);
     QString valueLongStr = QString::number(valueLong);
 
-    qDebug() << valueLatStr << valueLongStr;
+//    qDebug() << valueLatStr << valueLongStr;
 
     std::unordered_map<std::string, std::string> data_map =
     {
