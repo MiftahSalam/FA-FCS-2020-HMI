@@ -8,10 +8,11 @@
 
 QString loadStylesheetFile( const QString &path );
 QSplashScreen *splash;
+bool verbose;
 
 int main(int argc, char *argv[])
 {
-    QApplication a(argc, argv);
+    QApplication a(argc, argv); 
 
     QString appStyle = loadStylesheetFile( ":/HMI_Syle.css" );
     a.setStyle("plastique");
@@ -25,6 +26,7 @@ int main(int argc, char *argv[])
         qDebug()<<"init config file";
 
         config.setValue("Redis/osd","tcp://192.168.1.240:6379");
+        config.setValue("verbose",false);
     }
 
     MainWindow w;

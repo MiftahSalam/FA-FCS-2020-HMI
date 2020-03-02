@@ -4,5 +4,6 @@
 #include <QSplashScreen>
 
 extern QSplashScreen *splash;
+extern bool verbose;
 
 #endif // GLOBAL_H

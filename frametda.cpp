@@ -11,8 +11,8 @@
 bool RCEventHandler::eventFilter(QObject *obj, QEvent *event)
 {
     // you may handle multiple objects checking "obj" parameter
-     if (event->type() == QEvent::ContextMenu) {
-         qDebug()<<Q_FUNC_INFO<<"contex menu";
+    if (event->type() == QEvent::ContextMenu) {
+        qDebug()<<Q_FUNC_INFO<<"contex menu";
         QMouseEvent *mouseEvent = static_cast<QMouseEvent*> (event);
         send_rightButtonClicked(mouseEvent->globalPos());
         return true;
@@ -25,10 +25,10 @@ bool RCEventHandler::eventFilter(QObject *obj, QEvent *event)
         return true;
     }
     else if(event->type() == QEvent::MouseButtonRelease){
-         QMouseEvent *mouseEvent=static_cast<QMouseEvent*> (event);
-         send_leftButtonReleased(mouseEvent->pos());
+        QMouseEvent *mouseEvent=static_cast<QMouseEvent*> (event);
+        send_leftButtonReleased(mouseEvent->pos());
 
-         return true;
+        return true;
     }
     else if (event->type() == QEvent::MouseMove) {
         QMouseEvent *mouseEvent = static_cast<QMouseEvent*> (event);
@@ -98,7 +98,6 @@ FrameTDA::FrameTDA(QWidget *parent) :
 
 void FrameTDA::mousepos(QPointF point)
 {
-   qDebug()<<Q_FUNC_INFO;
     QPoint os_pos((width())/2,(height()/2));
     double range_pixel_x = os_pos.x()-point.x();
     double range_pixel_y = os_pos.y()-point.y();
@@ -109,9 +108,9 @@ void FrameTDA::mousepos(QPointF point)
 
     double range = sqrt(pow(range_pixel_y,2)+pow(range_pixel_x,2)); //pixel
     range = pixel2Range(range); //NM
-    statusBarMouse->showMessage(QString("Range : %1, Bearing : %2").arg(QString::number(range,'f',2)).arg(QString::number(bearing,'f',2)),2000);
-    statusBarMouse->setGeometry(10,height()-40,220,20);
-    qDebug() << Q_FUNC_INFO << range << bearing;
+    statusBarMouse->showMessage(QString("Range : %1, Bearing : %2").arg(QString::number(range,'f',1)).arg(QString::number(bearing,'f',1)),2000);
+    statusBarMouse->setGeometry(10,height()-40,200,20);
+//    qDebug() << Q_FUNC_INFO << range << bearing;
 }
 
 void FrameTDA::zoom_change()
@@ -124,8 +123,9 @@ void FrameTDA::zoom_change()
             cur_checked_zoom_scale = i;
         }
     }
+
     tdaScale = zoomAction[cur_checked_zoom_scale]->text().remove(" NM").toDouble();
-    qDebug()<<Q_FUNC_INFO<<tdaScale;
+//    qDebug()<<Q_FUNC_INFO<<tdaScale;
 }
 
 void FrameTDA::RC_radar(QPoint pos)
@@ -136,34 +136,12 @@ void FrameTDA::RC_radar(QPoint pos)
     menu->setStyleSheet("QMenu{color: rgb(255,255,255);background-color: rgb(0,0,0);selection-color: yellow;}");
     menu->addMenu(zoomSubMenu);
     menu->exec(pos);
-
-    /*
-    menu->addMenu(selectTrackSubMenu);
-    QMenu *selectTrackSubMenu = new QMenu("Select Track", this);
-
-    //select track handling
-    for(int i=0;i<tnList.size();i++)
-    {
-        QAction *stAction = new QAction(QString::number(tnList.at(i)),this);
-        connect(stAction,SIGNAL(triggered()),this,SLOT(selectedTrack()));
-        stAction->setCheckable(true);
-
-        if(cur_selected_track==tnList.at(i) && cur_selected_track>-1)
-            stAction->setChecked(true);
-
-        selectTrackSubMenu->addAction(stAction);
-        stAction->deleteLater();
-    }
-    */
 }
 
 void FrameTDA::paintEvent(QPaintEvent *event)
 {
     Q_UNUSED(event);
-//    qDebug()<<Q_FUNC_INFO;
-
-    QPixmap bufPixmap=QPixmap(width(),height());
-    bufPixmap.fill(Qt::transparent);
+    //    qDebug()<<Q_FUNC_INFO;
 
     QPainter painter(this);
     painter.setRenderHint(QPainter::Antialiasing);
@@ -190,7 +168,6 @@ void FrameTDA::paintEvent(QPaintEvent *event)
         font.setPixelSize(12);
         painter.setFont(font);
         painter.drawText(rect,text,opt);
-        //        bufPaint.drawRect(rect);
         text.clear();
     }
 
@@ -216,6 +193,7 @@ void FrameTDA::paintEvent(QPaintEvent *event)
     const qreal gun_orientation = 0.0;
     const qreal blind_arc = 90.0;
     const qreal gun_fire_range = 7.0; //NM
+
     int span = 360-blind_arc;
     int gun_coverage_pixel = 2*range2Pixel(gun_fire_range);
 
@@ -364,7 +342,7 @@ FrameTDA::zoomScale FrameTDA::zoomString2Scale(QString scale)
 void FrameTDA::setHeading(QString heading)
 {
     currentHeading = heading.toFloat();
-    qDebug()<<Q_FUNC_INFO<<currentHeading;
+//    qDebug()<<Q_FUNC_INFO<<currentHeading;
 
 }
 

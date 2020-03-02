@@ -41,33 +41,6 @@ FrameOSD::FrameOSD(QWidget *parent) :
     ui->lineEditWaterSOG->setValidator(valiNumber);
     ui->lineEditWaterCOG->setValidator(valiNumber);
 
-
-    // ==== redisClient validator Gyro ==== //
-    ui->osdGyroHeadingValue->setValidator(valiNumber);
-    ui->osdGyroPitchValue->setValidator(valiNumber);
-    ui->lineEditGyroRoll->setValidator(valiNumber);
-
-    // ==== redisClient validator GPS ==== //
-    // ui->lineEditGpsLat->setValidator(valiNumber);
-    // ui->lineEditGpsLong->setValidator(valiNumber);
-
-    // ==== redisClient validator Wind ==== //
-    ui->lineEditWindDir->setValidator(valiNumber);
-    ui->lineEditWindSpeed->setValidator(valiNumber);
-
-    // ==== redisClient validator Weather ==== //
-    ui->lineEditWeatherTemp->setValidator(valiNumber);
-    ui->lineEditWeatherPress->setValidator(valiNumber);
-    ui->lineEditWeatherHumidity->setValidator(valiNumber);
-
-    // ==== redisClient validator Speed ==== //
-    ui->lineEditSpeedSOG->setValidator(valiNumber);
-    ui->lineEditSpeedCOG->setValidator(valiNumber);
-
-    // ==== redisClient validator Water Speed ==== //
-    ui->lineEditWaterSOG->setValidator(valiNumber);
-    ui->lineEditWaterCOG->setValidator(valiNumber);
-
 }
 
 FrameOSD::~FrameOSD()
@@ -169,7 +142,7 @@ void FrameOSD::setConfig(QString Config)
     catch (Error e)
     {
         curStatusString = e.what();
-        qDebug() << "Speed" << curStatusString;
+        qDebug() << "Water Speed" << curStatusString;
     }
 
     qDebug() << "curStatusString" << curStatusString;
@@ -290,7 +263,6 @@ void FrameOSD::GyroTimerTimeOut()
             ui->osdGyroPitchValue->setStyleSheet("color: rgb(255, 0, 0);");
         }
     }
-    //qDebug() << Q_FUNC_INFO;
 }
 
 void FrameOSD::on_osdGryoComboBox_activated(int index)
@@ -502,6 +474,7 @@ void FrameOSD::GpsTimerTimeOut()
                    tanda_latitude = "S";
                else
                   tanda_latitude = "N";
+
                lat_float = fabs(lat_float);
                float deg = floor(lat_float);
                float min = lat_float - deg ;
@@ -525,7 +498,6 @@ void FrameOSD::GpsTimerTimeOut()
 
                QString latitude_string = deg_string + "-" + min_string + "'" + sec_string + "''" + tanda_latitude;
 
-
                // ==== Float Longitude ====
                float long_float = gpsdata.longitude.toFloat();
                QString tanda_longitude;
@@ -533,6 +505,7 @@ void FrameOSD::GpsTimerTimeOut()
                    tanda_longitude = "W";
                else
                    tanda_longitude = "E";
+
                long_float = fabs(long_float);
                float degg = floor(long_float);
                float minn = long_float - degg ;
@@ -573,7 +546,6 @@ void FrameOSD::GpsTimerTimeOut()
             ui->lineEditGpsLong->setStyleSheet("color: rgb(255, 0, 0);");
         }
     }
-//    qDebug() << Q_FUNC_INFO;
 }
 
 void FrameOSD::on_comboBoxGPSMode_activated(int index)
@@ -644,7 +616,6 @@ void FrameOSD::on_pushButtonGPSApply_clicked()
     // ==== Float latitude ====
     QString lat_str_trimmed = ui->lineEditGpsLat->text();
     lat_str_trimmed.remove(" ");
-//    qDebug()<<Q_FUNC_INFO<<"before trimm"<<ui->lineEditGpsLat->text()<<"after trimm"<<lat_str_trimmed;
 
     QString str = lat_str_trimmed;
     QStringList list1 = str.split("-");
@@ -663,8 +634,6 @@ void FrameOSD::on_pushButtonGPSApply_clicked()
         QMessageBox::critical(this, "Fatal Error Latitude", "Invalid input value" );
         return;
     }
-
-//    qDebug() << list1 << list2;
 
     QString min = list2.at(0);
     QString sec = list2.at(1);
@@ -716,7 +685,6 @@ void FrameOSD::on_pushButtonGPSApply_clicked()
 
     QString long_str_trimmed = ui->lineEditGpsLong->text();
     long_str_trimmed.remove(" ");
-//    qDebug()<<Q_FUNC_INFO<<"before trimm"<<ui->lineEditGpsLong->text()<<"after trimm"<<long_str_trimmed;
 
     QString str1 = long_str_trimmed;
     QStringList long_list1 = str1.split("-");
@@ -735,8 +703,6 @@ void FrameOSD::on_pushButtonGPSApply_clicked()
         QMessageBox::critical(this, "Fatal Error Longitude", "Invalid input value" );
         return;
     }
-
-//    qDebug() << long_list1 << long_list2;
 
     QString minn = long_list2.at(0);
     QString secc = long_list2.at(1);
@@ -786,8 +752,6 @@ void FrameOSD::on_pushButtonGPSApply_clicked()
 
     QString valueLatStr = QString::number(valueLat);
     QString valueLongStr = QString::number(valueLong);
-
-//    qDebug() << valueLatStr << valueLongStr;
 
     std::unordered_map<std::string, std::string> data_map =
     {
@@ -891,7 +855,6 @@ void FrameOSD::WindTimerTimeOut()
             ui->lineEditWindSpeed->setStyleSheet("color: rgb(255, 0, 0);");
         }
     }
-//    qDebug() << Q_FUNC_INFO;
 }
 
 void FrameOSD::on_comboBoxWindMode_activated(int index)
@@ -1098,7 +1061,6 @@ void FrameOSD::WeatherTimerTimeOut()
             ui->lineEditWeatherHumidity->setStyleSheet("color: rgb(255, 0, 0);");
         }
     }
-//    qDebug() << Q_FUNC_INFO;
 }
 
 void FrameOSD::on_comboBoxWeatherMode_activated(int index)
@@ -1167,7 +1129,6 @@ void FrameOSD::on_comboBoxWeatherMode_activated(int index)
         }
     }
 }
-
 
 void FrameOSD::on_pushButtonWeather_clicked()
 {
