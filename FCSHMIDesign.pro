@@ -19,14 +19,20 @@ SOURCES += main.cpp\
     framegun.cpp \
     frameosd.cpp \
     framewap.cpp \
-    frametda.cpp
+    frametda.cpp \
+    track.cpp \
+    tda_global.cpp \
+    rceventhandler.cpp
 
 HEADERS  += mainwindow.h \
     framegun.h \
     frameosd.h \
     framewap.h \
     global.h \
-    frametda.h
+    frametda.h \
+    track.h \
+    tda_global.h \
+    rceventhandler.h
 
 FORMS    += mainwindow.ui \
     framegun.ui \

@@ -1,6 +1,7 @@
 #ifndef FRAMETDA_H
 #define FRAMETDA_H
 
+#include <redis++.h>
 #include <QFrame>
 #include <QTimer>
 #include <QPainter>
@@ -10,24 +11,10 @@
 #include <QSettings>
 #include <QMenu>
 
-// ==== RCEventHandler ==== //
-class RCEventHandler : public QObject
-{
-Q_OBJECT
-public:
-    explicit RCEventHandler(QObject *parent = 0) : QObject(parent) {}
+#include "tda_global.h"
+#include "track.h"
+#include "rceventhandler.h"
 
-protected:
-    bool eventFilter(QObject *obj, QEvent *event);
-
-signals:
-    void send_rightButtonClicked(const QPoint &p);
-    void send_leftButtonClicked(const QPointF &p);
-    void send_leftButtonReleased(const QPointF &p);
-    void move_mouse(const QPointF &p);
-    void hover_enter(); //30 jan
-    void hover_leave();
-};
 
 // ==== TDA ==== //
 namespace Ui {
@@ -43,6 +30,9 @@ public:
     ~FrameTDA();
     void setHeading(QString heading);
 
+    void setConfig (QString Config);
+
+
 protected:
     void paintEvent(QPaintEvent *event) override;
 
@@ -50,6 +40,11 @@ private slots:
     void mousepos(QPointF point);
     void RC_radar(QPoint pos);
     void zoom_change();
+
+   // void selectedTrack();
+    void updateDataTracks();
+
+    void track_identity_changed(int tn,Identity identity);
 
 private:
 
@@ -67,14 +62,25 @@ private:
         Z_TOTAL
     };
 
-    Ui::FrameTDA *ui;
+   struct tracks
+    {
+       trackParam trackData;
+       track *track_symbol;
+    };
+
+   Ui::FrameTDA *ui;
 
     QTimer *timer;
+    QList <int> tnList;
+    QMap <int,tracks> *mapTracks;
     QStatusBar *statusBarMouse;
     QStatusBar *statusBarSelectedTrack;
     RCEventHandler *rc_radarevent;
     QAction *zoomAction[Z_TOTAL];
     QMenu *zoomSubMenu;
+
+    Redis *redisClient;
+    QString Config;
 
     float currentHeading;
     double tdaScale;
@@ -82,6 +88,9 @@ private:
     int cur_track_index_update;
     int cur_checked_zoom_scale;
     int cur_selected_track;
+
+
+    void loadTrackParam(tracks &bufParam, const trackParam track_data);
 
     QString zoomScale2String(zoomScale scale);
     zoomScale zoomString2Scale(QString scale);

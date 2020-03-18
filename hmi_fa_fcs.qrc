@@ -2,5 +2,9 @@
     <qresource prefix="/">
         <file>HMI_Syle.css</file>
         <file>logofcs.png</file>
+        <file>tda_track_symbol/surface-friend.png</file>
+        <file>tda_track_symbol/surface-hostile.png</file>
+        <file>tda_track_symbol/surface-netral.png</file>
+        <file>tda_track_symbol/surface-unknown.png</file>
     </qresource>
 </RCC>
