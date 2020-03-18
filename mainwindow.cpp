@@ -65,11 +65,13 @@ void MainWindow::setConfig(QSettings &Config)
     splash->show();
 
     QString osd = Config.value("Redis/osd", "192.168.1.2").toString();
+    QString track = Config.value("Redis/track", "192.168.1.2").toString();
     verbose = Config.value("Apps/verbose", false).toBool();
     qDebug()<<Q_FUNC_INFO<<"verbose"<<verbose;
 
     splash->showMessage("Setting up osd database connection...",Qt::AlignCenter);
     ui->frameBottomOSD->setConfig(osd);
+    ui->frameTDA->setConfig(track);
 
     splash->finish(this);
 }
