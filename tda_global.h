@@ -53,7 +53,6 @@ struct trackParam
     double bearing;
     double speed;
     double course;
-    double identity;
 
     Identity cur_identity;
     trackSource cur_source;
