@@ -26,7 +26,7 @@ int main(int argc, char *argv[])
         qDebug()<<"init config file";
 
         config.setValue("Redis/osd","tcp://192.168.1.240:6379");
-        config.setValue("verbose",false);
+        config.setValue("Apps/verbose",false);
     }
 
     MainWindow w;

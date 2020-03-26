@@ -20,24 +20,24 @@ public:
     void updateData(trackParam param);
     void setTrackNumber(int number);
     void buildUI(trackParam param);
-    void setDesigLIODEnable (bool enabled);
-    void setDesigWeaponEnable (QString weapon, bool enabled);
+//    void setDesigLIODEnable (bool enabled);
+//    void setDesigWeaponEnable (QString weapon, bool enabled);
     void setSelected(bool select);
 
 signals:
     void identity_change_signal(int tn,Identity identity);
     void env_change_signal(int tn,Environment identity);
-    void desig_request_signal(int tn,bool desig,QString desig_mode);
+//    void desig_request_signal(int tn,bool desig,QString desig_mode);
 
 private slots:
 
     void RC_track(QPoint pos);
     void identity_change();
     void environment_change();
-    void desig_change();
-    void desig_direct_change();
-    void desig_request(QString desig_mode);
-    void desig_feedback(int tn,bool approve,QString desig_mode);
+//    void desig_change();
+//    void desig_direct_change();
+//    void desig_request(QString desig_mode);
+//    void desig_feedback(int tn,bool approve,QString desig_mode);
 
 private:
     QLabel *symbol;
@@ -48,8 +48,8 @@ private:
 
     QString identity2String(Identity identity);
     QString env2String(Environment env);
-    QString desig2String(Desig desig);
-    QString desigDirect2String(DesigDirect desig_direct);
+//    QString desig2String(Desig desig);
+//    QString desigDirect2String(DesigDirect desig_direct);
     QString fileImageLocation(Identity identity, Environment env);
 
     QAction *identityAction[IDENTITY_COUNT];
@@ -58,8 +58,8 @@ private:
     QAction *desigDirectAction[DESIG_DIRECT_COUNT];
     QMenu *identitySubMenu;
     QMenu *envSubMenu;
-    QMenu *desigSubMenu;
-    QMenu *desigDirectSubMenu;
+//    QMenu *desigSubMenu;
+//    QMenu *desigDirectSubMenu;
     int cur_checked_identity;
     int cur_checked_env;
     int cur_checked_desig;

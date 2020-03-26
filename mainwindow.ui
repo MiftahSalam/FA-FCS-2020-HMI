@@ -29,19 +29,6 @@
       <property name="frameShadow">
        <enum>QFrame::Plain</enum>
       </property>
-      <widget class="QLabel" name="label">
-       <property name="geometry">
-        <rect>
-         <x>45</x>
-         <y>10</y>
-         <width>141</width>
-         <height>20</height>
-        </rect>
-       </property>
-       <property name="text">
-        <string>21-01-2020 10:15:03 Local</string>
-       </property>
-      </widget>
      </widget>
     </item>
     <item row="0" column="1">

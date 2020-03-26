@@ -7,15 +7,16 @@ track::track(QWidget *parent, QSize size) :
 {
     resize(size);
 }
+
 void track::buildUI(trackParam param)
 {
     trackDat = param;
 
     current_symbol_image = fileImageLocation(trackDat.cur_identity,trackDat.cur_env); //get image from file
-    qDebug()<<current_symbol_image;
+//    qDebug()<<current_symbol_image;
     QImage image(current_symbol_image);
 
-    /*contex menu desig*/
+    /*contex menu desig
     desigSubMenu = new QMenu("Desig",this);
     desigSubMenu->setStyleSheet("QMenu{color: rgb(255,255,255);background-color: rgb(0,0,0);selection-color: yellow; item:disabled: black;}");
     for(int i=0;i<DESIG_COUNT;i++)
@@ -27,8 +28,9 @@ void track::buildUI(trackParam param)
         desigSubMenu->addAction(desigAction[i]);
     }
     cur_checked_desig = 100; //no checked
+    */
 
-    /*contex menu desig direct*/
+    /*contex menu desig direct
     desigDirectSubMenu = new QMenu("Direct",this);
     desigDirectSubMenu->setStyleSheet("QMenu{color: rgb(255,255,255);background-color: rgb(0,0,0);selection-color: yellow; item:disabled: black;}");
     for(int i=0;i<DESIG_DIRECT_COUNT;i++)
@@ -40,6 +42,7 @@ void track::buildUI(trackParam param)
         desigDirectSubMenu->addAction(desigDirectAction[i]);
     }
     desigSubMenu->addMenu(desigDirectSubMenu);
+    */
 
     /*contex menu identity*/
     identitySubMenu = new QMenu("Identity",this);
@@ -63,6 +66,7 @@ void track::buildUI(trackParam param)
         envAction[i] = new QAction(env2String(int2Environment(i)),this);
         connect(envAction[i],SIGNAL(triggered()),this,SLOT(environment_change()));
         envAction[i]->setCheckable(true);
+        envAction[i]->setDisabled(true);
 
         envSubMenu->addAction(envAction[i]);
     }
@@ -118,6 +122,7 @@ void track::buildUI(trackParam param)
     no_track->setText(source+QString::number(trackDat.tn));
 
 }
+
 void track::setSelected(bool select)
 {
     if(select)
@@ -147,22 +152,6 @@ void track::updateData(trackParam param)
         no_track->setText(source+QString::number(trackDat.tn));
     }
 
-    /*weapon assign change
-//    qDebug()<<Q_FUNC_INFO<<param.weapon_assign<<trackDat.weapon_assign;
-
-    if(param.weapon_assign!=trackDat.weapon_assign)
-    {
-        for(int i=0;i<DESIG_DIRECT_COUNT;i++)
-        {
-            if(desigDirectAction[i]->text()==param.weapon_assign)
-                desigDirectAction[i]->setEnabled(true);
-            else
-                desigDirectAction[i]->setEnabled(false);
-            qDebug()<<Q_FUNC_INFO<<desigDirectAction[i]->isEnabled();
-
-        }
-    }
-*/
 
     trackDat = param;
 
@@ -197,9 +186,10 @@ void track::RC_track(QPoint pos)
     menu->setStyleSheet("QMenu{color: rgb(255,255,255);background-color: rgb(0,0,0);selection-color: yellow; item:disabled: black;}");
     menu->addMenu(identitySubMenu);
     menu->addMenu(envSubMenu);
-    menu->addMenu(desigSubMenu);
+   // menu->addMenu(desigSubMenu);
     menu->exec(pos);
 }
+
 void track::identity_change()
 {
     for(int i=0;i<IDENTITY_COUNT;i++)
@@ -217,15 +207,15 @@ void track::environment_change()
 {
     for(int i=0;i<ENVIRONMENT_COUNT;i++)
     {
-        if(envAction[i]->isChecked() && i!=cur_checked_env)
+        if(envAction[i]->isChecked() || i!=cur_checked_env)
         {
-            envAction[cur_checked_env]->setChecked(false);
+            envAction[cur_checked_env]->setChecked(true);
             cur_checked_env = i;
         }
     }
     env_change_signal(trackDat.tn,int2Environment(cur_checked_env));
 }
-
+/*
 void track::desig_change()
 {
     QAction *signalSender = dynamic_cast<QAction*>(sender());
@@ -245,6 +235,7 @@ void track::desig_change()
     desig_request(signalSender->text());
 
 }
+
 void track::desig_direct_change()
 {
     QAction *signalSender = dynamic_cast<QAction*>(sender());
@@ -259,6 +250,7 @@ void track::desig_direct_change()
     desig_request(desig_str);
 
 }
+
 void track::desig_request(QString desig_mode)
 {
     qDebug()<<desig_mode;
@@ -350,39 +342,8 @@ void track::desig_feedback(int tn,bool approve,QString desig_mode)
 
     if(no_checked_eot)
         cur_checked_desig = 100;
-
-}
-
-/*
-void track::setDesigLIODEnable(bool enabled)
-{
-//    qDebug()<<Q_FUNC_INFO<<"tn "<<trackDat.tn<<" liod action enable"<<enabled;
-    QAction *liodAction;
-
-    for(int i=0;i<DESIG_COUNT;i++)
-    {
-        if(desigAction[i]->text()=="EOT")
-        {
-            liodAction = desigAction[i];
-            break;
-        }
-    }
-    liodAction->setEnabled(enabled);
-}
-
-void track::setDesigWeaponEnable(QString weapon, bool enabled)
-{
-    weapon.remove(",");
-    for(int i=0;i<DESIG_DIRECT_COUNT;i++)
-    {
-        if(desigDirectAction[i]->text()==weapon)
-            desigDirectAction[i]->setEnabled(enabled);
-//        qDebug()<<Q_FUNC_INFO<<trackDat.tn<<weapon<<desigDirectAction[i]->isEnabled();
-
-    }
 }
 */
-
 QString track::identity2String(Identity identity)
 {
     if(identity==UNKNOWN)
@@ -396,6 +357,7 @@ QString track::identity2String(Identity identity)
     else
         return "Unidentify";
 }
+
 QString track::env2String(Environment env)
 {
     if(env==AIR)
@@ -405,16 +367,19 @@ QString track::env2String(Environment env)
     else
         return "Unknown Environment";
 }
+/*
 QString track::desig2String(Desig desig)
 {
     if(desig==EOT)
         return "EOT";
 }
+
 QString track::desigDirect2String(DesigDirect desig_direct)
 {
     if(desig_direct==M_40)
         return "40 mm";
 }
+*/
 QString track::fileImageLocation(Identity identity,Environment env)
 {
     if(env==AIR)
@@ -427,7 +392,7 @@ QString track::fileImageLocation(Identity identity,Environment env)
             return ":/tda_track_symbol/surface-netral.png";
         else if(identity==HOSTILE)
             return ":/tda_track_symbol/surface-hostile.png";
-        else if(identity==UNIDENTIFY)
+        else
             return ":/tda_track_symbol/surface-unknown.png";
     }
     else if (env==SURFACE)
@@ -440,7 +405,7 @@ QString track::fileImageLocation(Identity identity,Environment env)
             return ":/tda_track_symbol/surface-netral.png";
         else if(identity==HOSTILE)
             return ":/tda_track_symbol/surface-hostile.png";
-        else if(identity==UNIDENTIFY)
+        else
             return ":/tda_track_symbol/surface-unknown.png";
     }
 
