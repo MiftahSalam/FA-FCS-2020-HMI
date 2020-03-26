@@ -1,5 +1,6 @@
 #include "frametda.h"
 #include "ui_frametda.h"
+#include "global.h"
 
 #include <QDebug>
 #include <math.h>
@@ -72,7 +73,6 @@ void FrameTDA::zoom_change()
     }
 
     tdaScale = zoomAction[cur_checked_zoom_scale]->text().remove(" NM").toDouble();
-    //    qDebug()<<Q_FUNC_INFO<<tdaScale;
 }
 
 void FrameTDA::setConfig(QString Config)
@@ -118,7 +118,9 @@ void FrameTDA::updateDataTracks()
     try
     {
         redisClient->keys("track:Data:*",std::back_inserter(trackList));
-        qDebug() << Q_FUNC_INFO <<"track:Data query size"<<trackList.size();
+
+        if(verbose)
+            qDebug() << Q_FUNC_INFO <<"track:Data query size"<<trackList.size();
     }
     catch(Error e)
     {
@@ -127,13 +129,14 @@ void FrameTDA::updateDataTracks()
 
     if((int)trackList.size()>tnList.size())
     {
-        qDebug()<<Q_FUNC_INFO<<"lebih besar";
+//        qDebug()<<Q_FUNC_INFO<<"lebih besar";
 
         QPoint os_pos((width())/2,(height()/2));
 
         for(int i=0;i<trackList.size();i++)
         {
-            qDebug() << Q_FUNC_INFO <<"track:Data query result"<<QString::fromStdString(trackList.at(i));
+            if(verbose)
+                qDebug() << Q_FUNC_INFO <<"track:Data query result"<<QString::fromStdString(trackList.at(i));
 
             std::vector<std::string> trackQuery;
             try
@@ -150,7 +153,8 @@ void FrameTDA::updateDataTracks()
                 trackdata.cur_identity= int2Identity(QString::fromStdString(trackQuery.at(5)).toInt());
 
 
-                qDebug() << "Menampilkan data track:Data:" << trackdata.tn << trackdata.range << trackdata.bearing << trackdata.speed << trackdata.course << trackdata.cur_identity  ;
+                if(verbose)
+                    qDebug() << "Menampilkan data track:Data:" << trackdata.tn << trackdata.range << trackdata.bearing << trackdata.speed << trackdata.course << trackdata.cur_identity  ;
 
                 if(!tnList.contains(trackdata.tn))
                 {
@@ -167,7 +171,6 @@ void FrameTDA::updateDataTracks()
 
                     //track position in pixel
                     double range_pixel= range2Pixel(bufTracks.trackData.range);
-                    qDebug()<< range_pixel;
                     double range_pixel_y = range_pixel*sin((bufTracks.trackData.bearing-90)*M_PI/180);
                     double range_pixel_x  = range_pixel*cos((bufTracks.trackData.bearing-90)*M_PI/180);
                     int final_pos_y = os_pos.y()+range_pixel_y;
@@ -180,8 +183,11 @@ void FrameTDA::updateDataTracks()
                     mapTracks->insert(bufTracks.trackData.tn,bufTracks);
                     tnList.append(trackdata.tn);
 
-                    qDebug() << Q_FUNC_INFO << "insert"<< trackdata.tn;
-                    qDebug() << Q_FUNC_INFO << "mapTracks"<< mapTracks->size();
+                    if(verbose)
+                    {
+                        qDebug() << Q_FUNC_INFO << "insert"<< trackdata.tn;
+                        qDebug() << Q_FUNC_INFO << "mapTracks"<< mapTracks->size();
+                    }
                 }
             }
             catch (Error e)
@@ -192,7 +198,7 @@ void FrameTDA::updateDataTracks()
     }
     else if(trackList.size()==tnList.size())
     {
-        qDebug() << "jika sama" << tnList.size();
+//        qDebug() << "jika sama" << tnList.size();
 
         QPoint os_pos((width())/2,(height()/2));
 
@@ -215,46 +221,34 @@ void FrameTDA::updateDataTracks()
                 trackdata.course= QString::fromStdString(trackQuery.at(4)).toDouble();
                 trackdata.cur_identity= int2Identity(QString::fromStdString(trackQuery.at(5)).toInt());
 
+                if(verbose)
+                    qDebug() << "Menampilkan data track:Data:" << trackdata.tn << trackdata.range << trackdata.bearing << trackdata.speed << trackdata.course << trackdata.cur_identity  ;
 
-                qDebug() << "Menampilkan data track:Data:" << trackdata.tn << trackdata.range << trackdata.bearing << trackdata.speed << trackdata.course << trackdata.cur_identity  ;
+                int tn = trackdata.tn;
+                tracks bufTracks = mapTracks->take(tn);
+                loadTrackParam(bufTracks,trackdata);
 
-                    int tn = trackdata.tn;
-                    tracks bufTracks = mapTracks->take(tn);
-                    loadTrackParam(bufTracks,trackdata);
-
-
-                    if(cur_selected_track==tn)
-                    {
-                        bufTracks.track_symbol->setSelected(true);
-                        bufTracks.track_symbol->raise();
-                    }
-                    else
-                    {
-                        bufTracks.track_symbol->setSelected(false);
-                    }
-
-                    mapTracks->insert(bufTracks.trackData.tn,bufTracks);
-
-                    //update track position in tda
-                    double range_pixel = range2Pixel(mapTracks->value(tn).trackData.range);
-                    double range_pixel_y = range_pixel*sin((mapTracks->value(tn).trackData.bearing-90)*M_PI/180);
-                    double range_pixel_x = range_pixel*cos((mapTracks->value(tn).trackData.bearing-90)*M_PI/180);
-                    int final_pos_y = os_pos.y()+range_pixel_y;
-                    int final_pos_x = os_pos.x()+range_pixel_x;
-
-                    mapTracks->value(tn).track_symbol->setGeometry(final_pos_x-10,final_pos_y-10,60,20);
-                    mapTracks->value(tn).track_symbol->updateData(bufTracks.trackData);
-
-
-                /*
-                else //track hilang
+                if(cur_selected_track==tn)
                 {
-                    qDebug()<<Q_FUNC_INFO<<"delete one ";
+                    bufTracks.track_symbol->setSelected(true);
+                    bufTracks.track_symbol->raise();
+                }
+                else
+                {
+                    bufTracks.track_symbol->setSelected(false);
+                }
 
-                    tracks bufTracks = mapTracks->take(tnList.at(cur_track_index_update));
-                    delete bufTracks.track_symbol;
-                    tnList.removeAt(cur_track_index_update);
-                }*/
+                mapTracks->insert(bufTracks.trackData.tn,bufTracks);
+
+                //update track position in tda
+                double range_pixel = range2Pixel(mapTracks->value(tn).trackData.range);
+                double range_pixel_y = range_pixel*sin((mapTracks->value(tn).trackData.bearing-90)*M_PI/180);
+                double range_pixel_x = range_pixel*cos((mapTracks->value(tn).trackData.bearing-90)*M_PI/180);
+                int final_pos_y = os_pos.y()+range_pixel_y;
+                int final_pos_x = os_pos.x()+range_pixel_x;
+
+                mapTracks->value(tn).track_symbol->setGeometry(final_pos_x-10,final_pos_y-10,60,20);
+                mapTracks->value(tn).track_symbol->updateData(bufTracks.trackData);
             }
             catch (Error e)
             {
@@ -265,7 +259,7 @@ void FrameTDA::updateDataTracks()
     }
     else if(trackList.size()<tnList.size())
     {
-        qDebug() << "jika lebih kecil" << tnList.size();
+//        qDebug() << "jika lebih kecil" << tnList.size();
 
         QList <int> bufTn;
         QList <int> removeTn;
@@ -291,8 +285,11 @@ void FrameTDA::updateDataTracks()
 
         }
 
-        qDebug() << "track ID redis" << bufTn;
-        qDebug() << "track ID local" << tnList;
+        if(verbose)
+        {
+            qDebug() << "track ID redis" << bufTn;
+            qDebug() << "track ID local" << tnList;
+        }
 
         for(int i=0; i<tnList.size();i++)
         {
@@ -304,12 +301,14 @@ void FrameTDA::updateDataTracks()
             }
         }
 
-        qDebug() << "mencari yang beda" << removeTn;
+        if(verbose)
+            qDebug() << "mencari yang beda" << removeTn;
 
         for(int i=0; i<removeTn.size();i++)
             tnList.removeAll(removeTn.at(i));
 
-        qDebug() << "remove" << removeTn;
+        if(verbose)
+            qDebug() << "remove" << removeTn;
     }
 }
 

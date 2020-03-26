@@ -13,10 +13,10 @@ void track::buildUI(trackParam param)
     trackDat = param;
 
     current_symbol_image = fileImageLocation(trackDat.cur_identity,trackDat.cur_env); //get image from file
-    qDebug()<<current_symbol_image;
+//    qDebug()<<current_symbol_image;
     QImage image(current_symbol_image);
 
-    /*contex menu desig*/
+    /*contex menu desig
     desigSubMenu = new QMenu("Desig",this);
     desigSubMenu->setStyleSheet("QMenu{color: rgb(255,255,255);background-color: rgb(0,0,0);selection-color: yellow; item:disabled: black;}");
     for(int i=0;i<DESIG_COUNT;i++)
@@ -28,8 +28,9 @@ void track::buildUI(trackParam param)
         desigSubMenu->addAction(desigAction[i]);
     }
     cur_checked_desig = 100; //no checked
+    */
 
-    /*contex menu desig direct*/
+    /*contex menu desig direct
     desigDirectSubMenu = new QMenu("Direct",this);
     desigDirectSubMenu->setStyleSheet("QMenu{color: rgb(255,255,255);background-color: rgb(0,0,0);selection-color: yellow; item:disabled: black;}");
     for(int i=0;i<DESIG_DIRECT_COUNT;i++)
@@ -41,6 +42,7 @@ void track::buildUI(trackParam param)
         desigDirectSubMenu->addAction(desigDirectAction[i]);
     }
     desigSubMenu->addMenu(desigDirectSubMenu);
+    */
 
     /*contex menu identity*/
     identitySubMenu = new QMenu("Identity",this);
@@ -64,6 +66,7 @@ void track::buildUI(trackParam param)
         envAction[i] = new QAction(env2String(int2Environment(i)),this);
         connect(envAction[i],SIGNAL(triggered()),this,SLOT(environment_change()));
         envAction[i]->setCheckable(true);
+        envAction[i]->setDisabled(true);
 
         envSubMenu->addAction(envAction[i]);
     }
@@ -204,15 +207,15 @@ void track::environment_change()
 {
     for(int i=0;i<ENVIRONMENT_COUNT;i++)
     {
-        if(envAction[i]->isChecked() && i!=cur_checked_env)
+        if(envAction[i]->isChecked() || i!=cur_checked_env)
         {
-            envAction[cur_checked_env]->setEnabled(false);
+            envAction[cur_checked_env]->setChecked(true);
             cur_checked_env = i;
         }
     }
     env_change_signal(trackDat.tn,int2Environment(cur_checked_env));
 }
-
+/*
 void track::desig_change()
 {
     QAction *signalSender = dynamic_cast<QAction*>(sender());
@@ -340,7 +343,7 @@ void track::desig_feedback(int tn,bool approve,QString desig_mode)
     if(no_checked_eot)
         cur_checked_desig = 100;
 }
-
+*/
 QString track::identity2String(Identity identity)
 {
     if(identity==UNKNOWN)
@@ -364,7 +367,7 @@ QString track::env2String(Environment env)
     else
         return "Unknown Environment";
 }
-
+/*
 QString track::desig2String(Desig desig)
 {
     if(desig==EOT)
@@ -376,7 +379,7 @@ QString track::desigDirect2String(DesigDirect desig_direct)
     if(desig_direct==M_40)
         return "40 mm";
 }
-
+*/
 QString track::fileImageLocation(Identity identity,Environment env)
 {
     if(env==AIR)
