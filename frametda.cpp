@@ -8,6 +8,7 @@
 #include <QMouseEvent>
 #include <QDebug>
 #include <QMessageBox>
+#include <QDateTime>
 
 
 FrameTDA::FrameTDA(QWidget *parent) :
@@ -411,6 +412,16 @@ void FrameTDA::paintEvent(QPaintEvent *event)
     painter.setPen(QColor(192,128,0,255));
     painter.translate(width()/2,height()/2);
 
+    // ==== Clock ==== //
+    QDateTime dateTime = dateTime.currentDateTime();
+    QString dateTimeString = dateTime.toString("dd-MM-yyyy hh:mm:ss");
+
+    QRect rect1(-75,(-height()/2)+10,150,25);
+    QTextOption opt1;
+    opt1.setAlignment(Qt::AlignBaseline);
+
+    painter.drawText(rect1,dateTimeString,opt1);
+
     // ==== Compass Scale Text ==== //
     int range = qMin(width(),height())/4;
     QString text;
@@ -471,6 +482,17 @@ void FrameTDA::paintEvent(QPaintEvent *event)
     font.setPixelSize(11);
     painter.setFont(font);
     painter.drawText(rect,QString("40mm"),opt);
+
+    // ==== Gun barrel ==== //
+    const double bearing = 0;
+
+    int sideMax1 = qMax(width(),height());
+    painter.rotate(currentHeading+bearing);
+    painter.setPen(QPen(Qt::green, 5));
+    //painter.setPen(QColor(0, 100, 0));
+    painter.drawLine(0,0,0,(-sideMax1/20));
+    painter.rotate(-currentHeading-bearing);
+
 
 }
 

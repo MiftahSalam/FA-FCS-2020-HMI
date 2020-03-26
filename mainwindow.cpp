@@ -3,6 +3,9 @@
 #include "global.h"
 
 #include <QMessageBox>
+#include <QDateTime>
+#include <QTextOption>
+#include <QRect>
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
@@ -26,6 +29,10 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->gridLayout->addWidget(ui->frameBottomGun,0,4,6,1);
     ui->gridLayout->addWidget(ui->frameBottomOSD,6,0,1,4);
     ui->gridLayout->addWidget(ui->frameBottomClose,6,4,1,1);
+
+
+
+   // ui->label->setText(dateTimeString);
 
     /*
     ui->gridLayout->addWidget(ui->frameTDA,0,0,5,3);
@@ -75,3 +82,4 @@ void MainWindow::setConfig(QSettings &Config)
 
     splash->finish(this);
 }
+
