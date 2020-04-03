@@ -115,7 +115,7 @@
   <customwidget>
    <class>FrameGun</class>
    <extends>QFrame</extends>
-   <header>framegun.h</header>
+   <header location="global">framegun.h</header>
    <container>1</container>
   </customwidget>
   <customwidget>
