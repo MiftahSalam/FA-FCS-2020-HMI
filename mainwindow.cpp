@@ -15,6 +15,7 @@ MainWindow::MainWindow(QWidget *parent) :
 
     connect(&mastertimer, SIGNAL(timeout()), ui->frameBottomOSD, SLOT(on_osdTimerTimeOut()));
     connect(&mastertimer, SIGNAL(timeout()), this, SLOT(on_timeout()));
+    connect(&mastertimer, SIGNAL(timeout()), ui->frameBottomGun, SLOT(on_gunTimerTimeOut()));
 
     mastertimer.start(1000);
 
@@ -73,12 +74,17 @@ void MainWindow::setConfig(QSettings &Config)
 
     QString osd = Config.value("Redis/osd", "192.168.1.2").toString();
     QString track = Config.value("Redis/track", "192.168.1.2").toString();
+    QString gun = Config.value("Redis/gun", "192.168.1.2").toString();
+
     verbose = Config.value("Apps/verbose", false).toBool();
     qDebug()<<Q_FUNC_INFO<<"verbose"<<verbose;
 
     splash->showMessage("Setting up osd database connection...",Qt::AlignCenter);
     ui->frameBottomOSD->setConfig(osd);
+    splash->showMessage("Setting up track database connection...",Qt::AlignCenter);
     ui->frameTDA->setConfig(track);
+    splash->showMessage("Setting up gun database connection...",Qt::AlignCenter);
+    ui->frameBottomGun->setConfig(gun);
 
     splash->finish(this);
 }

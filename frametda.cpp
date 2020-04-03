@@ -1,8 +1,8 @@
 #include "frametda.h"
 #include "ui_frametda.h"
 #include "global.h"
+#include "unistd.h"
 
-#include <QDebug>
 #include <math.h>
 #include <QContextMenuEvent>
 #include <QMouseEvent>
@@ -87,7 +87,10 @@ void FrameTDA::setConfig(QString Config)
     }
     catch (Error e)
     {
-        qDebug() <<Q_FUNC_INFO;
+        splash->showMessage("Track Setup error\n\nDatabase error: " + QString(e.what()) + "\n\nApplication now will clossing ",Qt::AlignCenter);
+        sleep(3);
+        splash->finish(this);
+        qApp->exit();
     }
 }
 
@@ -492,8 +495,6 @@ void FrameTDA::paintEvent(QPaintEvent *event)
     //painter.setPen(QColor(0, 100, 0));
     painter.drawLine(0,0,0,(-sideMax1/20));
     painter.rotate(-currentHeading-bearing);
-
-
 }
 
 int FrameTDA::zoomScale2Int(zoomScale scale)

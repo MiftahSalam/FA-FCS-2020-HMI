@@ -207,7 +207,7 @@ void FrameOSD::GyroTimerTimeOut()
     catch (Error e)
     {
         curStatusString = e.what();
-        qDebug() << Q_FUNC_INFO <<  curStatusString;
+        //qDebug() << Q_FUNC_INFO <<  curStatusString;
     }
 
     //qDebug() << Q_FUNC_INFO << inersiamode;
