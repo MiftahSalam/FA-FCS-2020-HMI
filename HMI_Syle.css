@@ -46,3 +46,9 @@ QHeaderView::section {
     padding-left: 4px;
     border: 1px solid #6c6c6c;
 }
+
+QComboBox QAbstractItemView {
+    border: 1px solid black;
+    selection-background-color: yellow;
+    selection-color: black;
+}

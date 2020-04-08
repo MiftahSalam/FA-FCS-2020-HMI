@@ -133,7 +133,7 @@ void FrameTDA::updateDataTracks()
 
     if((int)trackList.size()>tnList.size())
     {
-//        qDebug()<<Q_FUNC_INFO<<"lebih besar";
+//      qDebug()<<Q_FUNC_INFO<<"lebih besar";
 
         QPoint os_pos((width())/2,(height()/2));
 
@@ -594,7 +594,7 @@ FrameTDA::zoomScale FrameTDA::zoomString2Scale(QString scale)
 void FrameTDA::setHeading(QString heading)
 {
     currentHeading = heading.toFloat();
-    //    qDebug()<<Q_FUNC_INFO<<currentHeading;
+//    qDebug()<<Q_FUNC_INFO<<currentHeading;
 
 }
 
