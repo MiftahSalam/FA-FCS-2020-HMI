@@ -16,6 +16,7 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(&mastertimer, SIGNAL(timeout()), ui->frameBottomOSD, SLOT(on_osdTimerTimeOut()));
     connect(&mastertimer, SIGNAL(timeout()), this, SLOT(on_timeout()));
     connect(&mastertimer, SIGNAL(timeout()), ui->frameBottomGun, SLOT(on_gunTimerTimeOut()));
+//    connect(&mastertimer, SIGNAL(timeout()), ui->frameBottomWAP, SLOT(on_gunTimerTimeOut()));
 
     mastertimer.start(1000);
 
@@ -49,6 +50,7 @@ MainWindow::MainWindow(QWidget *parent) :
 void MainWindow::on_timeout()
 {
     ui->frameTDA->setHeading(ui->frameBottomOSD->getHeading());
+    ui->frameBottomWAP->setAccessStatus(ui->frameBottomGun->getAccessStatus());
 }
 
 MainWindow::~MainWindow()
@@ -76,6 +78,7 @@ void MainWindow::setConfig(QSettings &Config)
     QString track = Config.value("Redis/track", "192.168.1.2").toString();
     QString gun = Config.value("Redis/gun", "192.168.1.2").toString();
 
+
     verbose = Config.value("Apps/verbose", false).toBool();
     qDebug()<<Q_FUNC_INFO<<"verbose"<<verbose;
 
@@ -85,6 +88,8 @@ void MainWindow::setConfig(QSettings &Config)
     ui->frameTDA->setConfig(track);
     splash->showMessage("Setting up gun database connection...",Qt::AlignCenter);
     ui->frameBottomGun->setConfig(gun);
+    splash->showMessage("Setting up wap database connection...",Qt::AlignCenter);
+    ui->frameBottomWAP->setConfig(track, gun);
 
     splash->finish(this);
 }

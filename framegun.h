@@ -5,6 +5,7 @@
 #include <QFrame>
 #include <QTimer>
 
+
 namespace Ui {
 class FrameGun;
 }
@@ -17,6 +18,7 @@ public:
     explicit FrameGun(QWidget *parent = 0);
     ~FrameGun();
     void setConfig (QString Config);
+    QString getAccessStatus() const;
 
 private slots:
     void on_gunTimerTimeOut();

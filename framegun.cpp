@@ -38,10 +38,15 @@ FrameGun::~FrameGun()
     delete ui;
 }
 
+QString FrameGun::getAccessStatus() const
+{
+    return gunstatus.access_status;
+}
+
 void FrameGun::setConfig(QString Config)
 {
     this->Config = Config;
-    qDebug() <<Q_FUNC_INFO<<"Redis config"<<this->Config;
+    qDebug() <<Q_FUNC_INFO <<"Redis config" <<this->Config;
 
     try
     {
@@ -146,6 +151,7 @@ void FrameGun::on_gunTimerTimeOut()
                     ui->labelGunStatEl->setText(gunstatus.elevation);
                     ui->labelGunStatEl->setStyleSheet("color:rgb(0, 255, 0);");
 
+                    // ==== Gun Op Status ===== //
                     std::vector<std::string> data_operational;
                     std::string data_engagement;
                     try
@@ -159,12 +165,16 @@ void FrameGun::on_gunTimerTimeOut()
                         {
                             ui->lineEditAz->setDisabled(true);
                             ui->lineEditEl->setDisabled(true);
+                            ui->comboBoxGunBarControlMode->setEnabled(true);
                             ui->pushButtonGunBarControlApply->setDisabled(true);
                         }
                         else if(data_engagement == "Manual")
                         {
                             ui->lineEditAz->setEnabled(true);
                             ui->lineEditEl->setEnabled(true);
+                            ui->lineEditAz->setText("0.0");
+                            ui->lineEditEl->setText("0.0");
+                            ui->comboBoxGunBarControlMode->setEnabled(true);
                             ui->pushButtonGunBarControlApply->setEnabled(true);
                         }
 
@@ -206,9 +216,14 @@ void FrameGun::on_gunTimerTimeOut()
             }
             else
             {
-
                 ui->labelGunStatAccess->setStyleSheet("color: rgb(255, 0, 0);");
                 ui->labelGunStatAccess->setText("Local");
+                ui->lineEditAz->setDisabled(true);
+                ui->lineEditEl->setDisabled(true);
+                ui->lineEditAz->setText("");
+                ui->lineEditEl->setText("");
+                ui->comboBoxGunBarControlMode->setDisabled(true);
+                ui->pushButtonGunBarControlApply->setDisabled(true);
 
                 ui->labelGunStatAz->setText("");
                 ui->labelGunStatEl->setText("");
