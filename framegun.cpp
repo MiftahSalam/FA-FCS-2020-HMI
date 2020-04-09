@@ -56,12 +56,10 @@ void FrameGun::setConfig(QString Config)
         redisClient->hset("engagement", "azimuth", "0");
         redisClient->hset("engagement", "elevation", "0");
 
-        ui->lineEditAz->setText("0");
-        ui->lineEditEl->setText("0");
+        ui->lineEditAz->setText("0.0");
+        ui->lineEditEl->setText("0.0");
         ui->lineEditAz->setStyleSheet("color:rgb(255, 255, 255);");
         ui->lineEditEl->setStyleSheet("color:rgb(255, 255, 255);");
-
-
     }
     catch (Error e)
     {
@@ -172,8 +170,6 @@ void FrameGun::on_gunTimerTimeOut()
                         {
                             ui->lineEditAz->setEnabled(true);
                             ui->lineEditEl->setEnabled(true);
-                            ui->lineEditAz->setText("0.0");
-                            ui->lineEditEl->setText("0.0");
                             ui->comboBoxGunBarControlMode->setEnabled(true);
                             ui->pushButtonGunBarControlApply->setEnabled(true);
                         }
@@ -261,6 +257,8 @@ void FrameGun::on_comboBoxGunBarControlMode_activated(const QString &arg1)
     redisClient->hset("engagement", "mode", arg1.toUtf8().constData());
     redisClient->hset("engagement", "azimuth", "0.0");
     redisClient->hset("engagement", "elevation", "0.0");
+    redisClient->hset("engagement", "azimuth_corr", "0.0");
+    redisClient->hset("engagement", "elevation_corr", "0.0");
 
     if (arg1 == "Manual")
     {
