@@ -30,6 +30,8 @@ private slots:
 
     void on_comboBoxWAPMode_activated(const QString &arg1);
 
+    void on_pushButtonCorrectionApply_clicked();
+
 private:
     Ui::FrameWAP *ui;
 
@@ -38,6 +40,8 @@ private:
     Redis *redisTrack;
     Redis *redisGun;
     QString currentAccessStatus;
+    QString curStatusString;
+    QString curEngStatus;
 };
 
 #endif // FRAMEWAP_H
