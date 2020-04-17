@@ -30,6 +30,7 @@ FrameTDA::FrameTDA(QWidget *parent) :
     statusBarMouse->setObjectName(QString::fromUtf8("statusBarMouse"));
     statusBarSelectedTrack = new QStatusBar(this);
     statusBarSelectedTrack->setObjectName(QString::fromUtf8("statusBarSelectedTrack"));
+    statusBarSelectedTrack->hide();
 
     // ==== Mouse event ==== //
     setMouseTracking(true);
@@ -136,16 +137,16 @@ void FrameTDA::updateDataTracks()
 //      qDebug()<<Q_FUNC_INFO<<"lebih besar";
 
         QPoint os_pos((width())/2,(height()/2));
+        std::vector<std::string> trackQuery;
 
         for(int i=0;i<trackList.size();i++)
         {
             if(verbose)
                 qDebug() << Q_FUNC_INFO <<"track:Data query result"<<QString::fromStdString(trackList.at(i));
 
-            std::vector<std::string> trackQuery;
             try
             {
-                redisClient->hmget(trackList.at(i).data(), {"id", "range", "bearing", "speed", "course", "identity" }, std::back_inserter(trackQuery));
+                redisClient->hmget(trackList.at(i).data(), {"id", "range", "bearing", "speed", "course", "identity", "weapon_assigned" }, std::back_inserter(trackQuery));
 
                 trackParam trackdata;
 
@@ -155,7 +156,9 @@ void FrameTDA::updateDataTracks()
                 trackdata.speed= QString::fromStdString(trackQuery.at(3)).toDouble();
                 trackdata.course= QString::fromStdString(trackQuery.at(4)).toDouble();
                 trackdata.cur_identity= int2Identity(QString::fromStdString(trackQuery.at(5)).toInt());
+                trackdata.weapon_assign= QString::fromStdString(trackQuery.at(6));
 
+                trackQuery.clear();
 
                 if(verbose)
                     qDebug() << "Menampilkan data track:Data:" << trackdata.tn << trackdata.range << trackdata.bearing << trackdata.speed << trackdata.course << trackdata.cur_identity  ;
@@ -205,16 +208,16 @@ void FrameTDA::updateDataTracks()
 //        qDebug() << "jika sama" << tnList.size();
 
         QPoint os_pos((width())/2,(height()/2));
+        std::vector<std::string> trackQuery;
 
         qSort(tnList.begin(),tnList.end());
 
         for(int i=0; i<trackList.size();i++)
         {
-            std::vector<std::string> trackQuery;
 
             try
             {
-                redisClient->hmget(trackList.at(i).data(), {"id", "range", "bearing", "speed", "course", "identity" }, std::back_inserter(trackQuery));
+                redisClient->hmget(trackList.at(i).data(), {"id", "range", "bearing", "speed", "course", "identity", "weapon_assigned" }, std::back_inserter(trackQuery));
 
                 trackParam trackdata;
 
@@ -224,9 +227,12 @@ void FrameTDA::updateDataTracks()
                 trackdata.speed= QString::fromStdString(trackQuery.at(3)).toDouble();
                 trackdata.course= QString::fromStdString(trackQuery.at(4)).toDouble();
                 trackdata.cur_identity= int2Identity(QString::fromStdString(trackQuery.at(5)).toInt());
+                trackdata.weapon_assign= QString::fromStdString(trackQuery.at(6));
+
+                trackQuery.clear();
 
                 if(verbose)
-                    qDebug() << "Menampilkan data track:Data:" << trackdata.tn << trackdata.range << trackdata.bearing << trackdata.speed << trackdata.course << trackdata.cur_identity  ;
+                    qDebug() << "Menampilkan data track:Data:" << trackdata.tn << trackdata.range << trackdata.bearing << trackdata.speed << trackdata.course << trackdata.cur_identity  <<trackdata.weapon_assign;
 
                 int tn = trackdata.tn;
                 tracks bufTracks = mapTracks->take(tn);

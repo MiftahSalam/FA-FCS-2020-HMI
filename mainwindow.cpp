@@ -34,7 +34,7 @@ MainWindow::MainWindow(QWidget *parent) :
 
 
 
-   // ui->label->setText(dateTimeString);
+//    ui->label->setText(dateTimeString);
 
     /*
     ui->gridLayout->addWidget(ui->frameTDA,0,0,5,3);

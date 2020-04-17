@@ -53,8 +53,8 @@ void FrameGun::setConfig(QString Config)
         redisClient = new Redis(this->Config.toStdString());
 
         redisClient->hset("engagement", "mode", "Manual");
-        redisClient->hset("engagement", "azimuth", "0");
-        redisClient->hset("engagement", "elevation", "0");
+        redisClient->hset("engagement", "azimuth", "0.0");
+        redisClient->hset("engagement", "elevation", "0.0");
 
         ui->lineEditAz->setText("0.0");
         ui->lineEditEl->setText("0.0");
