@@ -50,6 +50,7 @@ MainWindow::MainWindow(QWidget *parent) :
 void MainWindow::on_timeout()
 {
     ui->frameTDA->setHeading(ui->frameBottomOSD->getHeading());
+    ui->frameTDA->setGunbalisticdata(ui->frameBottomGun->getGunbalisticdata());
     ui->frameBottomWAP->setAccessStatus(ui->frameBottomGun->getAccessStatus());
 }
 

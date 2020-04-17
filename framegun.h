@@ -18,6 +18,9 @@ public:
     explicit FrameGun(QWidget *parent = 0);
     ~FrameGun();
     void setConfig (QString Config);
+
+    QStringList getGunbalisticdata() const;
+
     QString getAccessStatus() const;
 
 private slots:
@@ -28,6 +31,13 @@ private slots:
     void on_pushButtonGunBarControlApply_clicked();
 
 private:
+    struct GunBalistic
+    {
+        QString orientation;
+        QString blind_arc;
+        QString max_range;
+    };
+
     struct GunStatus
     {
         QString technical_status;
@@ -53,6 +63,7 @@ private:
 
     Ui::FrameGun *ui;
     Redis *redisClient;
+    GunBalistic gunbalistic;
     GunStatus gunstatus;
     OperationalStatus operationalstatus;
     EngagementStatus engagementstatus;

@@ -354,43 +354,11 @@ void FrameTDA::RC_radar(QPoint pos)
     //qDebug()<<Q_FUNC_INFO;
 
     QMenu *menu = new QMenu(this);
-    /*
-    QMenu *selectTrackSubMenu = new QMenu("Select Track", this);
 
-    // ==== select track handling ==== //
-    for(int i=0;i<tnList.size();i++)
-    {
-        QAction *stAction = new QAction(QString::number(tnList.at(i)),this);
-        connect(stAction,SIGNAL(triggered()),this,SLOT(selectedTrack()));
-        stAction->setCheckable(true);
-
-        if(cur_selected_track==tnList.at(i) && cur_selected_track>-1)
-            stAction->setChecked(true);
-
-        selectTrackSubMenu->addAction(stAction);
-        stAction->deleteLater();
-    }
-   */
     menu->setStyleSheet("QMenu{color: rgb(255,255,255);background-color: rgb(0,0,0);selection-color: yellow;}");
     menu->addMenu(zoomSubMenu);
-    //menu->addMenu(selectTrackSubMenu);
     menu->exec(pos);
 }
-
-/*
-void FrameTDA::selectedTrack()
-{
-    QAction *actionSender = (QAction *) QObject::sender();
-    int selectTrack = actionSender->text().toInt();
-
-    //qDebug()<<Q_FUNC_INFO<< selectTrack;
-
-    if(selectTrack!=cur_selected_track)
-        cur_selected_track = actionSender->text().toInt();
-    else
-        cur_selected_track = -1;
-}
-*/
 
 void FrameTDA::mousepos(QPointF point)
 {
@@ -471,6 +439,17 @@ void FrameTDA::paintEvent(QPaintEvent *event)
     painter.rotate(-currentHeading);
 
     // ==== Gun Coverage ==== //
+    QString str = currentGunBalistic.join(",");
+//    qDebug() << str ;
+
+    QStringList list = str.split(',');
+//    qDebug() << list;
+
+    QString orientation = list.at(0);
+    QString blind_arc1 = list.at(1);
+
+    qDebug() << orientation << blind_arc1;
+
     const qreal gun_orientation = 0.0;
     const qreal blind_arc = 90.0;
     const qreal gun_fire_range = 7.0; //NM
@@ -601,7 +580,13 @@ void FrameTDA::setHeading(QString heading)
 {
     currentHeading = heading.toFloat();
 //    qDebug()<<Q_FUNC_INFO<<currentHeading;
+}
 
+void FrameTDA::setGunbalisticdata(QStringList datagunbalistic)
+{
+    currentGunBalistic = datagunbalistic;
+
+//    qDebug() <<"hasil set"<<datagunbalistic;
 }
 
 int FrameTDA::range2Pixel(double range)

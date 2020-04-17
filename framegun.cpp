@@ -43,10 +43,22 @@ QString FrameGun::getAccessStatus() const
     return gunstatus.access_status;
 }
 
+QStringList FrameGun::getGunbalisticdata() const
+{
+    QStringList datagunbalistic;
+    datagunbalistic <<gunbalistic.orientation <<gunbalistic.blind_arc <<gunbalistic.max_range;
+
+//    qDebug() << "hasil get" <<datagunbalistic ;
+    return datagunbalistic;
+
+}
+
 void FrameGun::setConfig(QString Config)
 {
     this->Config = Config;
     qDebug() <<Q_FUNC_INFO <<"Redis config" <<this->Config;
+
+    std::vector<std::string> gunbalisticdata;
 
     try
     {
@@ -55,6 +67,13 @@ void FrameGun::setConfig(QString Config)
         redisClient->hset("engagement", "mode", "Manual");
         redisClient->hset("engagement", "azimuth", "0.0");
         redisClient->hset("engagement", "elevation", "0.0");
+        redisClient->hmget("Gun_balistic_data", {"orientation", "blind_arc", "max_range"}, std::back_inserter(gunbalisticdata));
+
+        gunbalistic.orientation = QString::fromStdString(gunbalisticdata.at(0));
+        gunbalistic.blind_arc = QString::fromStdString(gunbalisticdata.at(1));
+        gunbalistic.max_range = QString::fromStdString(gunbalisticdata.at(2));
+
+        //qDebug() << Q_FUNC_INFO << gunbalistic.orientation <<gunbalistic.blind_arc <<gunbalistic.max_range;
 
         ui->lineEditAz->setText("0.0");
         ui->lineEditEl->setText("0.0");
@@ -68,7 +87,6 @@ void FrameGun::setConfig(QString Config)
         splash->finish(this);
         qApp->exit();
     }
-
 }
 
 void FrameGun::on_gunTimerTimeOut()
@@ -322,3 +340,5 @@ void FrameGun::on_pushButtonGunBarControlApply_clicked()
         qDebug() << Q_FUNC_INFO <<  curStatusString;
     }
 }
+
+

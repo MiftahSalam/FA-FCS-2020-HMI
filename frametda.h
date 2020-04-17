@@ -30,6 +30,8 @@ public:
     ~FrameTDA();
     void setHeading(QString heading);
 
+    void setGunbalisticdata(QStringList datagunbalistic) ;
+
     void setConfig (QString Config);
 
 
@@ -82,6 +84,7 @@ private:
     Redis *redisClient;
     QString Config;
 
+    QStringList currentGunBalistic;
     float currentHeading;
     double tdaScale;
 
