@@ -70,6 +70,8 @@ private:
        track *track_symbol;
     };
 
+
+
    Ui::FrameTDA *ui;
 
     QTimer *timer;

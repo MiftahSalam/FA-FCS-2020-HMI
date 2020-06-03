@@ -334,7 +334,6 @@ void FrameTDA::loadTrackParam(tracks &bufParam, trackParam track_data)
     bufParam.trackData.cur_source = int2TrackSource(0);
     bufParam.trackData.cur_env = int2Environment(0);
     bufParam.trackData.weapon_assign = track_data.weapon_assign;
-
 }
 
 void FrameTDA::track_identity_changed(int tn,Identity identity)
@@ -480,6 +479,57 @@ void FrameTDA::paintEvent(QPaintEvent *event)
     //painter.setPen(QColor(0, 100, 0));
     painter.drawLine(0,0,0,(-sideMax1/20));
     painter.rotate(-currentHeading-bearing);
+
+    // ==== Fire Triangle (QMap)==== //
+    foreach(int i, mapTracks->keys())
+    {
+        if(mapTracks->value(i).trackData.weapon_assign == "40 mm")
+        {
+            qDebug() << Q_FUNC_INFO
+                     << mapTracks->value(i).trackData.tn << ","
+                     << mapTracks->value(i).trackData.range << ","
+                     << mapTracks->value(i).trackData.bearing << ","
+                     << mapTracks->value(i).trackData.speed << ","
+                     << mapTracks->value(i).trackData.course << ","
+                     << mapTracks->value(i).trackData.cur_identity << ","
+                     << mapTracks->value(i).trackData.weapon_assign;
+
+            std::vector<std::string> fire;
+            redisClient->hmget("fire_triangle", {"ttlf", "ttlf_x", "ttlf_y"}, std::back_inserter(fire));
+
+            QString::fromStdString(fire.at(0));
+            QString::fromStdString(fire.at(1));
+            QString::fromStdString(fire.at(2));
+
+            //qDebug() << Q_FUNC_INFO << firetriangle.TTLF << firetriangle.ttlf_x << firetriangle.ttlf_y;
+
+
+            double TTLF_x = QString::fromStdString(fire.at(1)).toDouble();
+            double TTLF_y = QString::fromStdString(fire.at(2)).toDouble();
+            double rng = range2Pixel(mapTracks->value(i).trackData.range);
+            double brn = 90-mapTracks->value(i).trackData.bearing;
+            int tn = mapTracks->value(i).trackData.tn;
+            painter.setPen(QColor(0,255,0,255));
+            painter.drawLine(0,0,range2Pixel(TTLF_x),-range2Pixel(TTLF_y));
+            painter.drawLine(rng*cos(brn*(M_PI/180)),-rng*sin(brn*(M_PI/180)),range2Pixel(TTLF_x),-range2Pixel(TTLF_y));
+            painter.drawLine(rng*cos(brn*(M_PI/180)),-rng*sin(brn*(M_PI/180)),0,0);
+
+            statusBarSelectedTrack->showMessage(QString("Tn : %1     "
+                                                        "Range : %2 NM     "
+                                                        "Bearing : %3     "
+                                                        "Speed : %4 kts     "
+                                                        "Course : %5     "
+                                                        //                                                    "Height : %6 ft     "
+                                                        )
+                                                .arg(tn)
+                                                .arg(QString::number(mapTracks->value(tn).trackData.range,'f',2))
+                                                .arg(QString::number(mapTracks->value(tn).trackData.bearing,'f',2))
+                                                .arg(QString::number(mapTracks->value(tn).trackData.speed,'f',2))
+                                                .arg(QString::number(mapTracks->value(tn).trackData.course,'f',2))
+                                                );
+            break;
+        }
+    }
 }
 
 int FrameTDA::zoomScale2Int(zoomScale scale)
