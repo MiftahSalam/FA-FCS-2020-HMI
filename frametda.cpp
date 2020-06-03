@@ -497,13 +497,6 @@ void FrameTDA::paintEvent(QPaintEvent *event)
             std::vector<std::string> fire;
             redisClient->hmget("fire_triangle", {"ttlf", "ttlf_x", "ttlf_y"}, std::back_inserter(fire));
 
-            QString::fromStdString(fire.at(0));
-            QString::fromStdString(fire.at(1));
-            QString::fromStdString(fire.at(2));
-
-            //qDebug() << Q_FUNC_INFO << firetriangle.TTLF << firetriangle.ttlf_x << firetriangle.ttlf_y;
-
-
             double TTLF_x = QString::fromStdString(fire.at(1)).toDouble();
             double TTLF_y = QString::fromStdString(fire.at(2)).toDouble();
             double rng = range2Pixel(mapTracks->value(i).trackData.range);
@@ -513,6 +506,8 @@ void FrameTDA::paintEvent(QPaintEvent *event)
             painter.drawLine(0,0,range2Pixel(TTLF_x),-range2Pixel(TTLF_y));
             painter.drawLine(rng*cos(brn*(M_PI/180)),-rng*sin(brn*(M_PI/180)),range2Pixel(TTLF_x),-range2Pixel(TTLF_y));
             painter.drawLine(rng*cos(brn*(M_PI/180)),-rng*sin(brn*(M_PI/180)),0,0);
+
+            qDebug() << Q_FUNC_INFO << TTLF_x << TTLF_y;
 
             statusBarSelectedTrack->showMessage(QString("Tn : %1     "
                                                         "Range : %2 NM     "
