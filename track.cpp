@@ -215,135 +215,7 @@ void track::environment_change()
     }
     env_change_signal(trackDat.tn,int2Environment(cur_checked_env));
 }
-/*
-void track::desig_change()
-{
-    QAction *signalSender = dynamic_cast<QAction*>(sender());
-    qDebug()<< signalSender->text();
 
-    for(int i=0;i<DESIG_COUNT;i++)
-    {
-        if(desigAction[i]->isChecked() && i!=cur_checked_desig)
-        {
-            if(cur_checked_desig < DESIG_COUNT)
-                desigAction[cur_checked_desig]->setChecked(false);
-
-            cur_checked_desig = i;
-        }
-    }
-
-    desig_request(signalSender->text());
-
-}
-
-void track::desig_direct_change()
-{
-    QAction *signalSender = dynamic_cast<QAction*>(sender());
-    QString desig_str;
-    qDebug()<< signalSender->text()<<signalSender->isChecked();
-
-    if(signalSender->isChecked())
-        desig_str = QString("Direct,add,%2").arg(signalSender->text());
-    else
-        desig_str = QString("Direct,rm,%2").arg(signalSender->text());
-
-    desig_request(desig_str);
-
-}
-
-void track::desig_request(QString desig_mode)
-{
-    qDebug()<<desig_mode;
-
-    bool checked_status;
-
-    if(desig_mode == "EOT")
-    {
-        QAction *liodAction;
-
-        for(int i=0;i<DESIG_COUNT;i++)
-        {
-            if(desigAction[i]->text()=="EOT")
-            {
-                liodAction = desigAction[i];
-                break;
-            }
-        }
-
-        checked_status = liodAction->isChecked();
-    }
-
-    emit desig_request_signal(trackDat.tn,checked_status,desig_mode);
-
-}
-
-void track::desig_feedback(int tn,bool approve,QString desig_mode)
-{
-    if(tn==trackDat.tn)
-    {
-        if(!approve)
-        {
-            QAction *action;
-            bool action_checked_found = false;
-
-            if(desig_mode == "EOT")
-            {
-                for(int i=0;i<DESIG_COUNT;i++)
-                {
-                    if(desigAction[i]->text()== desig_mode)
-                    {
-                        action = desigAction[i];
-                        action_checked_found = true;
-                        break;
-                    }
-                }
-            }
-            else if(desig_mode.contains("Direct"))
-            {
-                QString direct_mode = desig_mode.split(",").at(2);
-
-                for(int i=0;i<DESIG_DIRECT_COUNT;i++)
-                {
-                    if(desigDirectAction[i]->text() == direct_mode)
-                    {
-                        action = desigDirectAction[i];
-                        action_checked_found = true;
-                        break;
-                    }
-                }
-
-            }
-
-            if(action_checked_found)
-                action->setChecked(false);
-        }
-    }
-
-    bool no_checked_eot = true;
-    bool no_checked_direct = true;
-
-    for(int i=0;i<DESIG_COUNT;i++)
-    {
-        if(desigAction[i]->isChecked())
-        {
-            no_checked_eot = false;
-            break;
-        }
-    }
-
-    for(int i=0;i<DESIG_DIRECT_COUNT;i++)
-    {
-        if(desigDirectAction[i]->isChecked())
-        {
-            no_checked_direct = false;
-            break;
-        }
-    }
-
-    if(no_checked_eot)
-        cur_checked_desig = 100;
-}
-*/
 QString track::identity2String(Identity identity)
 {
     if(identity==UNKNOWN)
@@ -367,19 +239,7 @@ QString track::env2String(Environment env)
     else
         return "Unknown Environment";
 }
-/*
-QString track::desig2String(Desig desig)
-{
-    if(desig==EOT)
-        return "EOT";
-}
 
-QString track::desigDirect2String(DesigDirect desig_direct)
-{
-    if(desig_direct==M_40)
-        return "40 mm";
-}
-*/
 QString track::fileImageLocation(Identity identity,Environment env)
 {
     if(env==AIR)

@@ -20,8 +20,8 @@ FrameOSD::FrameOSD(QWidget *parent) :
     QRegExpValidator *valiNumber = new QRegExpValidator(rxNumber, this);
 
     // ==== validator Gyro ==== //
-    ui->osdGyroHeadingValue->setValidator(valiNumber);
-    ui->osdGyroPitchValue->setValidator(valiNumber);
+    ui->lineEditGyroHeading->setValidator(valiNumber);
+    ui->lineEditGyroPitch->setValidator(valiNumber);
     ui->lineEditGyroRoll->setValidator(valiNumber);
 
     // ==== validator Wind ==== //
@@ -40,7 +40,6 @@ FrameOSD::FrameOSD(QWidget *parent) :
     // ==== validator Water Speed ==== //
     ui->lineEditWaterSOG->setValidator(valiNumber);
     ui->lineEditWaterCOG->setValidator(valiNumber);
-
 }
 
 FrameOSD::~FrameOSD()
@@ -172,14 +171,13 @@ void FrameOSD::on_osdTimerTimeOut()
     WaterSpeedTimerTimeOut();
 }
 
-
 // ==== Gyro ==== //
 void FrameOSD::GyroAutoModeUi()
 {
     ui->pushButtonGyroApply->setEnabled(false);
     ui->pushButtonGyroApply->setStyleSheet("color: rgb(20, 20, 20);");
-    ui->osdGyroHeadingValue->setEnabled(false);
-    ui->osdGyroPitchValue->setEnabled(false);
+    ui->lineEditGyroHeading->setEnabled(false);
+    ui->lineEditGyroPitch->setEnabled(false);
     ui->lineEditGyroRoll->setEnabled(false);
 }
 
@@ -187,11 +185,11 @@ void FrameOSD::GyroManualModeUi()
 {
     ui->pushButtonGyroApply->setEnabled(true);
     ui->pushButtonGyroApply->setStyleSheet("");
-    ui->osdGyroHeadingValue->setStyleSheet("color:white;");
+    ui->lineEditGyroHeading->setStyleSheet("color:white;");
     ui->lineEditGyroRoll->setStyleSheet("color:white;");
-    ui->osdGyroPitchValue->setStyleSheet("color:white;");
-    ui->osdGyroHeadingValue->setEnabled(true);
-    ui->osdGyroPitchValue->setEnabled(true);
+    ui->lineEditGyroPitch->setStyleSheet("color:white;");
+    ui->lineEditGyroHeading->setEnabled(true);
+    ui->lineEditGyroPitch->setEnabled(true);
     ui->lineEditGyroRoll->setEnabled(true);
 }
 
@@ -228,9 +226,9 @@ void FrameOSD::GyroTimerTimeOut()
 
         if(status)
         {
-            ui->osdGyroHeadingValue->setStyleSheet("color:rgb(0, 255, 0);");
+            ui->lineEditGyroHeading->setStyleSheet("color:rgb(0, 255, 0);");
             ui->lineEditGyroRoll->setStyleSheet("color:rgb(0, 255, 0);");
-            ui->osdGyroPitchValue->setStyleSheet("color:rgb(0, 255, 0);");
+            ui->lineEditGyroPitch->setStyleSheet("color:rgb(0, 255, 0);");
 
             std::vector<std::string> inersia;
             inersia.reserve(3);
@@ -245,12 +243,13 @@ void FrameOSD::GyroTimerTimeOut()
                 inersiadata.roll = QString::fromStdString(inersia.at(1));
                 inersiadata.picth = QString::fromStdString(inersia.at(2));
 
-                ui->osdGyroHeadingValue->setText(inersiadata.heading);
+                ui->lineEditGyroHeading->setText(inersiadata.heading);
                 ui->lineEditGyroRoll->setText(inersiadata.roll);
-                ui->osdGyroPitchValue->setText(inersiadata.picth);
+                ui->lineEditGyroPitch->setText(inersiadata.picth);
             }
             catch (Error e)
             {
+                inersiadata.heading = "-";
                 curStatusString = e.what();
                 qDebug() << Q_FUNC_INFO <<  curStatusString;
             }
@@ -258,9 +257,11 @@ void FrameOSD::GyroTimerTimeOut()
         }
         else
         {
-            ui->osdGyroHeadingValue->setStyleSheet("color: rgb(255, 0, 0);");
+//            qDebug() << Q_FUNC_INFO <<  "no inersia";
+            inersiadata.heading = "-";
+            ui->lineEditGyroHeading->setStyleSheet("color: rgb(255, 0, 0);");
             ui->lineEditGyroRoll->setStyleSheet("color: rgb(255, 0, 0);");
-            ui->osdGyroPitchValue->setStyleSheet("color: rgb(255, 0, 0);");
+            ui->lineEditGyroPitch->setStyleSheet("color: rgb(255, 0, 0);");
         }
     }
 }
@@ -274,11 +275,20 @@ void FrameOSD::on_osdGryoComboBox_activated(int index)
             redisClient->set("inersia_mode", "auto");
             curStatusString = "";
 
-            ui->osdGyroHeadingValue->setEnabled(false);
+            ui->lineEditGyroHeading->setEnabled(false);
             ui->lineEditGyroRoll->setEnabled(false);
-            ui->osdGyroPitchValue->setEnabled(false);
+            ui->lineEditGyroPitch->setEnabled(false);
 
             GyroAutoModeUi();
+
+            try
+            {
+                redisClient->del("inersia");
+            }
+            catch (Error e)
+            {
+                qDebug() << Q_FUNC_INFO <<"cannot del position key";
+            }
         }
         catch (Error e)
         {
@@ -293,9 +303,9 @@ void FrameOSD::on_osdGryoComboBox_activated(int index)
             redisClient->set("inersia_mode", "manual");
             curStatusString = "";
 
-            ui->osdGyroHeadingValue->setEnabled(true);
+            ui->lineEditGyroHeading->setEnabled(true);
             ui->lineEditGyroRoll->setEnabled(true);
-            ui->osdGyroPitchValue->setEnabled(true);
+            ui->lineEditGyroPitch->setEnabled(true);
 
             GyroManualModeUi();
 
@@ -317,6 +327,8 @@ void FrameOSD::on_osdGryoComboBox_activated(int index)
                 else
                     redisClient->persist("inersia");
 
+                inersiadata.heading = ui->lineEditGyroHeading->text();
+
             }
             catch (Error e)
             {
@@ -334,9 +346,9 @@ void FrameOSD::on_osdGryoComboBox_activated(int index)
 
 void FrameOSD::on_pushButtonGyroApply_clicked()
 {
-    QString heading = ui->osdGyroHeadingValue->text();
+    QString heading = ui->lineEditGyroHeading->text();
     QString roll = ui->lineEditGyroRoll->text();
-    QString pitch = ui->osdGyroPitchValue->text();
+    QString pitch = ui->lineEditGyroPitch->text();
 
     bool ok;
 
@@ -398,7 +410,6 @@ void FrameOSD::on_pushButtonGyroApply_clicked()
         qDebug() << Q_FUNC_INFO <<  curStatusString;
     }
 }
-
 
 // ==== GPS ==== //
 void FrameOSD::GpsAutoModeUi()
@@ -561,6 +572,16 @@ void FrameOSD::on_comboBoxGPSMode_activated(int index)
             ui->lineEditGpsLong->setEnabled(false);
 
             GpsAutoModeUi();
+
+            try
+            {
+                redisClient->del("position");
+            }
+            catch (Error e)
+            {
+                qDebug() << Q_FUNC_INFO <<"cannot del position key";
+            }
+
         }
         catch (Error e)
         {
@@ -771,6 +792,420 @@ void FrameOSD::on_pushButtonGPSApply_clicked()
     }
 }
 
+// ==== Speed ==== //
+void FrameOSD::SpeedAutoModeUi()
+{
+    ui->pushButtonSpeedApply->setEnabled(false);
+    ui->pushButtonSpeedApply->setStyleSheet("color: rgb(20, 20, 20);");
+    ui->lineEditSpeedCOG->setEnabled(false);
+    ui->lineEditSpeedSOG->setEnabled(false);
+}
+
+void FrameOSD::SpeedManualModeUi()
+{
+    ui->pushButtonSpeedApply->setEnabled(true);
+    ui->pushButtonSpeedApply->setStyleSheet("");
+    ui->lineEditSpeedSOG->setStyleSheet("color:white;");
+    ui->lineEditSpeedCOG->setStyleSheet("color:white;");
+    ui->lineEditSpeedCOG->setEnabled(true);
+    ui->lineEditSpeedSOG->setEnabled(true);
+}
+
+void FrameOSD::SpeedTimerTimeOut()
+{
+    QString speedmode;
+    try
+    {
+        auto speed_mode = redisClient->get("speed_mode");
+        speedmode = QString::fromStdString(*speed_mode);
+        curStatusString = "";
+    }
+    catch (Error e)
+    {
+        curStatusString = e.what();
+        qDebug() << Q_FUNC_INFO <<  curStatusString;
+    }
+
+//    qDebug() << Q_FUNC_INFO << speedmode;
+
+    if(speedmode == "auto")
+    {
+        bool status = false;
+        try
+        {
+            status = redisClient->exists("speed");
+            curStatusString = "";
+        }
+        catch (Error e)
+        {
+            curStatusString = e.what();
+            qDebug() << Q_FUNC_INFO <<  curStatusString;
+        }
+
+        if(status)
+        {
+            ui->lineEditSpeedSOG->setStyleSheet("color:rgb(0, 255, 0);");
+            ui->lineEditSpeedCOG->setStyleSheet("color:rgb(0, 255, 0);");
+
+            std::vector<std::string> speed;
+            speed.reserve(2);
+
+            try
+            {
+                redisClient->hmget("speed", {"SOG", "COG"}, std::back_inserter(speed));
+
+                speeddata.sog = QString::fromStdString(speed.at(0));
+                speeddata.cog = QString::fromStdString(speed.at(1));
+
+                ui->lineEditSpeedSOG->setText(speeddata.sog);
+                ui->lineEditSpeedCOG->setText(speeddata.cog);
+
+                curStatusString = "";
+            }
+            catch (Error e)
+            {
+                curStatusString = e.what();
+                qDebug() << Q_FUNC_INFO <<  curStatusString;
+            }
+        }
+        else
+        {
+            ui->lineEditSpeedSOG->setStyleSheet("color: rgb(255, 0, 0);");
+            ui->lineEditSpeedCOG->setStyleSheet("color: rgb(255, 0, 0);");
+        }
+    }
+//    qDebug() << Q_FUNC_INFO;
+}
+
+void FrameOSD::on_comboBoxSpeedMode_activated(int index)
+{
+    if (index)
+    {
+        try
+        {
+            redisClient->set("speed_mode", "auto");
+            curStatusString = "";
+
+            ui->lineEditSpeedSOG->setEnabled(false);
+            ui->lineEditSpeedCOG->setEnabled(false);
+
+            SpeedAutoModeUi();
+
+            try
+            {
+                redisClient->del("speed");
+            }
+            catch (Error e)
+            {
+                qDebug() << Q_FUNC_INFO <<"cannot del position key";
+            }
+        }
+        catch (Error e)
+        {
+            curStatusString = e.what();
+            qDebug() << Q_FUNC_INFO <<  curStatusString;
+        }
+    }
+    else
+    {
+        try
+        {
+            redisClient->set("speed_mode", "manual");
+            curStatusString = "";
+
+            ui->lineEditSpeedSOG->setEnabled(true);
+            ui->lineEditSpeedCOG->setEnabled(true);
+
+            SpeedManualModeUi();
+
+            try
+            {
+                bool key_exist = redisClient->exists("speed");
+
+                if(!key_exist)
+                {
+                    std::unordered_map<std::string, std::string> data_map =
+                    {
+                        {"SOG", "0.0"},
+                        {"COG", "0.0"},
+                    };
+
+                    redisClient->hmset("speed",data_map.begin(), data_map.end());
+                }
+                else
+                    redisClient->persist("speed");
+
+            }
+            catch (Error e)
+            {
+                curStatusString = e.what();
+                qDebug() << Q_FUNC_INFO <<  curStatusString;
+            }
+        }
+        catch (Error e)
+        {
+            curStatusString = e.what();
+            qDebug() << Q_FUNC_INFO <<  curStatusString;
+        }
+    }
+}
+
+void FrameOSD::on_pushButtonSpeedApply_clicked()
+{
+    QString sog = ui->lineEditSpeedSOG->text();
+    QString cog = ui->lineEditSpeedCOG->text();
+
+    bool ok;
+
+    float sog_float =sog. toFloat(&ok);
+    if(!ok)
+    {
+        QMessageBox::critical(this, "Fatal Error Speed SOG", "Invalid input value\nValid input range : -150 to 150" );
+        return;
+    }
+    if ((sog_float < -150) || (sog_float > 150) )
+    {
+        QMessageBox::critical(this, "Fatal Error", "Invalid speed sog input\nValid input range : -150 to 150" );
+        return;
+    }
+
+    float cog_float =cog. toFloat(&ok);
+    if(!ok)
+    {
+        QMessageBox::critical(this, "Fatal Error Speed COG", "Invalid input value\nValid input range : 0 - 360" );
+        return;
+    }
+    if ((cog_float < 0) || (cog_float > 360) )
+    {
+        QMessageBox::critical(this, "Fatal Error", "Invalid speed cog input\nValid input range : 0 - 360" );
+        return;
+    }
+
+    std::unordered_map<std::string, std::string> data_map =
+    {
+        {"SOG", sog.toStdString()},
+        {"COG", cog.toStdString()},
+    };
+
+    try
+    {
+        redisClient->hmset("speed",data_map.begin(), data_map.end());
+        curStatusString = "";
+    }
+    catch (Error e)
+    {
+        curStatusString = e.what();
+        qDebug() << Q_FUNC_INFO <<  curStatusString;
+    }
+}
+
+// ==== Water Speed ==== //
+void FrameOSD::WaterSpeedAutoModeUi()
+{
+    ui->pushButtonWaterApply->setEnabled(false);
+    ui->pushButtonWaterApply->setStyleSheet("color: rgb(20, 20, 20);");
+    ui->lineEditWaterSOG->setEnabled(false);
+    ui->lineEditWaterCOG->setEnabled(false);
+}
+
+void FrameOSD::WaterSpeedManualModeUi()
+{
+    ui->pushButtonWaterApply->setEnabled(true);
+    ui->pushButtonWaterApply->setStyleSheet("");
+    ui->lineEditWaterSOG->setStyleSheet("color:white;");
+    ui->lineEditWaterCOG->setStyleSheet("color:white;");
+    ui->lineEditWaterSOG->setEnabled(true);
+    ui->lineEditWaterCOG->setEnabled(true);
+}
+
+void FrameOSD::WaterSpeedTimerTimeOut()
+{
+    QString waterspeedmode;
+    try
+    {
+        auto waterspeed_mode = redisClient->get("waterspeed_mode");
+        waterspeedmode = QString::fromStdString(*waterspeed_mode);
+        curStatusString = "";
+    }
+    catch (Error e)
+    {
+        curStatusString = e.what();
+        qDebug() << Q_FUNC_INFO <<  curStatusString;
+    }
+
+//    qDebug() << Q_FUNC_INFO << waterspeedmode;
+
+    if(waterspeedmode == "auto")
+    {
+        bool status = false;
+        try
+        {
+            status = redisClient->exists("waterspeed");
+            curStatusString = "";
+        }
+        catch (Error e)
+        {
+            curStatusString = e.what();
+            qDebug() << Q_FUNC_INFO <<  curStatusString;
+        }
+
+        if(status)
+        {
+            ui->lineEditWaterSOG->setStyleSheet("color:rgb(0, 255, 0);");
+            ui->lineEditWaterCOG->setStyleSheet("color:rgb(0, 255, 0);");
+
+            std::vector<std::string> waterspeed;
+            waterspeed.reserve(2);
+
+            try
+            {
+                redisClient->hmget("waterspeed", {"speed", "course"}, std::back_inserter(waterspeed));
+                curStatusString = "";
+
+                waterspeeddata.speed = QString::fromStdString(waterspeed.at(0));
+                waterspeeddata.course = QString::fromStdString(waterspeed.at(1));
+
+                ui->lineEditWaterSOG->setText(waterspeeddata.speed);
+                ui->lineEditWaterCOG->setText(waterspeeddata.course);
+            }
+            catch (Error e)
+            {
+                curStatusString = e.what();
+                qDebug() << Q_FUNC_INFO <<  curStatusString;
+            }
+        }
+        else
+        {
+            ui->lineEditWaterSOG->setStyleSheet("color: rgb(255, 0, 0);");
+            ui->lineEditWaterCOG->setStyleSheet("color: rgb(255, 0, 0);");
+        }
+    }
+//    qDebug() << Q_FUNC_INFO;
+}
+
+void FrameOSD::on_comboBoxWaterMode_activated(int index)
+{
+    qDebug () <<Q_FUNC_INFO;
+
+    if (index)
+    {
+        try
+        {
+            redisClient->set("waterspeed_mode", "auto");
+            curStatusString = "";
+
+            ui->lineEditWaterSOG->setEnabled(false);
+            ui->lineEditWaterCOG->setEnabled(false);
+
+            WaterSpeedAutoModeUi();
+
+            try
+            {
+                redisClient->del("waterspeed");
+            }
+            catch (Error e)
+            {
+                qDebug() << Q_FUNC_INFO <<"cannot del position key";
+            }
+        }
+        catch (Error e)
+        {
+            curStatusString = e.what();
+            qDebug() << Q_FUNC_INFO <<  curStatusString;
+        }
+    }
+    else
+    {
+        try
+        {
+            redisClient->set("waterspeed_mode", "manual");
+            curStatusString = "";
+
+            ui->lineEditWaterSOG->setEnabled(true);
+            ui->lineEditWaterCOG->setEnabled(true);
+
+            WaterSpeedManualModeUi();
+
+            try
+            {
+                bool key_exist = redisClient->exists("waterspeed");
+
+                if(!key_exist)
+                {
+                    std::unordered_map<std::string, std::string> data_map =
+                    {
+                        {"speed", "0.0"},
+                        {"course", "0.0"},
+                    };
+
+                    redisClient->hmset("waterspeed",data_map.begin(), data_map.end());
+                }
+                else
+                    redisClient->persist("waterspeed");
+
+            }
+            catch (Error e)
+            {
+                curStatusString = e.what();
+                qDebug() << Q_FUNC_INFO <<  curStatusString;
+            }
+        }
+        catch (Error e)
+        {
+            curStatusString = e.what();
+            qDebug() << Q_FUNC_INFO <<  curStatusString;
+        }
+    }
+}
+
+void FrameOSD::on_pushButtonWaterApply_clicked()
+{
+    QString speed = ui->lineEditWaterSOG->text();
+    QString course = ui->lineEditWaterCOG->text();
+
+    bool ok;
+
+    float speed_float =speed. toFloat(&ok);
+    if(!ok)
+    {
+        QMessageBox::critical(this, "Fatal Error Water Speed", "Invalid input value\nValid input range : -150 - 150" );
+        return;
+    }
+    if ((speed_float < -150) || (speed_float > 150) )
+    {
+        QMessageBox::critical(this, "Fatal Error", "Invalid water speed input\nValid input range : -150 - 150" );
+        return;
+    }
+
+    float course_float =course. toFloat(&ok);
+    if(!ok)
+    {
+        QMessageBox::critical(this, "Fatal Error Water Course", "Invalid input value\nValid input range : 0 - 360" );
+        return;
+    }
+    if ((course_float < 0) || (course_float > 360) )
+    {
+        QMessageBox::critical(this, "Fatal Error", "Invalid water course input\nValid input range : 0 - 360" );
+        return;
+    }
+
+    std::unordered_map<std::string, std::string> data_map =
+    {
+        {"speed", speed.toStdString()},
+        {"course", course.toStdString()},
+    };
+
+    try
+    {
+        redisClient->hmset("waterspeed",data_map.begin(), data_map.end());
+        curStatusString = "";
+    }
+    catch (Error e)
+    {
+        curStatusString = e.what();
+        qDebug() << Q_FUNC_INFO <<  curStatusString;
+    }
+}
 
 // ==== Wind ==== //
 void FrameOSD::WindAutoModeUi()
@@ -871,6 +1306,15 @@ void FrameOSD::on_comboBoxWindMode_activated(int index)
 
             WindAutoModeUi();
 
+            try
+            {
+                redisClient->del("wind");
+            }
+            catch (Error e)
+            {
+                qDebug() << Q_FUNC_INFO <<"cannot del position key";
+            }
+
         }
         catch (Error e)
         {
@@ -932,24 +1376,24 @@ void FrameOSD::on_pushButtonWindApply_clicked()
     float dir_float = dir.toFloat(&ok);
     if(!ok)
     {
-        QMessageBox::critical(this, "Fatal Error Dir", "Invalid input value\nValid input range : 0 - 360" );
+        QMessageBox::critical(this, "Fatal Error Wind Direction", "Invalid input value\nValid input range : 0 - 360" );
         return;
     }
     if ((dir_float < 0) || (dir_float > 360) )
     {
-        QMessageBox::critical(this, "Fatal Error", "Invalid dir value\nValid input range : 0 - 360" );
+        QMessageBox::critical(this, "Fatal Error", "Invalid wind direction value\nValid input range : 0 - 360" );
         return;
     }
 
     float speed_float =speed.toFloat(&ok);
     if(!ok)
     {
-        QMessageBox::critical(this, "Fatal Error Speed", "Invalid input value\nValid input range : -150 to 150" );
+        QMessageBox::critical(this, "Fatal Error Wind Speed", "Invalid input value\nValid input range : -150 to 150" );
         return;
     }
     if ((speed_float < -150) || (speed_float > 150) )
     {
-        QMessageBox::critical(this, "Fatal Error", "Invalid speed input\nValid input range : -150 to 150" );
+        QMessageBox::critical(this, "Fatal Error", "Invalid wind speed input\nValid input range : -150 to 150" );
         return;
     }
 
@@ -970,7 +1414,6 @@ void FrameOSD::on_pushButtonWindApply_clicked()
         qDebug() << Q_FUNC_INFO <<  curStatusString;
     }
 }
-
 
 // ==== Weather ==== //
 void FrameOSD::WeatherAutoModeUi()
@@ -1077,6 +1520,15 @@ void FrameOSD::on_comboBoxWeatherMode_activated(int index)
             ui->lineEditWeatherHumidity->setEnabled(false);
 
             WeatherAutoModeUi();
+
+            try
+            {
+                redisClient->del("weather");
+            }
+            catch (Error e)
+            {
+                qDebug() << Q_FUNC_INFO <<"cannot del position key";
+            }
         }
         catch (Error e)
         {
@@ -1141,37 +1593,37 @@ void FrameOSD::on_pushButtonWeather_clicked()
     float temperature_float =temperature. toFloat(&ok);
     if(!ok)
     {
-        QMessageBox::critical(this, "Fatal Error Temperature", "Invalid input value\nValid input range : -273 to 273" );
+        QMessageBox::critical(this, "Fatal Error Weather Temperature", "Invalid input value\nValid input range : -273 to 273" );
         return;
     }
     if ((temperature_float < -273) || (temperature_float > 273) )
     {
-        QMessageBox::critical(this, "Fatal Error", "Invalid temperature input\nValid input range : -273 to 273" );
+        QMessageBox::critical(this, "Fatal Error", "Invalid weather temperature input\nValid input range : -273 to 273" );
         return;
     }
 
     float pressure_float =pressure. toFloat(&ok);
     if(!ok)
     {
-        QMessageBox::critical(this, "Fatal Error Pressure", "Invalid input value\nValid input range : 100 - 1000" );
+        QMessageBox::critical(this, "Fatal Error Weather Pressure", "Invalid input value\nValid input range : 100 - 1000" );
         return;
     }
     if ((pressure_float < 100) || (pressure_float > 10000) )
     {
-        QMessageBox::critical(this, "Fatal Error", "Invalid Pressure input\nValid input range : 100 - 1000" );
+        QMessageBox::critical(this, "Fatal Error", "Invalid weather pressure input\nValid input range : 100 - 10000" );
         return;
     }
 
     float humidity_float =humidity. toFloat(&ok);
     if(!ok)
     {
-        QMessageBox::critical(this, "Fatal Error Humidity", "Invalid input value\nValid input range : 0 - 100" );
+        QMessageBox::critical(this, "Fatal Error Weather Humidity", "Invalid input value\nValid input range : 0 - 100" );
         return;
     }
 
     if ((humidity_float < 0) || (humidity_float > 100) )
     {
-        QMessageBox::critical(this, "Fatal Error", "Invalid humidity input\nValid input range : 0 - 100" );
+        QMessageBox::critical(this, "Fatal Error", "Invalid Weather humidity input\nValid input range : 0 - 100" );
         return;
     }
 
@@ -1185,405 +1637,6 @@ void FrameOSD::on_pushButtonWeather_clicked()
     try
     {
         redisClient->hmset("weather",data_map.begin(), data_map.end());
-        curStatusString = "";
-    }
-    catch (Error e)
-    {
-        curStatusString = e.what();
-        qDebug() << Q_FUNC_INFO <<  curStatusString;
-    }
-}
-
-
-// ==== Speed ==== //
-void FrameOSD::SpeedAutoModeUi()
-{
-    ui->pushButtonSpeedApply->setEnabled(false);
-    ui->pushButtonSpeedApply->setStyleSheet("color: rgb(20, 20, 20);");
-    ui->lineEditSpeedCOG->setEnabled(false);
-    ui->lineEditSpeedSOG->setEnabled(false);
-}
-
-void FrameOSD::SpeedManualModeUi()
-{
-    ui->pushButtonSpeedApply->setEnabled(true);
-    ui->pushButtonSpeedApply->setStyleSheet("");
-    ui->lineEditSpeedSOG->setStyleSheet("color:white;");
-    ui->lineEditSpeedCOG->setStyleSheet("color:white;");
-    ui->lineEditSpeedCOG->setEnabled(true);
-    ui->lineEditSpeedSOG->setEnabled(true);
-}
-
-void FrameOSD::SpeedTimerTimeOut()
-{
-    QString speedmode;
-    try
-    {
-        auto speed_mode = redisClient->get("speed_mode");
-        speedmode = QString::fromStdString(*speed_mode);
-        curStatusString = "";
-    }
-    catch (Error e)
-    {
-        curStatusString = e.what();
-        qDebug() << Q_FUNC_INFO <<  curStatusString;
-    }
-
-//    qDebug() << Q_FUNC_INFO << speedmode;
-
-    if(speedmode == "auto")
-    {
-        bool status = false;
-        try
-        {
-            status = redisClient->exists("speed");
-            curStatusString = "";
-        }
-        catch (Error e)
-        {
-            curStatusString = e.what();
-            qDebug() << Q_FUNC_INFO <<  curStatusString;
-        }
-
-        if(status)
-        {
-            ui->lineEditSpeedSOG->setStyleSheet("color:rgb(0, 255, 0);");
-            ui->lineEditSpeedCOG->setStyleSheet("color:rgb(0, 255, 0);");
-
-            std::vector<std::string> speed;
-            speed.reserve(2);
-
-            try
-            {
-                redisClient->hmget("speed", {"sog", "cog"}, std::back_inserter(speed));
-
-                speeddata.sog = QString::fromStdString(speed.at(0));
-                speeddata.cog = QString::fromStdString(speed.at(1));
-
-                ui->lineEditSpeedSOG->setText(speeddata.sog);
-                ui->lineEditSpeedCOG->setText(speeddata.cog);
-
-                curStatusString = "";
-            }
-            catch (Error e)
-            {
-                curStatusString = e.what();
-                qDebug() << Q_FUNC_INFO <<  curStatusString;
-            }
-        }
-        else
-        {
-            ui->lineEditSpeedSOG->setStyleSheet("color: rgb(255, 0, 0);");
-            ui->lineEditSpeedCOG->setStyleSheet("color: rgb(255, 0, 0);");
-        }
-    }
-//    qDebug() << Q_FUNC_INFO;
-}
-
-void FrameOSD::on_comboBoxSpeedMode_activated(int index)
-{
-    if (index)
-    {
-        try
-        {
-            redisClient->set("speed_mode", "auto");
-            curStatusString = "";
-
-            ui->lineEditSpeedSOG->setEnabled(false);
-            ui->lineEditSpeedCOG->setEnabled(false);
-
-            SpeedAutoModeUi();
-        }
-        catch (Error e)
-        {
-            curStatusString = e.what();
-            qDebug() << Q_FUNC_INFO <<  curStatusString;
-        }
-    }
-    else
-    {
-        try
-        {
-            redisClient->set("speed_mode", "manual");
-            curStatusString = "";
-
-            ui->lineEditSpeedSOG->setEnabled(true);
-            ui->lineEditSpeedCOG->setEnabled(true);
-
-            SpeedManualModeUi();
-
-            try
-            {
-                bool key_exist = redisClient->exists("speed");
-
-                if(!key_exist)
-                {
-                    std::unordered_map<std::string, std::string> data_map =
-                    {
-                        {"sog", "0.0"},
-                        {"cog", "0.0"},
-                    };
-
-                    redisClient->hmset("speed",data_map.begin(), data_map.end());
-                }
-                else
-                    redisClient->persist("speed");
-
-            }
-            catch (Error e)
-            {
-                curStatusString = e.what();
-                qDebug() << Q_FUNC_INFO <<  curStatusString;
-            }
-        }
-        catch (Error e)
-        {
-            curStatusString = e.what();
-            qDebug() << Q_FUNC_INFO <<  curStatusString;
-        }
-    }
-}
-
-void FrameOSD::on_pushButtonSpeedApply_clicked()
-{
-    QString sog = ui->lineEditSpeedSOG->text();
-    QString cog = ui->lineEditSpeedCOG->text();
-
-    bool ok;
-
-    float sog_float =sog. toFloat(&ok);
-    if(!ok)
-    {
-        QMessageBox::critical(this, "Fatal Error SOG", "Invalid input value\nValid input range : -150 to 150" );
-        return;
-    }
-    if ((sog_float < -150) || (sog_float > 150) )
-    {
-        QMessageBox::critical(this, "Fatal Error", "Invalid sog input\nValid input range : -150 to 150" );
-        return;
-    }
-
-    float cog_float =cog. toFloat(&ok);
-    if(!ok)
-    {
-        QMessageBox::critical(this, "Fatal Error COG", "Invalid input value\nValid input range : 0 - 360" );
-        return;
-    }
-    if ((cog_float < 0) || (cog_float > 360) )
-    {
-        QMessageBox::critical(this, "Fatal Error", "Invalid cog input\nValid input range : 0 - 360" );
-        return;
-    }
-
-    std::unordered_map<std::string, std::string> data_map =
-    {
-        {"sog", sog.toStdString()},
-        {"cog", cog.toStdString()},
-    };
-
-    try
-    {
-        redisClient->hmset("speed",data_map.begin(), data_map.end());
-        curStatusString = "";
-    }
-    catch (Error e)
-    {
-        curStatusString = e.what();
-        qDebug() << Q_FUNC_INFO <<  curStatusString;
-    }
-}
-
-
-// ==== Water Speed ==== //
-void FrameOSD::WaterSpeedAutoModeUi()
-{
-    ui->pushButtonWaterApply->setEnabled(false);
-    ui->pushButtonWaterApply->setStyleSheet("color: rgb(20, 20, 20);");
-    ui->lineEditWaterSOG->setEnabled(false);
-    ui->lineEditWaterCOG->setEnabled(false);
-}
-
-void FrameOSD::WaterSpeedManualModeUi()
-{
-    ui->pushButtonWaterApply->setEnabled(true);
-    ui->pushButtonWaterApply->setStyleSheet("");
-    ui->lineEditWaterSOG->setStyleSheet("color:white;");
-    ui->lineEditWaterCOG->setStyleSheet("color:white;");
-    ui->lineEditWaterSOG->setEnabled(true);
-    ui->lineEditWaterCOG->setEnabled(true);
-}
-
-void FrameOSD::WaterSpeedTimerTimeOut()
-{
-    QString waterspeedmode;
-    try
-    {
-        auto waterspeed_mode = redisClient->get("waterspeed_mode");
-        waterspeedmode = QString::fromStdString(*waterspeed_mode);
-        curStatusString = "";
-    }
-    catch (Error e)
-    {
-        curStatusString = e.what();
-        qDebug() << Q_FUNC_INFO <<  curStatusString;
-    }
-
-//    qDebug() << Q_FUNC_INFO << waterspeedmode;
-
-    if(waterspeedmode == "auto")
-    {
-        bool status = false;
-        try
-        {
-            status = redisClient->exists("waterspeed");
-            curStatusString = "";
-        }
-        catch (Error e)
-        {
-            curStatusString = e.what();
-            qDebug() << Q_FUNC_INFO <<  curStatusString;
-        }
-
-        if(status)
-        {
-            ui->lineEditWaterSOG->setStyleSheet("color:rgb(0, 255, 0);");
-            ui->lineEditWaterCOG->setStyleSheet("color:rgb(0, 255, 0);");
-
-            std::vector<std::string> waterspeed;
-            waterspeed.reserve(2);
-
-            try
-            {
-                redisClient->hmget("waterspeed", {"speed", "course"}, std::back_inserter(waterspeed));
-                curStatusString = "";
-
-                waterspeeddata.speed = QString::fromStdString(waterspeed.at(0));
-                waterspeeddata.course = QString::fromStdString(waterspeed.at(1));
-
-                ui->lineEditWaterSOG->setText(waterspeeddata.speed);
-                ui->lineEditWaterCOG->setText(waterspeeddata.course);
-            }
-            catch (Error e)
-            {
-                curStatusString = e.what();
-                qDebug() << Q_FUNC_INFO <<  curStatusString;
-            }
-        }
-        else
-        {
-            ui->lineEditWaterSOG->setStyleSheet("color: rgb(255, 0, 0);");
-            ui->lineEditWaterCOG->setStyleSheet("color: rgb(255, 0, 0);");
-        }
-    }
-//    qDebug() << Q_FUNC_INFO;
-}
-
-void FrameOSD::on_comboBoxWaterMode_activated(int index)
-{
-    qDebug () <<Q_FUNC_INFO;
-
-    if (index)
-    {
-        try
-        {
-            redisClient->set("waterspeed_mode", "auto");
-            curStatusString = "";
-
-            ui->lineEditWaterSOG->setEnabled(false);
-            ui->lineEditWaterCOG->setEnabled(false);
-
-            WaterSpeedAutoModeUi();
-        }
-        catch (Error e)
-        {
-            curStatusString = e.what();
-            qDebug() << Q_FUNC_INFO <<  curStatusString;
-        }
-    }
-    else
-    {
-        try
-        {
-            redisClient->set("waterspeed_mode", "manual");
-            curStatusString = "";
-
-            ui->lineEditWaterSOG->setEnabled(true);
-            ui->lineEditWaterCOG->setEnabled(true);
-
-            WaterSpeedManualModeUi();
-
-            try
-            {
-                bool key_exist = redisClient->exists("waterspeed");
-
-                if(!key_exist)
-                {
-                    std::unordered_map<std::string, std::string> data_map =
-                    {
-                        {"speed", "0.0"},
-                        {"course", "0.0"},
-                    };
-
-                    redisClient->hmset("waterspeed",data_map.begin(), data_map.end());
-                }
-                else
-                    redisClient->persist("waterspeed");
-
-            }
-            catch (Error e)
-            {
-                curStatusString = e.what();
-                qDebug() << Q_FUNC_INFO <<  curStatusString;
-            }
-        }
-        catch (Error e)
-        {
-            curStatusString = e.what();
-            qDebug() << Q_FUNC_INFO <<  curStatusString;
-        }
-    }
-}
-
-void FrameOSD::on_pushButtonWaterApply_clicked()
-{
-    QString speed = ui->lineEditWaterSOG->text();
-    QString course = ui->lineEditWaterCOG->text();
-
-    bool ok;
-
-    float speed_float =speed. toFloat(&ok);
-    if(!ok)
-    {
-        QMessageBox::critical(this, "Fatal Error SOG", "Invalid input value\nValid input range : -150 - 150" );
-        return;
-    }
-    if ((speed_float < -150) || (speed_float > 150) )
-    {
-        QMessageBox::critical(this, "Fatal Error", "Invalid cog input\nValid input range : -150 - 150" );
-        return;
-    }
-
-    float course_float =course. toFloat(&ok);
-    if(!ok)
-    {
-        QMessageBox::critical(this, "Fatal Error COG", "Invalid input value\nValid input range : 0 - 360" );
-        return;
-    }
-    if ((course_float < 0) || (course_float > 360) )
-    {
-        QMessageBox::critical(this, "Fatal Error", "Invalid cog input\nValid input range : 0 - 360" );
-        return;
-    }
-
-    std::unordered_map<std::string, std::string> data_map =
-    {
-        {"speed", speed.toStdString()},
-        {"course", course.toStdString()},
-    };
-
-    try
-    {
-        redisClient->hmset("waterspeed",data_map.begin(), data_map.end());
         curStatusString = "";
     }
     catch (Error e)

@@ -50,7 +50,6 @@ QStringList FrameGun::getGunbalisticdata() const
 
 //    qDebug() << "hasil get" <<datagunbalistic ;
     return datagunbalistic;
-
 }
 
 void FrameGun::setConfig(QString Config)
@@ -67,7 +66,7 @@ void FrameGun::setConfig(QString Config)
         redisClient->hset("engagement", "mode", "Manual");
         redisClient->hset("engagement", "azimuth", "0.0");
         redisClient->hset("engagement", "elevation", "0.0");
-        redisClient->hmget("Gun_balistic_data", {"orientation", "blind_arc", "max_range"}, std::back_inserter(gunbalisticdata));
+        redisClient->hmget("gun_balistic_data", {"orientation", "blind_arc", "max_range"}, std::back_inserter(gunbalisticdata));
 
         gunbalistic.orientation = QString::fromStdString(gunbalisticdata.at(0));
         gunbalistic.blind_arc = QString::fromStdString(gunbalisticdata.at(1));

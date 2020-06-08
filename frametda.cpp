@@ -19,7 +19,7 @@ FrameTDA::FrameTDA(QWidget *parent) :
 
     timer = new QTimer(this);
 
-    currentHeading = 0.0;
+    currentHeading = -1;
 
     connect(timer,SIGNAL(timeout()),this,SLOT(update()));
     connect(timer,SIGNAL(timeout()),this,SLOT(updateDataTracks()));
@@ -430,71 +430,73 @@ void FrameTDA::paintEvent(QPaintEvent *event)
         painter.rotate(2);
     }
 
-    // ==== Heading Marker ==== //
-    int sideMax = qMax(width(),height());
-    painter.rotate(currentHeading);
-    painter.setPen(QColor(255,255,0,255));
-    painter.drawLine(0,0,0,-sideMax);
-    painter.rotate(-currentHeading);
+    if(currentHeading >= 0)
+    {
+        // ==== Heading Marker ==== //
+        int sideMax = qMax(width(),height());
+        painter.rotate(currentHeading);
+        painter.setPen(QColor(255,255,0,255));
+        painter.drawLine(0,0,0,-sideMax);
+        painter.rotate(-currentHeading);
 
-    // ==== Gun Coverage ==== //
-    QString str = currentGunBalistic.join(",");
-//    qDebug() << str ;
+        // ==== Gun Coverage ==== //
+        QString str = currentGunBalistic.join(",");
+        QStringList list = str.split(',');
+        QString orientation = list.at(0);
+        QString blind_arc1 = list.at(1);
+        QString max_range1 = list.at(2);
+        const qreal gun_orientation = QString(orientation).toDouble();
+        const qreal blind_arc = QString(blind_arc1).toDouble();
+        const qreal max_range = QString(max_range1).toDouble(); //NM
 
-    QStringList list = str.split(',');
-//    qDebug() << list;
+    //    qDebug() <<Q_FUNC_INFO << gun_orientation << blind_arc << max_range;
 
-    QString orientation = list.at(0);
-    QString blind_arc1 = list.at(1);
+        int span = 360-blind_arc;
+        int gun_coverage_pixel = 2*range2Pixel(max_range);
 
-    qDebug() << orientation << blind_arc1;
+        painter.setPen(QColor(255,0,0,255));
+        painter.rotate(gun_orientation+currentHeading+qreal((span/2)-90));
+        painter.drawPie(-gun_coverage_pixel/2,-gun_coverage_pixel/2,gun_coverage_pixel,gun_coverage_pixel,0*16,span*16);
+        painter.rotate(-gun_orientation-currentHeading-qreal((span/2)-90));
 
-    const qreal gun_orientation = 0.0;
-    const qreal blind_arc = 90.0;
-    const qreal gun_fire_range = 7.0; //NM
+        QRect rect(-((gun_coverage_pixel/2)+20)*cos((currentHeading+100)*M_PI/180)-15,-((gun_coverage_pixel/2)+20)*sin((currentHeading+100)*M_PI/180)-5,30,15);
+        QTextOption opt;
+        opt.setAlignment(Qt::AlignHCenter);
+        QFont font;
 
-    int span = 360-blind_arc;
-    int gun_coverage_pixel = 2*range2Pixel(gun_fire_range);
+        font.setPixelSize(11);
+        painter.setFont(font);
+        painter.drawText(rect,QString("40mm"),opt);
 
-    painter.setPen(QColor(255,0,0,255));
-    painter.rotate(gun_orientation+currentHeading+qreal((span/2)-90));
-    painter.drawPie(-gun_coverage_pixel/2,-gun_coverage_pixel/2,gun_coverage_pixel,gun_coverage_pixel,0*16,span*16);
-    painter.rotate(-gun_orientation-currentHeading-qreal((span/2)-90));
-
-    QRect rect(-((gun_coverage_pixel/2)+20)*cos((currentHeading+100)*M_PI/180)-15,-((gun_coverage_pixel/2)+20)*sin((currentHeading+100)*M_PI/180)-5,30,15);
-    QTextOption opt;
-    opt.setAlignment(Qt::AlignHCenter);
-    QFont font;
-
-    font.setPixelSize(11);
-    painter.setFont(font);
-    painter.drawText(rect,QString("40mm"),opt);
-
-    // ==== Gun barrel ==== //
-    const double bearing = 0;
-
-    int sideMax1 = qMax(width(),height());
-    painter.rotate(currentHeading+bearing);
-    painter.setPen(QPen(Qt::green, 5));
-    //painter.setPen(QColor(0, 100, 0));
-    painter.drawLine(0,0,0,(-sideMax1/20));
-    painter.rotate(-currentHeading-bearing);
+        // ==== Gun barrel ==== //
+        if(currentAccessStatus >= 0)
+        {
+            const double bearing = 0;
+            int sideMax1 = qMax(width(),height());
+            painter.rotate(currentHeading+bearing);
+            painter.setPen(QPen(Qt::green, 5));
+            painter.drawLine(0,0,0,(-sideMax1/20));
+            painter.rotate(-currentHeading-bearing);
+        }
+    }
 
     // ==== Fire Triangle (QMap)==== //
     foreach(int i, mapTracks->keys())
     {
         if(mapTracks->value(i).trackData.weapon_assign == "40 mm")
         {
-            qDebug() << Q_FUNC_INFO
-                     << mapTracks->value(i).trackData.tn << ","
-                     << mapTracks->value(i).trackData.range << ","
-                     << mapTracks->value(i).trackData.bearing << ","
-                     << mapTracks->value(i).trackData.speed << ","
-                     << mapTracks->value(i).trackData.course << ","
-                     << mapTracks->value(i).trackData.cur_identity << ","
-                     << mapTracks->value(i).trackData.weapon_assign;
+//            qDebug() << Q_FUNC_INFO
+//                     << mapTracks->value(i).trackData.tn << ","
+//                     << mapTracks->value(i).trackData.range << ","
+//                     << mapTracks->value(i).trackData.bearing << ","
+//                     << mapTracks->value(i).trackData.speed << ","
+//                     << mapTracks->value(i).trackData.course << ","
+//                     << mapTracks->value(i).trackData.cur_identity << ","
+//                     << mapTracks->value(i).trackData.weapon_assign;
 
             std::vector<std::string> fire;
+            try
+            {
             redisClient->hmget("fire_triangle", {"ttlf", "ttlf_x", "ttlf_y"}, std::back_inserter(fire));
 
             double TTLF_x = QString::fromStdString(fire.at(1)).toDouble();
@@ -507,7 +509,7 @@ void FrameTDA::paintEvent(QPaintEvent *event)
             painter.drawLine(rng*cos(brn*(M_PI/180)),-rng*sin(brn*(M_PI/180)),range2Pixel(TTLF_x),-range2Pixel(TTLF_y));
             painter.drawLine(rng*cos(brn*(M_PI/180)),-rng*sin(brn*(M_PI/180)),0,0);
 
-            qDebug() << Q_FUNC_INFO << TTLF_x << TTLF_y;
+//            qDebug() << Q_FUNC_INFO << TTLF_x << TTLF_y;
 
             statusBarSelectedTrack->showMessage(QString("Tn : %1     "
                                                         "Range : %2 NM     "
@@ -523,6 +525,12 @@ void FrameTDA::paintEvent(QPaintEvent *event)
                                                 .arg(QString::number(mapTracks->value(tn).trackData.course,'f',2))
                                                 );
             break;
+            }
+            catch (Error e)
+            {
+                curStatusString = e.what();
+                qDebug() << Q_FUNC_INFO <<  curStatusString;
+            }
         }
     }
 }
@@ -623,8 +631,18 @@ FrameTDA::zoomScale FrameTDA::zoomString2Scale(QString scale)
 
 void FrameTDA::setHeading(QString heading)
 {
-    currentHeading = heading.toFloat();
-//    qDebug()<<Q_FUNC_INFO<<currentHeading;
+    bool ok;
+    currentHeading = heading.toFloat(&ok);
+
+    if(!ok)
+        currentHeading = -1;
+//    qDebug()<<Q_FUNC_INFO<<currentHeading<<ok;
+}
+
+void FrameTDA::setAccessStatus(QString access_status)
+{
+    currentAccessStatus = access_status;
+    qDebug() <<Q_FUNC_INFO << access_status;
 }
 
 void FrameTDA::setGunbalisticdata(QStringList datagunbalistic)

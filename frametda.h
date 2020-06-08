@@ -30,7 +30,9 @@ public:
     ~FrameTDA();
     void setHeading(QString heading);
 
-    void setGunbalisticdata(QStringList datagunbalistic) ;
+    void setGunbalisticdata(QStringList datagunbalistic);
+
+    void setAccessStatus(QString access_status);
 
     void setConfig (QString Config);
 
@@ -82,11 +84,13 @@ private:
     RCEventHandler *rc_radarevent;
     QAction *zoomAction[Z_TOTAL];
     QMenu *zoomSubMenu;
+    QString curStatusString;
 
     Redis *redisClient;
     QString Config;
 
     QStringList currentGunBalistic;
+    QString currentAccessStatus;
     float currentHeading;
     double tdaScale;
 
