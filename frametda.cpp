@@ -77,6 +77,7 @@ void FrameTDA::zoom_change()
     tdaScale = zoomAction[cur_checked_zoom_scale]->text().remove(" NM").toDouble();
 }
 
+
 void FrameTDA::setConfig(QString Config)
 {
     this->Config = Config;
@@ -116,7 +117,6 @@ void FrameTDA::updateDataTracks()
      *       >> cari track-track id yang tidak terdapat di record lokal (track hilang)
      *          ~ hapus gambar track
      *          ~ hapus track dari record local (tnList dan mapTrack)
-
     */
 
     std::vector<std::string> trackList;
@@ -214,7 +214,6 @@ void FrameTDA::updateDataTracks()
 
         for(int i=0; i<trackList.size();i++)
         {
-
             try
             {
                 redisClient->hmget(trackList.at(i).data(), {"id", "range", "bearing", "speed", "course", "identity", "weapon_assigned" }, std::back_inserter(trackQuery));
@@ -469,7 +468,7 @@ void FrameTDA::paintEvent(QPaintEvent *event)
         painter.drawText(rect,QString("40mm"),opt);
 
         // ==== Gun barrel ==== //
-        if(currentAccessStatus >= 0)
+        if(currentAccessStatus > "0")
         {
             const double bearing = 0;
             int sideMax1 = qMax(width(),height());
@@ -477,6 +476,7 @@ void FrameTDA::paintEvent(QPaintEvent *event)
             painter.setPen(QPen(Qt::green, 5));
             painter.drawLine(0,0,0,(-sideMax1/20));
             painter.rotate(-currentHeading-bearing);
+//            qDebug() <<Q_FUNC_INFO << "ok" << currentAccessStatus;
         }
     }
 
@@ -642,7 +642,7 @@ void FrameTDA::setHeading(QString heading)
 void FrameTDA::setAccessStatus(QString access_status)
 {
     currentAccessStatus = access_status;
-    qDebug() <<Q_FUNC_INFO << access_status;
+//    qDebug() <<Q_FUNC_INFO << access_status;
 }
 
 void FrameTDA::setGunbalisticdata(QStringList datagunbalistic)

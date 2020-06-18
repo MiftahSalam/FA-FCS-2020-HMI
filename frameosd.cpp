@@ -650,7 +650,7 @@ void FrameOSD::on_pushButtonGPSApply_clicked()
     QString deg = list1.at(0);
     QStringList list2 = list1.at(1).split("'");
 
-    if(list2.size()<4)
+    if(list2.size()!=4)
     {
         QMessageBox::critical(this, "Fatal Error Latitude", "Invalid input value" );
         return;
@@ -673,14 +673,14 @@ void FrameOSD::on_pushButtonGPSApply_clicked()
     float valuemin = min.toFloat(&ok)/60.0;
     if ((!ok) || (valuemin > 1))
     {
-        QMessageBox::critical(this, "Fatal Error Latitude", "Invalid minute input value.\nValid input : 00-60" );
+        QMessageBox::critical(this, "Fatal Error Latitude", "Invalid minute input value.\nValid input : 00-59" );
         return;
     }
 
     float valuesec = sec.toFloat(&ok)/3600.0;
     if ((!ok) || (valuesec > (1.0/60.0)))
     {
-        QMessageBox::critical(this, "Fatal Error Latitude", "Invalid second input value.\nValid input : 00-60" );
+        QMessageBox::critical(this, "Fatal Error Latitude", "Invalid second input value.\nValid input : 00-59" );
         return;
     }
 
@@ -696,7 +696,7 @@ void FrameOSD::on_pushButtonGPSApply_clicked()
 
     if ((valueLat < -90) || (valueLat > 90) )
     {
-        QMessageBox::critical(this, "Fatal Error Latitude", "Invalid input : out of range" );
+        QMessageBox::critical(this, "Fatal Error Latitude", "Invalid input : out of range.\nValid input : 00-00'00'' - 90-00'00''");
         return;
     }
 
@@ -719,7 +719,7 @@ void FrameOSD::on_pushButtonGPSApply_clicked()
     QString degg = long_list1.at(0);
     QStringList long_list2 = long_list1.at(1).split("'");
 
-    if(long_list2.size()<4)
+    if(long_list2.size()!=4)
     {
         QMessageBox::critical(this, "Fatal Error Longitude", "Invalid input value" );
         return;
@@ -740,16 +740,16 @@ void FrameOSD::on_pushButtonGPSApply_clicked()
     }
 
     float valueminn = minn.toFloat()/60.0;
-    if ((!ok) || (valueminn > 1))
+    if ((!ok) || (valueminn >= 1))
     {
-        QMessageBox::critical(this, "Fatal Error Longitude", "Invalid minute input value.\nValid input : 00-60" );
+        QMessageBox::critical(this, "Fatal Error Longitude", "Invalid minute input value.\nValid input : 00-59" );
         return;
     }
 
     float valuesecc = secc.toFloat()/3600.0;
     if ((!ok) || (valuesecc > (1.0/60.0)))
     {
-        QMessageBox::critical(this, "Fatal Error Longitude", "Invalid second input value.\nValid input : 00-60" );
+        QMessageBox::critical(this, "Fatal Error Longitude", "Invalid second input value.\nValid input : 00-59" );
         return;
     }
 
@@ -765,7 +765,7 @@ void FrameOSD::on_pushButtonGPSApply_clicked()
 
     if ((valueLong < -180) || (valueLong > 180) )
     {
-        QMessageBox::critical(this, "Fatal Error Longitude", "Invalid input : out of range" );
+        QMessageBox::critical(this, "Fatal Error Longitude", "Invalid input : out of range.\nValid input : 00-00'00'' - 180-00'00''" );
         return;
     }
 

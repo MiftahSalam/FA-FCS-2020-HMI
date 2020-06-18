@@ -51,6 +51,7 @@ void MainWindow::on_timeout()
 {
     ui->frameTDA->setHeading(ui->frameBottomOSD->getHeading());
     ui->frameTDA->setGunbalisticdata(ui->frameBottomGun->getGunbalisticdata());
+    ui->frameTDA->setAccessStatus(ui->frameBottomGun->getAccessStatus());
     ui->frameBottomWAP->setAccessStatus(ui->frameBottomGun->getAccessStatus());
 }
 
@@ -75,9 +76,9 @@ void MainWindow::setConfig(QSettings &Config)
 {
     splash->show();
 
-    QString osd = Config.value("Redis/osd", "192.168.1.2").toString();
-    QString track = Config.value("Redis/track", "192.168.1.2").toString();
-    QString gun = Config.value("Redis/gun", "192.168.1.2").toString();
+    QString osd = Config.value("Redis/osd", "192.168.1.240").toString();
+    QString track = Config.value("Redis/track", "192.168.1.240").toString();
+    QString gun = Config.value("Redis/gun", "192.168.1.240").toString();
 
 
     verbose = Config.value("Apps/verbose", false).toBool();
