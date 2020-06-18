@@ -671,7 +671,7 @@ void FrameOSD::on_pushButtonGPSApply_clicked()
     }
 
     float valuemin = min.toFloat(&ok)/60.0;
-    if ((!ok) || (valuemin > 1))
+    if ((!ok) || (valuemin >= 1))
     {
         QMessageBox::critical(this, "Fatal Error Latitude", "Invalid minute input value.\nValid input : 00-59" );
         return;
