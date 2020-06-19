@@ -529,7 +529,7 @@ void FrameTDA::paintEvent(QPaintEvent *event)
             catch (Error e)
             {
                 curStatusString = e.what();
-                qDebug() << Q_FUNC_INFO <<  curStatusString;
+                //qDebug() << Q_FUNC_INFO <<  curStatusString;
             }
         }
     }

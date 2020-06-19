@@ -226,26 +226,41 @@ void FrameOSD::GyroTimerTimeOut()
 
         if(status)
         {
-            ui->lineEditGyroHeading->setStyleSheet("color:rgb(0, 255, 0);");
-            ui->lineEditGyroRoll->setStyleSheet("color:rgb(0, 255, 0);");
-            ui->lineEditGyroPitch->setStyleSheet("color:rgb(0, 255, 0);");
-
             std::vector<std::string> inersia;
-            inersia.reserve(3);
+            inersia.reserve(4);
 
             try
             {
-                redisClient->hmget("inersia", {"heading", "roll", "pitch"}, std::back_inserter(inersia));
+                redisClient->hmget("inersia", {"heading", "roll", "pitch", "status"}, std::back_inserter(inersia));
 
                 curStatusString = "";
 
                 inersiadata.heading = QString::fromStdString(inersia.at(0));
                 inersiadata.roll = QString::fromStdString(inersia.at(1));
                 inersiadata.picth = QString::fromStdString(inersia.at(2));
+                inersiadata.status = QString::fromStdString(inersia.at(3));
 
-                ui->lineEditGyroHeading->setText(inersiadata.heading);
-                ui->lineEditGyroRoll->setText(inersiadata.roll);
-                ui->lineEditGyroPitch->setText(inersiadata.picth);
+                ui->lineEditGyroHeading->setToolTip(inersiadata.status);
+                ui->lineEditGyroRoll->setToolTip(inersiadata.status);
+                ui->lineEditGyroPitch->setToolTip(inersiadata.status);
+
+                if(inersiadata.status.isEmpty())
+                {
+                    ui->lineEditGyroHeading->setStyleSheet("color:rgb(0, 255, 0);");
+                    ui->lineEditGyroRoll->setStyleSheet("color:rgb(0, 255, 0);");
+                    ui->lineEditGyroPitch->setStyleSheet("color:rgb(0, 255, 0);");
+
+                    ui->lineEditGyroHeading->setText(inersiadata.heading);
+                    ui->lineEditGyroRoll->setText(inersiadata.roll);
+                    ui->lineEditGyroPitch->setText(inersiadata.picth);
+                }
+                else
+                {
+                    ui->lineEditGyroHeading->setStyleSheet("color: rgb(255, 0, 0);");
+                    ui->lineEditGyroRoll->setStyleSheet("color: rgb(255, 0, 0);");
+                    ui->lineEditGyroPitch->setStyleSheet("color: rgb(255, 0, 0);");
+                }
+
             }
             catch (Error e)
             {
@@ -253,7 +268,6 @@ void FrameOSD::GyroTimerTimeOut()
                 curStatusString = e.what();
                 qDebug() << Q_FUNC_INFO <<  curStatusString;
             }
-
         }
         else
         {
@@ -464,19 +478,19 @@ void FrameOSD::GpsTimerTimeOut()
 
         if(status)
         {
-            ui->lineEditGpsLat->setStyleSheet("color:rgb(0, 255, 0);");
-            ui->lineEditGpsLong->setStyleSheet("color:rgb(0, 255, 0);");
-
             std::vector<std::string> position;
             position.reserve(2);
 
             try
             {
-                redisClient->hmget("position", {"latitude", "longitude"}, std::back_inserter(position));
+                redisClient->hmget("position", {"latitude", "longitude", "status"}, std::back_inserter(position));
+
                 curStatusString = "";
 
                 gpsdata.latitude = QString::fromStdString(position.at(0));
                 gpsdata.longitude = QString::fromStdString(position.at(1));
+                gpsdata.status = QString::fromStdString(position.at(2));
+
 
                // ==== Float latitude ====
                float lat_float = gpsdata.latitude.toFloat();
@@ -542,8 +556,23 @@ void FrameOSD::GpsTimerTimeOut()
 
                QString longitude_string = degg_string + "-" + minn_string + "'" + secc_string + "''" + tanda_longitude;
 
-                ui->lineEditGpsLat->setText(latitude_string);
-                ui->lineEditGpsLong->setText(longitude_string);
+               ui->lineEditGpsLat->setToolTip(gpsdata.status);
+               ui->lineEditGpsLong->setToolTip(gpsdata.status);
+
+               if(gpsdata.status.isEmpty())
+               {
+                   ui->lineEditGpsLat->setStyleSheet("color:rgb(0, 255, 0);");
+                   ui->lineEditGpsLong->setStyleSheet("color:rgb(0, 255, 0);");
+
+                   ui->lineEditGpsLat->setText(latitude_string);
+                   ui->lineEditGpsLong->setText(longitude_string);
+               }
+               else
+               {
+                   ui->lineEditGpsLat->setStyleSheet("color: rgb(255, 0, 0);");
+                   ui->lineEditGpsLong->setStyleSheet("color: rgb(255, 0, 0);");
+               }
+
             }
             catch (Error e)
             {
@@ -844,23 +873,36 @@ void FrameOSD::SpeedTimerTimeOut()
 
         if(status)
         {
-            ui->lineEditSpeedSOG->setStyleSheet("color:rgb(0, 255, 0);");
-            ui->lineEditSpeedCOG->setStyleSheet("color:rgb(0, 255, 0);");
-
             std::vector<std::string> speed;
             speed.reserve(2);
 
             try
             {
-                redisClient->hmget("speed", {"SOG", "COG"}, std::back_inserter(speed));
+                redisClient->hmget("speed", {"SOG", "COG","status"}, std::back_inserter(speed));
+
+                curStatusString = "";
 
                 speeddata.sog = QString::fromStdString(speed.at(0));
                 speeddata.cog = QString::fromStdString(speed.at(1));
+                speeddata.status = QString::fromStdString(speed.at(2));
 
-                ui->lineEditSpeedSOG->setText(speeddata.sog);
-                ui->lineEditSpeedCOG->setText(speeddata.cog);
+                ui->lineEditSpeedSOG->setToolTip(speeddata.status);
+                ui->lineEditSpeedCOG->setToolTip(speeddata.status);
 
-                curStatusString = "";
+                if(speeddata.status.isEmpty())
+                {
+                    ui->lineEditSpeedSOG->setStyleSheet("color:rgb(0, 255, 0);");
+                    ui->lineEditSpeedCOG->setStyleSheet("color:rgb(0, 255, 0);");
+
+                    ui->lineEditSpeedSOG->setText(speeddata.sog);
+                    ui->lineEditSpeedCOG->setText(speeddata.cog);
+                }
+                else
+                {
+                    ui->lineEditSpeedSOG->setStyleSheet("color: rgb(255, 0, 0);");
+                    ui->lineEditSpeedCOG->setStyleSheet("color: rgb(255, 0, 0);");
+                }
+
             }
             catch (Error e)
             {
@@ -1050,23 +1092,36 @@ void FrameOSD::WaterSpeedTimerTimeOut()
         }
 
         if(status)
-        {
-            ui->lineEditWaterSOG->setStyleSheet("color:rgb(0, 255, 0);");
-            ui->lineEditWaterCOG->setStyleSheet("color:rgb(0, 255, 0);");
-
+        {   
             std::vector<std::string> waterspeed;
             waterspeed.reserve(2);
 
             try
             {
-                redisClient->hmget("waterspeed", {"speed", "course"}, std::back_inserter(waterspeed));
+                redisClient->hmget("waterspeed", {"speed", "course", "status"}, std::back_inserter(waterspeed));
+
                 curStatusString = "";
 
                 waterspeeddata.speed = QString::fromStdString(waterspeed.at(0));
                 waterspeeddata.course = QString::fromStdString(waterspeed.at(1));
+                waterspeeddata.status = QString::fromStdString(waterspeed.at(2));
 
-                ui->lineEditWaterSOG->setText(waterspeeddata.speed);
-                ui->lineEditWaterCOG->setText(waterspeeddata.course);
+                ui->lineEditWaterSOG->setToolTip(waterspeeddata.status);
+                ui->lineEditWaterCOG->setToolTip(waterspeeddata.status);
+
+                if(waterspeeddata.status.isEmpty())
+                {
+                    ui->lineEditWaterSOG->setStyleSheet("color:rgb(0, 255, 0);");
+                    ui->lineEditWaterCOG->setStyleSheet("color:rgb(0, 255, 0);");
+
+                    ui->lineEditWaterSOG->setText(waterspeeddata.speed);
+                    ui->lineEditWaterCOG->setText(waterspeeddata.course);
+                }
+                else
+                {
+                    ui->lineEditWaterSOG->setStyleSheet("color: rgb(255, 0, 0);");
+                    ui->lineEditWaterCOG->setStyleSheet("color: rgb(255, 0, 0);");
+                }
             }
             catch (Error e)
             {
@@ -1260,23 +1315,36 @@ void FrameOSD::WindTimerTimeOut()
 
         if(status)
         {
-            ui->lineEditWindDir->setStyleSheet("color:rgb(0, 255, 0);");
-            ui->lineEditWindSpeed->setStyleSheet("color:rgb(0, 255, 0);");
-
             std::vector<std::string> wind;
-            wind.reserve(2);
+            wind.reserve(3);
 
             try
             {
-                redisClient->hmget("wind", {"dir", "speed"}, std::back_inserter(wind));
+                redisClient->hmget("wind", {"dir", "speed", "status"}, std::back_inserter(wind));
 
                 curStatusString = "";
 
                 winddata.dir = QString::fromStdString(wind.at(0));
                 winddata.speed = QString::fromStdString(wind.at(1));
+                winddata.status = QString::fromStdString(wind.at(2));
 
-                ui->lineEditWindDir->setText(winddata.dir);
-                ui->lineEditWindSpeed->setText(winddata.speed);
+                ui->lineEditWindDir->setToolTip(winddata.status);
+                ui->lineEditWindSpeed->setToolTip(winddata.status);
+
+                if(winddata.status.isEmpty())
+                {
+                    ui->lineEditWindDir->setStyleSheet("color:rgb(0, 255, 0);");
+                    ui->lineEditWindSpeed->setStyleSheet("color:rgb(0, 255, 0);");
+
+                    ui->lineEditWindDir->setText(winddata.dir);
+                    ui->lineEditWindSpeed->setText(winddata.speed);
+                }
+                else
+                {
+                    ui->lineEditWindDir->setStyleSheet("color: rgb(255, 0, 0);");
+                    ui->lineEditWindSpeed->setStyleSheet("color: rgb(255, 0, 0);");
+                }
+
             }
             catch (Error e)
             {
@@ -1470,26 +1538,45 @@ void FrameOSD::WeatherTimerTimeOut()
 
         if(status)
         {
-            ui->lineEditWeatherTemp->setStyleSheet("color:rgb(0, 255, 0);");
-            ui->lineEditWeatherPress->setStyleSheet("color:rgb(0, 255, 0);");
-            ui->lineEditWeatherHumidity->setStyleSheet("color:rgb(0, 255, 0);");
-
             std::vector<std::string> weather;
-            weather.reserve(3);
+            weather.reserve(4);
 
             try
             {
-                redisClient->hmget("weather", {"temperature", "pressure", "humidity"}, std::back_inserter(weather));
+                redisClient->hmget("weather", {"temperature", "pressure", "humidity", "status"}, std::back_inserter(weather));
+
+                curStatusString = "";
 
                 weatherdata.temperature = QString::fromStdString(weather.at(0));
                 weatherdata.pressure = QString::fromStdString(weather.at(1));
                 weatherdata.humidity = QString::fromStdString(weather.at(2));
+                weatherdata.status = QString::fromStdString(weather.at(3));
+//                qDebug() <<"temperature" <<weatherdata.temperature
+//                         <<"pressure" <<weatherdata.pressure
+//                         <<"humidity" <<weatherdata.humidity
+//                         <<"status" <<weatherdata.status;
 
-                ui->lineEditWeatherTemp->setText(weatherdata.temperature);
-                ui->lineEditWeatherPress->setText(weatherdata.pressure);
-                ui->lineEditWeatherHumidity->setText(weatherdata.humidity);
+                ui->lineEditWeatherTemp->setToolTip(weatherdata.status);
+                ui->lineEditWeatherPress->setToolTip(weatherdata.status);
+                ui->lineEditWeatherHumidity->setToolTip(weatherdata.status);
 
-                curStatusString = "";
+                if(weatherdata.status.isEmpty())
+                {
+                    ui->lineEditWeatherTemp->setStyleSheet("color:rgb(0, 255, 0);");
+                    ui->lineEditWeatherPress->setStyleSheet("color:rgb(0, 255, 0);");
+                    ui->lineEditWeatherHumidity->setStyleSheet("color:rgb(0, 255, 0);");
+
+                    ui->lineEditWeatherTemp->setText(weatherdata.temperature);
+                    ui->lineEditWeatherPress->setText(weatherdata.pressure);
+                    ui->lineEditWeatherHumidity->setText(weatherdata.humidity);
+                }
+                else
+                {
+                    ui->lineEditWeatherTemp->setStyleSheet("color: rgb(255, 0, 0);");
+                    ui->lineEditWeatherPress->setStyleSheet("color: rgb(255, 0, 0);");
+                    ui->lineEditWeatherHumidity->setStyleSheet("color: rgb(255, 0, 0);");
+                }
+
             }
             catch (Error e)
             {

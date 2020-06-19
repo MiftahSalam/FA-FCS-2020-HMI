@@ -55,18 +55,21 @@ private:
         QString heading;
         QString roll;
         QString picth;
+        QString status;
     };
 
     struct GpsData
     {
         QString latitude;
         QString longitude;
+        QString status;
     };
 
     struct WindData
     {
         QString dir;
         QString speed;
+        QString status;
     };
 
     struct WeatherData
@@ -74,18 +77,21 @@ private:
         QString temperature;
         QString pressure;
         QString humidity;
+        QString status;
     };
 
     struct SpeedData
     {
         QString sog;
         QString cog;
+        QString status;
     };
 
     struct WaterSpeedData
     {
         QString speed;
         QString course;
+        QString status;
     };
 
     Ui::FrameOSD *ui;

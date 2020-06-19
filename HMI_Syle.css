@@ -26,6 +26,11 @@ QLineEdit::disabled {
     color:rgb(0, 0, 0);
 }
 
+QToolTip {
+    color:rgb(196, 160, 0);
+    background-color: rgb(40, 40, 40);
+}
+
 QGroupBox::title {
     subcontrol-origin: margin;
     subcontrol-position: top center;
@@ -52,3 +57,4 @@ QComboBox QAbstractItemView {
     selection-background-color: yellow;
     selection-color: black;
 }
+
