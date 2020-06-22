@@ -343,7 +343,16 @@ void FrameTDA::track_identity_changed(int tn,Identity identity)
     {
             {"identity", s.toStdString()},
     };
-    redisClient->hmset("track:Data:"+ QString::number(tn).toStdString(), data_map.begin(), data_map.end());
+
+    try
+    {
+        redisClient->hmset("track:Data:"+ QString::number(tn).toStdString(), data_map.begin(), data_map.end());
+    }
+    catch (Error e)
+    {
+        qDebug() << Q_FUNC_INFO << e.what();
+    }
+
 }
 
 // ==== Right Click TDA for contex Menu ==== //
@@ -497,34 +506,34 @@ void FrameTDA::paintEvent(QPaintEvent *event)
             std::vector<std::string> fire;
             try
             {
-            redisClient->hmget("fire_triangle", {"ttlf", "ttlf_x", "ttlf_y"}, std::back_inserter(fire));
+                redisClient->hmget("fire_triangle", {"ttlf", "ttlf_x", "ttlf_y"}, std::back_inserter(fire));
 
-            double TTLF_x = QString::fromStdString(fire.at(1)).toDouble();
-            double TTLF_y = QString::fromStdString(fire.at(2)).toDouble();
-            double rng = range2Pixel(mapTracks->value(i).trackData.range);
-            double brn = 90-mapTracks->value(i).trackData.bearing;
-            int tn = mapTracks->value(i).trackData.tn;
-            painter.setPen(QColor(0,255,0,255));
-            painter.drawLine(0,0,range2Pixel(TTLF_x),-range2Pixel(TTLF_y));
-            painter.drawLine(rng*cos(brn*(M_PI/180)),-rng*sin(brn*(M_PI/180)),range2Pixel(TTLF_x),-range2Pixel(TTLF_y));
-            painter.drawLine(rng*cos(brn*(M_PI/180)),-rng*sin(brn*(M_PI/180)),0,0);
+                double TTLF_x = QString::fromStdString(fire.at(1)).toDouble();
+                double TTLF_y = QString::fromStdString(fire.at(2)).toDouble();
+                double rng = range2Pixel(mapTracks->value(i).trackData.range);
+                double brn = 90-mapTracks->value(i).trackData.bearing;
+                int tn = mapTracks->value(i).trackData.tn;
+                painter.setPen(QColor(0,255,0,255));
+                painter.drawLine(0,0,range2Pixel(TTLF_x),-range2Pixel(TTLF_y));
+                painter.drawLine(rng*cos(brn*(M_PI/180)),-rng*sin(brn*(M_PI/180)),range2Pixel(TTLF_x),-range2Pixel(TTLF_y));
+                painter.drawLine(rng*cos(brn*(M_PI/180)),-rng*sin(brn*(M_PI/180)),0,0);
 
-//            qDebug() << Q_FUNC_INFO << TTLF_x << TTLF_y;
+                //            qDebug() << Q_FUNC_INFO << TTLF_x << TTLF_y;
 
-            statusBarSelectedTrack->showMessage(QString("Tn : %1     "
-                                                        "Range : %2 NM     "
-                                                        "Bearing : %3     "
-                                                        "Speed : %4 kts     "
-                                                        "Course : %5     "
-                                                        //                                                    "Height : %6 ft     "
-                                                        )
-                                                .arg(tn)
-                                                .arg(QString::number(mapTracks->value(tn).trackData.range,'f',2))
-                                                .arg(QString::number(mapTracks->value(tn).trackData.bearing,'f',2))
-                                                .arg(QString::number(mapTracks->value(tn).trackData.speed,'f',2))
-                                                .arg(QString::number(mapTracks->value(tn).trackData.course,'f',2))
-                                                );
-            break;
+                statusBarSelectedTrack->showMessage(QString("Tn : %1     "
+                                                            "Range : %2 NM     "
+                                                            "Bearing : %3     "
+                                                            "Speed : %4 kts     "
+                                                            "Course : %5     "
+                                                            //                                                    "Height : %6 ft     "
+                                                            )
+                                                    .arg(tn)
+                                                    .arg(QString::number(mapTracks->value(tn).trackData.range,'f',2))
+                                                    .arg(QString::number(mapTracks->value(tn).trackData.bearing,'f',2))
+                                                    .arg(QString::number(mapTracks->value(tn).trackData.speed,'f',2))
+                                                    .arg(QString::number(mapTracks->value(tn).trackData.course,'f',2))
+                                                    );
+                break;
             }
             catch (Error e)
             {
@@ -648,7 +657,6 @@ void FrameTDA::setAccessStatus(QString access_status)
 void FrameTDA::setGunbalisticdata(QStringList datagunbalistic)
 {
     currentGunBalistic = datagunbalistic;
-
 //    qDebug() <<"hasil set"<<datagunbalistic;
 }
 
