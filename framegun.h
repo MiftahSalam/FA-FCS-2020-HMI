@@ -19,9 +19,10 @@ public:
     ~FrameGun();
     void setConfig (QString Config);
 
-    QStringList getGunbalisticdata() const;
+    QStringList getGundata() const;
 
     QString getAccessStatus() const;
+    QString getReadyStatus() const;
 
 private slots:
     void on_gunTimerTimeOut();
@@ -52,6 +53,7 @@ private:
     struct OperationalStatus
     {
         QString operational;
+        QString assign_mode;
     };
 
     struct EngagementStatus

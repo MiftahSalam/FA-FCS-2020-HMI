@@ -51,6 +51,7 @@ struct trackParam
     int tn;
     double range;
     double bearing;
+    double height;
     double speed;
     double course;
 

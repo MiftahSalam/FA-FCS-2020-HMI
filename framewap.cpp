@@ -43,9 +43,12 @@ void FrameWAP::setConfig(QString ConfigTrack, QString ConfigGun)
 
     try
     {
-        redisGun->hset("gun_op_status","assign_mode","");
+        redisGun->hset("gun_op_status","assign_mode","-");
+        redisGun->hset("gun_op_status","operational","");
         redisGun->hset("engagement","azimuth_corr","0.0");
         redisGun->hset("engagement","elevation_corr","0.0");
+        redisGun->hset("engagement","azimuth","0.0");
+        redisGun->hset("engagement","elevation","0.0");
     }
     catch (Error e)
     {
@@ -71,6 +74,32 @@ void FrameWAP::setAccessStatus(QString access_status)
     {
         ui->comboBoxWAPMode->setDisabled(true);
         ui->comboBoxWAPWeapon->setDisabled(true);
+        ui->comboBoxWAPMode->setCurrentIndex(0);
+
+        try
+        {
+            std::unordered_map<std::string, std::string> data_map =
+            {
+                {"operational", ""},
+                {"assign_mode", "-"},
+            };
+
+            try
+            {
+                redisGun->hmset("gun_op_status",data_map.begin(), data_map.end());
+                curStatusString = "";
+            }
+            catch (Error e)
+            {
+                curStatusString = e.what();
+                qDebug() << Q_FUNC_INFO <<  curStatusString;
+            }
+
+        }
+        catch(Error e)
+        {
+            qDebug() << Q_FUNC_INFO << e.what();
+        }
     }
 
     if(!ui->comboBoxTrackEngTN->hasFocus())
@@ -111,7 +140,7 @@ void FrameWAP::setAccessStatus(QString access_status)
     {
         redisGun->hmget("engagement",{"azimuth_status", "elevation_status"},std::back_inserter (engagement));
 
-        QString engage_mode = QString::fromStdString(redisGun->hget("engagement", "mode").value());
+        QString engage_mode = QString::fromStdString(redisGun->get("engagement_mode").value());
 
         // ==== Engage Azimuth, Elevation, & Mode ==== //
         if(engage_mode != curEngStatus)
@@ -161,8 +190,8 @@ void FrameWAP::setAccessStatus(QString access_status)
             ui->groupBoxEng->setEnabled(true);
 
             // ==== Engage, El_status, & Az_status ==== //
-            if((QString::fromStdString(engagement.at(1)) == "Eng") &&
-                    (QString::fromStdString(engagement.at(0)) == "Eng"))
+            if((QString::fromStdString(engagement.at(1)) == "engageable") &&
+                    (QString::fromStdString(engagement.at(0)) == "engageable"))
             {
                 QTableWidgetItem *engage_status_itemElStatus = ui->tableWidgetEngData->item(0,1);
                 engage_status_itemElStatus->setText("Eng");
@@ -278,6 +307,23 @@ void FrameWAP::on_pushButtonTrackEngAssign_clicked()
         redisTrack->hset(trackKey.toStdString(),"weapon_assigned",assign.toStdString());
 
         ui->pushButtonTrackEngAssign->setText(assign.isEmpty() ? "Assign" : "Break");
+
+        QString wap_mode = QString::fromStdString(redisGun->hget("gun_op_status", "assign_mode").value());
+        if(wap_mode != "-")
+        {
+            QString engage_mode = QString::fromStdString(redisGun->get("engagement_mode").value());
+            if(engage_mode == "Auto")
+            {
+                if(assign.isEmpty())
+                    redisGun->hset("gun_op_status","operational","Standby");
+                else
+                    redisGun->hset("gun_op_status","operational","Assigned");
+            }
+        }
+        else
+            redisGun->hset("gun_op_status","operational","-");
+
+
     }
     catch (Error e)
     {
@@ -287,11 +333,46 @@ void FrameWAP::on_pushButtonTrackEngAssign_clicked()
 
 void FrameWAP::on_comboBoxWAPMode_activated(const QString &arg1)
 {
-    QString wap_mode = arg1 == "-" ? "" : arg1;
+    QString wap_mode = arg1;
 
     try
     {
+        qDebug() << Q_FUNC_INFO << wap_mode;
         redisGun->hset("gun_op_status","assign_mode",wap_mode.toStdString());
+        if(wap_mode != "-")
+        {
+            QString engage_mode = QString::fromStdString(redisGun->get("engagement_mode").value());
+            if(engage_mode == "Manual")
+            {
+                try
+                {
+                    redisGun->hset("gun_op_status","operational","Assigned");
+                    std::unordered_map<std::string, std::string> data_map =
+                    {
+                        {"azimuth", "0.0"},
+                        {"elevation", "0.0"},
+                        {"azimuth_status", "engageable"},
+                        {"elevation_status", "engageable"},
+                    };
+                    redisGun->hmset("engagement",data_map.begin(), data_map.end());
+                    curStatusString = "";
+                }
+                catch (Error e)
+                {
+                    curStatusString = e.what();
+                    qDebug() << Q_FUNC_INFO <<  curStatusString;
+                }
+
+            }
+            else if(engage_mode == "Auto")
+            {
+                redisGun->hset("gun_op_status","operational","Standby");
+            }
+        }
+        else
+        {
+            redisGun->hset("gun_op_status","operational","");
+        }
     }
     catch (Error e)
     {

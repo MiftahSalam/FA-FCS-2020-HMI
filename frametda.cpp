@@ -146,7 +146,7 @@ void FrameTDA::updateDataTracks()
 
             try
             {
-                redisClient->hmget(trackList.at(i).data(), {"id", "range", "bearing", "speed", "course", "identity", "weapon_assigned" }, std::back_inserter(trackQuery));
+                redisClient->hmget(trackList.at(i).data(), {"id", "range", "bearing", "speed", "height", "course" }, std::back_inserter(trackQuery));
 
                 trackParam trackdata;
 
@@ -154,11 +154,35 @@ void FrameTDA::updateDataTracks()
                 trackdata.range= QString::fromStdString(trackQuery.at(1)).toDouble();
                 trackdata.bearing= QString::fromStdString(trackQuery.at(2)).toDouble();
                 trackdata.speed= QString::fromStdString(trackQuery.at(3)).toDouble();
-                trackdata.course= QString::fromStdString(trackQuery.at(4)).toDouble();
-                trackdata.cur_identity= int2Identity(QString::fromStdString(trackQuery.at(5)).toInt());
-                trackdata.weapon_assign= QString::fromStdString(trackQuery.at(6));
+                trackdata.height= QString::fromStdString(trackQuery.at(4)).toDouble();
+                trackdata.course= QString::fromStdString(trackQuery.at(5)).toDouble();
 
                 trackQuery.clear();
+
+                try
+                {
+                    redisClient->hmget(trackList.at(i).data(), {"identity"}, std::back_inserter(trackQuery));
+                    trackdata.cur_identity= int2Identity(QString::fromStdString(trackQuery.at(0)).toInt());
+                    trackQuery.clear();
+                }
+                catch (Error e)
+                {
+                    redisClient->hset(trackList.at(i).data(), "identity", "0");
+
+                    qDebug() << Q_FUNC_INFO << e.what() << "cek identity lebih besar ";
+                }
+
+                try
+                {
+                    redisClient->hmget(trackList.at(i).data(), {"weapon_assigned" }, std::back_inserter(trackQuery));
+                    trackdata.weapon_assign= QString::fromStdString(trackQuery.at(0));
+                    trackQuery.clear();
+                }
+                catch (Error e)
+                {
+                    redisClient->hset(trackList.at(i).data(), "weapon_assigned", "");
+                    qDebug() << Q_FUNC_INFO << e.what() << "cek weapon lebih besar";
+                }
 
                 if(verbose)
                     qDebug() << "Menampilkan data track:Data:" << trackdata.tn << trackdata.range << trackdata.bearing << trackdata.speed << trackdata.course << trackdata.cur_identity  ;
@@ -199,7 +223,7 @@ void FrameTDA::updateDataTracks()
             }
             catch (Error e)
             {
-                qDebug() << Q_FUNC_INFO << e.what();
+                qDebug() << Q_FUNC_INFO << e.what() << "cek";
             }
         }
     }
@@ -216,7 +240,7 @@ void FrameTDA::updateDataTracks()
         {
             try
             {
-                redisClient->hmget(trackList.at(i).data(), {"id", "range", "bearing", "speed", "course", "identity", "weapon_assigned" }, std::back_inserter(trackQuery));
+                redisClient->hmget(trackList.at(i).data(), {"id", "range", "bearing", "speed", "height", "course" }, std::back_inserter(trackQuery));
 
                 trackParam trackdata;
 
@@ -224,11 +248,34 @@ void FrameTDA::updateDataTracks()
                 trackdata.range= QString::fromStdString(trackQuery.at(1)).toDouble();
                 trackdata.bearing= QString::fromStdString(trackQuery.at(2)).toDouble();
                 trackdata.speed= QString::fromStdString(trackQuery.at(3)).toDouble();
-                trackdata.course= QString::fromStdString(trackQuery.at(4)).toDouble();
-                trackdata.cur_identity= int2Identity(QString::fromStdString(trackQuery.at(5)).toInt());
-                trackdata.weapon_assign= QString::fromStdString(trackQuery.at(6));
+                trackdata.height= QString::fromStdString(trackQuery.at(4)).toDouble();
+                trackdata.course= QString::fromStdString(trackQuery.at(5)).toDouble();
 
                 trackQuery.clear();
+
+                try
+                {
+                    redisClient->hmget(trackList.at(i).data(), {"identity"}, std::back_inserter(trackQuery));
+                    trackdata.cur_identity= int2Identity(QString::fromStdString(trackQuery.at(0)).toInt());
+                    trackQuery.clear();
+                }
+                catch (Error e)
+                {
+                    redisClient->hset(trackList.at(i).data(), "identity", "0");
+                    qDebug() << Q_FUNC_INFO << e.what() << "cek identity lebih besar ";
+                }
+
+                try
+                {
+                    redisClient->hmget(trackList.at(i).data(), {"weapon_assigned" }, std::back_inserter(trackQuery));
+                    trackdata.weapon_assign= QString::fromStdString(trackQuery.at(0));
+                    trackQuery.clear();
+                }
+                catch (Error e)
+                {
+                    redisClient->hset(trackList.at(i).data(), "weapon_assigned", "");
+                    qDebug() << Q_FUNC_INFO << e.what() << "cek weapon lebih besar";
+                }
 
                 if(verbose)
                     qDebug() << "Menampilkan data track:Data:" << trackdata.tn << trackdata.range << trackdata.bearing << trackdata.speed << trackdata.course << trackdata.cur_identity  <<trackdata.weapon_assign;
@@ -339,6 +386,7 @@ void FrameTDA::track_identity_changed(int tn,Identity identity)
 {
     QString s = QString::number(identity2Int(identity));
 
+    qDebug() << tn << "coba klik" ;
     std::unordered_map<std::string, std::string> data_map =
     {
             {"identity", s.toStdString()},
@@ -448,14 +496,16 @@ void FrameTDA::paintEvent(QPaintEvent *event)
         painter.rotate(-currentHeading);
 
         // ==== Gun Coverage ==== //
-        QString str = currentGunBalistic.join(",");
+        QString str = currentGunData.join(",");
         QStringList list = str.split(',');
         QString orientation = list.at(0);
         QString blind_arc1 = list.at(1);
         QString max_range1 = list.at(2);
+        QString azimuth = list.at(3);
         const qreal gun_orientation = QString(orientation).toDouble();
         const qreal blind_arc = QString(blind_arc1).toDouble();
         const qreal max_range = QString(max_range1).toDouble(); //NM
+
 
     //    qDebug() <<Q_FUNC_INFO << gun_orientation << blind_arc << max_range;
 
@@ -479,7 +529,7 @@ void FrameTDA::paintEvent(QPaintEvent *event)
         // ==== Gun barrel ==== //
         if(currentAccessStatus > "0")
         {
-            const double bearing = 0;
+            const double bearing = azimuth.toDouble();
             int sideMax1 = qMax(width(),height());
             painter.rotate(currentHeading+bearing);
             painter.setPen(QPen(Qt::green, 5));
@@ -654,10 +704,10 @@ void FrameTDA::setAccessStatus(QString access_status)
 //    qDebug() <<Q_FUNC_INFO << access_status;
 }
 
-void FrameTDA::setGunbalisticdata(QStringList datagunbalistic)
+void FrameTDA::setGundata(QStringList datagun)
 {
-    currentGunBalistic = datagunbalistic;
-//    qDebug() <<"hasil set"<<datagunbalistic;
+    currentGunData = datagun;
+    qDebug() <<"hasil set"<<datagun;
 }
 
 int FrameTDA::range2Pixel(double range)
