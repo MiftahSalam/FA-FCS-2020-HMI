@@ -45,10 +45,12 @@ void FrameWAP::setConfig(QString ConfigTrack, QString ConfigGun)
     {
         redisGun->hset("gun_op_status","assign_mode","-");
         redisGun->hset("gun_op_status","operational","");
-        redisGun->hset("engagement","azimuth_corr","0.0");
-        redisGun->hset("engagement","elevation_corr","0.0");
-        redisGun->hset("engagement","azimuth","0.0");
-        redisGun->hset("engagement","elevation","0.0");
+        redisGun->hset("engagement", "azimuth", "0.0");
+        redisGun->hset("engagement", "elevation", "0.0");
+        redisGun->hset("engagement", "azimuth_status", "engageable");
+        redisGun->hset("engagement", "elevation_status", "engageable");
+        redisGun->hset("engagement", "azimuth_corr", "0.0");
+        redisGun->hset("engagement", "elevation_corr", "0.0");
     }
     catch (Error e)
     {
@@ -84,21 +86,13 @@ void FrameWAP::setAccessStatus(QString access_status)
                 {"assign_mode", "-"},
             };
 
-            try
-            {
-                redisGun->hmset("gun_op_status",data_map.begin(), data_map.end());
-                curStatusString = "";
-            }
-            catch (Error e)
-            {
-                curStatusString = e.what();
-                qDebug() << Q_FUNC_INFO <<  curStatusString;
-            }
-
+            redisGun->hmset("gun_op_status",data_map.begin(), data_map.end());
+            curStatusString = "";
         }
         catch(Error e)
         {
-            qDebug() << Q_FUNC_INFO << e.what();
+            curStatusString = e.what();
+            qDebug() << Q_FUNC_INFO <<  "cannot get gun_op_status" <<curStatusString;
         }
     }
 
@@ -130,16 +124,13 @@ void FrameWAP::setAccessStatus(QString access_status)
         }
         catch(Error e)
         {
-            qDebug() << Q_FUNC_INFO << e.what();
+            qDebug() << Q_FUNC_INFO << "no track" << e.what();
         }
     }
 
     // ==== Engagement Data ==== //
-    std::vector<std::string> engagement;
     try
     {
-        redisGun->hmget("engagement",{"azimuth_status", "elevation_status"},std::back_inserter (engagement));
-
         QString engage_mode = QString::fromStdString(redisGun->get("engagement_mode").value());
 
         // ==== Engage Azimuth, Elevation, & Mode ==== //
@@ -160,46 +151,94 @@ void FrameWAP::setAccessStatus(QString access_status)
             QString engagetrackTnWeapon;
             std::vector<std::string> trackTn;
 
-
-            redisTrack->keys("track:Data:*",std::back_inserter(trackTn));
-
-            for (int i=0;i<trackTn.size();i++)
+            try
             {
-                std::vector<std::string> engageTnWeapon;
-
-                redisTrack->hmget(trackTn.at(i).data(),
-                {"id","weapon_assigned"},std::back_inserter(engageTnWeapon));
-
-                if(QString::fromStdString(engageTnWeapon.at(1)) == "40 mm")
+                redisTrack->keys("track:Data:*",std::back_inserter(trackTn));
+                for (int i=0;i<trackTn.size();i++)
                 {
-                    engagetrackTnWeapon = QString::fromStdString(engageTnWeapon.at(0));
+                    std::vector<std::string> engageTnWeapon;
+
+                    redisTrack->hmget(trackTn.at(i).data(),
+                    {"id","weapon_assigned"},std::back_inserter(engageTnWeapon));
+
+                    if(QString::fromStdString(engageTnWeapon.at(1)) == "40 mm")
+                    {
+                        engagetrackTnWeapon = QString::fromStdString(engageTnWeapon.at(0));
+                    }
+                }
+
+                QString engage_az = QString::fromStdString(redisGun->hget("engagement", "azimuth").value());
+                QString engage_el = QString::fromStdString(redisGun->hget("engagement", "elevation").value());
+
+                QTableWidgetItem *engage_status_itemTn = ui->tableWidgetEngData->item(0,2);
+                engage_status_itemTn->setText(engagetrackTnWeapon);
+                QTableWidgetItem *engage_status_itemEl = ui->tableWidgetEngData->item(0,4);
+                engage_status_itemEl->setText(engage_el);
+                QTableWidgetItem *engage_status_itemAz = ui->tableWidgetEngData->item(0,3);
+                engage_status_itemAz->setText(engage_az);
+
+                ui->groupBoxCorr->setEnabled(true);
+                ui->groupBoxEng->setEnabled(true);
+
+                // ==== Engage, El_status, & Az_status ==== //
+                try
+                {
+                    std::vector<std::string> engagement;
+                    redisGun->hmget("engagement",{"azimuth_status", "elevation_status"},std::back_inserter (engagement));
+                    if((QString::fromStdString(engagement.at(1)) == "engageable") &&
+                            (QString::fromStdString(engagement.at(0)) == "engageable"))
+                    {
+                        QTableWidgetItem *engage_status_itemElStatus = ui->tableWidgetEngData->item(0,1);
+                        engage_status_itemElStatus->setText("Eng");
+                    }
+                    else
+                    {
+                        QTableWidgetItem *engage_status_itemElStatus = ui->tableWidgetEngData->item(0,1);
+                        engage_status_itemElStatus->setText("Not Eng");
+                    }
+                }
+                catch(Error e)
+                {
+                    qDebug() << Q_FUNC_INFO <<"cannot get engagement status"<< e.what();
+                    QTableWidgetItem *engage_status_itemElStatus = ui->tableWidgetEngData->item(0,1);
+                    engage_status_itemElStatus->setText("-");
+                    QTableWidgetItem *engage_status_itemTn = ui->tableWidgetEngData->item(0,2);
+                    engage_status_itemTn->setText("-");
+                    QTableWidgetItem *engage_status_itemEl = ui->tableWidgetEngData->item(0,4);
+                    engage_status_itemEl->setText("-");
+                    QTableWidgetItem *engage_status_itemAz = ui->tableWidgetEngData->item(0,3);
+                    engage_status_itemAz->setText("-");
+
+                    // ==== Correction ==== //
+                    QTableWidgetItem *corr_status_Az = ui->tableWidgetCorrection->item(0,1);
+                    corr_status_Az->setText("-");
+                    QTableWidgetItem *corr_status_El = ui->tableWidgetCorrection->item(0,2);
+                    corr_status_El->setText("-");
+                    ui->groupBoxCorr->setDisabled(true);
+                    ui->groupBoxEng->setDisabled(true);
+
                 }
             }
-
-            QString engage_az = QString::fromStdString(redisGun->hget("engagement", "azimuth").value());
-            QString engage_el = QString::fromStdString(redisGun->hget("engagement", "elevation").value());
-
-            QTableWidgetItem *engage_status_itemTn = ui->tableWidgetEngData->item(0,2);
-            engage_status_itemTn->setText(engagetrackTnWeapon);
-            QTableWidgetItem *engage_status_itemEl = ui->tableWidgetEngData->item(0,4);
-            engage_status_itemEl->setText(engage_el);
-            QTableWidgetItem *engage_status_itemAz = ui->tableWidgetEngData->item(0,3);
-            engage_status_itemAz->setText(engage_az);
-
-            ui->groupBoxCorr->setEnabled(true);
-            ui->groupBoxEng->setEnabled(true);
-
-            // ==== Engage, El_status, & Az_status ==== //
-            if((QString::fromStdString(engagement.at(1)) == "engageable") &&
-                    (QString::fromStdString(engagement.at(0)) == "engageable"))
+            catch(Error e)
             {
+                qDebug() << Q_FUNC_INFO <<"no track"<< e.what();
                 QTableWidgetItem *engage_status_itemElStatus = ui->tableWidgetEngData->item(0,1);
-                engage_status_itemElStatus->setText("Eng");
-            }
-            else
-            {
-                QTableWidgetItem *engage_status_itemElStatus = ui->tableWidgetEngData->item(0,1);
-                engage_status_itemElStatus->setText("Not Eng");
+                engage_status_itemElStatus->setText("-");
+                QTableWidgetItem *engage_status_itemTn = ui->tableWidgetEngData->item(0,2);
+                engage_status_itemTn->setText("-");
+                QTableWidgetItem *engage_status_itemEl = ui->tableWidgetEngData->item(0,4);
+                engage_status_itemEl->setText("-");
+                QTableWidgetItem *engage_status_itemAz = ui->tableWidgetEngData->item(0,3);
+                engage_status_itemAz->setText("-");
+
+                // ==== Correction ==== //
+                QTableWidgetItem *corr_status_Az = ui->tableWidgetCorrection->item(0,1);
+                corr_status_Az->setText("-");
+                QTableWidgetItem *corr_status_El = ui->tableWidgetCorrection->item(0,2);
+                corr_status_El->setText("-");
+                ui->groupBoxCorr->setDisabled(true);
+                ui->groupBoxEng->setDisabled(true);
+
             }
         }
         else if(engage_mode == "Manual")
@@ -228,7 +267,7 @@ void FrameWAP::setAccessStatus(QString access_status)
     }
     catch(Error e)
     {
-        qDebug() << Q_FUNC_INFO << e.what();
+        qDebug() << Q_FUNC_INFO << "cannot get engagement_mode"<<e.what();
     }
 }
 void FrameWAP::on_comboBoxWAPWeapon_activated(const QString &arg1)

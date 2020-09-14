@@ -544,18 +544,18 @@ void FrameTDA::paintEvent(QPaintEvent *event)
     {
         if(mapTracks->value(i).trackData.weapon_assign == "40 mm")
         {
-//            qDebug() << Q_FUNC_INFO
-//                     << mapTracks->value(i).trackData.tn << ","
-//                     << mapTracks->value(i).trackData.range << ","
-//                     << mapTracks->value(i).trackData.bearing << ","
-//                     << mapTracks->value(i).trackData.speed << ","
-//                     << mapTracks->value(i).trackData.course << ","
-//                     << mapTracks->value(i).trackData.cur_identity << ","
-//                     << mapTracks->value(i).trackData.weapon_assign;
+            qDebug() << Q_FUNC_INFO
+                     << mapTracks->value(i).trackData.tn << ","
+                     << mapTracks->value(i).trackData.range << ","
+                     << mapTracks->value(i).trackData.bearing << ","
+                     << mapTracks->value(i).trackData.speed << ","
+                     << mapTracks->value(i).trackData.course << ","
+                     << mapTracks->value(i).trackData.cur_identity << ","
+                     << mapTracks->value(i).trackData.weapon_assign;
 
-            std::vector<std::string> fire;
             try
             {
+                std::vector<std::string> fire;
                 redisClient->hmget("fire_triangle", {"ttlf", "ttlf_x", "ttlf_y"}, std::back_inserter(fire));
 
                 double TTLF_x = QString::fromStdString(fire.at(1)).toDouble();
@@ -568,7 +568,7 @@ void FrameTDA::paintEvent(QPaintEvent *event)
                 painter.drawLine(rng*cos(brn*(M_PI/180)),-rng*sin(brn*(M_PI/180)),range2Pixel(TTLF_x),-range2Pixel(TTLF_y));
                 painter.drawLine(rng*cos(brn*(M_PI/180)),-rng*sin(brn*(M_PI/180)),0,0);
 
-                //            qDebug() << Q_FUNC_INFO << TTLF_x << TTLF_y;
+                qDebug() << Q_FUNC_INFO << TTLF_x << TTLF_y;
 
                 statusBarSelectedTrack->showMessage(QString("Tn : %1     "
                                                             "Range : %2 NM     "
@@ -588,7 +588,7 @@ void FrameTDA::paintEvent(QPaintEvent *event)
             catch (Error e)
             {
                 curStatusString = e.what();
-                //qDebug() << Q_FUNC_INFO <<  curStatusString;
+                qDebug() << Q_FUNC_INFO << "cannot find fire_triangle" <<curStatusString;
             }
         }
     }
@@ -707,7 +707,7 @@ void FrameTDA::setAccessStatus(QString access_status)
 void FrameTDA::setGundata(QStringList datagun)
 {
     currentGunData = datagun;
-    qDebug() <<"hasil set"<<datagun;
+//    qDebug() <<"hasil set"<<datagun;
 }
 
 int FrameTDA::range2Pixel(double range)

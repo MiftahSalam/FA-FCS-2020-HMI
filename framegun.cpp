@@ -71,6 +71,10 @@ void FrameGun::setConfig(QString Config)
         redisClient->set("engagement_mode", "Manual");
         redisClient->hset("engagement", "azimuth", "0.0");
         redisClient->hset("engagement", "elevation", "0.0");
+        redisClient->hset("engagement", "azimuth_status", "engageable");
+        redisClient->hset("engagement", "elevation_status", "engageable");
+        redisClient->hset("engagement", "azimuth_corr", "0.0");
+        redisClient->hset("engagement", "elevation_corr", "0.0");
         redisClient->hset("gun_op_status", "assign_mode", "-");
         redisClient->hmget("gun_balistic_data", {"orientation", "blind_arc", "max_range"}, std::back_inserter(gunbalisticdata));
 
