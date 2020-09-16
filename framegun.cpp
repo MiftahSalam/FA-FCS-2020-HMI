@@ -12,16 +12,6 @@ FrameGun::FrameGun(QWidget *parent) :
 {
     ui->setupUi(this);
 
-    /*
-    ui->labelGunStatTech->setStyleSheet("item:disabled: black;");
-    ui->labelGunStatAccess->setStyleSheet("item:disabled: black;");
-    ui->labelGunStatReadyToStart->setStyleSheet("item:disabled: black;");
-    ui->labelGunStatReady->setStyleSheet("item:disabled: black;");
-    ui->labelGunStatFollow->setStyleSheet("item:disabled: black;");
-    ui->labelGunStatAz->setStyleSheet("item:disabled: black;");
-    ui->labelGunStatEl->setStyleSheet("item:disabled: black;");
-    */
-
     // ==== Label Kosong ==== //
     ui->labelGunStatTech->setText("");
     ui->labelGunStatAccess->setText("");
@@ -69,12 +59,14 @@ void FrameGun::setConfig(QString Config)
         redisClient = new Redis(this->Config.toStdString());
 
         redisClient->set("engagement_mode", "Manual");
+        /*
         redisClient->hset("engagement", "azimuth", "0.0");
         redisClient->hset("engagement", "elevation", "0.0");
         redisClient->hset("engagement", "azimuth_status", "engageable");
         redisClient->hset("engagement", "elevation_status", "engageable");
         redisClient->hset("engagement", "azimuth_corr", "0.0");
         redisClient->hset("engagement", "elevation_corr", "0.0");
+        */
         redisClient->hset("gun_op_status", "assign_mode", "-");
         redisClient->hmget("gun_balistic_data", {"orientation", "blind_arc", "max_range"}, std::back_inserter(gunbalisticdata));
 
@@ -90,9 +82,6 @@ void FrameGun::setConfig(QString Config)
         ui->comboBoxGunBarControlMode->setDisabled(true);
         ui->lineEditAz->setDisabled(true);
         ui->lineEditEl->setDisabled(true);
-
-//        ui->lineEditAz->setStyleSheet("color:rgb(255, 255, 255);");
-//        ui->lineEditEl->setStyleSheet("color:rgb(255, 255, 255);");
     }
     catch (Error e)
     {
@@ -182,14 +171,15 @@ void FrameGun::on_gunTimerTimeOut()
                     ui->labelGunStatEl->setStyleSheet("color:rgb(0, 255, 0);");
 
                     // ==== Gun Op Status ===== //
-                    std::vector<std::string> data_operational;
-                    std::string engagement_mode;
                     try
                     {
+                        std::vector<std::string> data_operational;
+                        std::string engagement_mode;
+
                         redisClient->hgetall("gun_op_status",std::back_inserter(data_operational));
                         engagement_mode = redisClient->get("engagement_mode").value();
 
-                        QString cur_op_stat = QString::fromStdString(data_operational.at(1));
+                        operationalstatus.operational = QString::fromStdString(data_operational.at(1));
                         QString cur_assign_mode = QString::fromStdString(data_operational.at(5));
 
                         qDebug() <<"operationalstatus"<<operationalstatus.operational <<"cur_assign_mode" <<cur_assign_mode<<operationalstatus.assign_mode;
@@ -208,7 +198,7 @@ void FrameGun::on_gunTimerTimeOut()
                                     ui->lineEditAz->setEnabled(true);
                                     ui->lineEditEl->setEnabled(true);
                                     ui->pushButtonGunBarControlApply->setEnabled(true);
-
+                                    ui->comboBoxGunBarControlMode->setCurrentIndex(0);
                                 }
                                 else
                                 {
@@ -217,7 +207,7 @@ void FrameGun::on_gunTimerTimeOut()
                                     ui->lineEditAz->setDisabled(true);
                                     ui->lineEditEl->setDisabled(true);
                                     ui->pushButtonGunBarControlApply->setDisabled(true);
-
+                                    ui->comboBoxGunBarControlMode->setCurrentIndex(1);
                                 }
                                 ui->comboBoxGunBarControlMode->setEnabled(true);
                             }
@@ -227,31 +217,22 @@ void FrameGun::on_gunTimerTimeOut()
                                 ui->lineEditEl->setDisabled(true);
                                 ui->comboBoxGunBarControlMode->setEnabled(false);
                                 ui->pushButtonGunBarControlApply->setDisabled(true);
+
+                                redisClient->set("engagement_mode", "Manual");
                             }
                             operationalstatus.assign_mode = cur_assign_mode;
                         }
-                        operationalstatus.operational = cur_op_stat;
 
 //                        qDebug() <<"operationalstatus"<<operationalstatus.operational <<"engagement" <<QString::fromStdString(data_engagement);
 
                         if (operationalstatus.operational == "Assigned")
-                        {
-//                            ui->groupBoxGunBarrCon->setEnabled(true);
                             ui->labelGunStatOp->setStyleSheet("color:rgb(0, 255, 0);");
-                            ui->labelGunStatOp->setText(operationalstatus.operational);
-                        }
                         else if (operationalstatus.operational == "Standby")
-                        {
-//                            ui->groupBoxGunBarrCon->setEnabled(true);
                             ui->labelGunStatOp->setStyleSheet("color:rgb(255, 255, 255);");
-                            ui->labelGunStatOp->setText(operationalstatus.operational);
-                        }
                         else if (operationalstatus.operational.isEmpty())
-                        {
-//                            ui->groupBoxGunBarrCon->setDisabled(true);
                             ui->labelGunStatOp->setStyleSheet("color:rgb(0, 0, 0);");
-                            ui->labelGunStatOp->setText(operationalstatus.operational);
-                        }
+
+                        ui->labelGunStatOp->setText(operationalstatus.operational);
                     }
                     catch (Error e)
                     {
@@ -269,6 +250,9 @@ void FrameGun::on_gunTimerTimeOut()
                     ui->comboBoxGunBarControlMode->setDisabled(true);
                     ui->lineEditAz->setDisabled(true);
                     ui->lineEditEl->setDisabled(true);
+
+                    redisClient->set("engagement_mode", "Manual");
+                    redisClient->hset("gun_op_status", "assign_mode", "-");
                 }
             }
             else
@@ -288,6 +272,9 @@ void FrameGun::on_gunTimerTimeOut()
                 ui->labelGunStatReady->setText("");
                 ui->labelGunStatFollow->setText("");
                 ui->labelGunStatOp->setText("");
+
+                redisClient->set("engagement_mode", "Manual");
+                redisClient->hset("gun_op_status", "assign_mode", "-");
             }
 
         }
@@ -304,11 +291,13 @@ void FrameGun::on_gunTimerTimeOut()
             ui->labelGunStatAz->setText("");
             ui->labelGunStatEl->setText("");
             ui->labelGunStatOp->setText("");
-//            ui->groupBoxGunBarrCon->setEnabled(false);
             ui->lineEditAz->setDisabled(true);
             ui->lineEditEl->setDisabled(true);
             ui->comboBoxGunBarControlMode->setDisabled(true);
             ui->pushButtonGunBarControlApply->setDisabled(true);
+
+            redisClient->set("engagement_mode", "Manual");
+            redisClient->hset("gun_op_status", "assign_mode", "-");
         }
     }
     catch (Error e)
