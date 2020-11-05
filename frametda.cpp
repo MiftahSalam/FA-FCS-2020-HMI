@@ -56,7 +56,7 @@ FrameTDA::FrameTDA(QWidget *parent) :
 
     cur_selected_track = -1;
 
-    tnList.clear();
+//    tnList.clear();
     mapTracks = new QMap<int,tracks>;
     mapTracks->clear();
 
@@ -134,7 +134,7 @@ void FrameTDA::updateDataTracks()
 
     if((int)trackList.size()>tnList.size())
     {
-//      qDebug()<<Q_FUNC_INFO<<"lebih besar";
+//      qDebug()<<Q_FUNC_INFO<<"lebih besar" <<trackList.size() <<"tracklist" << tnList.size() <<"tnlist";
 
         QPoint os_pos((width())/2,(height()/2));
         std::vector<std::string> trackQuery;
@@ -148,6 +148,7 @@ void FrameTDA::updateDataTracks()
             {
                 redisClient->hmget(trackList.at(i).data(), {"id", "range", "bearing", "speed", "height", "course" }, std::back_inserter(trackQuery));
 
+
                 trackParam trackdata;
 
                 trackdata.tn= QString::fromStdString(trackQuery.at(0)).toInt();
@@ -157,6 +158,7 @@ void FrameTDA::updateDataTracks()
                 trackdata.height= QString::fromStdString(trackQuery.at(4)).toDouble();
                 trackdata.course= QString::fromStdString(trackQuery.at(5)).toDouble();
 
+               // qDebug() << "TN" << trackdata.tn << "range" << trackdata.range <<"bearing" << trackdata.bearing << "speed" <<trackdata.height <<"course" <<trackdata.course;
                 trackQuery.clear();
 
                 try
@@ -168,6 +170,7 @@ void FrameTDA::updateDataTracks()
                 catch (Error e)
                 {
                     redisClient->hset(trackList.at(i).data(), "identity", "0");
+                    trackdata.cur_identity= int2Identity(0);
 
                     qDebug() << Q_FUNC_INFO << e.what() << "cek identity lebih besar ";
                 }
@@ -181,6 +184,7 @@ void FrameTDA::updateDataTracks()
                 catch (Error e)
                 {
                     redisClient->hset(trackList.at(i).data(), "weapon_assigned", "");
+                    trackdata.weapon_assign= "";
                     qDebug() << Q_FUNC_INFO << e.what() << "cek weapon lebih besar";
                 }
 
@@ -207,12 +211,15 @@ void FrameTDA::updateDataTracks()
                     int final_pos_y = os_pos.y()+range_pixel_y;
                     int final_pos_x = os_pos.x()+range_pixel_x;
 
+
                     bufTracks.track_symbol->setGeometry(final_pos_x-10,final_pos_y-10,60,20); //add track simbol size correction to final pos
                     bufTracks.track_symbol->adjustSize();
                     bufTracks.track_symbol->show();
 
                     mapTracks->insert(bufTracks.trackData.tn,bufTracks);
                     tnList.append(trackdata.tn);
+
+//                    qDebug() <<Q_FUNC_INFO << "tnlist" << tnList;
 
                     if(verbose)
                     {
@@ -262,7 +269,7 @@ void FrameTDA::updateDataTracks()
                 catch (Error e)
                 {
                     redisClient->hset(trackList.at(i).data(), "identity", "0");
-                    qDebug() << Q_FUNC_INFO << e.what() << "cek identity lebih besar ";
+                    qDebug() << Q_FUNC_INFO << e.what() << "cek identity jika sama ";
                 }
 
                 try
@@ -274,7 +281,7 @@ void FrameTDA::updateDataTracks()
                 catch (Error e)
                 {
                     redisClient->hset(trackList.at(i).data(), "weapon_assigned", "");
-                    qDebug() << Q_FUNC_INFO << e.what() << "cek weapon lebih besar";
+                    qDebug() << Q_FUNC_INFO << e.what() << "cek weapon jika sama";
                 }
 
                 if(verbose)

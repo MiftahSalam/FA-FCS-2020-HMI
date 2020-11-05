@@ -5,12 +5,22 @@
 
 #include <QMessageBox>
 #include <QDebug>
+#include <QRegExpValidator>
+
+#define NUMBER_RX "[0-9.-]+$"
 
 FrameGun::FrameGun(QWidget *parent) :
     QFrame(parent),
     ui(new Ui::FrameGun)
 {
     ui->setupUi(this);
+
+    QRegExp rxNumber(NUMBER_RX);
+    QRegExpValidator *valiNumber = new QRegExpValidator(rxNumber, this);
+
+    // ==== validator ==== //
+    ui->lineEditAz->setValidator(valiNumber);
+    ui->lineEditEl->setValidator(valiNumber);
 
     // ==== Label Kosong ==== //
     ui->labelGunStatTech->setText("");

@@ -19,6 +19,7 @@ public:
     ~FrameWAP();
     void setConfig (QString ConfigTrack, QString ConfigGun );
     void setAccessStatus (QString access_status);
+    QString trackTn;
 
 private slots:
 
@@ -35,6 +36,7 @@ private slots:
 private:
     Ui::FrameWAP *ui;
 
+    QList <int> tnList;
     QString ConfigGun;
     QString ConfigTrack;
     Redis *redisTrack;

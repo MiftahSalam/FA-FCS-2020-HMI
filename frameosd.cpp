@@ -1002,12 +1002,12 @@ void FrameOSD::on_pushButtonSpeedApply_clicked()
     float sog_float =sog. toFloat(&ok);
     if(!ok)
     {
-        QMessageBox::critical(this, "Fatal Error Speed SOG", "Invalid input value\nValid input range : -150 to 150" );
+        QMessageBox::critical(this, "Fatal Error Speed SOG", "Invalid input value\nValid input range : 0 to 150" );
         return;
     }
-    if ((sog_float < -150) || (sog_float > 150) )
+    if ((sog_float < 0) || (sog_float > 150) )
     {
-        QMessageBox::critical(this, "Fatal Error", "Invalid speed sog input\nValid input range : -150 to 150" );
+        QMessageBox::critical(this, "Fatal Error", "Invalid speed sog input\nValid input range : 0 to 150" );
         return;
     }
 

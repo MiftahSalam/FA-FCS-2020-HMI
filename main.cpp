@@ -37,7 +37,7 @@ int main(int argc, char *argv[])
     splash->setStyleSheet("font-size: 20px;");
 
     w.setConfig(config);
-    //    w.showFullScreen();
+//    w.showFullScreen();
     w.show();
 
     return a.exec();
