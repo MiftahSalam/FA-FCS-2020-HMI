@@ -10,7 +10,6 @@
 #include <QMessageBox>
 #include <QDateTime>
 
-
 FrameTDA::FrameTDA(QWidget *parent) :
     QFrame(parent),
     ui(new Ui::FrameTDA)
@@ -76,7 +75,6 @@ void FrameTDA::zoom_change()
 
     tdaScale = zoomAction[cur_checked_zoom_scale]->text().remove(" NM").toDouble();
 }
-
 
 void FrameTDA::setConfig(QString Config)
 {
@@ -148,7 +146,6 @@ void FrameTDA::updateDataTracks()
             {
                 redisClient->hmget(trackList.at(i).data(), {"id", "range", "bearing", "speed", "height", "course" }, std::back_inserter(trackQuery));
 
-
                 trackParam trackdata;
 
                 trackdata.tn= QString::fromStdString(trackQuery.at(0)).toInt();
@@ -203,14 +200,12 @@ void FrameTDA::updateDataTracks()
                     //connect
                     connect(bufTracks.track_symbol,SIGNAL(identity_change_signal(int,Identity)),this,SLOT(track_identity_changed(int,Identity)));
 
-
                     //track position in pixel
                     double range_pixel= range2Pixel(bufTracks.trackData.range);
                     double range_pixel_y = range_pixel*sin((bufTracks.trackData.bearing-90)*M_PI/180);
                     double range_pixel_x  = range_pixel*cos((bufTracks.trackData.bearing-90)*M_PI/180);
                     int final_pos_y = os_pos.y()+range_pixel_y;
                     int final_pos_x = os_pos.x()+range_pixel_x;
-
 
                     bufTracks.track_symbol->setGeometry(final_pos_x-10,final_pos_y-10,60,20); //add track simbol size correction to final pos
                     bufTracks.track_symbol->adjustSize();
@@ -317,7 +312,6 @@ void FrameTDA::updateDataTracks()
             {
                 qDebug() << Q_FUNC_INFO << e.what();
             }
-
         }
     }
     else if(trackList.size()<tnList.size())
@@ -345,7 +339,6 @@ void FrameTDA::updateDataTracks()
             {
                 qDebug() << Q_FUNC_INFO << e.what();
             }
-
         }
 
         if(verbose)
@@ -407,7 +400,6 @@ void FrameTDA::track_identity_changed(int tn,Identity identity)
     {
         qDebug() << Q_FUNC_INFO << e.what();
     }
-
 }
 
 // ==== Right Click TDA for contex Menu ==== //
@@ -513,7 +505,6 @@ void FrameTDA::paintEvent(QPaintEvent *event)
         const qreal blind_arc = QString(blind_arc1).toDouble();
         const qreal max_range = QString(max_range1).toDouble(); //NM
 
-
     //    qDebug() <<Q_FUNC_INFO << gun_orientation << blind_arc << max_range;
 
         int span = 360-blind_arc;
@@ -546,9 +537,10 @@ void FrameTDA::paintEvent(QPaintEvent *event)
         }
     }
 
-    // ==== Fire Triangle (QMap)==== //
+    // ==== Fire Triangle (QMap) ==== //
     foreach(int i, mapTracks->keys())
     {
+
         if(mapTracks->value(i).trackData.weapon_assign == "40 mm")
         {
             qDebug() << Q_FUNC_INFO
@@ -559,6 +551,46 @@ void FrameTDA::paintEvent(QPaintEvent *event)
                      << mapTracks->value(i).trackData.course << ","
                      << mapTracks->value(i).trackData.cur_identity << ","
                      << mapTracks->value(i).trackData.weapon_assign;
+
+                double rng = range2Pixel(mapTracks->value(i).trackData.range);
+                double brn = 90-mapTracks->value(i).trackData.bearing;
+
+                int rangetrack =rng*cos(brn*(M_PI/180))-M_PI+(-9);
+                int bearingtrack = -rng*sin(brn*(M_PI/180))-M_PI-8;
+                painter.setPen(QPen(Qt::yellow, 3));
+
+                qDebug()<< rangetrack << "range";
+                qDebug()<< bearingtrack << "bearing";
+
+                // ==== Gambar Kotak ==== //
+              //  painter.drawRect(rangetrack,bearingtrack,23,23);
+
+                // ==== Contoh gambar Track ==== //
+                // ==== horizontal ==== //
+//                painter.drawLine(-36, 64, -30, 64);
+//                painter.drawLine(-36, 90, -30, 90);
+
+//                painter.drawLine(-17, 64, -11, 64);
+//                painter.drawLine(-17, 90, -11, 90);
+
+//                // ==== vertical ==== //
+//                painter.drawLine(-36, 64, -36, 70);
+//                painter.drawLine(-36, 84, -36, 90);
+
+//                painter.drawLine(-11, 64, -11, 70);
+//                painter.drawLine(-11, 84, -11, 90);
+
+                // ==== horizontal ==== //
+                painter.drawLine(rangetrack, bearingtrack, rangetrack+5, bearingtrack);
+                painter.drawLine(rangetrack, bearingtrack+21, rangetrack+5, bearingtrack+21);
+                painter.drawLine(rangetrack+19, bearingtrack, rangetrack+24, bearingtrack);
+                painter.drawLine(rangetrack+24, bearingtrack+21, rangetrack+19, bearingtrack+21);
+
+                // ==== vertical ==== //
+                painter.drawLine(rangetrack, bearingtrack, rangetrack, bearingtrack+5);
+                painter.drawLine(rangetrack, bearingtrack+15,  rangetrack, bearingtrack+21);
+                painter.drawLine(rangetrack+24, bearingtrack, rangetrack+24, bearingtrack+5);
+                painter.drawLine(rangetrack+24, bearingtrack+15, rangetrack+24, bearingtrack+21);
 
             try
             {
@@ -598,7 +630,13 @@ void FrameTDA::paintEvent(QPaintEvent *event)
                 qDebug() << Q_FUNC_INFO << "cannot find fire_triangle" <<curStatusString;
             }
         }
+        // ==== Track Selected ==== //
+
+
     }
+
+
+
 }
 
 int FrameTDA::zoomScale2Int(zoomScale scale)

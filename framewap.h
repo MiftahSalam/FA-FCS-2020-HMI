@@ -19,7 +19,6 @@ public:
     ~FrameWAP();
     void setConfig (QString ConfigTrack, QString ConfigGun );
     void setAccessStatus (QString access_status);
-    QString trackTn;
 
 private slots:
 

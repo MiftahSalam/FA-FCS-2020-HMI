@@ -902,7 +902,6 @@ void FrameOSD::SpeedTimerTimeOut()
                     ui->lineEditSpeedSOG->setStyleSheet("color: rgb(255, 0, 0);");
                     ui->lineEditSpeedCOG->setStyleSheet("color: rgb(255, 0, 0);");
                 }
-
             }
             catch (Error e)
             {
@@ -976,7 +975,6 @@ void FrameOSD::on_comboBoxSpeedMode_activated(int index)
                 }
                 else
                     redisClient->persist("speed");
-
             }
             catch (Error e)
             {
@@ -1197,7 +1195,6 @@ void FrameOSD::on_comboBoxWaterMode_activated(int index)
                 }
                 else
                     redisClient->persist("waterspeed");
-
             }
             catch (Error e)
             {
@@ -1344,7 +1341,6 @@ void FrameOSD::WindTimerTimeOut()
                     ui->lineEditWindDir->setStyleSheet("color: rgb(255, 0, 0);");
                     ui->lineEditWindSpeed->setStyleSheet("color: rgb(255, 0, 0);");
                 }
-
             }
             catch (Error e)
             {
@@ -1382,7 +1378,6 @@ void FrameOSD::on_comboBoxWindMode_activated(int index)
             {
                 qDebug() << Q_FUNC_INFO <<"cannot del position key";
             }
-
         }
         catch (Error e)
         {
@@ -1418,7 +1413,6 @@ void FrameOSD::on_comboBoxWindMode_activated(int index)
                 }
                 else
                     redisClient->persist("wind");
-
             }
             catch (Error e)
             {
@@ -1576,7 +1570,6 @@ void FrameOSD::WeatherTimerTimeOut()
                     ui->lineEditWeatherPress->setStyleSheet("color: rgb(255, 0, 0);");
                     ui->lineEditWeatherHumidity->setStyleSheet("color: rgb(255, 0, 0);");
                 }
-
             }
             catch (Error e)
             {
@@ -1653,7 +1646,6 @@ void FrameOSD::on_comboBoxWeatherMode_activated(int index)
                 }
                 else
                     redisClient->persist("weather");
-
             }
             catch (Error e)
             {

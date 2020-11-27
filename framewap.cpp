@@ -436,8 +436,8 @@ void FrameWAP::on_comboBoxTrackEngTN_activated(const QString &arg1)
                 redisTrack->del(cb.toUtf8().constData());
             }
 
-
             qDebug()<<"track Lits"<<trackListTn[i].data();
+
             try
             {
                 std::vector<std::string> trackTnWeapon;
@@ -481,7 +481,6 @@ void FrameWAP::on_comboBoxTrackEngTN_activated(const QString &arg1)
     {
         qDebug() << Q_FUNC_INFO << e.what();
     }
-
 }
 
 void FrameWAP::on_pushButtonTrackEngAssign_clicked()
@@ -524,7 +523,6 @@ void FrameWAP::on_pushButtonTrackEngAssign_clicked()
             {
                 qDebug() << Q_FUNC_INFO << "cannot set weapon assign" << e.what();
             }
-
         }
         else {
             qDebug()<<"data tidak ditemukan";
@@ -534,15 +532,44 @@ void FrameWAP::on_pushButtonTrackEngAssign_clicked()
             ui->pushButtonTrackEngAssign->setEnabled(false);
             redisTrack->del(trackKey.toUtf8().constData());
         }
-
     }
-
 }
 
 void FrameWAP::on_comboBoxWAPMode_activated(const QString &arg1)
 {
     QString wap_mode = arg1;
+    /*
+    std::vector<std::string> trackTnList;
 
+    try
+    {
+        redisTrack->keys("track:Data:*",std::back_inserter(trackTnList));
+        for (int i=0;i<trackTnList.size();i++)
+        {
+            std::string engageTnWeapon;
+
+            try
+            {
+                engageTnWeapon = redisTrack->hget(trackTnList.at(i).data(), "weapon_assigned").value();
+
+                if(QString::fromStdString(engageTnWeapon) == "40 mm")
+                {
+                    redisTrack->hset(trackTnList.at(i).data(),"weapon_assigned","");
+                }
+            }
+            catch(Error e)
+            {
+                qDebug() << Q_FUNC_INFO << "no weapon_assigned has set"<<e.what();
+            }
+        }
+
+    }
+    catch(Error e)
+    {
+        qDebug() << Q_FUNC_INFO << "no track"<<e.what();
+    }
+    */
+    on_pushButtonTrackEngAssign_clicked();
     try
     {
         qDebug() << Q_FUNC_INFO << wap_mode;
@@ -571,7 +598,6 @@ void FrameWAP::on_comboBoxWAPMode_activated(const QString &arg1)
                     curStatusString = e.what();
                     qDebug() << Q_FUNC_INFO <<  curStatusString;
                 }
-
             }
             else if(engage_mode == "Auto")
             {
@@ -598,8 +624,6 @@ void FrameWAP::on_pushButtonCorrectionApply_clicked()
 
     int pos = 0;
 
-
-
     float azimuth_float = corr_az. toFloat(&ok);
     QRegularExpression re("[A-Z]\\d [a-z]+$");
     QRegularExpressionValidator v(re, 0);
@@ -613,6 +637,7 @@ void FrameWAP::on_pushButtonCorrectionApply_clicked()
         ui->tableWidgetCorrection->item(0,1)->setText("-");
         return;
     }
+
     if ((azimuth_float < -20.0) || (azimuth_float > 20.0) )
     {
         QMessageBox::critical(this, "Fatal Error", "Invalid Azimuth input\nValid input range : -20 to 20" );
@@ -627,8 +652,9 @@ void FrameWAP::on_pushButtonCorrectionApply_clicked()
 
         return;
     }
-    //
+
     qDebug()<<Q_FUNC_INFO<<(elevation_float < -5.0)<<(elevation_float > 80.0);
+
     if ((elevation_float < -10.0) || (elevation_float > 10.0) )
     {
         QMessageBox::critical(this, "Fatal Error", "Invalid Elevation input\nValid input range : -10 to 10" );
@@ -652,5 +678,3 @@ void FrameWAP::on_pushButtonCorrectionApply_clicked()
         qDebug() << Q_FUNC_INFO <<  curStatusString;
     }
 }
-
-

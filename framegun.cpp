@@ -249,7 +249,6 @@ void FrameGun::on_gunTimerTimeOut()
                         curStatusString = e.what();
                         qDebug() << Q_FUNC_INFO <<  curStatusString;
                     }
-
                 }
                 else
                 {
@@ -286,7 +285,6 @@ void FrameGun::on_gunTimerTimeOut()
                 redisClient->set("engagement_mode", "Manual");
                 redisClient->hset("gun_op_status", "assign_mode", "-");
             }
-
         }
         else if (gunstatus.technical_status == "0")
         {
@@ -348,7 +346,6 @@ void FrameGun::on_comboBoxGunBarControlMode_activated(const QString &arg1)
         redisClient->del("engagement");
         if(operationalstatus.assign_mode != "-")
             redisClient->hset("gun_op_status", "operational", "Standby");
-
     }
     //qDebug() << Q_FUNC_INFO <<arg1;
 }
@@ -402,5 +399,3 @@ void FrameGun::on_pushButtonGunBarControlApply_clicked()
         qDebug() << Q_FUNC_INFO <<  curStatusString;
     }
 }
-
-
