@@ -317,6 +317,19 @@ void FrameOSD::on_osdGryoComboBox_activated(int index)
             redisClient->set("inersia_mode", "manual");
             curStatusString = "";
 
+            QString InersiaHeadingVal;
+            QString InersiaRollVal;
+            QString InersiaPitchVal;
+
+
+            InersiaHeadingVal = QString::fromStdString(redisClient->hget("inersia", "heading").value());
+            InersiaRollVal = QString::fromStdString(redisClient->hget("inersia", "roll").value());
+            InersiaPitchVal = QString::fromStdString(redisClient->hget("inersia", "pitch").value());
+
+            ui->lineEditGyroHeading->setText(InersiaHeadingVal);
+            ui->lineEditGyroRoll->setText(InersiaRollVal);
+            ui->lineEditGyroPitch->setText(InersiaPitchVal);
+
             ui->lineEditGyroHeading->setEnabled(true);
             ui->lineEditGyroRoll->setEnabled(true);
             ui->lineEditGyroPitch->setEnabled(true);
@@ -334,6 +347,7 @@ void FrameOSD::on_osdGryoComboBox_activated(int index)
                         {"heading", "0.0"},
                         {"roll", "0.0"},
                         {"pitch", "0.0"},
+                        {"status", ""},
                     };
 
                     redisClient->hmset("inersia",data_map.begin(), data_map.end());
@@ -639,6 +653,7 @@ void FrameOSD::on_comboBoxGPSMode_activated(int index)
                     {
                         {"latitude", "0.0"},
                         {"longitude", "0.0"},
+                        {"status", ""},
                     };
 
                     redisClient->hmset("position",data_map.begin(), data_map.end());
@@ -954,6 +969,15 @@ void FrameOSD::on_comboBoxSpeedMode_activated(int index)
             redisClient->set("speed_mode", "manual");
             curStatusString = "";
 
+            QString SpeedSOGVal;
+            QString SpeedCOGVal;
+
+            SpeedSOGVal = QString::fromStdString(redisClient->hget("speed", "SOG").value());
+            SpeedCOGVal = QString::fromStdString(redisClient->hget("speed", "COG").value());
+
+            ui->lineEditSpeedSOG->setText(SpeedSOGVal);
+            ui->lineEditSpeedCOG->setText(SpeedCOGVal);
+
             ui->lineEditSpeedSOG->setEnabled(true);
             ui->lineEditSpeedCOG->setEnabled(true);
 
@@ -969,6 +993,7 @@ void FrameOSD::on_comboBoxSpeedMode_activated(int index)
                     {
                         {"SOG", "0.0"},
                         {"COG", "0.0"},
+                        {"status", ""},
                     };
 
                     redisClient->hmset("speed",data_map.begin(), data_map.end());
@@ -1174,6 +1199,15 @@ void FrameOSD::on_comboBoxWaterMode_activated(int index)
             redisClient->set("waterspeed_mode", "manual");
             curStatusString = "";
 
+            QString WaterSpeedVal;
+            QString WaterCourseVal;
+
+            WaterSpeedVal = QString::fromStdString(redisClient->hget("waterspeed", "speed").value());
+            WaterCourseVal = QString::fromStdString(redisClient->hget("waterspeed", "course").value());
+
+            ui->lineEditWaterSOG->setText(WaterSpeedVal);
+            ui->lineEditWaterCOG->setText(WaterCourseVal);
+
             ui->lineEditWaterSOG->setEnabled(true);
             ui->lineEditWaterCOG->setEnabled(true);
 
@@ -1189,6 +1223,7 @@ void FrameOSD::on_comboBoxWaterMode_activated(int index)
                     {
                         {"speed", "0.0"},
                         {"course", "0.0"},
+                        {"status", ""},
                     };
 
                     redisClient->hmset("waterspeed",data_map.begin(), data_map.end());
@@ -1392,6 +1427,15 @@ void FrameOSD::on_comboBoxWindMode_activated(int index)
             redisClient->set("wind_mode", "manual");
             curStatusString = "";
 
+            QString WindSpeedVal;
+            QString WindDirVal;
+
+            WindSpeedVal = QString::fromStdString(redisClient->hget("wind", "speed").value());
+            WindDirVal = QString::fromStdString(redisClient->hget("wind", "dir").value());
+
+            ui->lineEditWindSpeed->setText(WindSpeedVal);
+            ui->lineEditWindDir->setText(WindDirVal);
+
             ui->lineEditWindDir->setEnabled(true);
             ui->lineEditWindSpeed->setEnabled(true);
 
@@ -1407,6 +1451,7 @@ void FrameOSD::on_comboBoxWindMode_activated(int index)
                     {
                         {"dir", "0.0"},
                         {"speed", "0.0"},
+                        {"status", ""},
                     };
 
                     redisClient->hmset("wind",data_map.begin(), data_map.end());
@@ -1623,6 +1668,19 @@ void FrameOSD::on_comboBoxWeatherMode_activated(int index)
             redisClient->set("weather_mode", "manual");
             curStatusString = "";
 
+            QString WeatherTempVal;
+            QString WeatherPressureVal;
+            QString WeatherHumidityVal;
+
+
+            WeatherTempVal = QString::fromStdString(redisClient->hget("weather", "temperature").value());
+            WeatherPressureVal = QString::fromStdString(redisClient->hget("weather", "pressure").value());
+            WeatherHumidityVal = QString::fromStdString(redisClient->hget("weather", "humidity").value());
+
+            ui->lineEditWeatherTemp->setText(WeatherTempVal);
+            ui->lineEditWeatherPress->setText(WeatherPressureVal);
+            ui->lineEditWeatherHumidity->setText(WeatherPressureVal);
+
             ui->lineEditWeatherTemp->setEnabled(true);
             ui->lineEditWeatherPress->setEnabled(true);
             ui->lineEditWeatherHumidity->setEnabled(true);
@@ -1640,6 +1698,7 @@ void FrameOSD::on_comboBoxWeatherMode_activated(int index)
                         {"temperature", "0.0"},
                         {"pressure", "0.0"},
                         {"humidity", "0.0"},
+                        {"status", ""},
                     };
 
                     redisClient->hmset("weather",data_map.begin(), data_map.end());
