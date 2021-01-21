@@ -32,8 +32,6 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->gridLayout->addWidget(ui->frameBottomOSD,6,0,1,4);
     ui->gridLayout->addWidget(ui->frameBottomClose,6,4,1,1);
 
-
-
 //    ui->label->setText(dateTimeString);
 
     /*
@@ -79,7 +77,6 @@ void MainWindow::setConfig(QSettings &Config)
     QString osd = Config.value("Redis/osd", "192.168.1.240").toString();
     QString track = Config.value("Redis/track", "192.168.1.240").toString();
     QString gun = Config.value("Redis/gun", "192.168.1.240").toString();
-
 
     verbose = Config.value("Apps/verbose", false).toBool();
     qDebug()<<Q_FUNC_INFO<<"verbose"<<verbose;

@@ -2,6 +2,7 @@
 #include "ui_framewap.h"
 #include "global.h"
 #include "unistd.h"
+#include "frametda.h"
 
 #include <QMessageBox>
 #include <QDebug>
@@ -11,6 +12,8 @@
 #include <iterator>
 #include <vector>
 #include <iostream>
+#include<bits/stdc++.h>
+
 
 FrameWAP::FrameWAP(QWidget *parent) :
     QFrame(parent),
@@ -78,7 +81,6 @@ void FrameWAP::setAccessStatus(QString access_status)
         ui->groupBoxEng->setEnabled(true);
         ui->groupBoxTrackEng->setEnabled(true);
         ui->groupBoxCorr->setEnabled(true);
-
     }
     else if(access_status == "0")
     {
@@ -106,6 +108,7 @@ void FrameWAP::setAccessStatus(QString access_status)
             qDebug() << Q_FUNC_INFO << "reset weapon assign. no track" << e.what();
         }
 
+        // ==== Engagement Data  ==== //
         QTableWidgetItem *engage_status_itemElStatus = ui->tableWidgetEngData->item(0,1);
         engage_status_itemElStatus->setText("-");
         QTableWidgetItem *engage_status_itemTn = ui->tableWidgetEngData->item(0,2);
@@ -120,127 +123,84 @@ void FrameWAP::setAccessStatus(QString access_status)
         corr_status_Az->setText("-");
         QTableWidgetItem *corr_status_El = ui->tableWidgetCorrection->item(0,2);
         corr_status_El->setText("-");
-
-        /*
-        try
-        {
-            std::unordered_map<std::string, std::string> data_map =
-            {
-                {"operational", ""},
-                {"assign_mode", "-"},
-            };
-
-            redisGun->hmset("gun_op_status",data_map.begin(), data_map.end());
-            curStatusString = "";
-        }
-        catch(Error e)
-        {
-            curStatusString = e.what();
-            qDebug() << Q_FUNC_INFO <<  "cannot get gun_op_status" <<curStatusString;
-        }
-        */
     }
 
-//    if(!ui->comboBoxTrackEngTN->hasFocus())
+
+    try
     {
-        try
+        std::vector<std::string> trackListTn;
+        std::vector<std::string> track_id_identity;
+        std::vector<std::string> filteredTrack;
+
+        redisTrack->keys("track:Data:*",std::back_inserter(trackListTn));
+
+        for (int i = 0; i < trackListTn.size(); i++)
         {
-            std::vector<std::string> trackListTn;
-
-            redisTrack->keys("track:Data:*",std::back_inserter(trackListTn));
-
-            if((int)trackListTn.size() > tnList.size())
+            try
             {
-                std::vector<std::string> trackQuery;
-                for(int i=0;i<trackListTn.size();i++)
+                redisTrack->hmget(trackListTn.at(i).data(), {"id","identity"}, std::back_inserter(track_id_identity));
+            }
+            catch (Error e)
+            {
+                qDebug() << Q_FUNC_INFO <<  "cannot get id, identity: "<<e.what();
+            }
+
+            std::string id = track_id_identity.size() > 1 ? track_id_identity.at(0) : "0";
+            std::string identity = track_id_identity.size() > 1 ? track_id_identity.at(1) : "0";
+
+            if (identity != "1" && identity != "2")
+            {
+                filteredTrack.push_back(id);
+
+                int tn = QString::fromStdString(id).toInt();
+                if(!tnList.contains(tn))
                 {
-                    try
-                    {
-                        redisTrack->hmget(trackListTn.at(i).data(), { "id" }, std::back_inserter(trackQuery));
-                        int tn = QString::fromStdString(trackQuery.at(0)).toInt();
-                        if(!tnList.contains(tn))
-                        {
-                            tnList.append(tn);
-                            ui->comboBoxTrackEngTN->addItem(QString::fromStdString(trackQuery.at(0)));
-                        }
-                        trackQuery.clear();
-                    }
-                    catch (Error e)
-                    {
-                        curStatusString = e.what();
-                        qDebug() << Q_FUNC_INFO <<  "cannot get tn" <<curStatusString;
-                    }
+                    tnList.append(tn);
+                    qDebug()<<"new tnList" <<tnList.last();
+                    ui->comboBoxTrackEngTN->addItem(QString::fromStdString(id));
                 }
-
             }
-            else if((int)trackListTn.size() < tnList.size())
-            {
-                QList <int> tnListToDelete;
-
-                for(int i=0;i<tnList.size();i++)
-                {
-                    try
-                    {
-                        long long track_feedback = redisTrack->exists("track:Data:"+QString::number(tnList.at(i)).toStdString());
-
-                        if(!track_feedback)
-                        {
-                            tnListToDelete.append(tnList.at(i));
-                            if(ui->comboBoxTrackEngTN->currentIndex()==i)
-                            {
-                                if(ui->pushButtonTrackEngAssign->text() == "Break")
-                                    ui->pushButtonTrackEngAssign->setText("Assign");
-                            }
-                            ui->comboBoxTrackEngTN->removeItem(i);
-                        }
-                    }
-                    catch (Error e)
-                    {
-                        curStatusString = e.what();
-                        qDebug() << Q_FUNC_INFO <<  "error get track exist";
-                    }
-                }
-
-                for(int i=0;i<tnListToDelete.size();i++)
-                {
-                    tnList.removeAll(tnListToDelete.at(i));
-                }
-
-            }
-            //            qDebug() <<Q_FUNC_INFO << "track:Data:*"<<trackListTn.size() ;
-
-            if(trackListTn.size() < 1)
-            {
-                ui->pushButtonTrackEngAssign->setText("Assign/Break");
-                ui->pushButtonTrackEngAssign->setEnabled(false);
-                ui->comboBoxTrackEngTN->clear();
-            }
-
-            //            for(int i = ui->comboBoxTrackEngTN->count(); i >= 0; --i)
-            //            {
-            //                    if (i != ui->comboBoxTrackEngTN->currentIndex())
-            //                    {
-            //                        ui->comboBoxTrackEngTN->removeItem(i);
-            //                    }
-            //            }
-
-            /*
-            for (int i=0;i<trackListTn.size();i++)
-            {
-                QString trackTn = QString::fromStdString(redisTrack->hget(trackListTn.at(i).data(), "id").value());
-
-                if(ui->comboBoxTrackEngTN->findText(trackTn) < 0)
-                    ui->comboBoxTrackEngTN->addItem(trackTn);
-
-
-                qDebug()<<"track tn = " << trackTn;
-            }
-            */
+            track_id_identity.clear();
         }
-        catch(Error e)
+        qDebug()<<"filteredTrack.size()" <<filteredTrack.size()<<"tnList.size"<<tnList.size();
+
+        if (filteredTrack.size() < tnList.size())
         {
-            qDebug() << Q_FUNC_INFO << "update available track. no track" << e.what();
+            QList<int> tnListToDelete = tnList;
+
+            for (int j = 0; j< filteredTrack.size(); j++)
+            {
+                tnListToDelete.removeOne(QString::fromStdString(filteredTrack.at(j)).toInt());
+            }
+//            qDebug()<<"tn list delete ="<<tnListToDelete;
+
+            for (int i =0; i < tnListToDelete.size(); i++)
+            {
+                if(tnList.contains(tnListToDelete.at(i)))
+                {
+//                    qDebug()<< "proses remove"<<tnListToDelete.at(i);
+                    int curIdxToDel = ui->comboBoxTrackEngTN->findText(QString::number(tnListToDelete.at(i)));
+                    if(ui->comboBoxTrackEngTN->currentIndex()==curIdxToDel)
+                    {
+                        if(ui->pushButtonTrackEngAssign->text() == "Break")
+                            ui->pushButtonTrackEngAssign->setText("Assign");
+                    }
+                    ui->comboBoxTrackEngTN->removeItem(curIdxToDel);
+                    tnList.removeOne(tnListToDelete.at(i));
+                }
+            }
         }
+
+        if(trackListTn.size() < 1)
+        {
+            ui->pushButtonTrackEngAssign->setText("Assign/Break");
+            ui->pushButtonTrackEngAssign->setEnabled(false);
+            ui->comboBoxTrackEngTN->clear();
+        }
+    }
+    catch(Error e)
+    {
+        qDebug() << Q_FUNC_INFO << "update available track. no track" << e.what();
     }
 
     // ==== Engagement Data ==== //
@@ -497,14 +457,14 @@ void FrameWAP::on_pushButtonTrackEngAssign_clicked()
     {
         if (std::find(trackListTn.begin(), trackListTn.end(), trackKey.toUtf8().constData()) != trackListTn.end())
         {
-            qDebug()<<"data ditemukan";
+            //            qDebug()<<"data ditemukan";
 
             try
             {
                 redisTrack->hset(trackKey.toStdString(),"weapon_assigned",assign.toStdString());
                 ui->pushButtonTrackEngAssign->setText(assign.isEmpty() ? "Assign" : "Break");
 
-                QString wap_mode = QString::fromStdString(redisGun->hget("gun_op_status", "assign_mode").value());
+                QString wap_mode = QString::fromStdString(redisGun->hget("gun_op_status", "assign_mode1").value());
                 if(wap_mode != "-")
                 {
                     QString engage_mode = QString::fromStdString(redisGun->get("engagement_mode").value());
@@ -572,8 +532,8 @@ void FrameWAP::on_comboBoxWAPMode_activated(const QString &arg1)
     on_pushButtonTrackEngAssign_clicked();
     try
     {
-        qDebug() << Q_FUNC_INFO << wap_mode;
-        redisGun->hset("gun_op_status","assign_mode",wap_mode.toStdString());
+        qDebug() << Q_FUNC_INFO << wap_mode ;
+        redisGun->hset("gun_op_status","assign_mode1",wap_mode.toStdString());
         /**/
         if(wap_mode != "-")
         {
@@ -608,6 +568,8 @@ void FrameWAP::on_comboBoxWAPMode_activated(const QString &arg1)
         {
             redisGun->hset("gun_op_status","operational","");
         }
+
+        qDebug()<<Q_FUNC_INFO<<"wap mode ="<<wap_mode;
     }
     catch (Error e)
     {
@@ -678,3 +640,4 @@ void FrameWAP::on_pushButtonCorrectionApply_clicked()
         qDebug() << Q_FUNC_INFO <<  curStatusString;
     }
 }
+

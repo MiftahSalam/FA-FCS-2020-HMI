@@ -37,6 +37,7 @@ public:
     void setConfig (QString Config);
 
 
+
 protected:
     void paintEvent(QPaintEvent *event) override;
 
