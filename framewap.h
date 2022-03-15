@@ -20,7 +20,6 @@ public:
     void setConfig (QString ConfigTrack, QString ConfigGun );
     void setAccessStatus (QString access_status);
 
-
 private slots:
 
     void on_comboBoxWAPWeapon_activated(const QString &arg1);

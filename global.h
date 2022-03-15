@@ -3,6 +3,8 @@
 
 #include <QSplashScreen>
 
+
+
 extern QSplashScreen *splash;
 extern bool verbose;
 

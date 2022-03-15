@@ -386,6 +386,7 @@ void FrameTDA::track_identity_changed(int tn,Identity identity)
 {
     QString s = QString::number(identity2Int(identity));
 
+    qDebug() << tn << "coba klik" ;
     std::unordered_map<std::string, std::string> data_map =
     {
             {"identity", s.toStdString()},
@@ -630,7 +631,12 @@ void FrameTDA::paintEvent(QPaintEvent *event)
             }
         }
         // ==== Track Selected ==== //
+
+
     }
+
+
+
 }
 
 int FrameTDA::zoomScale2Int(zoomScale scale)

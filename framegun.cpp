@@ -6,7 +6,6 @@
 #include <QMessageBox>
 #include <QDebug>
 #include <QRegExpValidator>
-#include <QDateTime>
 
 #define NUMBER_RX "[0-9.-]+$"
 
@@ -78,7 +77,7 @@ void FrameGun::setConfig(QString Config)
         redisClient->hset("engagement", "azimuth_corr", "0.0");
         redisClient->hset("engagement", "elevation_corr", "0.0");
         */
-        redisClient->hset("gun_op_status", "assign_mode1", "-");
+        redisClient->hset("gun_op_status", "assign_mode", "-");
         redisClient->hmget("gun_balistic_data", {"orientation", "blind_arc", "max_range"}, std::back_inserter(gunbalisticdata));
 
         gunbalistic.orientation = QString::fromStdString(gunbalisticdata.at(0));
@@ -184,19 +183,16 @@ void FrameGun::on_gunTimerTimeOut()
                     // ==== Gun Op Status ===== //
                     try
                     {
-//                        std::vector<std::string> data_operational;
+                        std::vector<std::string> data_operational;
                         std::string engagement_mode;
 
-//                        redisClient->hgetall("gun_op_status",std::back_inserter(data_operational));
+                        redisClient->hgetall("gun_op_status",std::back_inserter(data_operational));
                         engagement_mode = redisClient->get("engagement_mode").value();
-                        operationalstatus.operational = QString::fromStdString(redisClient->hget("gun_op_status", "operational").value());
-                        QString cur_assign_mode = QString::fromStdString(redisClient->hget("gun_op_status", "assign_mode1").value());
 
+                        operationalstatus.operational = QString::fromStdString(data_operational.at(1));
+                        QString cur_assign_mode = QString::fromStdString(data_operational.at(5));
 
-//                        QDateTime dateTime = dateTime.currentDateTime();
-//                        QString dateTimeString = dateTime.toString("hh:mm:ss");
-
-                      //  qDebug() <<Q_FUNC_INFO << dateTimeString <<"operationalstatus"<<operationalstatus.operational <<"cur_assign_mode" <<cur_assign_mode<<operationalstatus.assign_mode;
+                        qDebug() <<"operationalstatus"<<operationalstatus.operational <<"cur_assign_mode" <<cur_assign_mode<<operationalstatus.assign_mode;
                         if(operationalstatus.assign_mode != cur_assign_mode)
                         {
                             if(cur_assign_mode != "-")
@@ -265,8 +261,7 @@ void FrameGun::on_gunTimerTimeOut()
                     ui->lineEditEl->setDisabled(true);
 
                     redisClient->set("engagement_mode", "Manual");
-                    redisClient->hset("gun_op_status", "assign_mode1", "-");
-                    qDebug() <<Q_FUNC_INFO <<"else gun_ready_status" << gunstatus.gun_ready_status;
+                    redisClient->hset("gun_op_status", "assign_mode", "-");
                 }
             }
             else
@@ -288,9 +283,7 @@ void FrameGun::on_gunTimerTimeOut()
                 ui->labelGunStatOp->setText("");
 
                 redisClient->set("engagement_mode", "Manual");
-                redisClient->hset("gun_op_status", "assign_mode1", "-");
-                qDebug() <<Q_FUNC_INFO <<"else access_status" << gunstatus.access_status;
-
+                redisClient->hset("gun_op_status", "assign_mode", "-");
             }
         }
         else if (gunstatus.technical_status == "0")
@@ -312,9 +305,7 @@ void FrameGun::on_gunTimerTimeOut()
             ui->pushButtonGunBarControlApply->setDisabled(true);
 
             redisClient->set("engagement_mode", "Manual");
-            redisClient->hset("gun_op_status", "assign_mode1", "-");
-            qDebug() <<Q_FUNC_INFO <<"else technical_status" << gunstatus.technical_status;
-
+            redisClient->hset("gun_op_status", "assign_mode", "-");
         }
     }
     catch (Error e)

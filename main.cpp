@@ -2,6 +2,7 @@
 #include "global.h"
 
 #include <QApplication>
+#include "redisconnectionnotify.h"
 #include <QFile>
 #include <QDebug>
 #include <QSettings>
@@ -17,6 +18,8 @@ int main(int argc, char *argv[])
     QString appStyle = loadStylesheetFile( ":/HMI_Syle.css" );
     a.setStyle("plastique");
     a.setStyleSheet( appStyle );
+    RedisConnectionNotify z;
+
 
     QSettings config(QSettings::IniFormat,QSettings::UserScope,"hmi_config");
     QFile file(config.fileName());
@@ -25,8 +28,10 @@ int main(int argc, char *argv[])
     {
         qDebug()<<"init config file";
 
+
         config.setValue("Redis/osd","tcp://192.168.1.240:6379");
         config.setValue("Apps/verbose",false);
+
     }
 
     MainWindow w;
@@ -37,8 +42,8 @@ int main(int argc, char *argv[])
     splash->setStyleSheet("font-size: 20px;");
 
     w.setConfig(config);
-//    w.showFullScreen();
-    w.show();
+    w.showFullScreen();
+//    w.show();
 
     return a.exec();
 }

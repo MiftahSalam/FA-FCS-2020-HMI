@@ -16,6 +16,34 @@ void track::buildUI(trackParam param)
 //    qDebug()<<current_symbol_image;
     QImage image(current_symbol_image);
 
+    /*contex menu desig
+    desigSubMenu = new QMenu("Desig",this);
+    desigSubMenu->setStyleSheet("QMenu{color: rgb(255,255,255);background-color: rgb(0,0,0);selection-color: yellow; item:disabled: black;}");
+    for(int i=0;i<DESIG_COUNT;i++)
+    {
+        desigAction[i] = new QAction(desig2String(int2Desig(i)),this);
+        connect(desigAction[i],SIGNAL(triggered()),this,SLOT(desig_change()));
+        desigAction[i]->setCheckable(true);
+
+        desigSubMenu->addAction(desigAction[i]);
+    }
+    cur_checked_desig = 100; //no checked
+    */
+
+    /*contex menu desig direct
+    desigDirectSubMenu = new QMenu("Direct",this);
+    desigDirectSubMenu->setStyleSheet("QMenu{color: rgb(255,255,255);background-color: rgb(0,0,0);selection-color: yellow; item:disabled: black;}");
+    for(int i=0;i<DESIG_DIRECT_COUNT;i++)
+    {
+        desigDirectAction[i] = new QAction(desigDirect2String(int2DesigDirect(i)),this);
+        connect(desigDirectAction[i],SIGNAL(triggered()),this,SLOT(desig_direct_change()));
+        desigDirectAction[i]->setCheckable(true);
+
+        desigDirectSubMenu->addAction(desigDirectAction[i]);
+    }
+    desigSubMenu->addMenu(desigDirectSubMenu);
+    */
+
     /*contex menu identity*/
     identitySubMenu = new QMenu("Identity",this);
     identitySubMenu->setStyleSheet("QMenu{color: rgb(255,255,255);background-color: rgb(0,0,0);selection-color: yellow; item:disabled: black;}");
@@ -70,13 +98,13 @@ void track::buildUI(trackParam param)
                        .arg(QString::number(0,'f',2))
                        .arg(identity2String(trackDat.cur_identity))
                        );
+
     /*
       track event handler
     */
-    rc_radarevent=new RCEventHandler(this);
-    connect(rc_radarevent,SIGNAL(send_rightButtonClicked(QPoint)),this,SLOT(RC_track(QPoint))); //tombol2 klik kanan track
-    symbol->installEventFilter(rc_radarevent);
-//    qDebug() <<Q_FUNC_INFO <<"filter" <<symbol;
+//    rc_radarevent=new RCEventHandler(this);
+//    connect(rc_radarevent,SIGNAL(send_rightButtonClicked(QPoint)),this,SLOT(RC_track(QPoint))); //tombol2 klik kanan track
+//    symbol->installEventFilter(rc_radarevent);
 
     /*create QLabel for holding track number and source display*/
     no_track = new QLabel(this);
@@ -85,7 +113,6 @@ void track::buildUI(trackParam param)
     no_track->setStyleSheet(QString::fromUtf8("color: rgba(255, 255, 255);background-color: rgb(0,0,0,0);"));
     no_track->setGeometry(QRect(symbol->width()+5,0,width()*2/3,height()));
     no_track->setScaledContents(true);
-    no_track->installEventFilter(rc_radarevent);
 
     QString source;
     if(trackDat.cur_source==T_NAVRAD)
@@ -93,6 +120,7 @@ void track::buildUI(trackParam param)
     else if(trackDat.cur_source==T_LIOD)
         source = "L ";
     no_track->setText(source+QString::number(trackDat.tn));
+
 }
 
 void track::setSelected(bool select)
@@ -240,6 +268,7 @@ QString track::fileImageLocation(Identity identity,Environment env)
         else
             return ":/tda_track_symbol/surface-unknown.png";
     }
+
 }
 
 

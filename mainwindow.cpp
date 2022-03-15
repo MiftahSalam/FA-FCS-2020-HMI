@@ -26,11 +26,25 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->gridLayout->removeWidget(ui->frameBottomWAP);
     ui->gridLayout->removeWidget(ui->frameBottomClose);
 
+//    ui->gridLayout->addWidget(ui->frameTDA,0,0,9,4);
+//    ui->gridLayout->addWidget(ui->frameBottomWAP,0,0,0,0);
+//   ui->gridLayout->addWidget(ui->frameBottomWAP,0,3,6,1);
+//    ui->gridLayout->addWidget(ui->frameBottomGun,0,4,6,1);
+//   // ui->gridLayout->addWidget(ui->frameBottomOSD,0,0,0,0);
+//    ui->gridLayout->addWidget(ui->frameBottomOSD,6,0,1,4);
+//    ui->gridLayout->addWidget(ui->frameBottomClose,6,4,3,1);
+
+
+
     ui->gridLayout->addWidget(ui->frameTDA,0,0,6,3);
     ui->gridLayout->addWidget(ui->frameBottomWAP,0,3,6,1);
     ui->gridLayout->addWidget(ui->frameBottomGun,0,4,6,1);
     ui->gridLayout->addWidget(ui->frameBottomOSD,6,0,1,4);
     ui->gridLayout->addWidget(ui->frameBottomClose,6,4,1,1);
+
+
+//    ui->frameBottomOSD->setVisible(false);
+//    ui->frameBottomWAP->setVisible(false);
 
 //    ui->label->setText(dateTimeString);
 
@@ -72,11 +86,12 @@ void MainWindow::on_pushButtonExit_clicked()
 
 void MainWindow::setConfig(QSettings &Config)
 {
-    splash->show();
+//    splash->show();
 
     QString osd = Config.value("Redis/osd", "192.168.1.240").toString();
     QString track = Config.value("Redis/track", "192.168.1.240").toString();
     QString gun = Config.value("Redis/gun", "192.168.1.240").toString();
+
 
     verbose = Config.value("Apps/verbose", false).toBool();
     qDebug()<<Q_FUNC_INFO<<"verbose"<<verbose;
