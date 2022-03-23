@@ -1,0 +1,3 @@
+[submodule "MyQtRedis"]
+	path = MyQtRedis
+	url = git@github.com:MiftahSalam/MyQtRedis.git
