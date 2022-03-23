@@ -1,7 +1,11 @@
 #ifndef FRAMEWAP_H
 #define FRAMEWAP_H
 
-#include <redis++.h>
+#ifdef WIN32
+#include <QtRedis>
+#else
+#include "qredis/redis++.h"
+#endif
 #include <QFrame>
 #include <QTimer>
 
@@ -38,11 +42,19 @@ private:
     QList <int> tnList;
     QString ConfigGun;
     QString ConfigTrack;
+#ifdef WIN32
+    QtRedis *redisTrack;
+    QtRedis *redisGun;
+#else
     Redis *redisTrack;
     Redis *redisGun;
+#endif
     QString currentAccessStatus;
     QString curStatusString;
     QString curEngStatus;
+
+    void reconnecRedis();
+
 };
 
 #endif // FRAMEWAP_H

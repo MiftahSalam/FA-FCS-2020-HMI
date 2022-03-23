@@ -29,22 +29,39 @@ RedisConnectionNotify::RedisConnectionNotify(QWidget *parent)
     foreach (QString key, redis_child_settings)
     {
         QString settings_value = settings.value(key).toString();
-        QStringList settings_value_split_1 = settings_value.split("//",QString::SkipEmptyParts);
+#ifdef WIN32
+        QStringList settings_value_split_1 = settings_value.split(":",QString::SkipEmptyParts);
         if(settings_value_split_1.size() < 2)
         {
             QMessageBox::critical(this,"Fatal Error","Config syntax error in first split",QMessageBox::Ok);
             exit(1);
         }
+#else
+        QStringList settings_value_split_1 = settings_value.split("//",QString::SkipEmptyParts);
+        QStringList settings_value_split_1 = settings_value.split(":",QString::SkipEmptyParts);
+        if(settings_value_split_1.size() < 2)
+        {
+            QMessageBox::critical(this,"Fatal Error","Config syntax error in first split",QMessageBox::Ok);
+            exit(1);
+        }
+
         QStringList settings_value_split_2 = settings_value_split_1.at(1).split(":",QString::SkipEmptyParts);
         if(settings_value_split_2.size() < 2)
         {
             QMessageBox::critical(this,"Fatal Error","Config syntax error in second split",QMessageBox::Ok);
             exit(1);
         }
+#endif
+
 
         ServerHandler1 *buf_server_handler = new ServerHandler1;
+#ifdef WIN32
+        buf_server_handler->config.ip = settings_value_split_1.at(0);
+        buf_server_handler->config.port = settings_value_split_1.at(1).toInt();
+#else
         buf_server_handler->config.ip = settings_value_split_2.at(0);
         buf_server_handler->config.port = settings_value_split_2.at(1).toInt();
+#endif
         serverList.append(buf_server_handler);
 
         qDebug()<<"buf_server_handler"<<buf_server_handler->config.ip<<buf_server_handler->config.port;

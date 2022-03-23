@@ -16,6 +16,10 @@ FrameTDA::FrameTDA(QWidget *parent) :
 {
     ui->setupUi(this);
 
+#ifdef WIN32
+    redisClient = nullptr;
+#endif
+
     timer = new QTimer(this);
 
     currentHeading = -1;
@@ -76,11 +80,39 @@ void FrameTDA::zoom_change()
     tdaScale = zoomAction[cur_checked_zoom_scale]->text().remove(" NM").toDouble();
 }
 
+void FrameTDA::reconnecRedis()
+{
+#ifdef WIN32
+    if(redisClient->isConnected()) return;
+
+    if(redisClient->openConnection()) qDebug() << "Connected to server Track...";
+
+#endif
+
+}
+
 void FrameTDA::setConfig(QString Config)
 {
     this->Config = Config;
     qDebug() <<Q_FUNC_INFO<<"Redis config"<<this->Config;
 
+#ifdef WIN32
+    QStringList args = Config.split(":");
+    if(args.size() != 2) {
+        qDebug()<<Q_FUNC_INFO<<"Invalid arguments for redis. Program exit";
+        exit(1);
+    }
+    redisClient = new QtRedis(args.at(0), args.at(1).toInt());
+
+//    if(!redisClient->isConnected())
+//    {
+//        splash->showMessage("Track Setup error\n\nServer connection error: Cannot connect to server" + Config + "\n\nApplication now will clossing ",Qt::AlignCenter);
+//        sleep(3);
+//        splash->finish(this);
+//        qApp->exit();
+//    }
+    reconnecRedis();
+#else
     try
     {
         redisClient = new Redis(this->Config.toStdString());
@@ -92,6 +124,8 @@ void FrameTDA::setConfig(QString Config)
         splash->finish(this);
         qApp->exit();
     }
+#endif
+
 }
 
 void FrameTDA::updateDataTracks()
@@ -117,6 +151,11 @@ void FrameTDA::updateDataTracks()
      *          ~ hapus track dari record local (tnList dan mapTrack)
     */
 
+#ifdef WIN32
+    if(redisClient==nullptr) return;
+
+    QStringList trackList = redisClient->keys("track:Data:*");
+#else
     std::vector<std::string> trackList;
     try
     {
@@ -129,16 +168,109 @@ void FrameTDA::updateDataTracks()
     {
         qDebug()<<Q_FUNC_INFO<<"error get track"<<e.what();
     }
+#endif
 
     if((int)trackList.size()>tnList.size())
     {
 //      qDebug()<<Q_FUNC_INFO<<"lebih besar" <<trackList.size() <<"tracklist" << tnList.size() <<"tnlist";
 
         QPoint os_pos((width())/2,(height()/2));
+#ifdef WIN32
+        QStringList trackQuery;
+#else
         std::vector<std::string> trackQuery;
+#endif
 
         for(int i=0;i<trackList.size();i++)
         {
+#ifdef WIN32
+            if(verbose)
+                qDebug() << Q_FUNC_INFO <<"track:Data query result"<<trackList.at(i);
+
+            trackQuery = redisClient->hmget(trackList.at(i), "id range bearing speed height course");
+            if(trackQuery.size() == 6)
+            {
+
+                trackParam trackdata;
+
+                trackdata.tn= trackQuery.at(0).toInt();
+                trackdata.range= trackQuery.at(1).toDouble();
+                trackdata.bearing= trackQuery.at(2).toDouble();
+                trackdata.speed= trackQuery.at(3).toDouble();
+                trackdata.height= trackQuery.at(4).toDouble();
+                trackdata.course= trackQuery.at(5).toDouble();
+
+               // qDebug() << "TN" << trackdata.tn << "range" << trackdata.range <<"bearing" << trackdata.bearing << "speed" <<trackdata.height <<"course" <<trackdata.course;
+                trackQuery.clear();
+
+                trackQuery = redisClient->hmget(trackList.at(i), "identity");
+                if(trackQuery.size() == 1)
+                {
+                    trackdata.cur_identity= int2Identity(trackQuery.at(0).toInt());
+                    trackQuery.clear();
+                }
+                else
+                {
+                    redisClient->hset(trackList.at(i), "identity", "0");
+                    trackdata.cur_identity= int2Identity(0);
+
+                    qDebug() << Q_FUNC_INFO << "cek identity lebih besar ";
+                }
+
+                trackQuery = redisClient->hmget(trackList.at(i), "weapon_assigned");
+                if(trackQuery.size() == 1)
+                {
+                    trackdata.weapon_assign= trackQuery.at(0);
+                    trackQuery.clear();
+                }
+                else
+                {
+                    redisClient->hset(trackList.at(i), "weapon_assigned", "");
+                    trackdata.weapon_assign= "";
+                    qDebug() << Q_FUNC_INFO << "cek weapon lebih besar";
+                }
+
+                if(verbose)
+                    qDebug() << "Menampilkan data track:Data:" << trackdata.tn << trackdata.range << trackdata.bearing << trackdata.speed << trackdata.course << trackdata.cur_identity  ;
+
+                if(!tnList.contains(trackdata.tn))
+                {
+                    tracks bufTracks;
+                    loadTrackParam(bufTracks,trackdata);
+
+                    //draw track
+                    bufTracks.track_symbol = new track(this, QSize(60,20));
+                    bufTracks.track_symbol->buildUI(bufTracks.trackData);
+
+                    //connect
+                    connect(bufTracks.track_symbol,SIGNAL(identity_change_signal(int,Identity)),this,SLOT(track_identity_changed(int,Identity)));
+
+                    //track position in pixel
+                    double range_pixel= range2Pixel(bufTracks.trackData.range);
+                    double range_pixel_y = range_pixel*sin((bufTracks.trackData.bearing-90)*M_PI/180);
+                    double range_pixel_x  = range_pixel*cos((bufTracks.trackData.bearing-90)*M_PI/180);
+                    int final_pos_y = os_pos.y()+range_pixel_y;
+                    int final_pos_x = os_pos.x()+range_pixel_x;
+
+                    bufTracks.track_symbol->setGeometry(final_pos_x-10,final_pos_y-10,60,20); //add track simbol size correction to final pos
+                    bufTracks.track_symbol->adjustSize();
+                    bufTracks.track_symbol->show();
+
+                    mapTracks->insert(bufTracks.trackData.tn,bufTracks);
+                    tnList.append(trackdata.tn);
+
+//                    qDebug() <<Q_FUNC_INFO << "tnlist" << tnList;
+
+                    if(verbose)
+                    {
+                        qDebug() << Q_FUNC_INFO << "insert"<< trackdata.tn;
+                        qDebug() << Q_FUNC_INFO << "mapTracks"<< mapTracks->size();
+                    }
+                }
+            }
+            else qDebug() << Q_FUNC_INFO << "Cannot get track data"<<trackList.at(i);
+
+#else
             if(verbose)
                 qDebug() << Q_FUNC_INFO <<"track:Data query result"<<QString::fromStdString(trackList.at(i));
 
@@ -227,6 +359,7 @@ void FrameTDA::updateDataTracks()
             {
                 qDebug() << Q_FUNC_INFO << e.what() << "cek";
             }
+#endif
         }
     }
     else if(trackList.size()==tnList.size())
@@ -234,12 +367,89 @@ void FrameTDA::updateDataTracks()
 //        qDebug() << "jika sama" << tnList.size();
 
         QPoint os_pos((width())/2,(height()/2));
+#ifdef WIN32
+        QStringList trackQuery;
+#else
         std::vector<std::string> trackQuery;
+#endif
 
         qSort(tnList.begin(),tnList.end());
 
         for(int i=0; i<trackList.size();i++)
         {
+#ifdef WIN32
+            trackQuery = redisClient->hmget(trackList.at(i), "id range bearing speed height course");
+            if(trackQuery.size() == 6)
+            {
+                trackParam trackdata;
+
+                trackdata.tn= trackQuery.at(0).toInt();
+                trackdata.range= trackQuery.at(1).toDouble();
+                trackdata.bearing= trackQuery.at(2).toDouble();
+                trackdata.speed= trackQuery.at(3).toDouble();
+                trackdata.height= trackQuery.at(4).toDouble();
+                trackdata.course= trackQuery.at(5).toDouble();
+
+                trackQuery.clear();
+
+                trackQuery = redisClient->hmget(trackList.at(i), "identity");
+                if(trackQuery.size() == 1)
+                {
+                    trackdata.cur_identity= int2Identity(trackQuery.at(0).toInt());
+                    trackQuery.clear();
+                }
+                else
+                {
+                    redisClient->hset(trackList.at(i), "identity", "0");
+                    qDebug() << Q_FUNC_INFO << "cek identity jika sama ";
+                }
+
+                trackQuery = redisClient->hmget(trackList.at(i), "weapon_assigned");
+                if(trackQuery.size() == 1)
+                {
+                    trackdata.weapon_assign=trackQuery.at(0);
+                    trackQuery.clear();
+                }
+                else
+                {
+                    redisClient->hset(trackList.at(i), "weapon_assigned", "");
+                    qDebug() << Q_FUNC_INFO << "cek weapon jika sama";
+                }
+
+                if(verbose)
+                    qDebug() << "Menampilkan data track:Data:" << trackdata.tn << trackdata.range << trackdata.bearing << trackdata.speed << trackdata.course << trackdata.cur_identity  <<trackdata.weapon_assign;
+
+                int tn = trackdata.tn;
+                tracks bufTracks = mapTracks->take(tn);
+                loadTrackParam(bufTracks,trackdata);
+
+                if(cur_selected_track==tn)
+                {
+                    bufTracks.track_symbol->setSelected(true);
+                    bufTracks.track_symbol->raise();
+                }
+                else
+                {
+                    bufTracks.track_symbol->setSelected(false);
+                }
+
+                mapTracks->insert(bufTracks.trackData.tn,bufTracks);
+
+                //update track position in tda
+                double range_pixel = range2Pixel(mapTracks->value(tn).trackData.range);
+                double range_pixel_y = range_pixel*sin((mapTracks->value(tn).trackData.bearing-90)*M_PI/180);
+                double range_pixel_x = range_pixel*cos((mapTracks->value(tn).trackData.bearing-90)*M_PI/180);
+                int final_pos_y = os_pos.y()+range_pixel_y;
+                int final_pos_x = os_pos.x()+range_pixel_x;
+
+                mapTracks->value(tn).track_symbol->setGeometry(final_pos_x-10,final_pos_y-10,60,20);
+                mapTracks->value(tn).track_symbol->updateData(bufTracks.trackData);
+            }
+            else
+            {
+                qDebug() << Q_FUNC_INFO << "Cannot get track data jika sama"<<trackList.at(i);
+            }
+#else
             try
             {
                 redisClient->hmget(trackList.at(i).data(), {"id", "range", "bearing", "speed", "height", "course" }, std::back_inserter(trackQuery));
@@ -312,6 +522,7 @@ void FrameTDA::updateDataTracks()
             {
                 qDebug() << Q_FUNC_INFO << e.what();
             }
+#endif
         }
     }
     else if(trackList.size()<tnList.size())
@@ -326,6 +537,17 @@ void FrameTDA::updateDataTracks()
 
         for(int i=0; i<trackList.size();i++)
         {
+#ifdef WIN32
+            QStringList trackQuery= redisClient->hmget(trackList.at(i), "id");
+
+            if(trackList.size() == 1)
+            {
+                int trackID = trackQuery.at(0).toInt();
+                bufTn.append(trackID);
+            }
+            else qDebug() << Q_FUNC_INFO << "CAnnot get track id lebih kecil"<<trackList.at(i);
+
+#else
             std::vector<std::string> trackQuery;
 
             try
@@ -339,6 +561,7 @@ void FrameTDA::updateDataTracks()
             {
                 qDebug() << Q_FUNC_INFO << e.what();
             }
+#endif
         }
 
         if(verbose)
@@ -387,6 +610,13 @@ void FrameTDA::track_identity_changed(int tn,Identity identity)
     QString s = QString::number(identity2Int(identity));
 
     qDebug() << tn << "coba klik" ;
+#ifdef WIN32
+    QMap<QString, QVariant> data_map;
+    data_map.insert("identity", s);
+
+    if(!redisClient->hmset("track:Data:"+ QString::number(tn), data_map)) qDebug() << Q_FUNC_INFO << "Cannot set track identity";
+
+#else
     std::unordered_map<std::string, std::string> data_map =
     {
             {"identity", s.toStdString()},
@@ -400,6 +630,7 @@ void FrameTDA::track_identity_changed(int tn,Identity identity)
     {
         qDebug() << Q_FUNC_INFO << e.what();
     }
+#endif
 }
 
 // ==== Right Click TDA for contex Menu ==== //
@@ -592,13 +823,11 @@ void FrameTDA::paintEvent(QPaintEvent *event)
                 painter.drawLine(rangetrack+24, bearingtrack, rangetrack+24, bearingtrack+5);
                 painter.drawLine(rangetrack+24, bearingtrack+15, rangetrack+24, bearingtrack+21);
 
-            try
+                QStringList fire = redisClient->hmget("fire_triangle", "ttlf ttlf_x ttlf_y");
+            if(fire.size() == 3)
             {
-                std::vector<std::string> fire;
-                redisClient->hmget("fire_triangle", {"ttlf", "ttlf_x", "ttlf_y"}, std::back_inserter(fire));
-
-                double TTLF_x = QString::fromStdString(fire.at(1)).toDouble();
-                double TTLF_y = QString::fromStdString(fire.at(2)).toDouble();
+                double TTLF_x = fire.at(1).toDouble();
+                double TTLF_y = fire.at(2).toDouble();
                 double rng = range2Pixel(mapTracks->value(i).trackData.range);
                 double brn = 90-mapTracks->value(i).trackData.bearing;
                 int tn = mapTracks->value(i).trackData.tn;
@@ -624,9 +853,9 @@ void FrameTDA::paintEvent(QPaintEvent *event)
                                                     );
                 break;
             }
-            catch (Error e)
+            else
             {
-                curStatusString = e.what();
+                curStatusString = "Cannot get fire triangle data";
                 qDebug() << Q_FUNC_INFO << "cannot find fire_triangle" <<curStatusString;
             }
         }

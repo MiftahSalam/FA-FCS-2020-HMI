@@ -6,8 +6,15 @@
 
 QT       += core gui network
 
-include($$PWD/qredis/qredis.pri)
-
+win32: {
+    message("Build for windows")
+    QT += network
+    include(MyQtRedis/QtRedis.pri)
+} else:linux {
+    message("Build for linux")
+    include(qredis/qredis.pri)
+    CONFIG += c++11
+}
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
 TARGET = GunControllerLPDP

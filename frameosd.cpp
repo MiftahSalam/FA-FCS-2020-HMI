@@ -40,6 +40,11 @@ FrameOSD::FrameOSD(QWidget *parent) :
     // ==== validator Water Speed ==== //
     ui->lineEditWaterSOG->setValidator(valiNumber);
     ui->lineEditWaterCOG->setValidator(valiNumber);
+
+#ifdef WIN32
+    redisClient = nullptr;
+#endif
+
 }
 
 FrameOSD::~FrameOSD()
@@ -52,11 +57,74 @@ QString FrameOSD::getHeading() const
     return inersiadata.heading;
 }
 
+void FrameOSD::reconnecRedis()
+{
+#ifdef WIN32
+    if(redisClient->isConnected()) return;
+
+    if (redisClient->openConnection())
+    {
+        qDebug() << "Connected to server OSD...";
+
+        bool status;
+        status = false;
+
+        // ==== Gyro ==== //
+        status = redisClient->set("inersia_mode", "auto");
+        if(status) curStatusString = "";
+        else qDebug() << " cannot init mode Gyro";
+
+        // ==== GPS ==== //
+        status = redisClient->set("position_mode", "auto");
+        if(status) curStatusString = "";
+        else qDebug() << "cannot init mode GPS";
+
+
+        // ==== Wind ==== //
+        status = redisClient->set("wind_mode", "auto");
+        if(status) curStatusString = "";
+        else qDebug() << "cannot init mode Wind";
+
+        // ==== Weather ==== //
+        status = redisClient->set("weather_mode", "auto");
+        if(status) curStatusString = "";
+        else qDebug() << "cannot init mode Weather";
+
+        // ==== Speed ==== //
+        status = redisClient->set("speed_mode", "auto");
+        if(status) curStatusString = "";
+        else qDebug() << "cannot init mode Speed";
+
+        // ==== Water Speed ==== //
+        status = redisClient->set("waterspeed_mode", "auto");
+        if(status) curStatusString = "";
+        else qDebug() << "cannot init mode Water Speed";
+    }
+#endif
+
+}
 void FrameOSD::setConfig(QString Config)
 {
     this->Config = Config;
     qDebug() <<Q_FUNC_INFO<<"Redis config"<<this->Config;
 
+#ifdef WIN32
+    QStringList args = Config.split(":");
+    if(args.size() != 2) {
+        qDebug()<<Q_FUNC_INFO<<"Invalid arguments for redis. Program exit";
+        exit(1);
+    }
+    redisClient = new QtRedis(args.at(0), args.at(1).toInt());
+
+//    if(!redisClient->isConnected())
+//    {
+//        splash->showMessage("OSD Setup error\n\nServer connection error: Cannot connect to server" + Config + "\n\nApplication now will clossing ",Qt::AlignCenter);
+//        sleep(3);
+//        splash->finish(this);
+//        qApp->exit();
+//    }
+    reconnecRedis();
+#else
     try
     {
         redisClient = new Redis(this->Config.toStdString());
@@ -143,12 +211,15 @@ void FrameOSD::setConfig(QString Config)
         curStatusString = e.what();
         qDebug() << "Water Speed" << curStatusString;
     }
+#endif
 
     qDebug() << "curStatusString" << curStatusString;
 }
 
 void FrameOSD::on_osdTimerTimeOut()
 {
+    if(redisClient==nullptr) return;
+
     if(!curStatusString.isEmpty())
     {
         if(curStatusString.contains("refuse"))
@@ -196,6 +267,14 @@ void FrameOSD::GyroManualModeUi()
 void FrameOSD::GyroTimerTimeOut()
 {
     QString inersiamode ;
+#ifdef WIN32
+         inersiamode = redisClient->get("inersia_mode");
+         if(inersiamode.isEmpty())
+         {
+             curStatusString = "Cannot get inertia mode";
+             qDebug() << Q_FUNC_INFO <<  curStatusString;
+         } else curStatusString = "";
+#else
     try
     {
          auto inersia_mode = redisClient->get("inersia_mode");
@@ -207,12 +286,21 @@ void FrameOSD::GyroTimerTimeOut()
         curStatusString = e.what();
         //qDebug() << Q_FUNC_INFO <<  curStatusString;
     }
+#endif
 
     //qDebug() << Q_FUNC_INFO << inersiamode;
 
     if(inersiamode == "auto")
     {
         bool status = false;
+#ifdef WIN32
+        status = redisClient->exists("inersia");
+        if(!status)
+        {
+            curStatusString = "No inertia data";
+            qDebug() << Q_FUNC_INFO <<  curStatusString;
+        } else curStatusString = "";
+#else
         try
         {
             status = redisClient->exists("inersia");
@@ -223,9 +311,51 @@ void FrameOSD::GyroTimerTimeOut()
             curStatusString = e.what();
             qDebug() << Q_FUNC_INFO <<  curStatusString;
         }
+#endif
 
         if(status)
         {
+#ifdef WIN32
+            QStringList inersia = redisClient->hmget("inersia", "heading roll pitch status");
+
+            if(inersia.size() == 4)
+            {
+                curStatusString = "";
+
+                inersiadata.heading = inersia.at(0);
+                inersiadata.roll = inersia.at(1);
+                inersiadata.picth = inersia.at(2);
+                inersiadata.status = inersia.at(3);
+
+                ui->lineEditGyroHeading->setToolTip(inersiadata.status);
+                ui->lineEditGyroRoll->setToolTip(inersiadata.status);
+                ui->lineEditGyroPitch->setToolTip(inersiadata.status);
+
+                if(inersiadata.status.isEmpty())
+                {
+                    ui->lineEditGyroHeading->setStyleSheet("color:rgb(0, 255, 0);");
+                    ui->lineEditGyroRoll->setStyleSheet("color:rgb(0, 255, 0);");
+                    ui->lineEditGyroPitch->setStyleSheet("color:rgb(0, 255, 0);");
+
+                    ui->lineEditGyroHeading->setText(inersiadata.heading);
+                    ui->lineEditGyroRoll->setText(inersiadata.roll);
+                    ui->lineEditGyroPitch->setText(inersiadata.picth);
+                }
+                else
+                {
+                    ui->lineEditGyroHeading->setStyleSheet("color: rgb(255, 0, 0);");
+                    ui->lineEditGyroRoll->setStyleSheet("color: rgb(255, 0, 0);");
+                    ui->lineEditGyroPitch->setStyleSheet("color: rgb(255, 0, 0);");
+                }
+
+            }            }
+            else
+            {
+                inersiadata.heading = "-";
+                curStatusString = "Cannot get data inertia";
+                qDebug() << Q_FUNC_INFO <<  curStatusString;
+            }
+#else
             std::vector<std::string> inersia;
             inersia.reserve(4);
 
@@ -268,6 +398,7 @@ void FrameOSD::GyroTimerTimeOut()
                 curStatusString = e.what();
                 qDebug() << Q_FUNC_INFO <<  curStatusString;
             }
+#endif
         }
         else
         {
@@ -278,12 +409,30 @@ void FrameOSD::GyroTimerTimeOut()
             ui->lineEditGyroPitch->setStyleSheet("color: rgb(255, 0, 0);");
         }
     }
-}
 
 void FrameOSD::on_osdGryoComboBox_activated(int index)
 {
     if (index)
     {
+#ifdef WIN32
+        if(redisClient->set("inersia_mode", "auto"))
+        {
+            curStatusString = "";
+
+            ui->lineEditGyroHeading->setEnabled(false);
+            ui->lineEditGyroRoll->setEnabled(false);
+            ui->lineEditGyroPitch->setEnabled(false);
+
+            GyroAutoModeUi();
+            if(redisClient->del("inersia") < 1) qDebug() << Q_FUNC_INFO <<"cannot del position key";
+
+        }
+        else
+        {
+            curStatusString = "Cannot set inersia_mode";
+            qDebug() << Q_FUNC_INFO <<  curStatusString;
+        }
+#else
         try
         {
             redisClient->set("inersia_mode", "auto");
@@ -294,7 +443,6 @@ void FrameOSD::on_osdGryoComboBox_activated(int index)
             ui->lineEditGyroPitch->setEnabled(false);
 
             GyroAutoModeUi();
-
             try
             {
                 redisClient->del("inersia");
@@ -309,9 +457,41 @@ void FrameOSD::on_osdGryoComboBox_activated(int index)
             curStatusString = e.what();
             qDebug() << Q_FUNC_INFO <<  curStatusString;
         }
+#endif
     }
     else
     {
+#ifdef WIN32
+        if(redisClient->set("inersia_mode", "manual"))
+        {
+            curStatusString = "";
+
+            ui->lineEditGyroHeading->setEnabled(true);
+            ui->lineEditGyroRoll->setEnabled(true);
+            ui->lineEditGyroPitch->setEnabled(true);
+
+            GyroManualModeUi();
+
+            bool key_exist = redisClient->exists("inersia");
+            if(!key_exist)
+            {
+                QMap<QString, QVariant> data_map;
+                data_map.insert("heading", "0.0");
+                data_map.insert("roll", "0.0");
+                data_map.insert("pitch", "0.0");
+
+                redisClient->hmset("inersia",data_map);
+            }
+            else redisClient->persist("inersia");
+
+            inersiadata.heading = ui->lineEditGyroHeading->text();
+        }
+        else
+        {
+            curStatusString = "Cannot get inertia mode";
+            qDebug() << Q_FUNC_INFO <<  curStatusString;
+        }
+#else
         try
         {
             redisClient->set("inersia_mode", "manual");
@@ -355,6 +535,7 @@ void FrameOSD::on_osdGryoComboBox_activated(int index)
             curStatusString = e.what();
             qDebug() << Q_FUNC_INFO <<  curStatusString;
         }
+#endif
     }
 }
 
@@ -406,6 +587,19 @@ void FrameOSD::on_pushButtonGyroApply_clicked()
     inersiadata.roll = roll;
     inersiadata.picth = pitch;
 
+#ifdef WIN32
+    QMap<QString, QVariant> data_map;
+    data_map.insert("heading", heading);
+    data_map.insert("roll", roll);
+    data_map.insert("pitch", pitch);
+
+    if(redisClient->hmset("inersia",data_map)) curStatusString = "";
+    else
+    {
+        curStatusString = "Cannot set inestia data";
+        qDebug() << Q_FUNC_INFO <<  curStatusString;
+    }
+#else
     std::unordered_map<std::string, std::string> data_map =
     {
         {"heading", heading.toStdString()},
@@ -423,6 +617,7 @@ void FrameOSD::on_pushButtonGyroApply_clicked()
         curStatusString = e.what();
         qDebug() << Q_FUNC_INFO <<  curStatusString;
     }
+#endif
 }
 
 // ==== GPS ==== //
@@ -447,7 +642,15 @@ void FrameOSD::GpsManualModeUi()
 
 void FrameOSD::GpsTimerTimeOut()
 {
-    QString positionmode;
+    QString positionmode = redisClient->get("position_mode");
+#ifdef WIN32
+    if(!positionmode.isEmpty()) curStatusString = "";
+    else
+    {
+        curStatusString = "Cannot get position_mode";
+        qDebug() << Q_FUNC_INFO <<  curStatusString;
+    }
+#else
     try
     {
         auto position_mode = redisClient->get("position_mode");
@@ -459,12 +662,21 @@ void FrameOSD::GpsTimerTimeOut()
         curStatusString = e.what();
         qDebug() << Q_FUNC_INFO <<  curStatusString;
     }
+#endif
 
     //qDebug() << Q_FUNC_INFO << positionmode;
 
     if(positionmode == "auto")
     {
-        bool status = false;
+        bool status = redisClient->exists("position");
+#ifdef WIN32
+        if(status) curStatusString = "";
+        else
+        {
+            curStatusString = "No position data";
+            qDebug() << Q_FUNC_INFO <<  curStatusString;
+        }
+#else
         try
         {
             status = redisClient->exists("position");
@@ -475,12 +687,109 @@ void FrameOSD::GpsTimerTimeOut()
             curStatusString = e.what();
             qDebug() << Q_FUNC_INFO <<  curStatusString;
         }
+#endif
 
         if(status)
         {
-            std::vector<std::string> position;
-            position.reserve(2);
+            QStringList position = redisClient->hmget("position", "latitude longitude status");
+#ifdef WIN32
+            if(position.size() == 3)
+            {
+                curStatusString = "";
 
+                gpsdata.latitude =position.at(0);
+                gpsdata.longitude = position.at(1);
+                gpsdata.status = position.at(2);
+
+
+               // ==== Float latitude ====
+               float lat_float = gpsdata.latitude.toFloat();
+               QString tanda_latitude;
+               if (lat_float < 0)
+                   tanda_latitude = "S";
+               else
+                  tanda_latitude = "N";
+
+               lat_float = fabs(lat_float);
+               float deg = floor(lat_float);
+               float min = lat_float - deg ;
+                     min = min * 60;
+                     min = floor(min);
+               float sec = (lat_float - deg - (min / 60.0)) * 3600.0;
+
+//               qDebug() << deg << lat_float << gpsdata.latitude << min << sec << tanda_latitude;
+
+               QString deg_string = QString::number(deg,'f', 0);
+               if (deg_string.size() < 2)
+                   deg_string.prepend("0");
+
+               QString min_string = QString::number(min,'f', 0);
+               if (min_string.size() < 2)
+                   min_string.prepend("0");
+
+               QString sec_string = QString::number(sec, 'f', 0);
+               if (sec_string.size() <2)
+                   sec_string.prepend("0");
+
+               QString latitude_string = deg_string + "-" + min_string + "'" + sec_string + "''" + tanda_latitude;
+
+               // ==== Float Longitude ====
+               float long_float = gpsdata.longitude.toFloat();
+               QString tanda_longitude;
+               if (long_float < 0)
+                   tanda_longitude = "W";
+               else
+                   tanda_longitude = "E";
+
+               long_float = fabs(long_float);
+               float degg = floor(long_float);
+               float minn = long_float - degg ;
+                     minn = minn * 60;
+                     minn = floor(minn);
+               float secc = (long_float - degg - (minn / 60.0)) * 3600.0;
+
+//               qDebug() << degg << long_float << gpsdata.longitude << minn << secc << tanda_longitude;
+
+               QString degg_string = QString::number(degg,'f', 0);
+               if (degg_string.size() < 3)
+                   degg_string.prepend("0");
+               if (degg_string.size() < 3)
+                   degg_string.prepend("0");
+
+               QString minn_string = QString::number(minn,'f', 0);
+               if (minn_string.size() < 2)
+                   minn_string.prepend("0");
+
+               QString secc_string = QString::number(secc, 'f', 0);
+               if (secc_string.size() <2)
+                   secc_string.prepend("0");
+
+               QString longitude_string = degg_string + "-" + minn_string + "'" + secc_string + "''" + tanda_longitude;
+
+               ui->lineEditGpsLat->setToolTip(gpsdata.status);
+               ui->lineEditGpsLong->setToolTip(gpsdata.status);
+
+               if(gpsdata.status.isEmpty())
+               {
+                   ui->lineEditGpsLat->setStyleSheet("color:rgb(0, 255, 0);");
+                   ui->lineEditGpsLong->setStyleSheet("color:rgb(0, 255, 0);");
+
+                   ui->lineEditGpsLat->setText(latitude_string);
+                   ui->lineEditGpsLong->setText(longitude_string);
+               }
+               else
+               {
+                   ui->lineEditGpsLat->setStyleSheet("color: rgb(255, 0, 0);");
+                   ui->lineEditGpsLong->setStyleSheet("color: rgb(255, 0, 0);");
+               }
+
+            }
+            else
+            {
+                curStatusString = "Cannot get position data";
+                qDebug() << Q_FUNC_INFO <<  curStatusString;
+            }
+#else
             try
             {
                 redisClient->hmget("position", {"latitude", "longitude", "status"}, std::back_inserter(position));
@@ -579,6 +888,7 @@ void FrameOSD::GpsTimerTimeOut()
                 curStatusString = e.what();
                 qDebug() << Q_FUNC_INFO <<  curStatusString;
             }
+#endif
         }
         else
         {
@@ -592,6 +902,25 @@ void FrameOSD::on_comboBoxGPSMode_activated(int index)
 {
     if (index)
     {
+#ifdef WIN32
+        if(redisClient->set("position_mode", "auto"))
+        {
+            curStatusString = "";
+
+            ui->lineEditGpsLat->setEnabled(false);
+            ui->lineEditGpsLong->setEnabled(false);
+
+            GpsAutoModeUi();
+
+            if(!redisClient->del("position")) qDebug() << Q_FUNC_INFO <<"cannot del position key";
+
+        }
+        else
+        {
+            curStatusString = "Cannot set position mode";
+            qDebug() << Q_FUNC_INFO <<  curStatusString;
+        }
+#else
         try
         {
             redisClient->set("position_mode", "auto");
@@ -617,18 +946,38 @@ void FrameOSD::on_comboBoxGPSMode_activated(int index)
             curStatusString = e.what();
             qDebug() << Q_FUNC_INFO <<  curStatusString;
         }
+#endif
     }
     else
     {
-        try
+        if(redisClient->set("position_mode", "manual"))
         {
-            redisClient->set("position_mode", "manual");
             curStatusString = "";
 
             ui->lineEditGpsLat->setEnabled(true);
             ui->lineEditGpsLong->setEnabled(true);
 
             GpsManualModeUi();
+#ifdef WIN32
+            bool key_exist = redisClient->exists("position");
+            if(key_exist)
+            {
+                QMap<QString, QVariant> data_map;
+                data_map.insert("latitude", "0.0");
+                data_map.insert("longitude", "0.0");
+                data_map.insert("status", "");
+
+                redisClient->hmset("position",data_map);
+            }
+            else
+                redisClient->persist("position");
+        }
+        else
+        {
+            curStatusString = "cannot set position mode";
+            qDebug() << Q_FUNC_INFO <<  curStatusString;
+        }
+#else
             try
             {
                 bool key_exist = redisClient->exists("position");
@@ -659,6 +1008,7 @@ void FrameOSD::on_comboBoxGPSMode_activated(int index)
             curStatusString = e.what();
             qDebug() << Q_FUNC_INFO <<  curStatusString;
         }
+#endif
     }
 }
 
@@ -804,6 +1154,18 @@ void FrameOSD::on_pushButtonGPSApply_clicked()
     QString valueLatStr = QString::number(valueLat);
     QString valueLongStr = QString::number(valueLong);
 
+#ifdef WIN32
+    QMap<QString, QVariant> data_map;
+    data_map.insert("latitude", valueLatStr);
+    data_map.insert("longitude", valueLongStr);
+
+    if(redisClient->hmset("position",data_map)) curStatusString = "";
+    else
+    {
+        curStatusString = "Cannot set position";
+        qDebug() << Q_FUNC_INFO <<  curStatusString;
+    }
+#else
     std::unordered_map<std::string, std::string> data_map =
     {
         {"latitude", valueLatStr.toStdString()},
@@ -820,6 +1182,7 @@ void FrameOSD::on_pushButtonGPSApply_clicked()
         curStatusString = e.what();
         qDebug() << Q_FUNC_INFO <<  curStatusString;
     }
+#endif
 }
 
 // ==== Speed ==== //
@@ -843,6 +1206,15 @@ void FrameOSD::SpeedManualModeUi()
 
 void FrameOSD::SpeedTimerTimeOut()
 {
+#ifdef WIN32
+    QString speedmode = redisClient->get("speed_mode");;
+    if(!speedmode.isEmpty()) curStatusString = "";
+    else
+    {
+        curStatusString = "Cannot get speed mode";
+        qDebug() << Q_FUNC_INFO <<  curStatusString;
+    }
+#else
     QString speedmode;
     try
     {
@@ -855,12 +1227,22 @@ void FrameOSD::SpeedTimerTimeOut()
         curStatusString = e.what();
         qDebug() << Q_FUNC_INFO <<  curStatusString;
     }
+#endif
 
 //    qDebug() << Q_FUNC_INFO << speedmode;
 
     if(speedmode == "auto")
     {
         bool status = false;
+#ifdef WIN32
+        status = redisClient->exists("speed");
+        if(status) curStatusString = "";
+        else
+        {
+            curStatusString = "No speed data";
+            qDebug() << Q_FUNC_INFO <<  curStatusString;
+        }
+#else
         try
         {
             status = redisClient->exists("speed");
@@ -871,9 +1253,44 @@ void FrameOSD::SpeedTimerTimeOut()
             curStatusString = e.what();
             qDebug() << Q_FUNC_INFO <<  curStatusString;
         }
+#endif
 
         if(status)
         {
+#ifdef WIN32
+            QStringList speed = redisClient->hmget("speed", "SOG COG status");
+
+            if(speed.size() == 3)
+            {
+                curStatusString = "";
+
+                speeddata.sog = speed.at(0);
+                speeddata.cog = speed.at(1);
+                speeddata.status = speed.at(2);
+
+                ui->lineEditSpeedSOG->setToolTip(speeddata.status);
+                ui->lineEditSpeedCOG->setToolTip(speeddata.status);
+
+                if(speeddata.status.isEmpty())
+                {
+                    ui->lineEditSpeedSOG->setStyleSheet("color:rgb(0, 255, 0);");
+                    ui->lineEditSpeedCOG->setStyleSheet("color:rgb(0, 255, 0);");
+
+                    ui->lineEditSpeedSOG->setText(speeddata.sog);
+                    ui->lineEditSpeedCOG->setText(speeddata.cog);
+                }
+                else
+                {
+                    ui->lineEditSpeedSOG->setStyleSheet("color: rgb(255, 0, 0);");
+                    ui->lineEditSpeedCOG->setStyleSheet("color: rgb(255, 0, 0);");
+                }
+            }
+            else
+            {
+                curStatusString = "Cannot get speed data";
+                qDebug() << Q_FUNC_INFO <<  curStatusString;
+            }
+#else
             std::vector<std::string> speed;
             speed.reserve(2);
 
@@ -909,6 +1326,7 @@ void FrameOSD::SpeedTimerTimeOut()
                 curStatusString = e.what();
                 qDebug() << Q_FUNC_INFO <<  curStatusString;
             }
+#endif
         }
         else
         {
@@ -923,6 +1341,25 @@ void FrameOSD::on_comboBoxSpeedMode_activated(int index)
 {
     if (index)
     {
+#ifdef WIN32
+        if(redisClient->set("speed_mode", "auto"))
+        {
+            curStatusString = "";
+
+            ui->lineEditSpeedSOG->setEnabled(false);
+            ui->lineEditSpeedCOG->setEnabled(false);
+
+            SpeedAutoModeUi();
+
+            if(!redisClient->del("speed")) qDebug() << Q_FUNC_INFO <<"cannot del position key";
+
+        }
+        else
+        {
+            curStatusString = "Cannot set speed mode";
+            qDebug() << Q_FUNC_INFO <<  curStatusString;
+        }
+#else
         try
         {
             redisClient->set("speed_mode", "auto");
@@ -947,9 +1384,39 @@ void FrameOSD::on_comboBoxSpeedMode_activated(int index)
             curStatusString = e.what();
             qDebug() << Q_FUNC_INFO <<  curStatusString;
         }
+#endif
     }
     else
     {
+#ifdef WIN32
+        if(redisClient->set("speed_mode", "manual"))
+        {
+            curStatusString = "";
+
+            ui->lineEditSpeedSOG->setEnabled(true);
+            ui->lineEditSpeedCOG->setEnabled(true);
+
+            SpeedManualModeUi();
+
+            bool key_exist = redisClient->exists("speed");
+            if(!key_exist)
+            {
+                QMap<QString, QVariant> data_map;
+                data_map.insert("SOG", "0.0");
+                data_map.insert("COG", "0.0");
+                data_map.insert("status", "");
+
+                redisClient->hmset("speed",data_map);
+            }
+            else
+                redisClient->persist("speed");
+        }
+        else
+        {
+            curStatusString = "Cannot set speed mode";
+            qDebug() << Q_FUNC_INFO <<  curStatusString;
+        }
+#else
         try
         {
             redisClient->set("speed_mode", "manual");
@@ -991,6 +1458,7 @@ void FrameOSD::on_comboBoxSpeedMode_activated(int index)
             curStatusString = e.what();
             qDebug() << Q_FUNC_INFO <<  curStatusString;
         }
+#endif
     }
 }
 
@@ -1025,6 +1493,18 @@ void FrameOSD::on_pushButtonSpeedApply_clicked()
         return;
     }
 
+#ifdef WIN32
+    QMap<QString, QVariant> data_map;
+    data_map.insert("SOG", sog);
+    data_map.insert("COG", cog);
+
+    if(redisClient->hmset("speed",data_map)) curStatusString = "";
+    else
+    {
+        curStatusString = "Cannot set speed data";
+        qDebug() << Q_FUNC_INFO <<  curStatusString;
+    }
+#else
     std::unordered_map<std::string, std::string> data_map =
     {
         {"SOG", sog.toStdString()},
@@ -1041,6 +1521,7 @@ void FrameOSD::on_pushButtonSpeedApply_clicked()
         curStatusString = e.what();
         qDebug() << Q_FUNC_INFO <<  curStatusString;
     }
+#endif
 }
 
 // ==== Water Speed ==== //
@@ -1064,7 +1545,15 @@ void FrameOSD::WaterSpeedManualModeUi()
 
 void FrameOSD::WaterSpeedTimerTimeOut()
 {
-    QString waterspeedmode;
+    QString waterspeedmode = redisClient->get("waterspeed_mode");
+#ifdef WIN32
+    if(!waterspeedmode.isEmpty()) curStatusString = "";
+    else
+    {
+        curStatusString = "Cannot get water speed mode";
+        qDebug() << Q_FUNC_INFO <<  curStatusString;
+    }
+#else
     try
     {
         auto waterspeed_mode = redisClient->get("waterspeed_mode");
@@ -1076,12 +1565,22 @@ void FrameOSD::WaterSpeedTimerTimeOut()
         curStatusString = e.what();
         qDebug() << Q_FUNC_INFO <<  curStatusString;
     }
+#endif
 
 //    qDebug() << Q_FUNC_INFO << waterspeedmode;
 
     if(waterspeedmode == "auto")
     {
         bool status = false;
+#ifdef WIN32
+        status = redisClient->exists("waterspeed");
+        if(status) curStatusString = "";
+        else
+        {
+            curStatusString = "No water speed data";
+            qDebug() << Q_FUNC_INFO <<  curStatusString;
+        }
+#else
         try
         {
             status = redisClient->exists("waterspeed");
@@ -1092,9 +1591,44 @@ void FrameOSD::WaterSpeedTimerTimeOut()
             curStatusString = e.what();
             qDebug() << Q_FUNC_INFO <<  curStatusString;
         }
+#endif
 
         if(status)
         {   
+#ifdef WIN32
+            QStringList waterspeed = redisClient->hmget("waterspeed", "speed course status");
+
+            if(waterspeed.size() == 3)
+            {
+                curStatusString = "";
+
+                waterspeeddata.speed = waterspeed.at(0);
+                waterspeeddata.course = waterspeed.at(1);
+                waterspeeddata.status = waterspeed.at(2);
+
+                ui->lineEditWaterSOG->setToolTip(waterspeeddata.status);
+                ui->lineEditWaterCOG->setToolTip(waterspeeddata.status);
+
+                if(waterspeeddata.status.isEmpty())
+                {
+                    ui->lineEditWaterSOG->setStyleSheet("color:rgb(0, 255, 0);");
+                    ui->lineEditWaterCOG->setStyleSheet("color:rgb(0, 255, 0);");
+
+                    ui->lineEditWaterSOG->setText(waterspeeddata.speed);
+                    ui->lineEditWaterCOG->setText(waterspeeddata.course);
+                }
+                else
+                {
+                    ui->lineEditWaterSOG->setStyleSheet("color: rgb(255, 0, 0);");
+                    ui->lineEditWaterCOG->setStyleSheet("color: rgb(255, 0, 0);");
+                }
+            }
+            else
+            {
+                curStatusString = "Cannot get water speed data";
+                qDebug() << Q_FUNC_INFO <<  curStatusString;
+            }
+#else
             std::vector<std::string> waterspeed;
             waterspeed.reserve(2);
 
@@ -1130,6 +1664,7 @@ void FrameOSD::WaterSpeedTimerTimeOut()
                 curStatusString = e.what();
                 qDebug() << Q_FUNC_INFO <<  curStatusString;
             }
+#endif
         }
         else
         {
@@ -1146,6 +1681,25 @@ void FrameOSD::on_comboBoxWaterMode_activated(int index)
 
     if (index)
     {
+#ifdef WIN32
+        if(redisClient->set("waterspeed_mode", "auto"))
+        {
+            curStatusString = "";
+
+            ui->lineEditWaterSOG->setEnabled(false);
+            ui->lineEditWaterCOG->setEnabled(false);
+
+            WaterSpeedAutoModeUi();
+
+            if(!redisClient->del("waterspeed")) qDebug() << Q_FUNC_INFO <<"cannot del waterspeed key";
+
+        }
+        else
+        {
+            curStatusString = "Cannot get water speed mode";
+            qDebug() << Q_FUNC_INFO <<  curStatusString;
+        }
+#else
         try
         {
             redisClient->set("waterspeed_mode", "auto");
@@ -1170,9 +1724,39 @@ void FrameOSD::on_comboBoxWaterMode_activated(int index)
             curStatusString = e.what();
             qDebug() << Q_FUNC_INFO <<  curStatusString;
         }
+#endif
     }
     else
     {
+#ifdef WIN32
+        if(redisClient->set("waterspeed_mode", "manual"))
+        {
+            curStatusString = "";
+
+            ui->lineEditWaterSOG->setEnabled(true);
+            ui->lineEditWaterCOG->setEnabled(true);
+
+            WaterSpeedManualModeUi();
+
+            bool key_exist = redisClient->exists("waterspeed");
+            if(!key_exist)
+            {
+                QMap<QString, QVariant> data_map;
+                data_map.insert("speed", "0.0");
+                data_map.insert("course", "0.0");
+                data_map.insert("status", "");
+
+                redisClient->hmset("waterspeed",data_map);
+            }
+            else
+                redisClient->persist("waterspeed");
+        }
+        else
+        {
+            curStatusString = "Cannot set water speed mode";
+            qDebug() << Q_FUNC_INFO <<  curStatusString;
+        }
+#else
         try
         {
             redisClient->set("waterspeed_mode", "manual");
@@ -1212,6 +1796,7 @@ void FrameOSD::on_comboBoxWaterMode_activated(int index)
             curStatusString = e.what();
             qDebug() << Q_FUNC_INFO <<  curStatusString;
         }
+#endif
     }
 }
 
@@ -1246,6 +1831,18 @@ void FrameOSD::on_pushButtonWaterApply_clicked()
         return;
     }
 
+#ifdef WIN32
+    QMap<QString, QVariant> data_map;
+    data_map.insert("speed", speed);
+    data_map.insert("course", course);
+
+    if(redisClient->hmset("waterspeed",data_map)) curStatusString = "";
+    else
+    {
+        curStatusString = "Cannot set waterspeed data";
+        qDebug() << Q_FUNC_INFO <<  curStatusString;
+    }
+#else
     std::unordered_map<std::string, std::string> data_map =
     {
         {"speed", speed.toStdString()},
@@ -1262,6 +1859,7 @@ void FrameOSD::on_pushButtonWaterApply_clicked()
         curStatusString = e.what();
         qDebug() << Q_FUNC_INFO <<  curStatusString;
     }
+#endif
 }
 
 // ==== Wind ==== //
@@ -1287,6 +1885,15 @@ void FrameOSD::WindManualModeUi()
 void FrameOSD::WindTimerTimeOut()
 {
     QString windmode;
+#ifdef WIN32
+    windmode = redisClient->get("wind_mode");
+    if(!windmode.isEmpty()) curStatusString = "";
+    else
+    {
+        curStatusString = "Cannot get wind mode";
+        qDebug() << Q_FUNC_INFO <<  curStatusString;
+    }
+#else
     try
     {
         auto wind_mode = redisClient->get("wind_mode");
@@ -1298,12 +1905,22 @@ void FrameOSD::WindTimerTimeOut()
         curStatusString = e.what();
         qDebug() << Q_FUNC_INFO <<  curStatusString;
     }
+#endif
 
 //    qDebug() << Q_FUNC_INFO << windmode;
 
     if(windmode == "auto")
     {
         bool status = false;
+#ifdef WIN32
+        status = redisClient->exists("wind");
+        if(status) curStatusString = "";
+        else
+        {
+            curStatusString = "No wind data";
+            qDebug() << Q_FUNC_INFO <<  curStatusString;
+        }
+#else
         try
         {
             status = redisClient->exists("wind");
@@ -1315,9 +1932,44 @@ void FrameOSD::WindTimerTimeOut()
             curStatusString = e.what();
             qDebug() << Q_FUNC_INFO <<  curStatusString;
         }
+#endif
 
         if(status)
         {
+#ifdef WIN32
+            QStringList wind = redisClient->hmget("wind", "dir speed status");
+
+            if(wind.size() == 3)
+            {
+                curStatusString = "";
+
+                winddata.dir = wind.at(0);
+                winddata.speed = wind.at(1);
+                winddata.status = wind.at(2);
+
+                ui->lineEditWindDir->setToolTip(winddata.status);
+                ui->lineEditWindSpeed->setToolTip(winddata.status);
+
+                if(winddata.status.isEmpty())
+                {
+                    ui->lineEditWindDir->setStyleSheet("color:rgb(0, 255, 0);");
+                    ui->lineEditWindSpeed->setStyleSheet("color:rgb(0, 255, 0);");
+
+                    ui->lineEditWindDir->setText(winddata.dir);
+                    ui->lineEditWindSpeed->setText(winddata.speed);
+                }
+                else
+                {
+                    ui->lineEditWindDir->setStyleSheet("color: rgb(255, 0, 0);");
+                    ui->lineEditWindSpeed->setStyleSheet("color: rgb(255, 0, 0);");
+                }
+            }
+            else
+            {
+                curStatusString = "Cannot get wind data";
+                qDebug() << Q_FUNC_INFO <<  curStatusString;
+            }
+#else
             std::vector<std::string> wind;
             wind.reserve(3);
 
@@ -1353,6 +2005,7 @@ void FrameOSD::WindTimerTimeOut()
                 curStatusString = e.what();
                 qDebug() << Q_FUNC_INFO <<  curStatusString;
             }
+#endif
         }
         else
         {
@@ -1366,6 +2019,24 @@ void FrameOSD::on_comboBoxWindMode_activated(int index)
 {
     if (index)
     {
+#ifdef WIN32
+        if(redisClient->set("wind_mode", "auto"))
+        {
+            curStatusString = "";
+
+            ui->lineEditWindDir->setEnabled(false);
+            ui->lineEditWindSpeed->setEnabled(false);
+
+            WindAutoModeUi();
+
+            if(!redisClient->del("wind")) qDebug() << Q_FUNC_INFO <<"cannot del position key";
+        }
+        else
+        {
+            curStatusString = "Cannot set wind mode";
+            qDebug() << Q_FUNC_INFO <<  curStatusString;
+        }
+#else
         try
         {
             redisClient->set("wind_mode", "auto");
@@ -1390,9 +2061,46 @@ void FrameOSD::on_comboBoxWindMode_activated(int index)
             curStatusString = e.what();
             qDebug() << Q_FUNC_INFO <<  curStatusString;
         }
+#endif
     }
     else
     {
+#ifdef WIN32
+        if(redisClient->set("wind_mode", "manual"))
+        {
+            curStatusString = "";
+
+            QString speed = redisClient->hget("wind","speed dir");
+
+            if(speed.size() == 2)
+            {
+                ui->lineEditWindSpeed->setText(speed.at(0));
+                ui->lineEditWindDir->setText(speed.at(1));
+            }
+            ui->lineEditWindDir->setEnabled(true);
+            ui->lineEditWindSpeed->setEnabled(true);
+
+            WindManualModeUi();
+
+            bool key_exist = redisClient->exists("wind");
+            if(!key_exist)
+            {
+                QMap<QString, QVariant> data_map;
+                data_map.insert("dir", "0.0");
+                data_map.insert("speed", "0.0");
+                data_map.insert("status", "");
+
+                redisClient->hmset("wind",data_map);
+            }
+            else
+                redisClient->persist("wind");
+        }
+        else
+        {
+            curStatusString = "Cannot set wind mode";
+            qDebug() << Q_FUNC_INFO <<  curStatusString;
+        }
+#else
         try
         {
             redisClient->set("wind_mode", "manual");
@@ -1439,6 +2147,7 @@ void FrameOSD::on_comboBoxWindMode_activated(int index)
             curStatusString = e.what();
             qDebug() << Q_FUNC_INFO <<  curStatusString;
         }
+#endif
     }
 }
 
@@ -1473,6 +2182,18 @@ void FrameOSD::on_pushButtonWindApply_clicked()
         return;
     }
 
+#ifdef WIN32
+    QMap<QString, QVariant> data_map;
+    data_map.insert("dir", dir);
+    data_map.insert("speed", speed);
+
+    if(redisClient->hmset("wind",data_map)) curStatusString = "";
+    else
+    {
+        curStatusString = "Cannot set wind data";
+        qDebug() << Q_FUNC_INFO <<  curStatusString;
+    }
+#else
     std::unordered_map<std::string, std::string> data_map =
     {
         {"dir", dir.toStdString()},
@@ -1489,6 +2210,7 @@ void FrameOSD::on_pushButtonWindApply_clicked()
         curStatusString = e.what();
         qDebug() << Q_FUNC_INFO <<  curStatusString;
     }
+#endif
 }
 
 // ==== Weather ==== //
@@ -1516,6 +2238,15 @@ void FrameOSD::WeatherManualModeUi()
 void FrameOSD::WeatherTimerTimeOut()
 {
     QString weathermode;
+#ifdef WIN32
+    weathermode = redisClient->get("weather_mode");
+    if(!weathermode.isEmpty()) curStatusString = "";
+    else
+    {
+        curStatusString = "Cannot get weather mode";
+        qDebug() << Q_FUNC_INFO <<  curStatusString;
+    }
+#else
     try
     {
         auto weather_mode = redisClient->get("weather_mode");
@@ -1527,12 +2258,22 @@ void FrameOSD::WeatherTimerTimeOut()
         curStatusString = e.what();
         qDebug() << Q_FUNC_INFO <<  curStatusString;
     }
+#endif
 
 //    qDebug() << Q_FUNC_INFO << weathermode;
 
     if(weathermode == "auto")
     {
         bool status = false;
+#ifdef WIN32
+        status = redisClient->exists("weather");
+        if(status) curStatusString = "";
+        else
+        {
+            curStatusString = "No weather data";
+            qDebug() << Q_FUNC_INFO <<  curStatusString;
+        }
+#else
         try
         {
             status = redisClient->exists("weather");
@@ -1543,9 +2284,53 @@ void FrameOSD::WeatherTimerTimeOut()
             curStatusString = e.what();
             qDebug() << Q_FUNC_INFO <<  curStatusString;
         }
+#endif
 
         if(status)
         {
+#ifdef WIN32
+            QStringList weather = redisClient->hmget("weather", "temperature pressure humidity status");
+
+            if(weather.size() == 4)
+            {
+                curStatusString = "";
+
+                weatherdata.temperature =weather.at(0);
+                weatherdata.pressure = weather.at(1);
+                weatherdata.humidity = weather.at(2);
+                weatherdata.status = weather.at(3);
+//                qDebug() <<"temperature" <<weatherdata.temperature
+//                         <<"pressure" <<weatherdata.pressure
+//                         <<"humidity" <<weatherdata.humidity
+//                         <<"status" <<weatherdata.status;
+
+                ui->lineEditWeatherTemp->setToolTip(weatherdata.status);
+                ui->lineEditWeatherPress->setToolTip(weatherdata.status);
+                ui->lineEditWeatherHumidity->setToolTip(weatherdata.status);
+
+                if(weatherdata.status.isEmpty())
+                {
+                    ui->lineEditWeatherTemp->setStyleSheet("color:rgb(0, 255, 0);");
+                    ui->lineEditWeatherPress->setStyleSheet("color:rgb(0, 255, 0);");
+                    ui->lineEditWeatherHumidity->setStyleSheet("color:rgb(0, 255, 0);");
+
+                    ui->lineEditWeatherTemp->setText(weatherdata.temperature);
+                    ui->lineEditWeatherPress->setText(weatherdata.pressure);
+                    ui->lineEditWeatherHumidity->setText(weatherdata.humidity);
+                }
+                else
+                {
+                    ui->lineEditWeatherTemp->setStyleSheet("color: rgb(255, 0, 0);");
+                    ui->lineEditWeatherPress->setStyleSheet("color: rgb(255, 0, 0);");
+                    ui->lineEditWeatherHumidity->setStyleSheet("color: rgb(255, 0, 0);");
+                }
+            }
+            else
+            {
+                curStatusString = "Cannot get weather data";
+                qDebug() << Q_FUNC_INFO <<  curStatusString;
+            }
+#else
             std::vector<std::string> weather;
             weather.reserve(4);
 
@@ -1590,6 +2375,7 @@ void FrameOSD::WeatherTimerTimeOut()
                 curStatusString = e.what();
                 qDebug() << Q_FUNC_INFO <<  curStatusString;
             }
+#endif
         }
         else
         {
@@ -1604,6 +2390,25 @@ void FrameOSD::on_comboBoxWeatherMode_activated(int index)
 {
     if (index)
     {
+#ifdef WIN32
+        if(redisClient->set("weather_mode", "auto"))
+        {
+            curStatusString = "";
+
+            ui->lineEditWeatherTemp->setEnabled(false);
+            ui->lineEditWeatherPress->setEnabled(false);
+            ui->lineEditWeatherHumidity->setEnabled(false);
+
+            WeatherAutoModeUi();
+
+            if(!redisClient->del("weather")) qDebug() << Q_FUNC_INFO <<"cannot del position key";
+        }
+        else
+        {
+            curStatusString = "Cannot set weather mode";
+            qDebug() << Q_FUNC_INFO <<  curStatusString;
+        }
+#else
         try
         {
             redisClient->set("weather_mode", "auto");
@@ -1629,9 +2434,42 @@ void FrameOSD::on_comboBoxWeatherMode_activated(int index)
             curStatusString = e.what();
             qDebug() << Q_FUNC_INFO <<  curStatusString;
         }
+#endif
     }
     else
     {
+#ifdef WIN32
+        if(redisClient->set("weather_mode", "manual"))
+        {
+            curStatusString = "";
+
+            ui->lineEditWeatherTemp->setEnabled(true);
+            ui->lineEditWeatherPress->setEnabled(true);
+            ui->lineEditWeatherHumidity->setEnabled(true);
+
+            WeatherManualModeUi();
+
+            bool key_exist = redisClient->exists("weather");
+
+            if(!key_exist)
+            {
+                QMap<QString, QVariant> data_map;
+                data_map.insert("temperature", "0.0");
+                data_map.insert("pressure", "0.0");
+                data_map.insert("humidity", "0.0");
+                data_map.insert("status", "");
+
+                redisClient->hmset("weather",data_map);
+            }
+            else
+                redisClient->persist("weather");
+        }
+        else
+        {
+            curStatusString = "Cannot set weather mode";
+            qDebug() << Q_FUNC_INFO <<  curStatusString;
+        }
+#else
         try
         {
             redisClient->set("weather_mode", "manual");
@@ -1673,6 +2511,7 @@ void FrameOSD::on_comboBoxWeatherMode_activated(int index)
             curStatusString = e.what();
             qDebug() << Q_FUNC_INFO <<  curStatusString;
         }
+#endif
     }
 }
 
@@ -1720,7 +2559,19 @@ void FrameOSD::on_pushButtonWeather_clicked()
         QMessageBox::critical(this, "Fatal Error", "Invalid Weather humidity input\nValid input range : 0 - 100" );
         return;
     }
+#ifdef WIN32
+    QMap<QString, QVariant> data_map;
+    data_map.insert("temperature", temperature);
+    data_map.insert("pressure", pressure);
+    data_map.insert("humidity", humidity);
 
+    if(redisClient->hmset("weather",data_map)) curStatusString = "";
+    else
+    {
+        curStatusString = "Cannot set weather data";
+        qDebug() << Q_FUNC_INFO <<  curStatusString;
+    }
+#else
     std::unordered_map<std::string, std::string> data_map =
     {
         {"temperature", temperature.toStdString()},
@@ -1738,4 +2589,5 @@ void FrameOSD::on_pushButtonWeather_clicked()
         curStatusString = e.what();
         qDebug() << Q_FUNC_INFO <<  curStatusString;
     }
+#endif
 }

@@ -1,7 +1,11 @@
 #ifndef FRAMEOSD_H
 #define FRAMEOSD_H
 
-#include <redis++.h>
+#ifdef WIN32
+#include <QtRedis>
+#else
+#include "qredis/redis++.h"
+#endif
 #include <QFrame>
 #include <QDebug>
 #include <QTimer>
@@ -95,7 +99,11 @@ private:
     };
 
     Ui::FrameOSD *ui;
+#ifdef WIN32
+    QtRedis *redisClient;
+#else
     Redis *redisClient;
+#endif
     InersiaData inersiadata;
     GpsData gpsdata;
     WindData winddata;
@@ -122,6 +130,8 @@ private:
 
     void WaterSpeedAutoModeUi();
     void WaterSpeedManualModeUi();
+
+    void reconnecRedis();
 
 };
 

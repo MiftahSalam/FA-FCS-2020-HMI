@@ -1,7 +1,11 @@
 #ifndef FRAMEGUN_H
 #define FRAMEGUN_H
 
-#include <redis++.h>
+#ifdef WIN32
+#include <QtRedis>
+#else
+#include "qredis/redis++.h"
+#endif
 #include <QFrame>
 #include <QTimer>
 
@@ -64,13 +68,19 @@ private:
     };
 
     Ui::FrameGun *ui;
+#ifdef WIN32
+    QtRedis *redisClient;
+#else
     Redis *redisClient;
+#endif
     GunBalistic gunbalistic;
     GunStatus gunstatus;
     OperationalStatus operationalstatus;
     EngagementStatus engagementstatus;
     QString Config;
     QString curStatusString;
+
+    void reconnecRedis();
 
 };
 

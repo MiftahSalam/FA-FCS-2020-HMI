@@ -1,7 +1,11 @@
 #ifndef FRAMETDA_H
 #define FRAMETDA_H
 
-#include <redis++.h>
+#ifdef WIN32
+#include <QtRedis>
+#else
+#include "qredis/redis++.h"
+#endif
 #include <QFrame>
 #include <QTimer>
 #include <QPainter>
@@ -51,6 +55,7 @@ private slots:
     void track_identity_changed(int tn,Identity identity);
 
 private:
+    void reconnecRedis();
 
     enum zoomScale
     {
@@ -86,7 +91,11 @@ private:
     QMenu *zoomSubMenu;
     QString curStatusString;
 
+#ifdef WIN32
+    QtRedis *redisClient;
+#else
     Redis *redisClient;
+#endif
     QString Config;
 
     QStringList currentGunData;

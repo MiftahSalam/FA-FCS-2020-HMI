@@ -18,8 +18,6 @@ int main(int argc, char *argv[])
     QString appStyle = loadStylesheetFile( ":/HMI_Syle.css" );
     a.setStyle("plastique");
     a.setStyleSheet( appStyle );
-    RedisConnectionNotify z;
-
 
     QSettings config(QSettings::IniFormat,QSettings::UserScope,"hmi_config");
     QFile file(config.fileName());
@@ -27,12 +25,17 @@ int main(int argc, char *argv[])
     if(!file.exists())
     {
         qDebug()<<"init config file";
-
-
+#ifdef WIN32
+        config.setValue("Redis/osd","127.0.0.1:6379");
+        config.setValue("Redis/track","127.0.0.1:6379");
+        config.setValue("Redis/gun","127.0.0.1:6379");
+#else
         config.setValue("Redis/osd","tcp://192.168.1.240:6379");
+#endif
         config.setValue("Apps/verbose",false);
 
     }
+    RedisConnectionNotify z;
 
     MainWindow w;
 

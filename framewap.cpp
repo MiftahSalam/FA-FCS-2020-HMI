@@ -19,11 +19,45 @@ FrameWAP::FrameWAP(QWidget *parent) :
     ui->setupUi(this);
     ui->tableWidgetCorrection->horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);
     ui->tableWidgetEngData->horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);
+
+#ifdef WIN32
+    redisGun = nullptr;
+    redisTrack = nullptr;
+#endif
 }
 
 FrameWAP::~FrameWAP()
 {
     delete ui;
+}
+
+void FrameWAP::reconnecRedis()
+{
+#ifdef WIN32
+    if(redisGun->isConnected() && redisTrack->isConnected()) return;
+
+    if(redisTrack->openConnection()) qDebug() << "Connected to server Track...";
+
+    if (redisGun->openConnection())
+    {
+        qDebug() << "Connected to server Gun...";
+
+        //        redisGun->hset("gun_op_status","assign_mode","-");
+        redisGun->hset("gun_op_status","operational","");
+        redisGun->hset("engagement", "azimuth", "0.0");
+        redisGun->hset("engagement", "elevation", "0.0");
+        redisGun->hset("engagement", "azimuth_status", "engageable");
+        redisGun->hset("engagement", "elevation_status", "engageable");
+        redisGun->hset("engagement", "azimuth_corr", "0.0");
+        redisGun->hset("engagement", "elevation_corr", "0.0");
+
+        QTableWidgetItem *corr_status_Az = ui->tableWidgetCorrection->item(0,1);
+        corr_status_Az->setText("-");
+        QTableWidgetItem *corr_status_El = ui->tableWidgetCorrection->item(0,2);
+        corr_status_El->setText("-");
+    }
+#endif
+
 }
 
 void FrameWAP::setConfig(QString ConfigTrack, QString ConfigGun)
@@ -32,6 +66,39 @@ void FrameWAP::setConfig(QString ConfigTrack, QString ConfigGun)
     this->ConfigGun = ConfigGun;
     qDebug() <<Q_FUNC_INFO <<"Redis configTrack" <<this->ConfigTrack <<"Redis configGun" <<this->ConfigGun;
 
+#ifdef WIN32
+    QStringList args = ConfigTrack.split(":");
+    if(args.size() != 2) {
+        qDebug()<<Q_FUNC_INFO<<"Invalid arguments for redis track. Program exit";
+        exit(1);
+    }
+    redisTrack = new QtRedis(args.at(0), args.at(1).toInt());
+
+//    if(!redisTrack->isConnected())
+//    {
+//        splash->showMessage("Track Setup error\n\nServer connection error: Cannot connect to server" + ConfigTrack + "\n\nApplication now will clossing ",Qt::AlignCenter);
+//        sleep(3);
+//        splash->finish(this);
+//        qApp->exit();
+//    }
+
+    args = ConfigGun.split(":");
+    if(args.size() != 2) {
+        qDebug()<<Q_FUNC_INFO<<"Invalid arguments for redis gun. Program exit";
+        exit(1);
+    }
+    redisGun = new QtRedis(args.at(0), args.at(1).toInt());
+
+//    if(!redisGun->isConnected())
+//    {
+//        splash->showMessage("Gun Setup error\n\nServer connection error: Cannot connect to server" + ConfigGun + "\n\nApplication now will clossing ",Qt::AlignCenter);
+//        sleep(3);
+//        splash->finish(this);
+//        qApp->exit();
+//    }
+
+    reconnecRedis();
+#else
     try
     {
         redisTrack = new Redis(this->ConfigTrack.toStdString());
@@ -65,10 +132,17 @@ void FrameWAP::setConfig(QString ConfigTrack, QString ConfigGun)
     corr_status_Az->setText("-");
     QTableWidgetItem *corr_status_El = ui->tableWidgetCorrection->item(0,2);
     corr_status_El->setText("-");
+#endif
 }
 
 void FrameWAP::setAccessStatus(QString access_status)
 {
+#ifdef WIN32
+    if(redisGun == nullptr || redisTrack == nullptr) return;
+#endif
+
+    reconnecRedis();
+
     currentAccessStatus = access_status;
 
     //    qDebug() <<Q_FUNC_INFO << "access_status"<<access_status;
@@ -90,6 +164,19 @@ void FrameWAP::setAccessStatus(QString access_status)
         ui->groupBoxTrackEng->setEnabled(false);
         ui->groupBoxCorr->setEnabled(false);
 
+#ifdef WIN32
+        QStringList trackListTn = redisTrack->keys("track:Data:*");
+        if(trackListTn.size() > 0)
+        {
+            for (int i=0;i<trackListTn.size();i++)
+            {
+                QString trackTn = redisTrack->hget(trackListTn.at(i), "id");
+                redisTrack->hset(trackTn,"weapon_assigned","");
+            }
+        }
+        else qDebug() << Q_FUNC_INFO << "reset weapon assign. no track";
+
+#else
         try
         {
             std::vector<std::string> trackListTn;
@@ -105,6 +192,7 @@ void FrameWAP::setAccessStatus(QString access_status)
         {
             qDebug() << Q_FUNC_INFO << "reset weapon assign. no track" << e.what();
         }
+#endif
 
         QTableWidgetItem *engage_status_itemElStatus = ui->tableWidgetEngData->item(0,1);
         engage_status_itemElStatus->setText("-");
@@ -142,6 +230,239 @@ void FrameWAP::setAccessStatus(QString access_status)
     }
 
 //    if(!ui->comboBoxTrackEngTN->hasFocus())
+#ifdef WIN32
+    {
+        QStringList trackListTn = redisTrack->keys("track:Data:*");
+        if(trackListTn.size() > 0)
+        {
+            if((int)trackListTn.size() > tnList.size())
+            {
+                QStringList trackQuery;
+                for(int i=0;i<trackListTn.size();i++)
+                {
+                    trackQuery = redisTrack->hmget(trackListTn.at(i), "id");
+                    if(trackQuery.size() == 1)
+                    {
+                        int tn = trackQuery.at(0).toInt();
+                        if(!tnList.contains(tn))
+                        {
+                            tnList.append(tn);
+                            ui->comboBoxTrackEngTN->addItem(trackQuery.at(0));
+                        }
+                        trackQuery.clear();
+                    }
+                    else
+                    {
+                        curStatusString = "Cannot get tn";
+                        qDebug() << Q_FUNC_INFO <<  "cannot get tn" <<curStatusString;
+                    }
+                }
+
+            }
+            else if((int)trackListTn.size() < tnList.size())
+            {
+                QList <int> tnListToDelete;
+
+                for(int i=0;i<tnList.size();i++)
+                {
+                    bool track_feedback = redisTrack->exists("track:Data:"+QString::number(tnList.at(i)));
+                    if(!track_feedback)
+                    {
+                            tnListToDelete.append(tnList.at(i));
+                            if(ui->comboBoxTrackEngTN->currentIndex()==i)
+                            {
+                                if(ui->pushButtonTrackEngAssign->text() == "Break")
+                                    ui->pushButtonTrackEngAssign->setText("Assign");
+                            }
+                            ui->comboBoxTrackEngTN->removeItem(i);
+
+                    }
+                    else
+                    {
+                        curStatusString = "No tracks";
+                        qDebug() << Q_FUNC_INFO <<  "error get track exist";
+                    }
+                }
+
+                for(int i=0;i<tnListToDelete.size();i++)
+                {
+                    tnList.removeAll(tnListToDelete.at(i));
+                }
+
+            }
+            //            qDebug() <<Q_FUNC_INFO << "track:Data:*"<<trackListTn.size() ;
+
+            if(trackListTn.size() < 1)
+            {
+                ui->pushButtonTrackEngAssign->setText("Assign/Break");
+                ui->pushButtonTrackEngAssign->setEnabled(false);
+                ui->comboBoxTrackEngTN->clear();
+            }
+
+            //            for(int i = ui->comboBoxTrackEngTN->count(); i >= 0; --i)
+            //            {
+            //                    if (i != ui->comboBoxTrackEngTN->currentIndex())
+            //                    {
+            //                        ui->comboBoxTrackEngTN->removeItem(i);
+            //                    }
+            //            }
+
+            /*
+            for (int i=0;i<trackListTn.size();i++)
+            {
+                QString trackTn = QString::fromStdString(redisTrack->hget(trackListTn.at(i).data(), "id").value());
+
+                if(ui->comboBoxTrackEngTN->findText(trackTn) < 0)
+                    ui->comboBoxTrackEngTN->addItem(trackTn);
+
+
+                qDebug()<<"track tn = " << trackTn;
+            }
+            */
+        }
+        else qDebug() << Q_FUNC_INFO << "update available track. no track";
+
+    }
+
+    // ==== Engagement Data ==== //
+    QString engage_mode = redisGun->get("engagement_mode");
+    if(!engage_mode.isEmpty())
+    {
+
+        if(engage_mode == "Auto")
+        {
+            // ==== Engage Tn ==== //
+            QString engagetrackTnWeapon;
+            QStringList trackTn = redisTrack->keys("track:Data:*");
+
+            if(trackTn.size() > 0)
+            {
+                for (int i=0;i<trackTn.size();i++)
+                {
+                    QStringList engageTnWeapon = redisTrack->hmget(trackTn.at(i), "id weapon_assigned");
+                    if(engageTnWeapon.size() == 2)
+                    {
+                        if(engageTnWeapon.at(1) == "40 mm") engagetrackTnWeapon = engageTnWeapon.at(0);
+                    }
+                    else qDebug() << Q_FUNC_INFO << "weapon_assigned has not set";
+                }
+
+                QString engage_az = redisGun->hget("engagement", "azimuth");
+                QString engage_el = redisGun->hget("engagement", "elevation");
+
+                QTableWidgetItem *engage_status_itemTn = ui->tableWidgetEngData->item(0,2);
+                engage_status_itemTn->setText(engagetrackTnWeapon);
+                QTableWidgetItem *engage_status_itemEl = ui->tableWidgetEngData->item(0,4);
+                engage_status_itemEl->setText(engage_el);
+                QTableWidgetItem *engage_status_itemAz = ui->tableWidgetEngData->item(0,3);
+                engage_status_itemAz->setText(engage_az);
+
+                //                ui->groupBoxCorr->setEnabled(true);
+                //                ui->groupBoxEng->setEnabled(true);
+
+                // ==== Engage, El_status, & Az_status ==== //
+                QStringList engagement = redisGun->hmget("engagement","azimuth_status elevation_status");
+                if(engagement.size() == 2)
+                {
+                    if((engagement.at(1) == "engageable") &&
+                            (engagement.at(0)) == "engageable")
+                    {
+                        QTableWidgetItem *engage_status_itemElStatus = ui->tableWidgetEngData->item(0,1);
+                        engage_status_itemElStatus->setText("Eng");
+                    }
+                    else
+                    {
+                        QTableWidgetItem *engage_status_itemElStatus = ui->tableWidgetEngData->item(0,1);
+                        engage_status_itemElStatus->setText("Not Eng");
+                    }
+                }
+                else
+                {
+                    qDebug() << Q_FUNC_INFO <<"cannot get engagement status";
+                    QTableWidgetItem *engage_status_itemElStatus = ui->tableWidgetEngData->item(0,1);
+                    engage_status_itemElStatus->setText("-");
+                    QTableWidgetItem *engage_status_itemTn = ui->tableWidgetEngData->item(0,2);
+                    engage_status_itemTn->setText("-");
+                    QTableWidgetItem *engage_status_itemEl = ui->tableWidgetEngData->item(0,4);
+                    engage_status_itemEl->setText("-");
+                    QTableWidgetItem *engage_status_itemAz = ui->tableWidgetEngData->item(0,3);
+                    engage_status_itemAz->setText("-");
+
+                    // ==== Correction ==== //
+                    QTableWidgetItem *corr_status_Az = ui->tableWidgetCorrection->item(0,1);
+                    corr_status_Az->setText("-");
+                    QTableWidgetItem *corr_status_El = ui->tableWidgetCorrection->item(0,2);
+                    corr_status_El->setText("-");
+                    ui->groupBoxCorr->setDisabled(true);
+                    ui->groupBoxEng->setDisabled(true);
+
+                }
+            }
+            else
+            {
+                qDebug() << Q_FUNC_INFO <<"no track";
+                QTableWidgetItem *engage_status_itemElStatus = ui->tableWidgetEngData->item(0,1);
+                engage_status_itemElStatus->setText("-");
+                QTableWidgetItem *engage_status_itemTn = ui->tableWidgetEngData->item(0,2);
+                engage_status_itemTn->setText("-");
+                QTableWidgetItem *engage_status_itemEl = ui->tableWidgetEngData->item(0,4);
+                engage_status_itemEl->setText("-");
+                QTableWidgetItem *engage_status_itemAz = ui->tableWidgetEngData->item(0,3);
+                engage_status_itemAz->setText("-");
+
+                // ==== Correction ==== //
+                QTableWidgetItem *corr_status_Az = ui->tableWidgetCorrection->item(0,1);
+                corr_status_Az->setText("-");
+                QTableWidgetItem *corr_status_El = ui->tableWidgetCorrection->item(0,2);
+                corr_status_El->setText("-");
+                ui->groupBoxCorr->setDisabled(true);
+                ui->groupBoxEng->setDisabled(true);
+
+            }
+        }
+        else if(engage_mode == "Manual")
+        {
+            ui->pushButtonTrackEngAssign->setText("Assign/Break");
+
+            ui->groupBoxEng->setEnabled(false);
+            ui->groupBoxTrackEng->setEnabled(false);
+            ui->groupBoxCorr->setEnabled(false);
+
+            QStringList trackListTn = redisTrack->keys("track:Data:*");
+            if(trackListTn.size() > 0)
+            {
+                for (int i=0;i<trackListTn.size();i++)
+                {
+                    //                    qDebug() << Q_FUNC_INFO << "track" << trackListTn.at(i).data();
+                    redisTrack->hset(trackListTn.at(i),"weapon_assigned","");
+                }
+            }
+            else qDebug() << Q_FUNC_INFO << "reset weapon assign. no track";
+
+
+            QTableWidgetItem *engage_status_itemElStatus = ui->tableWidgetEngData->item(0,1);
+            engage_status_itemElStatus->setText("-");
+            QTableWidgetItem *engage_status_itemTn = ui->tableWidgetEngData->item(0,2);
+            engage_status_itemTn->setText("-");
+            QTableWidgetItem *engage_status_itemEl = ui->tableWidgetEngData->item(0,4);
+            engage_status_itemEl->setText("-");
+            QTableWidgetItem *engage_status_itemAz = ui->tableWidgetEngData->item(0,3);
+            engage_status_itemAz->setText("-");
+
+            // ==== Correction ==== //
+            QTableWidgetItem *corr_status_Az = ui->tableWidgetCorrection->item(0,1);
+            corr_status_Az->setText("-");
+            QTableWidgetItem *corr_status_El = ui->tableWidgetCorrection->item(0,2);
+            corr_status_El->setText("-");
+        }
+        //    qDebug() <<Q_FUNC_INFO << "hasil" <<access_status;
+        //    qDebug() <<Q_FUNC_INFO << "wap current weapon" <<currentWapWeapon;
+        //    qDebug() <<Q_FUNC_INFO << "wap current mode" <<currentWapMode;
+        //    qDebug() <<Q_FUNC_INFO << "wap current weapon assign" <<currentTrackEngWeapon;
+    }
+    else qDebug() << Q_FUNC_INFO << "cannot get engagement_mode";
+
+#else
     {
         try
         {
@@ -399,6 +720,7 @@ void FrameWAP::setAccessStatus(QString access_status)
     {
         qDebug() << Q_FUNC_INFO << "cannot get engagement_mode"<<e.what();
     }
+#endif
 }
 void FrameWAP::on_comboBoxWAPWeapon_activated(const QString &arg1)
 {
@@ -409,6 +731,66 @@ void FrameWAP::on_comboBoxTrackEngTN_activated(const QString &arg1)
 {
     QString currentTrackAssign;
 
+#ifdef WIN32
+    QStringList trackListTn = redisTrack->keys("track:Data:*");
+
+    if(trackListTn.size() > 0)
+    {
+        qDebug() <<Q_FUNC_INFO << "track:Data:*"<<trackListTn.size() ;
+
+        QString cb = QString("track:Data:")+ui->comboBoxTrackEngTN->currentText();
+        qDebug()<<"Data yang di pilih"<< cb;
+
+
+        for (int i=0;i<trackListTn.size();i++)
+        {
+            if(!trackListTn.contains(cb))
+            {
+                qDebug()<<"data tidak ditemukan";
+                ui->comboBoxTrackEngTN->removeItem(cb.toInt());
+                ui->comboBoxTrackEngTN->clearFocus();
+                ui->pushButtonTrackEngAssign->setEnabled(true);
+                redisTrack->del(cb.toUtf8().constData());
+            }
+            else qDebug()<<"data ditemukan";
+
+            qDebug()<<"track Lits"<<trackListTn[i].data();
+
+            QStringList trackTnWeapon = redisTrack->hmget(trackListTn.at(i),"id weapon_assigned");
+            if(trackTnWeapon.size() == 2)
+            {
+                if(trackTnWeapon.at(1) == "40 mm")
+                {
+                    currentTrackAssign = trackTnWeapon.at(0);
+                    qDebug() <<Q_FUNC_INFO <<"curren"<< currentTrackAssign <<trackTnWeapon.at(1);
+                }
+            }
+            else qDebug() << Q_FUNC_INFO << "weapon_assigne has not set";
+
+        }
+
+        if(currentTrackAssign.isEmpty())
+        {
+            ui->pushButtonTrackEngAssign->setEnabled(true);
+            ui->pushButtonTrackEngAssign->setText("Assign");
+        }
+        else
+        {
+            if(currentTrackAssign == arg1)
+            {
+                ui->pushButtonTrackEngAssign->setEnabled(true);
+                ui->pushButtonTrackEngAssign->setText("Break");
+            }
+            else
+            {
+                ui->pushButtonTrackEngAssign->setEnabled(false);
+                ui->pushButtonTrackEngAssign->setText("Assign/Break");
+            }
+        }
+    }
+    else qDebug() << Q_FUNC_INFO << "Cannot find track";
+
+#else
     std::vector<std::string> trackListTn;
 
     try
@@ -481,6 +863,7 @@ void FrameWAP::on_comboBoxTrackEngTN_activated(const QString &arg1)
     {
         qDebug() << Q_FUNC_INFO << e.what();
     }
+#endif
 }
 
 void FrameWAP::on_pushButtonTrackEngAssign_clicked()
@@ -490,24 +873,22 @@ void FrameWAP::on_pushButtonTrackEngAssign_clicked()
 
     qDebug() << Q_FUNC_INFO <<"trackkey" << trackKey << "assign"<< assign;
 
-    std::vector<std::string> trackListTn;
-    redisTrack->keys("track:Data:*",std::back_inserter(trackListTn));
+    QStringList trackListTn = redisTrack->keys("track:Data:*");
 
     for (int i=0;i<trackListTn.size();i++)
     {
-        if (std::find(trackListTn.begin(), trackListTn.end(), trackKey.toUtf8().constData()) != trackListTn.end())
+        if(trackListTn.contains(trackKey))
         {
             qDebug()<<"data ditemukan";
 
-            try
+            if(redisTrack->hset(trackKey,"weapon_assigned",assign))
             {
-                redisTrack->hset(trackKey.toStdString(),"weapon_assigned",assign.toStdString());
                 ui->pushButtonTrackEngAssign->setText(assign.isEmpty() ? "Assign" : "Break");
 
-                QString wap_mode = QString::fromStdString(redisGun->hget("gun_op_status", "assign_mode").value());
+                QString wap_mode = redisGun->hget("gun_op_status", "assign_mode");
                 if(wap_mode != "-")
                 {
-                    QString engage_mode = QString::fromStdString(redisGun->get("engagement_mode").value());
+                    QString engage_mode = redisGun->get("engagement_mode");
                     if(engage_mode == "Auto")
                     {
                         if(assign.isEmpty())
@@ -519,10 +900,7 @@ void FrameWAP::on_pushButtonTrackEngAssign_clicked()
                 else
                     redisGun->hset("gun_op_status","operational","-");
             }
-            catch (Error e)
-            {
-                qDebug() << Q_FUNC_INFO << "cannot set weapon assign" << e.what();
-            }
+            else qDebug() << Q_FUNC_INFO << "cannot set weapon assign";
         }
         else {
             qDebug()<<"data tidak ditemukan";
@@ -570,32 +948,31 @@ void FrameWAP::on_comboBoxWAPMode_activated(const QString &arg1)
     }
     */
     on_pushButtonTrackEngAssign_clicked();
-    try
+
+    qDebug() << Q_FUNC_INFO << wap_mode;
+
+    if(redisGun->hset("gun_op_status","assign_mode",wap_mode))
     {
-        qDebug() << Q_FUNC_INFO << wap_mode;
-        redisGun->hset("gun_op_status","assign_mode",wap_mode.toStdString());
         /**/
         if(wap_mode != "-")
         {
-            QString engage_mode = QString::fromStdString(redisGun->get("engagement_mode").value());
+            QString engage_mode = redisGun->get("engagement_mode");
             if(engage_mode == "Manual")
             {
-                try
+                if(redisGun->hset("gun_op_status","operational","Assigned"))
                 {
-                    redisGun->hset("gun_op_status","operational","Assigned");
-                    std::unordered_map<std::string, std::string> data_map =
-                    {
-                        {"azimuth", "0.0"},
-                        {"elevation", "0.0"},
-                        {"azimuth_status", "engageable"},
-                        {"elevation_status", "engageable"},
-                    };
-                    redisGun->hmset("engagement",data_map.begin(), data_map.end());
+                    QMap<QString, QVariant> data_map;
+                    data_map.insert("azimuth", "0.0");
+                    data_map.insert("elevation", "0.0");
+                    data_map.insert("azimuth_status", "");
+                    data_map.insert("elevation_status", "0.0");
+
+                    redisGun->hmset("engagement",data_map);
                     curStatusString = "";
                 }
-                catch (Error e)
+                else
                 {
-                    curStatusString = e.what();
+                    curStatusString = "CAnnot get gun_op_status";
                     qDebug() << Q_FUNC_INFO <<  curStatusString;
                 }
             }
@@ -609,10 +986,7 @@ void FrameWAP::on_comboBoxWAPMode_activated(const QString &arg1)
             redisGun->hset("gun_op_status","operational","");
         }
     }
-    catch (Error e)
-    {
-        qDebug() << Q_FUNC_INFO << e.what();
-    }
+    else qDebug() << Q_FUNC_INFO;
 }
 
 void FrameWAP::on_pushButtonCorrectionApply_clicked()
@@ -661,6 +1035,18 @@ void FrameWAP::on_pushButtonCorrectionApply_clicked()
         return;
     }
 
+#ifdef WIN32
+    QMap<QString, QVariant> data_map;
+    data_map.insert("azimuth_corr", corr_az);
+    data_map.insert("elevation_corr", corr_el);
+
+    if(redisGun->hmset("engagement",data_map)) curStatusString = "";
+    else
+    {
+        curStatusString = "Cannot set data engagement";
+        qDebug() << Q_FUNC_INFO <<  curStatusString;
+    }
+#else
     std::unordered_map<std::string, std::string> data_map =
     {
         {"azimuth_corr", corr_az.toStdString()},
@@ -677,4 +1063,5 @@ void FrameWAP::on_pushButtonCorrectionApply_clicked()
         curStatusString = e.what();
         qDebug() << Q_FUNC_INFO <<  curStatusString;
     }
+#endif
 }
