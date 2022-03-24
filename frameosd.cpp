@@ -116,13 +116,13 @@ void FrameOSD::setConfig(QString Config)
     }
     redisClient = new QtRedis(args.at(0), args.at(1).toInt());
 
-//    if(!redisClient->isConnected())
-//    {
-//        splash->showMessage("OSD Setup error\n\nServer connection error: Cannot connect to server" + Config + "\n\nApplication now will clossing ",Qt::AlignCenter);
-//        sleep(3);
-//        splash->finish(this);
-//        qApp->exit();
-//    }
+    //    if(!redisClient->isConnected())
+    //    {
+    //        splash->showMessage("OSD Setup error\n\nServer connection error: Cannot connect to server" + Config + "\n\nApplication now will clossing ",Qt::AlignCenter);
+    //        sleep(3);
+    //        splash->finish(this);
+    //        qApp->exit();
+    //    }
     reconnecRedis();
 #else
     try
@@ -266,20 +266,20 @@ void FrameOSD::GyroManualModeUi()
 
 void FrameOSD::GyroTimerTimeOut()
 {
-    QString inersiamode ;
+    QString inersiamode = redisClient->get("inersia_mode");
 #ifdef WIN32
-         inersiamode = redisClient->get("inersia_mode");
-         if(inersiamode.isEmpty())
-         {
-             curStatusString = "Cannot get inertia mode";
-             qDebug() << Q_FUNC_INFO <<  curStatusString;
-         } else curStatusString = "";
+    if(!inersiamode.isEmpty()) curStatusString = "";
+    else
+    {
+        curStatusString = "Cannot get inersia_mode";
+        qDebug() << Q_FUNC_INFO <<  curStatusString;
+    }
 #else
     try
     {
-         auto inersia_mode = redisClient->get("inersia_mode");
-         inersiamode = QString::fromStdString(*inersia_mode);
-         curStatusString = "";
+        auto inersia_mode = redisClient->get("inersia_mode");
+        inersiamode = QString::fromStdString(*inersia_mode);
+        curStatusString = "";
     }
     catch (Error e)
     {
@@ -288,18 +288,18 @@ void FrameOSD::GyroTimerTimeOut()
     }
 #endif
 
-    //qDebug() << Q_FUNC_INFO << inersiamode;
+    //qDebug() << Q_FUNC_INFO << positionmode;
 
     if(inersiamode == "auto")
     {
-        bool status = false;
+        bool status = redisClient->exists("inersia");
 #ifdef WIN32
-        status = redisClient->exists("inersia");
-        if(!status)
+        if(status) curStatusString = "";
+        else
         {
-            curStatusString = "No inertia data";
+            curStatusString = "No inersia data";
             qDebug() << Q_FUNC_INFO <<  curStatusString;
-        } else curStatusString = "";
+        }
 #else
         try
         {
@@ -315,31 +315,30 @@ void FrameOSD::GyroTimerTimeOut()
 
         if(status)
         {
-#ifdef WIN32
             QStringList inersia = redisClient->hmget("inersia", "heading roll pitch status");
-
+#ifdef WIN32
             if(inersia.size() == 4)
             {
                 curStatusString = "";
 
-                inersiadata.heading = inersia.at(0);
-                inersiadata.roll = inersia.at(1);
-                inersiadata.picth = inersia.at(2);
-                inersiadata.status = inersia.at(3);
+                inersiadata.heading =inersia.at(0);
+                inersiadata.roll =inersia.at(1);
+                inersiadata.picth =inersia.at(2);
+                inersiadata.status =inersia.at(3);
 
                 ui->lineEditGyroHeading->setToolTip(inersiadata.status);
                 ui->lineEditGyroRoll->setToolTip(inersiadata.status);
                 ui->lineEditGyroPitch->setToolTip(inersiadata.status);
 
-                if(inersiadata.status.isEmpty())
+                if(inersiadata.status == "-")
                 {
                     ui->lineEditGyroHeading->setStyleSheet("color:rgb(0, 255, 0);");
                     ui->lineEditGyroRoll->setStyleSheet("color:rgb(0, 255, 0);");
                     ui->lineEditGyroPitch->setStyleSheet("color:rgb(0, 255, 0);");
 
+                    ui->lineEditGyroPitch->setText(inersiadata.picth);
                     ui->lineEditGyroHeading->setText(inersiadata.heading);
                     ui->lineEditGyroRoll->setText(inersiadata.roll);
-                    ui->lineEditGyroPitch->setText(inersiadata.picth);
                 }
                 else
                 {
@@ -348,11 +347,10 @@ void FrameOSD::GyroTimerTimeOut()
                     ui->lineEditGyroPitch->setStyleSheet("color: rgb(255, 0, 0);");
                 }
 
-            }            }
+            }
             else
             {
-                inersiadata.heading = "-";
-                curStatusString = "Cannot get data inertia";
+                curStatusString = "Cannot get inersia data";
                 qDebug() << Q_FUNC_INFO <<  curStatusString;
             }
 #else
@@ -402,13 +400,12 @@ void FrameOSD::GyroTimerTimeOut()
         }
         else
         {
-//            qDebug() << Q_FUNC_INFO <<  "no inersia";
-            inersiadata.heading = "-";
             ui->lineEditGyroHeading->setStyleSheet("color: rgb(255, 0, 0);");
             ui->lineEditGyroRoll->setStyleSheet("color: rgb(255, 0, 0);");
             ui->lineEditGyroPitch->setStyleSheet("color: rgb(255, 0, 0);");
         }
     }
+}
 
 void FrameOSD::on_osdGryoComboBox_activated(int index)
 {
@@ -702,86 +699,86 @@ void FrameOSD::GpsTimerTimeOut()
                 gpsdata.status = position.at(2);
 
 
-               // ==== Float latitude ====
-               float lat_float = gpsdata.latitude.toFloat();
-               QString tanda_latitude;
-               if (lat_float < 0)
-                   tanda_latitude = "S";
-               else
-                  tanda_latitude = "N";
+                // ==== Float latitude ====
+                float lat_float = gpsdata.latitude.toFloat();
+                QString tanda_latitude;
+                if (lat_float < 0)
+                    tanda_latitude = "S";
+                else
+                    tanda_latitude = "N";
 
-               lat_float = fabs(lat_float);
-               float deg = floor(lat_float);
-               float min = lat_float - deg ;
-                     min = min * 60;
-                     min = floor(min);
-               float sec = (lat_float - deg - (min / 60.0)) * 3600.0;
+                lat_float = fabs(lat_float);
+                float deg = floor(lat_float);
+                float min = lat_float - deg ;
+                min = min * 60;
+                min = floor(min);
+                float sec = (lat_float - deg - (min / 60.0)) * 3600.0;
 
-//               qDebug() << deg << lat_float << gpsdata.latitude << min << sec << tanda_latitude;
+                //               qDebug() << deg << lat_float << gpsdata.latitude << min << sec << tanda_latitude;
 
-               QString deg_string = QString::number(deg,'f', 0);
-               if (deg_string.size() < 2)
-                   deg_string.prepend("0");
+                QString deg_string = QString::number(deg,'f', 0);
+                if (deg_string.size() < 2)
+                    deg_string.prepend("0");
 
-               QString min_string = QString::number(min,'f', 0);
-               if (min_string.size() < 2)
-                   min_string.prepend("0");
+                QString min_string = QString::number(min,'f', 0);
+                if (min_string.size() < 2)
+                    min_string.prepend("0");
 
-               QString sec_string = QString::number(sec, 'f', 0);
-               if (sec_string.size() <2)
-                   sec_string.prepend("0");
+                QString sec_string = QString::number(sec, 'f', 0);
+                if (sec_string.size() <2)
+                    sec_string.prepend("0");
 
-               QString latitude_string = deg_string + "-" + min_string + "'" + sec_string + "''" + tanda_latitude;
+                QString latitude_string = deg_string + "-" + min_string + "'" + sec_string + "''" + tanda_latitude;
 
-               // ==== Float Longitude ====
-               float long_float = gpsdata.longitude.toFloat();
-               QString tanda_longitude;
-               if (long_float < 0)
-                   tanda_longitude = "W";
-               else
-                   tanda_longitude = "E";
+                // ==== Float Longitude ====
+                float long_float = gpsdata.longitude.toFloat();
+                QString tanda_longitude;
+                if (long_float < 0)
+                    tanda_longitude = "W";
+                else
+                    tanda_longitude = "E";
 
-               long_float = fabs(long_float);
-               float degg = floor(long_float);
-               float minn = long_float - degg ;
-                     minn = minn * 60;
-                     minn = floor(minn);
-               float secc = (long_float - degg - (minn / 60.0)) * 3600.0;
+                long_float = fabs(long_float);
+                float degg = floor(long_float);
+                float minn = long_float - degg ;
+                minn = minn * 60;
+                minn = floor(minn);
+                float secc = (long_float - degg - (minn / 60.0)) * 3600.0;
 
-//               qDebug() << degg << long_float << gpsdata.longitude << minn << secc << tanda_longitude;
+                //               qDebug() << degg << long_float << gpsdata.longitude << minn << secc << tanda_longitude;
 
-               QString degg_string = QString::number(degg,'f', 0);
-               if (degg_string.size() < 3)
-                   degg_string.prepend("0");
-               if (degg_string.size() < 3)
-                   degg_string.prepend("0");
+                QString degg_string = QString::number(degg,'f', 0);
+                if (degg_string.size() < 3)
+                    degg_string.prepend("0");
+                if (degg_string.size() < 3)
+                    degg_string.prepend("0");
 
-               QString minn_string = QString::number(minn,'f', 0);
-               if (minn_string.size() < 2)
-                   minn_string.prepend("0");
+                QString minn_string = QString::number(minn,'f', 0);
+                if (minn_string.size() < 2)
+                    minn_string.prepend("0");
 
-               QString secc_string = QString::number(secc, 'f', 0);
-               if (secc_string.size() <2)
-                   secc_string.prepend("0");
+                QString secc_string = QString::number(secc, 'f', 0);
+                if (secc_string.size() <2)
+                    secc_string.prepend("0");
 
-               QString longitude_string = degg_string + "-" + minn_string + "'" + secc_string + "''" + tanda_longitude;
+                QString longitude_string = degg_string + "-" + minn_string + "'" + secc_string + "''" + tanda_longitude;
 
-               ui->lineEditGpsLat->setToolTip(gpsdata.status);
-               ui->lineEditGpsLong->setToolTip(gpsdata.status);
+                ui->lineEditGpsLat->setToolTip(gpsdata.status);
+                ui->lineEditGpsLong->setToolTip(gpsdata.status);
 
-               if(gpsdata.status.isEmpty())
-               {
-                   ui->lineEditGpsLat->setStyleSheet("color:rgb(0, 255, 0);");
-                   ui->lineEditGpsLong->setStyleSheet("color:rgb(0, 255, 0);");
+                if(gpsdata.status == "-")
+                {
+                    ui->lineEditGpsLat->setStyleSheet("color:rgb(0, 255, 0);");
+                    ui->lineEditGpsLong->setStyleSheet("color:rgb(0, 255, 0);");
 
-                   ui->lineEditGpsLat->setText(latitude_string);
-                   ui->lineEditGpsLong->setText(longitude_string);
-               }
-               else
-               {
-                   ui->lineEditGpsLat->setStyleSheet("color: rgb(255, 0, 0);");
-                   ui->lineEditGpsLong->setStyleSheet("color: rgb(255, 0, 0);");
-               }
+                    ui->lineEditGpsLat->setText(latitude_string);
+                    ui->lineEditGpsLong->setText(longitude_string);
+                }
+                else
+                {
+                    ui->lineEditGpsLat->setStyleSheet("color: rgb(255, 0, 0);");
+                    ui->lineEditGpsLong->setStyleSheet("color: rgb(255, 0, 0);");
+                }
 
             }
             else
@@ -801,86 +798,86 @@ void FrameOSD::GpsTimerTimeOut()
                 gpsdata.status = QString::fromStdString(position.at(2));
 
 
-               // ==== Float latitude ====
-               float lat_float = gpsdata.latitude.toFloat();
-               QString tanda_latitude;
-               if (lat_float < 0)
-                   tanda_latitude = "S";
-               else
-                  tanda_latitude = "N";
+                // ==== Float latitude ====
+                float lat_float = gpsdata.latitude.toFloat();
+                QString tanda_latitude;
+                if (lat_float < 0)
+                    tanda_latitude = "S";
+                else
+                    tanda_latitude = "N";
 
-               lat_float = fabs(lat_float);
-               float deg = floor(lat_float);
-               float min = lat_float - deg ;
-                     min = min * 60;
-                     min = floor(min);
-               float sec = (lat_float - deg - (min / 60.0)) * 3600.0;
+                lat_float = fabs(lat_float);
+                float deg = floor(lat_float);
+                float min = lat_float - deg ;
+                min = min * 60;
+                min = floor(min);
+                float sec = (lat_float - deg - (min / 60.0)) * 3600.0;
 
-//               qDebug() << deg << lat_float << gpsdata.latitude << min << sec << tanda_latitude;
+                //               qDebug() << deg << lat_float << gpsdata.latitude << min << sec << tanda_latitude;
 
-               QString deg_string = QString::number(deg,'f', 0);
-               if (deg_string.size() < 2)
-                   deg_string.prepend("0");
+                QString deg_string = QString::number(deg,'f', 0);
+                if (deg_string.size() < 2)
+                    deg_string.prepend("0");
 
-               QString min_string = QString::number(min,'f', 0);
-               if (min_string.size() < 2)
-                   min_string.prepend("0");
+                QString min_string = QString::number(min,'f', 0);
+                if (min_string.size() < 2)
+                    min_string.prepend("0");
 
-               QString sec_string = QString::number(sec, 'f', 0);
-               if (sec_string.size() <2)
-                   sec_string.prepend("0");
+                QString sec_string = QString::number(sec, 'f', 0);
+                if (sec_string.size() <2)
+                    sec_string.prepend("0");
 
-               QString latitude_string = deg_string + "-" + min_string + "'" + sec_string + "''" + tanda_latitude;
+                QString latitude_string = deg_string + "-" + min_string + "'" + sec_string + "''" + tanda_latitude;
 
-               // ==== Float Longitude ====
-               float long_float = gpsdata.longitude.toFloat();
-               QString tanda_longitude;
-               if (long_float < 0)
-                   tanda_longitude = "W";
-               else
-                   tanda_longitude = "E";
+                // ==== Float Longitude ====
+                float long_float = gpsdata.longitude.toFloat();
+                QString tanda_longitude;
+                if (long_float < 0)
+                    tanda_longitude = "W";
+                else
+                    tanda_longitude = "E";
 
-               long_float = fabs(long_float);
-               float degg = floor(long_float);
-               float minn = long_float - degg ;
-                     minn = minn * 60;
-                     minn = floor(minn);
-               float secc = (long_float - degg - (minn / 60.0)) * 3600.0;
+                long_float = fabs(long_float);
+                float degg = floor(long_float);
+                float minn = long_float - degg ;
+                minn = minn * 60;
+                minn = floor(minn);
+                float secc = (long_float - degg - (minn / 60.0)) * 3600.0;
 
-//               qDebug() << degg << long_float << gpsdata.longitude << minn << secc << tanda_longitude;
+                //               qDebug() << degg << long_float << gpsdata.longitude << minn << secc << tanda_longitude;
 
-               QString degg_string = QString::number(degg,'f', 0);
-               if (degg_string.size() < 3)
-                   degg_string.prepend("0");
-               if (degg_string.size() < 3)
-                   degg_string.prepend("0");
+                QString degg_string = QString::number(degg,'f', 0);
+                if (degg_string.size() < 3)
+                    degg_string.prepend("0");
+                if (degg_string.size() < 3)
+                    degg_string.prepend("0");
 
-               QString minn_string = QString::number(minn,'f', 0);
-               if (minn_string.size() < 2)
-                   minn_string.prepend("0");
+                QString minn_string = QString::number(minn,'f', 0);
+                if (minn_string.size() < 2)
+                    minn_string.prepend("0");
 
-               QString secc_string = QString::number(secc, 'f', 0);
-               if (secc_string.size() <2)
-                   secc_string.prepend("0");
+                QString secc_string = QString::number(secc, 'f', 0);
+                if (secc_string.size() <2)
+                    secc_string.prepend("0");
 
-               QString longitude_string = degg_string + "-" + minn_string + "'" + secc_string + "''" + tanda_longitude;
+                QString longitude_string = degg_string + "-" + minn_string + "'" + secc_string + "''" + tanda_longitude;
 
-               ui->lineEditGpsLat->setToolTip(gpsdata.status);
-               ui->lineEditGpsLong->setToolTip(gpsdata.status);
+                ui->lineEditGpsLat->setToolTip(gpsdata.status);
+                ui->lineEditGpsLong->setToolTip(gpsdata.status);
 
-               if(gpsdata.status.isEmpty())
-               {
-                   ui->lineEditGpsLat->setStyleSheet("color:rgb(0, 255, 0);");
-                   ui->lineEditGpsLong->setStyleSheet("color:rgb(0, 255, 0);");
+                if(gpsdata.status.isEmpty())
+                {
+                    ui->lineEditGpsLat->setStyleSheet("color:rgb(0, 255, 0);");
+                    ui->lineEditGpsLong->setStyleSheet("color:rgb(0, 255, 0);");
 
-                   ui->lineEditGpsLat->setText(latitude_string);
-                   ui->lineEditGpsLong->setText(longitude_string);
-               }
-               else
-               {
-                   ui->lineEditGpsLat->setStyleSheet("color: rgb(255, 0, 0);");
-                   ui->lineEditGpsLong->setStyleSheet("color: rgb(255, 0, 0);");
-               }
+                    ui->lineEditGpsLat->setText(latitude_string);
+                    ui->lineEditGpsLong->setText(longitude_string);
+                }
+                else
+                {
+                    ui->lineEditGpsLat->setStyleSheet("color: rgb(255, 0, 0);");
+                    ui->lineEditGpsLong->setStyleSheet("color: rgb(255, 0, 0);");
+                }
 
             }
             catch (Error e)
@@ -1040,7 +1037,7 @@ void FrameOSD::on_pushButtonGPSApply_clicked()
     QString sec = list2.at(1);
     QString sign = list2.at(3);
 
-//    qDebug() << deg  <<min <<sec <<sign;
+    //    qDebug() << deg  <<min <<sec <<sign;
 
     bool ok;
     float valuedeg = deg.toFloat(&ok);
@@ -1080,7 +1077,7 @@ void FrameOSD::on_pushButtonGPSApply_clicked()
         return;
     }
 
-//    qDebug() << Q_FUNC_INFO<<valuedeg << valuemin <<valuesec <<valueLat;
+    //    qDebug() << Q_FUNC_INFO<<valuedeg << valuemin <<valuesec <<valueLat;
 
     // ==== Float longitude ====
 
@@ -1109,7 +1106,7 @@ void FrameOSD::on_pushButtonGPSApply_clicked()
     QString secc = long_list2.at(1);
     QString signn = long_list2.at(3);
 
-//    qDebug() <<degg  <<minn <<secc <<signn;
+    //    qDebug() <<degg  <<minn <<secc <<signn;
 
     bool ok1;
     float valuedegg = degg.toFloat(&ok1);
@@ -1149,7 +1146,7 @@ void FrameOSD::on_pushButtonGPSApply_clicked()
         return;
     }
 
-//    qDebug() << Q_FUNC_INFO<<valuedegg << valueminn <<valuesecc <<valueLong;
+    //    qDebug() << Q_FUNC_INFO<<valuedegg << valueminn <<valuesecc <<valueLong;
 
     QString valueLatStr = QString::number(valueLat);
     QString valueLongStr = QString::number(valueLong);
@@ -1229,7 +1226,7 @@ void FrameOSD::SpeedTimerTimeOut()
     }
 #endif
 
-//    qDebug() << Q_FUNC_INFO << speedmode;
+    //    qDebug() << Q_FUNC_INFO << speedmode;
 
     if(speedmode == "auto")
     {
@@ -1271,7 +1268,7 @@ void FrameOSD::SpeedTimerTimeOut()
                 ui->lineEditSpeedSOG->setToolTip(speeddata.status);
                 ui->lineEditSpeedCOG->setToolTip(speeddata.status);
 
-                if(speeddata.status.isEmpty())
+                if(speeddata.status == "-")
                 {
                     ui->lineEditSpeedSOG->setStyleSheet("color:rgb(0, 255, 0);");
                     ui->lineEditSpeedCOG->setStyleSheet("color:rgb(0, 255, 0);");
@@ -1334,7 +1331,7 @@ void FrameOSD::SpeedTimerTimeOut()
             ui->lineEditSpeedCOG->setStyleSheet("color: rgb(255, 0, 0);");
         }
     }
-//    qDebug() << Q_FUNC_INFO;
+    //    qDebug() << Q_FUNC_INFO;
 }
 
 void FrameOSD::on_comboBoxSpeedMode_activated(int index)
@@ -1567,7 +1564,7 @@ void FrameOSD::WaterSpeedTimerTimeOut()
     }
 #endif
 
-//    qDebug() << Q_FUNC_INFO << waterspeedmode;
+    //    qDebug() << Q_FUNC_INFO << waterspeedmode;
 
     if(waterspeedmode == "auto")
     {
@@ -1594,7 +1591,7 @@ void FrameOSD::WaterSpeedTimerTimeOut()
 #endif
 
         if(status)
-        {   
+        {
 #ifdef WIN32
             QStringList waterspeed = redisClient->hmget("waterspeed", "speed course status");
 
@@ -1609,7 +1606,7 @@ void FrameOSD::WaterSpeedTimerTimeOut()
                 ui->lineEditWaterSOG->setToolTip(waterspeeddata.status);
                 ui->lineEditWaterCOG->setToolTip(waterspeeddata.status);
 
-                if(waterspeeddata.status.isEmpty())
+                if(waterspeeddata.status == "-")
                 {
                     ui->lineEditWaterSOG->setStyleSheet("color:rgb(0, 255, 0);");
                     ui->lineEditWaterCOG->setStyleSheet("color:rgb(0, 255, 0);");
@@ -1672,7 +1669,7 @@ void FrameOSD::WaterSpeedTimerTimeOut()
             ui->lineEditWaterCOG->setStyleSheet("color: rgb(255, 0, 0);");
         }
     }
-//    qDebug() << Q_FUNC_INFO;
+    //    qDebug() << Q_FUNC_INFO;
 }
 
 void FrameOSD::on_comboBoxWaterMode_activated(int index)
@@ -1907,7 +1904,7 @@ void FrameOSD::WindTimerTimeOut()
     }
 #endif
 
-//    qDebug() << Q_FUNC_INFO << windmode;
+    //    qDebug() << Q_FUNC_INFO << windmode;
 
     if(windmode == "auto")
     {
@@ -1950,7 +1947,7 @@ void FrameOSD::WindTimerTimeOut()
                 ui->lineEditWindDir->setToolTip(winddata.status);
                 ui->lineEditWindSpeed->setToolTip(winddata.status);
 
-                if(winddata.status.isEmpty())
+                if(winddata.status == "-")
                 {
                     ui->lineEditWindDir->setStyleSheet("color:rgb(0, 255, 0);");
                     ui->lineEditWindSpeed->setStyleSheet("color:rgb(0, 255, 0);");
@@ -2260,7 +2257,7 @@ void FrameOSD::WeatherTimerTimeOut()
     }
 #endif
 
-//    qDebug() << Q_FUNC_INFO << weathermode;
+    //    qDebug() << Q_FUNC_INFO << weathermode;
 
     if(weathermode == "auto")
     {
@@ -2299,16 +2296,16 @@ void FrameOSD::WeatherTimerTimeOut()
                 weatherdata.pressure = weather.at(1);
                 weatherdata.humidity = weather.at(2);
                 weatherdata.status = weather.at(3);
-//                qDebug() <<"temperature" <<weatherdata.temperature
-//                         <<"pressure" <<weatherdata.pressure
-//                         <<"humidity" <<weatherdata.humidity
-//                         <<"status" <<weatherdata.status;
+                //                qDebug() <<"temperature" <<weatherdata.temperature
+                //                         <<"pressure" <<weatherdata.pressure
+                //                         <<"humidity" <<weatherdata.humidity
+                //                         <<"status" <<weatherdata.status;
 
                 ui->lineEditWeatherTemp->setToolTip(weatherdata.status);
                 ui->lineEditWeatherPress->setToolTip(weatherdata.status);
                 ui->lineEditWeatherHumidity->setToolTip(weatherdata.status);
 
-                if(weatherdata.status.isEmpty())
+                if(weatherdata.status == "-")
                 {
                     ui->lineEditWeatherTemp->setStyleSheet("color:rgb(0, 255, 0);");
                     ui->lineEditWeatherPress->setStyleSheet("color:rgb(0, 255, 0);");
@@ -2344,10 +2341,10 @@ void FrameOSD::WeatherTimerTimeOut()
                 weatherdata.pressure = QString::fromStdString(weather.at(1));
                 weatherdata.humidity = QString::fromStdString(weather.at(2));
                 weatherdata.status = QString::fromStdString(weather.at(3));
-//                qDebug() <<"temperature" <<weatherdata.temperature
-//                         <<"pressure" <<weatherdata.pressure
-//                         <<"humidity" <<weatherdata.humidity
-//                         <<"status" <<weatherdata.status;
+                //                qDebug() <<"temperature" <<weatherdata.temperature
+                //                         <<"pressure" <<weatherdata.pressure
+                //                         <<"humidity" <<weatherdata.humidity
+                //                         <<"status" <<weatherdata.status;
 
                 ui->lineEditWeatherTemp->setToolTip(weatherdata.status);
                 ui->lineEditWeatherPress->setToolTip(weatherdata.status);
