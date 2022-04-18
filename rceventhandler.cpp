@@ -2,12 +2,13 @@
 #include <QContextMenuEvent>
 #include <QMouseEvent>
 #include <QDebug>
+#include <QToolTip>
 
 bool RCEventHandler::eventFilter(QObject *obj, QEvent *event)
 {
     // you may handle multiple objects checking "obj" parameter
-     if (event->type() == QEvent::ContextMenu) {
-         qDebug()<<Q_FUNC_INFO<<"contex menu";
+    if (event->type() == QEvent::ContextMenu) {
+        qDebug()<<Q_FUNC_INFO<<"contex menu";
         QMouseEvent *mouseEvent = static_cast<QMouseEvent*> (event);
         send_rightButtonClicked(mouseEvent->globalPos());
         return true;
@@ -20,10 +21,10 @@ bool RCEventHandler::eventFilter(QObject *obj, QEvent *event)
         return true;
     }
     else if(event->type() == QEvent::MouseButtonRelease){
-         QMouseEvent *mouseEvent=static_cast<QMouseEvent*> (event);
-         send_leftButtonReleased(mouseEvent->pos());
+        QMouseEvent *mouseEvent=static_cast<QMouseEvent*> (event);
+        send_leftButtonReleased(mouseEvent->pos());
 
-         return true;
+        return true;
     }
     else if (event->type() == QEvent::MouseMove) {
         QMouseEvent *mouseEvent = static_cast<QMouseEvent*> (event);
@@ -38,6 +39,11 @@ bool RCEventHandler::eventFilter(QObject *obj, QEvent *event)
     else if (event->type() == QEvent::Leave) {
         //        QMouseEvent *mouseEvent = static_cast<QMouseEvent*> (event);
         hover_leave();
+        return true;
+    }
+    else if (event->type() == QEvent::ToolTip) {
+        QHelpEvent *helpEvent = static_cast<QHelpEvent*>(event);
+        tooltip(helpEvent->globalPos());
         return true;
     }
     else

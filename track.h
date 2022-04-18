@@ -27,13 +27,16 @@ public:
 signals:
     void identity_change_signal(int tn,Identity identity);
     void env_change_signal(int tn,Environment identity);
+    void selected_req_signal(int tn);
 //    void desig_request_signal(int tn,bool desig,QString desig_mode);
 
 private slots:
 
     void RC_track(QPoint pos);
+    void toolTipHandler(const QPoint pos);
     void identity_change();
     void environment_change();
+    void selected_req_change();
 //    void desig_change();
 //    void desig_direct_change();
 //    void desig_request(QString desig_mode);

@@ -34,9 +34,9 @@ public:
     ~FrameTDA();
     void setHeading(QString heading);
 
-    void setGundata(QStringList datagun);
+//    void setGundata(QStringList datagun);
 
-    void setAccessStatus(QString access_status);
+//    void setAccessStatus(QString access_status);
 
     void setConfig (QString Config);
 
@@ -53,6 +53,7 @@ private slots:
     void updateDataTracks();
 
     void track_identity_changed(int tn,Identity identity);
+    void track_selected_changed(int tn);
 
 private:
     void reconnecRedis();
@@ -98,8 +99,8 @@ private:
 #endif
     QString Config;
 
-    QStringList currentGunData;
-    QString currentAccessStatus;
+//    QStringList currentGunData;
+//    QString currentAccessStatus;
     float currentHeading;
     double tdaScale;
 

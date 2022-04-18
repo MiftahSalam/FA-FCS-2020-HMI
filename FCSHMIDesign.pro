@@ -30,7 +30,8 @@ SOURCES += main.cpp\
     track.cpp \
     tda_global.cpp \
     rceventhandler.cpp \
-    redisconnectionnotify.cpp
+    redisconnectionnotify.cpp \
+    simplecrypt.cpp
 
 HEADERS  += mainwindow.h \
     framegun.h \
@@ -41,7 +42,8 @@ HEADERS  += mainwindow.h \
     track.h \
     tda_global.h \
     rceventhandler.h \
-    redisconnectionnotify.h
+    redisconnectionnotify.h \
+    simplecrypt.h
 
 FORMS    += mainwindow.ui \
     framegun.ui \

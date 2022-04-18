@@ -1,6 +1,7 @@
 #include "track.h"
 #include <QDir>
 #include <QDebug>
+#include <QToolTip>
 
 track::track(QWidget *parent, QSize size) :
     QWidget(parent)
@@ -79,7 +80,7 @@ void track::buildUI(trackParam param)
     symbol->setFrameShape(QFrame::NoFrame);
     symbol->setGeometry(QRect(0,0,width()/3,height()));
     symbol->setPixmap(QPixmap::fromImage(image));
-    symbol->setStyleSheet(QString::fromUtf8("color: rgba(255, 255, 255);background-color: rgb(0,0,0,0);"));
+    symbol->setStyleSheet(QString::fromUtf8("color: rgb(255, 255, 255);background-color: rgb(0,0,0);"));
     symbol->setScaledContents(true);
     symbol->setToolTip(QString("Track Information\n\n"
                                "TN : %1\n"
@@ -98,13 +99,15 @@ void track::buildUI(trackParam param)
                        .arg(QString::number(0,'f',2))
                        .arg(identity2String(trackDat.cur_identity))
                        );
+    symbol->setStyleSheet(QString::fromUtf8("color: rgb(255, 255, 255);background-color: rgb(0,0,0);QToolTip{color: rgb(255,255,255);background-color: rgb(0,0,0);}"));
 
     /*
       track event handler
     */
-//    rc_radarevent=new RCEventHandler(this);
-//    connect(rc_radarevent,SIGNAL(send_rightButtonClicked(QPoint)),this,SLOT(RC_track(QPoint))); //tombol2 klik kanan track
-//    symbol->installEventFilter(rc_radarevent);
+    rc_radarevent=new RCEventHandler(this);
+    connect(rc_radarevent,SIGNAL(send_rightButtonClicked(QPoint)),this,SLOT(RC_track(QPoint))); //tombol2 klik kanan track
+    connect(rc_radarevent,SIGNAL(tooltip(const QPoint)),this,SLOT(toolTipHandler(const QPoint))); //tooltip event
+    symbol->installEventFilter(rc_radarevent);
 
     /*create QLabel for holding track number and source display*/
     no_track = new QLabel(this);
@@ -186,8 +189,19 @@ void track::RC_track(QPoint pos)
     menu->setStyleSheet("QMenu{color: rgb(255,255,255);background-color: rgb(0,0,0);selection-color: yellow; item:disabled: black;}");
     menu->addMenu(identitySubMenu);
     menu->addMenu(envSubMenu);
+    menu->addAction("Assign",this,SLOT(selected_req_change()));
    // menu->addMenu(desigSubMenu);
     menu->exec(pos);
+}
+
+void track::selected_req_change()
+{
+    emit selected_req_signal(trackDat.tn);
+}
+void track::toolTipHandler(const QPoint pos)
+{
+    qDebug()<<Q_FUNC_INFO<<" pos "<<pos;
+    QToolTip::showText(pos,symbol->toolTip());
 }
 
 void track::identity_change()

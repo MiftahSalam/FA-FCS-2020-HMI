@@ -15,15 +15,15 @@ MainWindow::MainWindow(QWidget *parent) :
 
     connect(&mastertimer, SIGNAL(timeout()), ui->frameBottomOSD, SLOT(on_osdTimerTimeOut()));
     connect(&mastertimer, SIGNAL(timeout()), this, SLOT(on_timeout()));
-    connect(&mastertimer, SIGNAL(timeout()), ui->frameBottomGun, SLOT(on_gunTimerTimeOut()));
+//    connect(&mastertimer, SIGNAL(timeout()), ui->frameBottomGun, SLOT(on_gunTimerTimeOut()));
 //    connect(&mastertimer, SIGNAL(timeout()), ui->frameBottomWAP, SLOT(on_gunTimerTimeOut()));
 
     mastertimer.start(1000);
 
     ui->gridLayout->removeWidget(ui->frameTDA);
-    ui->gridLayout->removeWidget(ui->frameBottomGun);
+//    ui->gridLayout->removeWidget(ui->frameBottomGun);
     ui->gridLayout->removeWidget(ui->frameBottomOSD);
-    ui->gridLayout->removeWidget(ui->frameBottomWAP);
+//    ui->gridLayout->removeWidget(ui->frameBottomWAP);
     ui->gridLayout->removeWidget(ui->frameBottomClose);
 
 //    ui->gridLayout->addWidget(ui->frameTDA,0,0,9,4);
@@ -36,13 +36,14 @@ MainWindow::MainWindow(QWidget *parent) :
 
 
 
-    ui->gridLayout->addWidget(ui->frameTDA,0,0,6,3);
-    ui->gridLayout->addWidget(ui->frameBottomWAP,0,3,6,1);
-    ui->gridLayout->addWidget(ui->frameBottomGun,0,4,6,1);
-    ui->gridLayout->addWidget(ui->frameBottomOSD,6,0,1,4);
-    ui->gridLayout->addWidget(ui->frameBottomClose,6,4,1,1);
+    ui->gridLayout->addWidget(ui->frameTDA,0,0,4,6);
+//    ui->gridLayout->addWidget(ui->frameBottomWAP,0,3,6,1);
+//    ui->gridLayout->addWidget(ui->frameBottomGun,0,4,6,1);
+    ui->gridLayout->addWidget(ui->frameBottomOSD,4,0,1,5);
+    ui->gridLayout->addWidget(ui->frameBottomClose,4,5,1,1);
 
 
+//    ui->frameBottomClose->hide();
 //    ui->frameBottomOSD->setVisible(false);
 //    ui->frameBottomWAP->setVisible(false);
 
@@ -62,9 +63,9 @@ MainWindow::MainWindow(QWidget *parent) :
 void MainWindow::on_timeout()
 {
     ui->frameTDA->setHeading(ui->frameBottomOSD->getHeading());
-    ui->frameTDA->setGundata(ui->frameBottomGun->getGundata());
-    ui->frameTDA->setAccessStatus(ui->frameBottomGun->getAccessStatus());
-    ui->frameBottomWAP->setAccessStatus(ui->frameBottomGun->getReadyStatus());
+//    ui->frameTDA->setGundata(ui->frameBottomGun->getGundata());
+//    ui->frameTDA->setAccessStatus(ui->frameBottomGun->getAccessStatus());
+//    ui->frameBottomWAP->setAccessStatus(ui->frameBottomGun->getReadyStatus());
 }
 
 MainWindow::~MainWindow()
@@ -105,10 +106,10 @@ void MainWindow::setConfig(QSettings &Config)
     ui->frameBottomOSD->setConfig(osd);
     splash->showMessage("Setting up track database connection...",Qt::AlignCenter);
     ui->frameTDA->setConfig(track);
-    splash->showMessage("Setting up gun database connection...",Qt::AlignCenter);
-    ui->frameBottomGun->setConfig(gun);
-    splash->showMessage("Setting up wap database connection...",Qt::AlignCenter);
-    ui->frameBottomWAP->setConfig(track, gun);
+//    splash->showMessage("Setting up gun database connection...",Qt::AlignCenter);
+//    ui->frameBottomGun->setConfig(gun);
+//    splash->showMessage("Setting up wap database connection...",Qt::AlignCenter);
+//    ui->frameBottomWAP->setConfig(track, gun);
 
     splash->finish(this);
 }

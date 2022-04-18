@@ -20,6 +20,7 @@ signals:
     void move_mouse(const QPointF &p);
     void hover_enter(); //30 jan
     void hover_leave();
+    void tooltip(const QPoint pos);
 };
 
 #endif // RCEVENTHANDLER_H

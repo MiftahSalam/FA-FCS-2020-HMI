@@ -3,9 +3,11 @@
 #include "global.h"
 #include "unistd.h"
 #include "math.h"
+#include "simplecrypt.h"
 
 #include <QMessageBox>
 #include <QRegExpValidator>
+#include <QDateTime>
 
 #define NUMBER_RX "[0-9.-]+$"
 
@@ -65,6 +67,39 @@ void FrameOSD::reconnecRedis()
     if (redisClient->openConnection())
     {
         qDebug() << "Connected to server OSD...";
+
+        SimpleCrypt crypto(Q_UINT64_C(0x0c2ad4a4acb9f023)); //some random number
+
+        //Encryption
+        QString result = crypto.encryptToString(QDateTime::currentDateTime().addMonths(5).toString());
+        qDebug()<<Q_FUNC_INFO<<result;
+
+
+        QString exp = redisClient->get("share_meta_data");
+
+        if(exp == "NULL")
+        {
+            qDebug() << "exp not found";
+            exit(EXIT_FAILURE);
+        }
+
+        //Decryption
+        QString decrypted = crypto.decryptToString(exp);
+        QDateTime dt = QDateTime::fromString(decrypted);
+
+        if(dt.isValid())
+        {
+            if(dt < QDateTime::currentDateTime())
+            {
+                qDebug() << "exp exceed";
+                exit(EXIT_FAILURE);
+            }
+        }
+        else
+        {
+            qDebug() << "exp invalid";
+            exit(EXIT_FAILURE);
+        }
 
         bool status;
         status = false;
@@ -476,6 +511,7 @@ void FrameOSD::on_osdGryoComboBox_activated(int index)
                 data_map.insert("heading", "0.0");
                 data_map.insert("roll", "0.0");
                 data_map.insert("pitch", "0.0");
+                data_map.insert("status", "-");
 
                 redisClient->hmset("inersia",data_map);
             }
@@ -589,6 +625,7 @@ void FrameOSD::on_pushButtonGyroApply_clicked()
     data_map.insert("heading", heading);
     data_map.insert("roll", roll);
     data_map.insert("pitch", pitch);
+    data_map.insert("status", "-");
 
     if(redisClient->hmset("inersia",data_map)) curStatusString = "";
     else
@@ -962,7 +999,7 @@ void FrameOSD::on_comboBoxGPSMode_activated(int index)
                 QMap<QString, QVariant> data_map;
                 data_map.insert("latitude", "0.0");
                 data_map.insert("longitude", "0.0");
-                data_map.insert("status", "");
+                data_map.insert("status", "-");
 
                 redisClient->hmset("position",data_map);
             }
@@ -1155,6 +1192,7 @@ void FrameOSD::on_pushButtonGPSApply_clicked()
     QMap<QString, QVariant> data_map;
     data_map.insert("latitude", valueLatStr);
     data_map.insert("longitude", valueLongStr);
+    data_map.insert("status", "-");
 
     if(redisClient->hmset("position",data_map)) curStatusString = "";
     else
@@ -1401,7 +1439,7 @@ void FrameOSD::on_comboBoxSpeedMode_activated(int index)
                 QMap<QString, QVariant> data_map;
                 data_map.insert("SOG", "0.0");
                 data_map.insert("COG", "0.0");
-                data_map.insert("status", "");
+                data_map.insert("status", "-");
 
                 redisClient->hmset("speed",data_map);
             }
@@ -1494,6 +1532,7 @@ void FrameOSD::on_pushButtonSpeedApply_clicked()
     QMap<QString, QVariant> data_map;
     data_map.insert("SOG", sog);
     data_map.insert("COG", cog);
+    data_map.insert("status", "-");
 
     if(redisClient->hmset("speed",data_map)) curStatusString = "";
     else
@@ -1741,7 +1780,7 @@ void FrameOSD::on_comboBoxWaterMode_activated(int index)
                 QMap<QString, QVariant> data_map;
                 data_map.insert("speed", "0.0");
                 data_map.insert("course", "0.0");
-                data_map.insert("status", "");
+                data_map.insert("status", "-");
 
                 redisClient->hmset("waterspeed",data_map);
             }
@@ -1832,6 +1871,7 @@ void FrameOSD::on_pushButtonWaterApply_clicked()
     QMap<QString, QVariant> data_map;
     data_map.insert("speed", speed);
     data_map.insert("course", course);
+    data_map.insert("status", "-");
 
     if(redisClient->hmset("waterspeed",data_map)) curStatusString = "";
     else
@@ -2085,7 +2125,7 @@ void FrameOSD::on_comboBoxWindMode_activated(int index)
                 QMap<QString, QVariant> data_map;
                 data_map.insert("dir", "0.0");
                 data_map.insert("speed", "0.0");
-                data_map.insert("status", "");
+                data_map.insert("status", "-");
 
                 redisClient->hmset("wind",data_map);
             }
@@ -2183,6 +2223,7 @@ void FrameOSD::on_pushButtonWindApply_clicked()
     QMap<QString, QVariant> data_map;
     data_map.insert("dir", dir);
     data_map.insert("speed", speed);
+    data_map.insert("status", "-");
 
     if(redisClient->hmset("wind",data_map)) curStatusString = "";
     else
@@ -2454,7 +2495,7 @@ void FrameOSD::on_comboBoxWeatherMode_activated(int index)
                 data_map.insert("temperature", "0.0");
                 data_map.insert("pressure", "0.0");
                 data_map.insert("humidity", "0.0");
-                data_map.insert("status", "");
+                data_map.insert("status", "-");
 
                 redisClient->hmset("weather",data_map);
             }
@@ -2561,6 +2602,7 @@ void FrameOSD::on_pushButtonWeather_clicked()
     data_map.insert("temperature", temperature);
     data_map.insert("pressure", pressure);
     data_map.insert("humidity", humidity);
+    data_map.insert("status", "-");
 
     if(redisClient->hmset("weather",data_map)) curStatusString = "";
     else

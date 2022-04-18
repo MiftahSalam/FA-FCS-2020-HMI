@@ -242,8 +242,9 @@ void FrameTDA::updateDataTracks()
                     bufTracks.track_symbol = new track(this, QSize(60,20));
                     bufTracks.track_symbol->buildUI(bufTracks.trackData);
 
-                    //connect
+                    //connect track_selected_changed
                     connect(bufTracks.track_symbol,SIGNAL(identity_change_signal(int,Identity)),this,SLOT(track_identity_changed(int,Identity)));
+                    connect(bufTracks.track_symbol,SIGNAL(selected_req_signal(int)),this,SLOT(track_selected_changed(int)));
 
                     //track position in pixel
                     double range_pixel= range2Pixel(bufTracks.trackData.range);
@@ -605,6 +606,34 @@ void FrameTDA::loadTrackParam(tracks &bufParam, trackParam track_data)
     bufParam.trackData.weapon_assign = track_data.weapon_assign;
 }
 
+void FrameTDA::track_selected_changed(int tn)
+{
+#ifdef WIN32
+    QMap<QString, QVariant> data_map;
+    data_map.insert("weapon_assigned", "20 mm");
+
+    if(!redisClient->hmset("track:Data:"+ QString::number(tn), data_map)) qDebug() << Q_FUNC_INFO << "Cannot set track"<<tn<<"weapon_assigned";
+    if(!redisClient->hdel("track:Data:"+ QString::number(cur_selected_track), "-")) qDebug() << Q_FUNC_INFO << "Cannot reset track"<<cur_selected_track<<"weapon_assigned";
+
+#else
+    std::unordered_map<std::string, std::string> data_map =
+    {
+            {"weapon_assigned", "20 mm"},
+    };
+
+    try
+    {
+        redisClient->hmset("track:Data:"+ QString::number(tn).toStdString(), data_map.begin(), data_map.end());
+    }
+    catch (Error e)
+    {
+        qDebug() << Q_FUNC_INFO << e.what();
+    }
+    if(!redisClient->hdel("track:Data:"+ QString::number(cur_selected_track), "-")) qDebug() << Q_FUNC_INFO << "Cannot reset track"<<cur_selected_track<<"weapon_assigned";
+
+#endif
+    cur_selected_track = tn;
+}
 void FrameTDA::track_identity_changed(int tn,Identity identity)
 {
     QString s = QString::number(identity2Int(identity));
@@ -720,12 +749,13 @@ void FrameTDA::paintEvent(QPaintEvent *event)
     {
         // ==== Heading Marker ==== //
         int sideMax = qMax(width(),height());
-        painter.rotate(currentHeading);
+        painter.rotate(static_cast<qreal>(currentHeading));
         painter.setPen(QColor(255,255,0,255));
         painter.drawLine(0,0,0,-sideMax);
-        painter.rotate(-currentHeading);
+        painter.rotate(-static_cast<qreal>(currentHeading));
 
         // ==== Gun Coverage ==== //
+        /*
         QString str = currentGunData.join(",");
         QStringList list = str.split(',');
         QString orientation = list.at(0);
@@ -754,8 +784,10 @@ void FrameTDA::paintEvent(QPaintEvent *event)
         font.setPixelSize(11);
         painter.setFont(font);
         painter.drawText(rect,QString("40mm"),opt);
+        */
 
         // ==== Gun barrel ==== //
+        /*
         if(currentAccessStatus > "0")
         {
             const double bearing = azimuth.toDouble();
@@ -766,9 +798,11 @@ void FrameTDA::paintEvent(QPaintEvent *event)
             painter.rotate(-currentHeading-bearing);
 //            qDebug() <<Q_FUNC_INFO << "ok" << currentAccessStatus;
         }
+        */
     }
 
     // ==== Fire Triangle (QMap) ==== //
+    /*
     foreach(int i, mapTracks->keys())
     {
 
@@ -795,21 +829,6 @@ void FrameTDA::paintEvent(QPaintEvent *event)
 
                 // ==== Gambar Kotak ==== //
               //  painter.drawRect(rangetrack,bearingtrack,23,23);
-
-                // ==== Contoh gambar Track ==== //
-                // ==== horizontal ==== //
-//                painter.drawLine(-36, 64, -30, 64);
-//                painter.drawLine(-36, 90, -30, 90);
-
-//                painter.drawLine(-17, 64, -11, 64);
-//                painter.drawLine(-17, 90, -11, 90);
-
-//                // ==== vertical ==== //
-//                painter.drawLine(-36, 64, -36, 70);
-//                painter.drawLine(-36, 84, -36, 90);
-
-//                painter.drawLine(-11, 64, -11, 70);
-//                painter.drawLine(-11, 84, -11, 90);
 
                 // ==== horizontal ==== //
                 painter.drawLine(rangetrack, bearingtrack, rangetrack+5, bearingtrack);
@@ -860,10 +879,8 @@ void FrameTDA::paintEvent(QPaintEvent *event)
             }
         }
         // ==== Track Selected ==== //
-
-
     }
-
+    */
 
 
 }
@@ -972,21 +989,21 @@ void FrameTDA::setHeading(QString heading)
 //    qDebug()<<Q_FUNC_INFO<<currentHeading<<ok;
 }
 
-void FrameTDA::setAccessStatus(QString access_status)
-{
-    currentAccessStatus = access_status;
-//    qDebug() <<Q_FUNC_INFO << access_status;
-}
+//void FrameTDA::setAccessStatus(QString access_status)
+//{
+//    currentAccessStatus = access_status;
+////    qDebug() <<Q_FUNC_INFO << access_status;
+//}
 
-void FrameTDA::setGundata(QStringList datagun)
-{
-    currentGunData = datagun;
-//    qDebug() <<"hasil set"<<datagun;
-}
+//void FrameTDA::setGundata(QStringList datagun)
+//{
+//    currentGunData = datagun;
+////    qDebug() <<"hasil set"<<datagun;
+//}
 
 int FrameTDA::range2Pixel(double range)
 {
-    return range*(width()/(2*tdaScale));
+    return static_cast<int>(range*(width()/(2*tdaScale)));
 }
 
 double FrameTDA::pixel2Range(int pixel)
