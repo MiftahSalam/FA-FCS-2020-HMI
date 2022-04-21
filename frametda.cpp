@@ -220,7 +220,16 @@ void FrameTDA::updateDataTracks()
                 trackQuery = redisClient->hmget(trackList.at(i), "weapon_assigned");
                 if(trackQuery.size() == 1)
                 {
-                    trackdata.weapon_assign= trackQuery.at(0);
+                    if(trackQuery.at(0) != "-" && trackQuery.at(0) != "NULL" && !trackQuery.at(0).isEmpty())
+                    {
+                        trackdata.weapon_assign = trackQuery.at(0);
+                        cur_selected_track = trackdata.tn;
+                    }
+                    else
+                    {
+                        redisClient->hset(trackList.at(i), "weapon_assigned", "");
+                        trackdata.weapon_assign= "";
+                    }
                     trackQuery.clear();
                 }
                 else
@@ -408,12 +417,22 @@ void FrameTDA::updateDataTracks()
                 trackQuery = redisClient->hmget(trackList.at(i), "weapon_assigned");
                 if(trackQuery.size() == 1)
                 {
-                    trackdata.weapon_assign=trackQuery.at(0);
+                    if(trackQuery.at(0) != "-" && trackQuery.at(0) != "NULL" && !trackQuery.at(0).isEmpty())
+                    {
+                        trackdata.weapon_assign = trackQuery.at(0);
+                        cur_selected_track = trackdata.tn;
+                    }
+                    else
+                    {
+                        redisClient->hset(trackList.at(i), "weapon_assigned", "");
+                        trackdata.weapon_assign= "";
+                    }
                     trackQuery.clear();
                 }
                 else
                 {
                     redisClient->hset(trackList.at(i), "weapon_assigned", "");
+                    trackdata.weapon_assign= "";
                     qDebug() << Q_FUNC_INFO << "cek weapon jika sama";
                 }
 
@@ -578,6 +597,7 @@ void FrameTDA::updateDataTracks()
                 tracks bufTracks = mapTracks->take(tnList.at(i));
                 delete bufTracks.track_symbol;
                 removeTn.append(tnList.at(i));
+                if(tnList.at(i) == cur_selected_track) cur_selected_track = -1;
             }
         }
 
@@ -610,10 +630,40 @@ void FrameTDA::track_selected_changed(int tn)
 {
 #ifdef WIN32
     QMap<QString, QVariant> data_map;
-    data_map.insert("weapon_assigned", "20 mm");
+    data_map.insert("weapon_assigned", "-");
 
-    if(!redisClient->hmset("track:Data:"+ QString::number(tn), data_map)) qDebug() << Q_FUNC_INFO << "Cannot set track"<<tn<<"weapon_assigned";
-    if(!redisClient->hdel("track:Data:"+ QString::number(cur_selected_track), "-")) qDebug() << Q_FUNC_INFO << "Cannot reset track"<<cur_selected_track<<"weapon_assigned";
+    if(cur_selected_track > 0)
+    {
+        if(redisClient->hmset("track:Data:"+ QString::number(cur_selected_track), data_map))
+        {
+            data_map.clear();
+            data_map.insert("weapon_assigned", "20mm");
+            if(redisClient->hmset("track:Data:"+ QString::number(tn), data_map))
+            {
+                cur_selected_track = tn;
+            }
+            else
+            {
+                redisClient->hmset("track:Data:"+ QString::number(cur_selected_track), data_map);
+                qDebug() << Q_FUNC_INFO << "Cannot set track"<<tn<<"weapon_assigned";
+            }
+        }
+        else qDebug() << Q_FUNC_INFO << "Cannot reset track"<<cur_selected_track<<"weapon_assigned";
+    }
+    else
+    {
+        data_map.clear();
+        data_map.insert("weapon_assigned", "20mm");
+        if(redisClient->hmset("track:Data:"+ QString::number(tn), data_map))
+        {
+            cur_selected_track = tn;
+        }
+        else
+        {
+            redisClient->hmset("track:Data:"+ QString::number(cur_selected_track), data_map);
+            qDebug() << Q_FUNC_INFO << "Cannot set track"<<tn<<"weapon_assigned";
+        }
+    }
 
 #else
     std::unordered_map<std::string, std::string> data_map =
@@ -632,7 +682,6 @@ void FrameTDA::track_selected_changed(int tn)
     if(!redisClient->hdel("track:Data:"+ QString::number(cur_selected_track), "-")) qDebug() << Q_FUNC_INFO << "Cannot reset track"<<cur_selected_track<<"weapon_assigned";
 
 #endif
-    cur_selected_track = tn;
 }
 void FrameTDA::track_identity_changed(int tn,Identity identity)
 {
