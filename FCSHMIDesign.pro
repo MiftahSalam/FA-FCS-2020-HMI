@@ -10,39 +10,12 @@ include($$PWD/qredis/qredis.pri)
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
-TARGET = FCSHMIDesign
+TARGET = fa_fcs_hmi
 TEMPLATE = app
 
+SOURCES += \
+    osdservice.cpp \
+    src/main.cpp
 
-SOURCES += main.cpp\
-        mainwindow.cpp \
-    framegun.cpp \
-    frameosd.cpp \
-    framewap.cpp \
-    frametda.cpp \
-    track.cpp \
-    tda_global.cpp \
-    rceventhandler.cpp
-
-HEADERS  += mainwindow.h \
-    framegun.h \
-    frameosd.h \
-    framewap.h \
-    global.h \
-    frametda.h \
-    track.h \
-    tda_global.h \
-    rceventhandler.h
-
-FORMS    += mainwindow.ui \
-    framegun.ui \
-    frameosd.ui \
-    framewap.ui \
-    frametda.ui
-
-RESOURCES += \
-    hmi_fa_fcs.qrc
-
-DISTFILES += \
-    HMI_Syle.css \
-    logofcs.png
+HEADERS += \
+    osdservice.h
