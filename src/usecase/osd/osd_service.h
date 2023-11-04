@@ -11,7 +11,7 @@ public:
     void operator=(const OSDService&) = delete;
     ~OSDService() override;
 
-    static OSDService getInstance();
+    static OSDService* getInstance();
 
 protected:
     OSDService(QObject *parent = nullptr);

@@ -8,7 +8,7 @@ OSDService::OSDService(QObject *parent)
 
 }
 
-OSDService OSDService::getInstance() {
+OSDService* OSDService::getInstance() {
     if(service == nullptr) {
         service = new OSDService();
     }

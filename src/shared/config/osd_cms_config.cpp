@@ -38,7 +38,7 @@ OSDCmsConfig* OSDCmsConfig::getInstance(const QString path) {
 void OSDCmsConfig::setup(const QString path)
 {
     if (!QFile::exists(path)) {
-        throw new ErrFileNotFound();
+        throw ErrFileNotFound();
     }
 
     QSettings configFile(path,QSettings::IniFormat);

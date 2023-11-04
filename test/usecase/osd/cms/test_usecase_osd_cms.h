@@ -8,10 +8,9 @@ class TestServiceOSDCms: public TestSuit
     Q_OBJECT
 public:
     using TestSuit::TestSuit;
-    ~TestServiceOSDCms();
 
 private slots:
-    void createIServiceObject();
+    void getInstance();
 };
 static TestServiceOSDCms TEST_SERVICE_OSD_CMS;
 

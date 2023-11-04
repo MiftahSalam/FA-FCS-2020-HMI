@@ -4,8 +4,8 @@
 #include <QException>
 #include <QString>
 
-const int ERROR_CODE_FILE_NOT_FOUND = 1;
-const int ERROR_CODE_FILE_CANNOT_BE_OPENED = 2;
+const QPair<int, QString> ERROR_CODE_FILE_NOT_FOUND(1, "File not found");
+const QPair<int, QString> ERROR_CODE_FILE_CANNOT_BE_OPENED(2, "File cannot not be opened");
 
 class BaseError: public QException
 {
@@ -18,8 +18,8 @@ private:
 
     // QException interface
 public:
-    void raise() const;
-    QException *clone() const;
+    void raise() const override;
+    QException *clone() const override;
 
     int getCode() const;
     QString getMessage() const;

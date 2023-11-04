@@ -23,6 +23,8 @@ SOURCES += \
     src/shared/config/osd_cms_config.cpp \
     src/usecase/osd/cms/osd_cms.cpp \
     src/usecase/osd/osd_service.cpp \
+    test/shared/config/test_osd_cms_config.cpp \
+    test/shared/errors/test_base_error.cpp \
     test/testsuit.cpp \
     test/usecase/osd/cms/test_usecase_osd_cms.cpp
 
@@ -36,5 +38,7 @@ HEADERS += \
     src/shared/config/osd_cms_config.h \
     src/usecase/osd/cms/osd_cms.h \
     src/usecase/osd/osd_service.h \
+    test/shared/config/test_osd_cms_config.h \
+    test/shared/errors/test_base_error.h \
     test/testsuit.h \
     test/usecase/osd/cms/test_usecase_osd_cms.h
