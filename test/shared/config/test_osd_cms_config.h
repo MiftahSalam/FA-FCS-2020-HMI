@@ -12,6 +12,8 @@ public:
 private slots:
     void getInstanceFailed();
     void getInstanceOk();
+    void getManualUrlOk();
+    void getModeUrlOk();
 
 };
 static TestOSDCMSConfig TEST_CONFIG_OSD_CMS;

@@ -9,21 +9,11 @@
 void TestErrors::throwBaseError()
 {
     QSKIP("");
-    try {
-        throw BaseError(1,"test");
-    } catch (BaseError &e) {
-        qDebug()<<"caught base error";
-    }
+    QVERIFY_EXCEPTION_THROWN(throw BaseError(0, "test error"), BaseError);
 }
 
 void TestErrors::throwFileNotFoundError()
 {
     QSKIP("");
-    try {
-        throw ErrFileNotFound();
-    } catch (ErrFileNotFound &e) {
-        qDebug()<<"caught file not found error";
-    }
-
-    QVERIFY_EXCEPTION_THROWN(throw ErrFileNotFound(), BaseError);
+    QVERIFY_EXCEPTION_THROWN(throw ErrFileNotFound(), ErrFileNotFound);
 }

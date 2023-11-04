@@ -1,3 +1,4 @@
+#include <QDebug>
 #include <QString>
 #include <QFile>
 #include <QSettings>
@@ -15,6 +16,11 @@ OSDCmsConfig::OSDCmsConfig()
 
 }
 
+OSDCmsConfig::~OSDCmsConfig()
+{
+
+}
+
 QString OSDCmsConfig::getManualDataUrl() const
 {
     return manualDataUrl;
@@ -26,7 +32,13 @@ QString OSDCmsConfig::getModeUrl() const
 }
 
 OSDCmsConfig* OSDCmsConfig::getInstance(const QString path) {
+    qDebug()<<Q_FUNC_INFO<<"path"<<path;
+
     if(config == nullptr) {
+        if (!QFile::exists(path)) {
+            throw ErrFileNotFound();
+        }
+
         config = new OSDCmsConfig();
         config->setup(path);
     }
@@ -37,10 +49,6 @@ OSDCmsConfig* OSDCmsConfig::getInstance(const QString path) {
 
 void OSDCmsConfig::setup(const QString path)
 {
-    if (!QFile::exists(path)) {
-        throw ErrFileNotFound();
-    }
-
     QSettings configFile(path,QSettings::IniFormat);
     manualDataUrl = configFile.value(CONFIG_OSD_CMS_MANUAL_DATA_URL, "").toString();
     modeUrl = configFile.value(CONFIG_OSD_CMS_MODE_URL, "").toString();
