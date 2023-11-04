@@ -1,4 +1,10 @@
-#include "base_error.h"
+#include "err_base.h"
+
+
+NoError::NoError(): BaseError(ERROR_NO.first, ERROR_NO.second)
+{
+
+}
 
 BaseError::BaseError(int code, const QString &message) : code(code),
     message(message)

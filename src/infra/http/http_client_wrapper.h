@@ -10,6 +10,9 @@ class HttpClientWrapper : public QObject
 public:
     explicit HttpClientWrapper(QObject *parent = nullptr);
 
+protected slots:
+    virtual void onReplyFinished() {};
+
 protected:
     QNetworkReply *httpResponse;
     QNetworkAccessManager httpClient;

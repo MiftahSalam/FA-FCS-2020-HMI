@@ -1,7 +1,7 @@
 #ifndef ERRJSONPARSE_H
 #define ERRJSONPARSE_H
 
-#include "base_error.h"
+#include "err_base.h"
 
 class ErrJsonParse: public BaseError
 {

@@ -38,13 +38,13 @@ signals:
     void signal_setPositionResponse(BaseResponse<PositionModel> response);
 
 private slots:
-    void onReplyFinished();
-    void onReplyError(QNetworkReply::NetworkError err);
+    void onReplyFinished() override;
 
 private:
     OSDCmsConfig *cfgCms;
 
     BaseResponse<PositionModel> toResponse(QByteArray raw);
+    BaseResponse<PositionModel> errorResponse(QNetworkReply::NetworkError err);
 };
 
 #endif // OSDCMS_H

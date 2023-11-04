@@ -1,6 +1,7 @@
 #include <QNetworkRequest>
 #include <QtDebug>
 
+#include "src/shared/common/errors/helper_err.h"
 #include "src/shared/common/errors/err_json_parse.h"
 #include "src/shared/common/errors/err_object_creation.h"
 #include "src/shared/utils/utils.h"
@@ -35,7 +36,6 @@ void OSDCMSPositionData::setPosition(OSDSetPositionRequest request)
 
     httpResponse = httpClient.put(httpReq, request.toJSON());
     connect(httpResponse, &QNetworkReply::finished, this, &OSDCMSPositionData::onReplyFinished);
-    connect(httpResponse, &QNetworkReply::errorOccurred, this, &OSDCMSPositionData::onReplyError);
 }
 
 void OSDCMSPositionData::onReplyFinished()
@@ -45,14 +45,12 @@ void OSDCMSPositionData::onReplyFinished()
     qDebug()<<Q_FUNC_INFO<<"respRaw: "<<respRaw;
     qDebug()<<Q_FUNC_INFO<<"err: "<<httpResponse->error();
 
+    BaseResponse<PositionModel> respErr = errorResponse(httpResponse->error());
+    if(respErr.getHttpCode() != 0) emit signal_setPositionResponse(respErr);
+
     BaseResponse<PositionModel> resp = toResponse(respRaw);
 
     emit signal_setPositionResponse(resp);
-}
-
-void OSDCMSPositionData::onReplyError(QNetworkReply::NetworkError err)
-{
-    qDebug()<<Q_FUNC_INFO<<"err: "<<err;
 }
 
 BaseResponse<PositionModel> OSDCMSPositionData::toResponse(QByteArray raw)
@@ -68,12 +66,28 @@ BaseResponse<PositionModel> OSDCMSPositionData::toResponse(QByteArray raw)
         qDebug()<<Q_FUNC_INFO<<"resp"<<resp.getHttpCode()<<resp.getMessage()<<resp.getData()->getLatitude()<<resp.getData()->getLongitude();
 
         return resp;
-    } catch (ErrJsonParse e) {
+    } catch (ErrJsonParse &e) {
         qDebug()<<Q_FUNC_INFO<<"caught error: "<<e.getMessage();
     }  catch (...) {
         qDebug()<<Q_FUNC_INFO<<"caught unkbnown error";
     }
 
     return BaseResponse<PositionModel>(ERROR_CODE_UNKNOWN.first, ERROR_CODE_UNKNOWN.second, nullptr);
+}
+
+BaseResponse<PositionModel> OSDCMSPositionData::errorResponse(QNetworkReply::NetworkError err)
+{
+    try {
+        ErrHelper::throwHttpError(err);
+    } catch (BaseError &e) {
+        qDebug()<<Q_FUNC_INFO<<"caught error: "<<e.getMessage();
+        return BaseResponse<PositionModel>(e.getCode(), e.getMessage(), nullptr);
+    }  catch (...) {
+        qDebug()<<Q_FUNC_INFO<<"caught unkbnown error";
+        return BaseResponse<PositionModel>(ERROR_CODE_UNKNOWN.first, ERROR_CODE_UNKNOWN.second, nullptr);
+    }
+
+    NoError status;
+    return BaseResponse<PositionModel>(status.getCode(), status.getMessage(), nullptr);
 }
 

@@ -19,10 +19,12 @@ SOURCES += \
     src/main.cpp \
     src/model/osd/cms/osd_set_position_request.cpp \
     src/model/osd/position_model.cpp \
-    src/shared/common/errors/base_error.cpp \
+    src/shared/common/errors/err_base.cpp \
+    src/shared/common/errors/err_http.cpp \
     src/shared/common/errors/err_json_parse.cpp \
     src/shared/common/errors/err_object_creation.cpp \
     src/shared/common/errors/err_open_file.cpp \
+    src/shared/common/errors/helper_err.cpp \
     src/shared/config/configuration.cpp \
     src/shared/config/osd_cms_config.cpp \
     src/shared/utils/utils.cpp \
@@ -40,10 +42,12 @@ HEADERS += \
     src/model/base_response.h \
     src/model/osd/cms/osd_set_position_request.h \
     src/model/osd/position_model.h \
-    src/shared/common/errors/base_error.h \
+    src/shared/common/errors/err_base.h \
+    src/shared/common/errors/err_http.h \
     src/shared/common/errors/err_json_parse.h \
     src/shared/common/errors/err_object_creation.h \
     src/shared/common/errors/err_open_file.h \
+    src/shared/common/errors/helper_err.h \
     src/shared/config/base_config.h \
     src/shared/config/configuration.h \
     src/shared/config/osd_cms_config.h \

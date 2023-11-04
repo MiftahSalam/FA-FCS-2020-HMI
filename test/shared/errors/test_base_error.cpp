@@ -1,6 +1,6 @@
 #include "test_base_error.h"
 
-#include "src/shared/common/errors/base_error.h"
+#include "src/shared/common/errors/err_base.h"
 #include "src/shared/common/errors/err_open_file.h"
 
 #include <QtDebug>
