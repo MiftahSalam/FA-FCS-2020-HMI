@@ -1,31 +1,50 @@
 #ifndef OSDCMS_H
 #define OSDCMS_H
 
+#include <QNetworkReply>
 #include <QObject>
 
-#include "src/model/osd/cms/osd_set_position_reqeust.h"
+#include "src/infra/http/http_client_wrapper.h"
+#include "src/model/osd/cms/osd_set_position_request.h"
+#include "src/model/base_response.h"
+#include "src/model/osd/position_model.h"
 #include "src/shared/config/osd_cms_config.h"
 
-class IOSDCMS {
-public:
-    virtual void setPosition(const OSDSetPositionReqeust request) = 0;
-};
+class OSDCMSPositionData;
 
-class OSDCMS : public QObject, public IOSDCMS
+class OSDCMS : public QObject
 {
     Q_OBJECT
 public:
     explicit OSDCMS(QObject *parent = nullptr, OSDCmsConfig *cmsConfig = nullptr);
 
-    // IOSDCMS interface
+    OSDCMSPositionData *getServiceOSDCMSPosition() const;
+
+private:
+    OSDCmsConfig *cfgCms;
+    OSDCMSPositionData *serviceOSDCMSPosition;
+};
+
+
+class OSDCMSPositionData : public HttpClientWrapper
+{
+    Q_OBJECT
 public:
-    void setPosition(const OSDSetPositionReqeust request) override;
+    explicit OSDCMSPositionData(HttpClientWrapper *parent = nullptr, OSDCmsConfig *cmsConfig = nullptr);
+
+    void setPosition(OSDSetPositionRequest request);
 
 signals:
+    void signal_setPositionResponse(BaseResponse<PositionModel> response);
+
+private slots:
+    void onReplyFinished();
+    void onReplyError(QNetworkReply::NetworkError err);
 
 private:
     OSDCmsConfig *cfgCms;
 
+    BaseResponse<PositionModel> toResponse(QByteArray raw);
 };
 
 #endif // OSDCMS_H

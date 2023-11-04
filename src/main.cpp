@@ -67,19 +67,23 @@
 #include <QObject>
 #include <QTest>
 
+#include "src/di/di.h"
 #include "test/testsuit.h"
 
 int main(int argc, char *argv[])
 {
-    int status = 0;
-    auto runTest = [&status, argc, argv](QObject *obj) {
-        status |= QTest::qExec(obj, argc, argv);
-    };
+    QApplication a(argc, argv);
+    DI *di = new DI();
+    di->getOSDCMSService()->getServiceOSDCMSPosition()->setPosition(OSDSetPositionRequest(1.2,-32.1));
+//    int status = 0;
+//    auto runTest = [&status, argc, argv](QObject *obj) {
+//        status |= QTest::qExec(obj, argc, argv);
+//    };
 
-    auto &suite = TestSuit::suits();
-    for (auto it = suite.begin(); it != suite.end(); ++it) {
-        runTest(*it);
-    }
+//    auto &suite = TestSuit::suits();
+//    for (auto it = suite.begin(); it != suite.end(); ++it) {
+//        runTest(*it);
+//    }
 
-    return status;
+    return a.exec();
 }

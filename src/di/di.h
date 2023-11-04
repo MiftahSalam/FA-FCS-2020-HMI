@@ -11,6 +11,7 @@ public:
     DI();
 
     Configuration *getConfig() const;
+    OSDCMS *getOSDCMSService() const;
 
 private:
     Configuration *config;

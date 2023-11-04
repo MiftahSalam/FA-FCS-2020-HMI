@@ -10,7 +10,9 @@ public:
     using TestSuit::TestSuit;
 
 private slots:
-    void getInstance();
+    void createObjectOk();
+    void createObjectFailed();
+    void setPosition();
 };
 static TestServiceOSDCms TEST_SERVICE_OSD_CMS;
 

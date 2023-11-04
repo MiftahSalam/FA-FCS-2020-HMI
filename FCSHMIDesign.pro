@@ -15,12 +15,17 @@ TEMPLATE = app
 
 SOURCES += \
     src/di/di.cpp \
-    src/model/osd/cms/osd_set_position_reqeust.cpp \
+    src/infra/http/http_client_wrapper.cpp \
     src/main.cpp \
+    src/model/osd/cms/osd_set_position_request.cpp \
+    src/model/osd/position_model.cpp \
     src/shared/common/errors/base_error.cpp \
+    src/shared/common/errors/err_json_parse.cpp \
+    src/shared/common/errors/err_object_creation.cpp \
     src/shared/common/errors/err_open_file.cpp \
     src/shared/config/configuration.cpp \
     src/shared/config/osd_cms_config.cpp \
+    src/shared/utils/utils.cpp \
     src/usecase/osd/cms/osd_cms.cpp \
     src/usecase/osd/osd_service.cpp \
     test/shared/config/test_osd_cms_config.cpp \
@@ -30,12 +35,19 @@ SOURCES += \
 
 HEADERS += \
     src/di/di.h \
-    src/model/osd/cms/osd_set_position_reqeust.h \
+    src/infra/http/http_client_wrapper.h \
+    src/model/base_request.h \
+    src/model/base_response.h \
+    src/model/osd/cms/osd_set_position_request.h \
+    src/model/osd/position_model.h \
     src/shared/common/errors/base_error.h \
+    src/shared/common/errors/err_json_parse.h \
+    src/shared/common/errors/err_object_creation.h \
     src/shared/common/errors/err_open_file.h \
     src/shared/config/base_config.h \
     src/shared/config/configuration.h \
     src/shared/config/osd_cms_config.h \
+    src/shared/utils/utils.h \
     src/usecase/osd/cms/osd_cms.h \
     src/usecase/osd/osd_service.h \
     test/shared/config/test_osd_cms_config.h \

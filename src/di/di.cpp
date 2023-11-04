@@ -10,3 +10,8 @@ Configuration *DI::getConfig() const
 {
     return config;
 }
+
+OSDCMS *DI::getOSDCMSService() const
+{
+    return serviceOSDCMS;
+}
