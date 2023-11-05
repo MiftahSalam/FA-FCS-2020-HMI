@@ -17,15 +17,11 @@ public:
     explicit MainWindow(QWidget *parent = 0);
     ~MainWindow();
 
-    void setConfig (QSettings &Config);
-
 private slots:
     void on_pushButtonExit_clicked();
-    void on_timeout();
 
 private:
     Ui::MainWindow *ui;
-    QTimer mastertimer;
 };
 
 #endif // MAINWINDOW_H

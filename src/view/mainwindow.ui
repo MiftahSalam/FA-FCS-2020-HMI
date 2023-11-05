@@ -91,7 +91,6 @@
           <font>
            <family>DejaVu Sans</family>
            <pointsize>30</pointsize>
-           <weight>75</weight>
            <italic>false</italic>
            <bold>true</bold>
           </font>
@@ -115,7 +114,7 @@
   <customwidget>
    <class>FrameGun</class>
    <extends>QFrame</extends>
-   <header location="global">framegun.h</header>
+   <header>framegun.h</header>
    <container>1</container>
   </customwidget>
   <customwidget>
