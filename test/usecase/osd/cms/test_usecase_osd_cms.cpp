@@ -12,7 +12,7 @@ void TestServiceOSDCms::setPosition()
     OSDSetPositionRequest req(1.2, -113.5);
 
     try {
-        cms->getServiceOSDCMSPosition()->setPosition(req);
+        cms->getServiceOSDCMSPosition()->set(req);
     } catch (...) {
         QFAIL("unexpected thrown exception");
     }

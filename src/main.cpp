@@ -74,7 +74,7 @@ int main(int argc, char *argv[])
 {
     QApplication a(argc, argv);
     DI *di = new DI();
-    di->getOSDCMSService()->getServiceOSDCMSPosition()->setPosition(OSDSetPositionRequest(1.2,-32.1));
+    di->getOSDCMSService()->getServiceOSDCMSPosition()->set(OSDSetPositionRequest(1.2,-32.1));
 //    int status = 0;
 //    auto runTest = [&status, argc, argv](QObject *obj) {
 //        status |= QTest::qExec(obj, argc, argv);
