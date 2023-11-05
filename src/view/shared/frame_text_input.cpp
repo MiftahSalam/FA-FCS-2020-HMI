@@ -9,13 +9,18 @@ FrameTextInput::FrameTextInput(QWidget *parent) :
     ui->setupUi(this);
 }
 
-void FrameTextInput::setup(const TextInputProp &prop)
+void FrameTextInput::setup(const TextInputProp &props)
 {
-    ui->labelTitle->setText(prop.title);
-    ui->labelInfo->setText(prop.info);
-    ui->textInput->setText(prop.defaultInputText);
+    ui->labelTitle->setText(props.title);
+    ui->labelInfo->setText(props.info);
+    ui->textInput->setText(props.defaultInputText);
 
     setStatusFailed();
+}
+
+void FrameTextInput::setInputEnable(bool enable)
+{
+    ui->textInput->setEnabled(enable);
 }
 
 void FrameTextInput::setStatusOk()

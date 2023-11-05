@@ -6,16 +6,13 @@ FrameOSDMode::FrameOSDMode(QWidget *parent) :
     ui(new Ui::FrameOSDMode)
 {
     ui->setupUi(this);
+
+    connect(ui->comboBoxMode, QOverload<int>::of(&QComboBox::currentIndexChanged), this, &FrameOSDMode::signal_currentModeChange);
 }
 
 void FrameOSDMode::setCurrentModeIndex(int index)
 {
     ui->comboBoxMode->setCurrentIndex(index);
-}
-
-void FrameOSDMode::setEnableCombo(bool enable)
-{
-    ui->comboBoxMode->setEnabled(enable);
 }
 
 FrameOSDMode::~FrameOSDMode()

@@ -17,6 +17,16 @@ FrameOSD::FrameOSD(QWidget *parent) :
 {
     ui->setupUi(this);
 
+    setup();
+}
+
+FrameOSD::~FrameOSD()
+{
+    delete ui;
+}
+
+void FrameOSD::setup()
+{
     ui->widgetGyro->setup(OSDGyroProp{
                                "Gyro",
                                TextInputProp{
@@ -39,10 +49,4 @@ FrameOSD::FrameOSD(QWidget *parent) :
                                    },
                                });
 
-
-}
-
-FrameOSD::~FrameOSD()
-{
-    delete ui;
 }

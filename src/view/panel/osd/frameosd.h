@@ -21,7 +21,7 @@ public:
 private:
     Ui::FrameOSD *ui;
 
-
+    void setup();
 };
 
 #endif // FRAMEOSD_H

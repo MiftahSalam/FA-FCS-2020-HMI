@@ -3,7 +3,7 @@
 
 #include <QWidget>
 
-#include "src/di/di.h"
+#include "src/view/shared/constant_ui.h"
 #include "src/view/shared/frame_text_input.h"
 
 namespace Ui {
@@ -27,9 +27,17 @@ public:
 
     void setup(const OSDPositionProp& prop);
 
+private slots:
+    void onModeChange(int index);
+
 private:
     Ui::FrameOSDPosition *ui;
-    DI* di;
+    OSDCMSPositionData* _cmsPos;
+
+    OSD_MODE currentMode;
+
+    void manualUiSetup();
+    void autoUiSetup();
 };
 
 #endif // FRAME_OSD_POSITION_H

@@ -15,9 +15,11 @@ public:
     explicit FrameOSDMode(QWidget *parent = nullptr);
 
     void setCurrentModeIndex(int index);
-    void setEnableCombo(bool enable);
 
     ~FrameOSDMode();
+
+signals:
+    void signal_currentModeChange(int index);
 
 private:
     Ui::FrameOSDMode *ui;
