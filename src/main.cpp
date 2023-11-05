@@ -75,15 +75,21 @@
 //#include "src/view/panel/osd/frameosd.h"
 //#include "test/testsuit.h"
 
+QString loadStylesheetFile( const QString &path );
+
 int main(int argc, char *argv[])
 {
     QApplication a(argc, argv);
+    QString appStyle = loadStylesheetFile( ":/styles/HMI_Style.css" );
+    a.setStyle("plastique");
+    a.setStyleSheet( appStyle );
+
     DI *di = new DI();
     di->getOSDCMSService()->getServiceOSDCMSPosition()->set(OSDSetPositionRequest(1.2,-32.1)); //test
 
     MainWindow w;
     w.showMaximized();
-//    QWidget *testWidget = new QWidget();
+    //    QWidget *testWidget = new QWidget();
     /*
     FrameOSDGyro *testGyo = new FrameOSDGyro(testWidget);
     testGyo->modify(
@@ -137,4 +143,25 @@ int main(int argc, char *argv[])
     //    }
 
     return a.exec();
+}
+
+QString loadStylesheetFile( const QString &path )
+{
+    /**
+     * Load application stylesheet file (.qss) from given path
+     * then return the contents to function caller
+     */
+
+    QFile styleFile( path );
+    if( styleFile.open( QFile::ReadOnly ) )
+    {
+        qDebug() << "loading stylesheet file...";
+        QString style = QLatin1String( styleFile.readAll() );
+        return style;
+    }
+    else
+    {
+        qDebug() << path << ": file not found!";
+        return "";
+    }
 }

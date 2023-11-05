@@ -108,3 +108,6 @@ FORMS += \
     src/view/panel/wap/weapon_assign/frame_weapon_assign.ui \
     src/view/shared/frame_text_input.ui \
     src/view/tda/frametda.ui
+
+RESOURCES += \
+    src/view/assets/hmi_fa_fcs.qrc

@@ -1,10 +1,11 @@
 <RCC>
     <qresource prefix="/">
-        <file>HMI_Syle.css</file>
-        <file>logofcs.png</file>
-        <file>tda_track_symbol/surface-friend.png</file>
-        <file>tda_track_symbol/surface-hostile.png</file>
-        <file>tda_track_symbol/surface-netral.png</file>
-        <file>tda_track_symbol/surface-unknown.png</file>
+        <file>images/logofcs.png</file>
+        <file>styles/HMI_Style.css</file>
+        <file>images/tda_track_symbol/surface-friend.png</file>
+        <file>images/tda_track_symbol/surface-hostile.png</file>
+        <file>images/tda_track_symbol/surface-netral.png</file>
+        <file>images/tda_track_symbol/surface-unknown.png</file>
+        <file>hmi_fa_fcs.qrc</file>
     </qresource>
 </RCC>
