@@ -65,13 +65,13 @@
   <customwidget>
    <class>FrameOSDMode</class>
    <extends>QWidget</extends>
-   <header>frame_osd_mode.h</header>
+   <header>src/view/panel/osd/frame_osd_mode.h</header>
    <container>1</container>
   </customwidget>
   <customwidget>
    <class>FrameTextInput</class>
    <extends>QWidget</extends>
-   <header>frame_text_input.h</header>
+   <header>src/view/shared/frame_text_input.h</header>
    <container>1</container>
   </customwidget>
  </customwidgets>
