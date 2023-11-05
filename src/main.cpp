@@ -71,6 +71,7 @@
 #include "src/di/di.h"
 #include "src/view/panel/osd/frame_osd_gyro.h"
 #include "src/view/panel/osd/frame_osd_position.h"
+#include "src/view/panel/osd/frameosd.h"
 //#include "test/testsuit.h"
 
 int main(int argc, char *argv[])
@@ -80,9 +81,7 @@ int main(int argc, char *argv[])
     di->getOSDCMSService()->getServiceOSDCMSPosition()->set(OSDSetPositionRequest(1.2,-32.1)); //test
 
     QWidget *testWidget = new QWidget();
-        QHBoxLayout *testLayout = new QHBoxLayout(testWidget);
-
-    /**/
+    /*
     FrameOSDGyro *testGyo = new FrameOSDGyro(testWidget);
     testGyo->modify(
                 OSDGyroProp{
@@ -97,8 +96,6 @@ int main(int argc, char *argv[])
                         "Roll:", "deg", "rollInput", "0.0"
                     },
                 });
-//    testWidget->show();
-
 
     FrameOSDPosition *testPos = new FrameOSDPosition(testWidget);
     testPos->modify(
@@ -112,8 +109,16 @@ int main(int argc, char *argv[])
                     },
                 });
 
+//        QHBoxLayout *testLayout = new QHBoxLayout(testWidget);
     testLayout->addWidget(testGyo);
     testLayout->addWidget(testPos);
+    */
+
+    FrameOSD *osd = new FrameOSD(testWidget);
+    QHBoxLayout *testLayout = new QHBoxLayout(testWidget);
+
+    testLayout->addWidget(osd);
+    testWidget->setLayout(testLayout);
     testWidget->show();
 
     //    int status = 0;
