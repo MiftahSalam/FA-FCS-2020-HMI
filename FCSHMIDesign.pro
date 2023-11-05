@@ -37,7 +37,11 @@ SOURCES += \
     src/view/panel/osd/frame_osd_mode.cpp \
     src/view/panel/osd/frame_osd_position.cpp \
     src/view/panel/osd/frameosd.cpp \
+    src/view/panel/wap/engagement_data/frame_engage_data.cpp \
     src/view/panel/wap/framewap.cpp \
+    src/view/panel/wap/gun_correction/frame_gun_correction.cpp \
+    src/view/panel/wap/track_engagement/frame_track_engage.cpp \
+    src/view/panel/wap/weapon_assign/frame_weapon_assign.cpp \
     src/view/shared/frame_text_input.cpp \
     src/view/tda/frametda.cpp \
     src/view/tda/rceventhandler.cpp \
@@ -75,7 +79,11 @@ HEADERS += \
     src/view/panel/osd/frame_osd_mode.h \
     src/view/panel/osd/frame_osd_position.h \
     src/view/panel/osd/frameosd.h \
+    src/view/panel/wap/engagement_data/frame_engage_data.h \
     src/view/panel/wap/framewap.h \
+    src/view/panel/wap/gun_correction/frame_gun_correction.h \
+    src/view/panel/wap/track_engagement/frame_track_engage.h \
+    src/view/panel/wap/weapon_assign/frame_weapon_assign.h \
     src/view/shared/frame_text_input.h \
     src/view/tda/frametda.h \
     src/view/tda/rceventhandler.h \
@@ -93,6 +101,10 @@ FORMS += \
     src/view/panel/osd/frame_osd_mode.ui \
     src/view/panel/osd/frame_osd_position.ui \
     src/view/panel/osd/frameosd.ui \
+    src/view/panel/wap/engagement_data/frame_engage_data.ui \
     src/view/panel/wap/framewap.ui \
+    src/view/panel/wap/gun_correction/frame_gun_correction.ui \
+    src/view/panel/wap/track_engagement/frame_track_engage.ui \
+    src/view/panel/wap/weapon_assign/frame_weapon_assign.ui \
     src/view/shared/frame_text_input.ui \
     src/view/tda/frametda.ui

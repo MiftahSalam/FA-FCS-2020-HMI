@@ -6,8 +6,8 @@ FrameWAP::FrameWAP(QWidget *parent) :
     ui(new Ui::FrameWAP)
 {
     ui->setupUi(this);
-    ui->tableWidgetCorrection->horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);
-    ui->tableWidgetEngData->horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);
+//    ui->tableWidgetCorrection->horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);
+//    ui->tableWidgetEngData->horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);
 }
 
 FrameWAP::~FrameWAP()
