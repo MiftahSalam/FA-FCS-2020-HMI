@@ -7,13 +7,11 @@
 #include "src/shared/config/osd_cms_config.h"
 #include "src/usecase/osd/cms/osd_cms_position_data.h"
 
-class OSDCMSPositionData;
-
 class OSDCMS : public QObject
 {
     Q_OBJECT
 public:
-    explicit OSDCMS(QObject *parent = nullptr, OSDCmsConfig *cmsConfig = nullptr);
+    OSDCMS(QObject *parent = nullptr, OSDCmsConfig *cmsConfig = nullptr);
 
     OSDCMSPositionData *getServiceOSDCMSPosition() const;
 

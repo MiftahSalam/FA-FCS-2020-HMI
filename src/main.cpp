@@ -68,22 +68,43 @@
 #include <QTest>
 
 #include "src/di/di.h"
-#include "test/testsuit.h"
+#include "src/view/panel/osd/frame_base_osd.h"
+//#include "test/testsuit.h"
 
 int main(int argc, char *argv[])
 {
     QApplication a(argc, argv);
     DI *di = new DI();
-    di->getOSDCMSService()->getServiceOSDCMSPosition()->set(OSDSetPositionRequest(1.2,-32.1));
-//    int status = 0;
-//    auto runTest = [&status, argc, argv](QObject *obj) {
-//        status |= QTest::qExec(obj, argc, argv);
-//    };
+    di->getOSDCMSService()->getServiceOSDCMSPosition()->set(OSDSetPositionRequest(1.2,-32.1)); //test
 
-//    auto &suite = TestSuit::suits();
-//    for (auto it = suite.begin(); it != suite.end(); ++it) {
-//        runTest(*it);
-//    }
+    QWidget *testWidget = new QWidget();
+    //    QGridLayout *testLayout = new QGridLayout(testWidget);
+
+    FrameBaseOSD *testOSD = new FrameBaseOSD(testWidget);
+    testOSD->modify(
+                BaseOSDProp{
+                    "Gyro",
+                    TextInputProp{
+                        "Heading:", "deg", "headingInput", "0.0"
+                    },
+                    TextInputProp{
+                        "Pitch:", "deg", "pitchInput", "0.0"
+                    },
+                    TextInputProp{
+                        "Roll:", "deg", "rollInput", "0.0"
+                    },
+                });
+    //    testLayout->addWidget(testOSD);
+    testWidget->show();
+    //    int status = 0;
+    //    auto runTest = [&status, argc, argv](QObject *obj) {
+    //        status |= QTest::qExec(obj, argc, argv);
+    //    };
+
+    //    auto &suite = TestSuit::suits();
+    //    for (auto it = suite.begin(); it != suite.end(); ++it) {
+    //        runTest(*it);
+    //    }
 
     return a.exec();
 }

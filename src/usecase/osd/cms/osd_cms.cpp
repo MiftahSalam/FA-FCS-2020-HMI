@@ -12,7 +12,7 @@ OSDCMS::OSDCMS(QObject *parent, OSDCmsConfig *cmsConfig): QObject(parent), cfgCm
         throw ErrObjectCreation();
     }
 
-    serviceOSDCMSPosition = new OSDCMSPositionData(new HttpClientWrapper(), cmsConfig);
+    serviceOSDCMSPosition = OSDCMSPositionData::getInstance(new HttpClientWrapper(), cmsConfig);
 }
 
 

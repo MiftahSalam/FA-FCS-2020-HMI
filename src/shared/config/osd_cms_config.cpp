@@ -50,6 +50,7 @@ OSDCmsConfig* OSDCmsConfig::getInstance(const QString path) {
 void OSDCmsConfig::setup(const QString path)
 {
     QSettings configFile(path,QSettings::IniFormat);
+
     manualDataUrl = configFile.value(CONFIG_OSD_CMS_MANUAL_DATA_URL, "").toString();
     modeUrl = configFile.value(CONFIG_OSD_CMS_MODE_URL, "").toString();
 }

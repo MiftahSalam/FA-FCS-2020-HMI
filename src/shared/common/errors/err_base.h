@@ -42,4 +42,10 @@ public:
     NoError();
 };
 
+class ErrUnknown: public BaseError
+{
+public:
+    ErrUnknown();
+};
+
 #endif // ERRORS_H
