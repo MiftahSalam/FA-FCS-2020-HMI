@@ -31,8 +31,9 @@ SOURCES += \
     src/usecase/osd/cms/osd_cms.cpp \
     src/usecase/osd/cms/osd_cms_position_data.cpp \
     src/usecase/osd/osd_service.cpp \
-    src/view/panel/osd/frame_base_osd.cpp \
+    src/view/panel/osd/frame_osd_gyro.cpp \
     src/view/panel/osd/frame_osd_mode.cpp \
+    src/view/panel/osd/frame_osd_position.cpp \
     src/view/panel/osd/frameosd.cpp \
     src/view/shared/frame_text_input.cpp \
     test/shared/config/test_osd_cms_config.cpp \
@@ -61,8 +62,9 @@ HEADERS += \
     src/usecase/osd/cms/osd_cms.h \
     src/usecase/osd/cms/osd_cms_position_data.h \
     src/usecase/osd/osd_service.h \
-    src/view/panel/osd/frame_base_osd.h \
+    src/view/panel/osd/frame_osd_gyro.h \
     src/view/panel/osd/frame_osd_mode.h \
+    src/view/panel/osd/frame_osd_position.h \
     src/view/panel/osd/frameosd.h \
     src/view/shared/frame_text_input.h \
     test/shared/config/test_osd_cms_config.h \
@@ -71,7 +73,8 @@ HEADERS += \
     test/usecase/osd/cms/test_usecase_osd_cms.h
 
 FORMS += \
-    src/view/panel/osd/frame_base_osd.ui \
+    src/view/panel/osd/frame_osd_gyro.ui \
     src/view/panel/osd/frame_osd_mode.ui \
+    src/view/panel/osd/frame_osd_position.ui \
     src/view/panel/osd/frameosd.ui \
     src/view/shared/frame_text_input.ui

@@ -67,8 +67,10 @@
 #include <QObject>
 #include <QTest>
 
+#include "qgridlayout.h"
 #include "src/di/di.h"
-#include "src/view/panel/osd/frame_base_osd.h"
+#include "src/view/panel/osd/frame_osd_gyro.h"
+#include "src/view/panel/osd/frame_osd_position.h"
 //#include "test/testsuit.h"
 
 int main(int argc, char *argv[])
@@ -78,11 +80,12 @@ int main(int argc, char *argv[])
     di->getOSDCMSService()->getServiceOSDCMSPosition()->set(OSDSetPositionRequest(1.2,-32.1)); //test
 
     QWidget *testWidget = new QWidget();
-    //    QGridLayout *testLayout = new QGridLayout(testWidget);
+        QHBoxLayout *testLayout = new QHBoxLayout(testWidget);
 
-    FrameBaseOSD *testOSD = new FrameBaseOSD(testWidget);
-    testOSD->modify(
-                BaseOSDProp{
+    /**/
+    FrameOSDGyro *testGyo = new FrameOSDGyro(testWidget);
+    testGyo->modify(
+                OSDGyroProp{
                     "Gyro",
                     TextInputProp{
                         "Heading:", "deg", "headingInput", "0.0"
@@ -94,8 +97,25 @@ int main(int argc, char *argv[])
                         "Roll:", "deg", "rollInput", "0.0"
                     },
                 });
-    //    testLayout->addWidget(testOSD);
+//    testWidget->show();
+
+
+    FrameOSDPosition *testPos = new FrameOSDPosition(testWidget);
+    testPos->modify(
+                OSDPositionProp{
+                    "Position",
+                    TextInputProp{
+                        "Latitude:", "deg", "latInput", "0.0"
+                    },
+                    TextInputProp{
+                        "Longitude:", "deg", "latInput", "0.0"
+                    },
+                });
+
+    testLayout->addWidget(testGyo);
+    testLayout->addWidget(testPos);
     testWidget->show();
+
     //    int status = 0;
     //    auto runTest = [&status, argc, argv](QObject *obj) {
     //        status |= QTest::qExec(obj, argc, argv);
