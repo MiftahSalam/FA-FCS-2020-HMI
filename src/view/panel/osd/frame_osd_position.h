@@ -1,8 +1,10 @@
 #ifndef FRAME_OSD_POSITION_H
 #define FRAME_OSD_POSITION_H
 
-#include "src/view/shared/frame_text_input.h"
 #include <QWidget>
+
+#include "src/di/di.h"
+#include "src/view/shared/frame_text_input.h"
 
 namespace Ui {
 class FrameOSDPosition;
@@ -23,10 +25,11 @@ public:
     explicit FrameOSDPosition(QWidget *parent = nullptr);
     ~FrameOSDPosition();
 
-    void modify(const OSDPositionProp& prop);
+    void setup(const OSDPositionProp& prop);
 
 private:
     Ui::FrameOSDPosition *ui;
+    DI* di;
 };
 
 #endif // FRAME_OSD_POSITION_H

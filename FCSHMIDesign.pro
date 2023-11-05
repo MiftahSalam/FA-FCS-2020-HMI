@@ -49,6 +49,7 @@ SOURCES += \
     src/view/tda/track/track.cpp \
     test/shared/config/test_osd_cms_config.cpp \
     test/shared/errors/test_base_error.cpp \
+    test/shared/utils/test_utils.cpp \
     test/testsuit.cpp \
     test/usecase/osd/cms/test_usecase_osd_cms.cpp
 
@@ -84,6 +85,7 @@ HEADERS += \
     src/view/panel/wap/gun_correction/frame_gun_correction.h \
     src/view/panel/wap/track_engagement/frame_track_engage.h \
     src/view/panel/wap/weapon_assign/frame_weapon_assign.h \
+    src/view/shared/constant_ui.h \
     src/view/shared/frame_text_input.h \
     src/view/tda/frametda.h \
     src/view/tda/rceventhandler.h \
@@ -91,6 +93,7 @@ HEADERS += \
     src/view/tda/track/track.h \
     test/shared/config/test_osd_cms_config.h \
     test/shared/errors/test_base_error.h \
+    test/shared/utils/test_utils.h \
     test/testsuit.h \
     test/usecase/osd/cms/test_usecase_osd_cms.h
 

@@ -6,9 +6,10 @@
 #include <QTextOption>
 #include <QRect>
 
-MainWindow::MainWindow(QWidget *parent) :
+MainWindow::MainWindow(QWidget *parent, DI* di):
     QMainWindow(parent),
-    ui(new Ui::MainWindow)
+    ui(new Ui::MainWindow),
+    _di(di)
 {
     ui->setupUi(this);
 

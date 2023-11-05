@@ -1,4 +1,5 @@
 #include "frameosd.h"
+#include "src/shared/utils/utils.h"
 #include "ui_frameosd.h"
 //#include "global.h"
 //#include "unistd.h"
@@ -16,7 +17,7 @@ FrameOSD::FrameOSD(QWidget *parent) :
 {
     ui->setupUi(this);
 
-    ui->widgetGyro->modify(OSDGyroProp{
+    ui->widgetGyro->setup(OSDGyroProp{
                                "Gyro",
                                TextInputProp{
                                    "Heading:", "deg", "headingInput", "0.0"
@@ -28,10 +29,10 @@ FrameOSD::FrameOSD(QWidget *parent) :
                                    "Roll:", "deg", "rollInput", "0.0"
                                },
                            });
-    ui->widgetPosition->modify(OSDPositionProp{
+    ui->widgetPosition->setup(OSDPositionProp{
                                    "Position",
                                    TextInputProp{
-                                       "Latitude:", "deg", "latInput", "0.0"
+                                       "Latitude:", "deg", "latInput", Utils::latDecToStringDegree(12.544)
                                    },
                                    TextInputProp{
                                        "Longitude:", "deg", "latInput", "0.0"

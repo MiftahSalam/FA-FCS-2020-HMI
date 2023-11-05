@@ -8,6 +8,16 @@ FrameOSDMode::FrameOSDMode(QWidget *parent) :
     ui->setupUi(this);
 }
 
+void FrameOSDMode::setCurrentModeIndex(int index)
+{
+    ui->comboBoxMode->setCurrentIndex(index);
+}
+
+void FrameOSDMode::setEnableCombo(bool enable)
+{
+    ui->comboBoxMode->setEnabled(enable);
+}
+
 FrameOSDMode::~FrameOSDMode()
 {
     delete ui;

@@ -8,12 +8,19 @@
 class DI
 {
 public:
-    DI();
+    DI(DI &other) = delete;
+    void operator=(const DI&) = delete;
+    static DI* getInstance();
 
     Configuration *getConfig() const;
     OSDCMS *getOSDCMSService() const;
 
+protected:
+    DI();
+
 private:
+    static DI *di;
+
     Configuration *config;
     OSDCMS *serviceOSDCMS;
 };

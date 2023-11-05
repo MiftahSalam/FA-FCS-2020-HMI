@@ -11,12 +11,12 @@ FrameOSDGyro::FrameOSDGyro(QWidget *parent) :
     ui->setupUi(this);
 }
 
-void FrameOSDGyro::modify(const OSDGyroProp &prop)
+void FrameOSDGyro::setup(const OSDGyroProp &prop)
 {
     ui->groupBox->setTitle(prop.title);
-    ui->inputPitch->modify(prop.pitch);
-    ui->inputRoll->modify(prop.roll);
-    ui->inputHeading->modify(prop.heading);
+    ui->inputPitch->setup(prop.pitch);
+    ui->inputRoll->setup(prop.roll);
+    ui->inputHeading->setup(prop.heading);
 
 }
 

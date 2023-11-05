@@ -3,9 +3,14 @@
 
 FrameOSDPosition::FrameOSDPosition(QWidget *parent) :
     QWidget(parent),
-    ui(new Ui::FrameOSDPosition)
+    ui(new Ui::FrameOSDPosition),
+    di(DI::getInstance())
 {
     ui->setupUi(this);
+
+    //init combobox mode (should be auto by default. make sure to sync with osd server)
+    ui->mode->setCurrentModeIndex(0);
+    ui->mode->setEnableCombo(false);
 }
 
 FrameOSDPosition::~FrameOSDPosition()
@@ -13,10 +18,10 @@ FrameOSDPosition::~FrameOSDPosition()
     delete ui;
 }
 
-void FrameOSDPosition::modify(const OSDPositionProp &prop)
+void FrameOSDPosition::setup(const OSDPositionProp &prop)
 {
     ui->groupBox->setTitle(prop.title);
-    ui->inputLatitude->modify(prop.lat);
-    ui->inputLongitude->modify(prop.lon);
+    ui->inputLatitude->setup(prop.lat);
+    ui->inputLongitude->setup(prop.lon);
 
 }

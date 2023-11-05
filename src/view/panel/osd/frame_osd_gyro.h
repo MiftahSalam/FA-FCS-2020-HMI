@@ -24,7 +24,7 @@ public:
     explicit FrameOSDGyro(QWidget *parent = nullptr);
     ~FrameOSDGyro();
 
-    void modify(const OSDGyroProp& prop);
+    void setup(const OSDGyroProp& prop);
 
 private:
     Ui::FrameOSDGyro *ui;

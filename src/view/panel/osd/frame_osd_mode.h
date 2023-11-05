@@ -13,6 +13,10 @@ class FrameOSDMode : public QWidget
 
 public:
     explicit FrameOSDMode(QWidget *parent = nullptr);
+
+    void setCurrentModeIndex(int index);
+    void setEnableCombo(bool enable);
+
     ~FrameOSDMode();
 
 private:

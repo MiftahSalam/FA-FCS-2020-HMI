@@ -6,17 +6,12 @@
 //#include <QDebug>
 //#include <QSettings>
 
-//QString loadStylesheetFile( const QString &path );
 //QSplashScreen *splash;
 //bool verbose;
 
 //int main(int argc, char *argv[])
 //{
 //    QApplication a(argc, argv);
-
-//    QString appStyle = loadStylesheetFile( ":/HMI_Syle.css" );
-//    a.setStyle("plastique");
-//    a.setStyleSheet( appStyle );
 
 //    QSettings config(QSettings::IniFormat,QSettings::UserScope,"hmi_config");
 //    QFile file(config.fileName());
@@ -36,32 +31,9 @@
 //    splash = new QSplashScreen(pixmap);
 //    splash->setStyleSheet("font-size: 20px;");
 
-//    w.setConfig(config);
 ////    w.showFullScreen();
 //    w.show();
 
-//    return a.exec();
-//}
-
-//QString loadStylesheetFile( const QString &path )
-//{
-//    /**
-//     * Load application stylesheet file (.qss) from given path
-//     * then return the contents to function caller
-//     */
-
-//    QFile styleFile( path );
-//    if( styleFile.open( QFile::ReadOnly ) )
-//    {
-//        qDebug() << "loading stylesheet file...";
-//        QString style = QLatin1String( styleFile.readAll() );
-//        return style;
-//    }
-//    else
-//    {
-//        qDebug() << path << ": file not found!";
-//        return "";
-//    }
 //}
 
 #include <QObject>
@@ -84,11 +56,13 @@ int main(int argc, char *argv[])
     a.setStyle("plastique");
     a.setStyleSheet( appStyle );
 
-    DI *di = new DI();
-    di->getOSDCMSService()->getServiceOSDCMSPosition()->set(OSDSetPositionRequest(1.2,-32.1)); //test
+    DI *di = DI::getInstance();
 
-    MainWindow w;
+    MainWindow w(nullptr, di);
     w.showMaximized();
+    ////    w.showFullScreen();
+    //    w.show();
+
     //    QWidget *testWidget = new QWidget();
     /*
     FrameOSDGyro *testGyo = new FrameOSDGyro(testWidget);

@@ -23,7 +23,10 @@ public:
     explicit FrameTextInput(QWidget *parent = nullptr);
     ~FrameTextInput();
 
-    void modify(const TextInputProp& prop);
+    void setup(const TextInputProp& prop);
+    void setStatusOk();
+    void setStatusFailed();
+    void setModeManual();
 
 private:
     Ui::FrameTextInput *ui;
