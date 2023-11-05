@@ -1,6 +1,5 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
-#include "global.h"
 
 #include <QMessageBox>
 #include <QDateTime>
@@ -12,13 +11,6 @@ MainWindow::MainWindow(QWidget *parent) :
     ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
-
-    connect(&mastertimer, SIGNAL(timeout()), ui->frameBottomOSD, SLOT(on_osdTimerTimeOut()));
-    connect(&mastertimer, SIGNAL(timeout()), this, SLOT(on_timeout()));
-    connect(&mastertimer, SIGNAL(timeout()), ui->frameBottomGun, SLOT(on_gunTimerTimeOut()));
-//    connect(&mastertimer, SIGNAL(timeout()), ui->frameBottomWAP, SLOT(on_gunTimerTimeOut()));
-
-    mastertimer.start(1000);
 
     ui->gridLayout->removeWidget(ui->frameTDA);
     ui->gridLayout->removeWidget(ui->frameBottomGun);
@@ -45,14 +37,6 @@ MainWindow::MainWindow(QWidget *parent) :
 
 }
 
-void MainWindow::on_timeout()
-{
-    ui->frameTDA->setHeading(ui->frameBottomOSD->getHeading());
-    ui->frameTDA->setGundata(ui->frameBottomGun->getGundata());
-    ui->frameTDA->setAccessStatus(ui->frameBottomGun->getAccessStatus());
-    ui->frameBottomWAP->setAccessStatus(ui->frameBottomGun->getReadyStatus());
-}
-
 MainWindow::~MainWindow()
 {
     delete ui;
@@ -69,27 +53,3 @@ void MainWindow::on_pushButtonExit_clicked()
 
     close();
 }
-
-void MainWindow::setConfig(QSettings &Config)
-{
-    splash->show();
-
-    QString osd = Config.value("Redis/osd", "192.168.1.240").toString();
-    QString track = Config.value("Redis/track", "192.168.1.240").toString();
-    QString gun = Config.value("Redis/gun", "192.168.1.240").toString();
-
-    verbose = Config.value("Apps/verbose", false).toBool();
-    qDebug()<<Q_FUNC_INFO<<"verbose"<<verbose;
-
-    splash->showMessage("Setting up osd database connection...",Qt::AlignCenter);
-    ui->frameBottomOSD->setConfig(osd);
-    splash->showMessage("Setting up track database connection...",Qt::AlignCenter);
-    ui->frameTDA->setConfig(track);
-    splash->showMessage("Setting up gun database connection...",Qt::AlignCenter);
-    ui->frameBottomGun->setConfig(gun);
-    splash->showMessage("Setting up wap database connection...",Qt::AlignCenter);
-    ui->frameBottomWAP->setConfig(track, gun);
-
-    splash->finish(this);
-}
-

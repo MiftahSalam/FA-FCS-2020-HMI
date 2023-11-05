@@ -6,8 +6,8 @@
 #include <QAction>
 #include <QMenu>
 
-#include "rceventhandler.h"
-#include "tda_global.h"
+#include "src/view/tda/rceventhandler.h"
+#include "src/view/tda/tda_global.h"
 
 
 class track : public QWidget

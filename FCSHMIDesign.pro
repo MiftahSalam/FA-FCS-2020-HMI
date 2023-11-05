@@ -32,11 +32,17 @@ SOURCES += \
     src/usecase/osd/cms/osd_cms_position_data.cpp \
     src/usecase/osd/osd_service.cpp \
     src/view/mainwindow.cpp \
+    src/view/panel/gun/framegun.cpp \
     src/view/panel/osd/frame_osd_gyro.cpp \
     src/view/panel/osd/frame_osd_mode.cpp \
     src/view/panel/osd/frame_osd_position.cpp \
     src/view/panel/osd/frameosd.cpp \
+    src/view/panel/wap/framewap.cpp \
     src/view/shared/frame_text_input.cpp \
+    src/view/tda/frametda.cpp \
+    src/view/tda/rceventhandler.cpp \
+    src/view/tda/tda_global.cpp \
+    src/view/tda/track/track.cpp \
     test/shared/config/test_osd_cms_config.cpp \
     test/shared/errors/test_base_error.cpp \
     test/testsuit.cpp \
@@ -64,11 +70,17 @@ HEADERS += \
     src/usecase/osd/cms/osd_cms_position_data.h \
     src/usecase/osd/osd_service.h \
     src/view/mainwindow.h \
+    src/view/panel/gun/framegun.h \
     src/view/panel/osd/frame_osd_gyro.h \
     src/view/panel/osd/frame_osd_mode.h \
     src/view/panel/osd/frame_osd_position.h \
     src/view/panel/osd/frameosd.h \
+    src/view/panel/wap/framewap.h \
     src/view/shared/frame_text_input.h \
+    src/view/tda/frametda.h \
+    src/view/tda/rceventhandler.h \
+    src/view/tda/tda_global.h \
+    src/view/tda/track/track.h \
     test/shared/config/test_osd_cms_config.h \
     test/shared/errors/test_base_error.h \
     test/testsuit.h \
@@ -76,8 +88,11 @@ HEADERS += \
 
 FORMS += \
     src/view/mainwindow.ui \
+    src/view/panel/gun/framegun.ui \
     src/view/panel/osd/frame_osd_gyro.ui \
     src/view/panel/osd/frame_osd_mode.ui \
     src/view/panel/osd/frame_osd_position.ui \
     src/view/panel/osd/frameosd.ui \
-    src/view/shared/frame_text_input.ui
+    src/view/panel/wap/framewap.ui \
+    src/view/shared/frame_text_input.ui \
+    src/view/tda/frametda.ui

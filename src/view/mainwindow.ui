@@ -114,25 +114,25 @@
   <customwidget>
    <class>FrameGun</class>
    <extends>QFrame</extends>
-   <header>framegun.h</header>
+   <header>src/view/panel/gun/framegun.h</header>
    <container>1</container>
   </customwidget>
   <customwidget>
    <class>FrameOSD</class>
    <extends>QFrame</extends>
-   <header>frameosd.h</header>
+   <header>src/view/panel/osd/frameosd.h</header>
    <container>1</container>
   </customwidget>
   <customwidget>
    <class>FrameWAP</class>
    <extends>QFrame</extends>
-   <header>framewap.h</header>
+   <header>src/view/panel/wap/framewap.h</header>
    <container>1</container>
   </customwidget>
   <customwidget>
    <class>FrameTDA</class>
    <extends>QFrame</extends>
-   <header>frametda.h</header>
+   <header>src/view/tda/frametda.h</header>
    <container>1</container>
   </customwidget>
  </customwidgets>

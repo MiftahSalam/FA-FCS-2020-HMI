@@ -67,11 +67,12 @@
 #include <QObject>
 #include <QTest>
 
-#include "qgridlayout.h"
+//#include "qgridlayout.h"
 #include "src/di/di.h"
-#include "src/view/panel/osd/frame_osd_gyro.h"
-#include "src/view/panel/osd/frame_osd_position.h"
-#include "src/view/panel/osd/frameosd.h"
+#include "src/view/mainwindow.h"
+//#include "src/view/panel/osd/frame_osd_gyro.h"
+//#include "src/view/panel/osd/frame_osd_position.h"
+//#include "src/view/panel/osd/frameosd.h"
 //#include "test/testsuit.h"
 
 int main(int argc, char *argv[])
@@ -80,7 +81,9 @@ int main(int argc, char *argv[])
     DI *di = new DI();
     di->getOSDCMSService()->getServiceOSDCMSPosition()->set(OSDSetPositionRequest(1.2,-32.1)); //test
 
-    QWidget *testWidget = new QWidget();
+    MainWindow w;
+    w.showMaximized();
+//    QWidget *testWidget = new QWidget();
     /*
     FrameOSDGyro *testGyo = new FrameOSDGyro(testWidget);
     testGyo->modify(
@@ -114,12 +117,14 @@ int main(int argc, char *argv[])
     testLayout->addWidget(testPos);
     */
 
+    /*
     FrameOSD *osd = new FrameOSD(testWidget);
     QHBoxLayout *testLayout = new QHBoxLayout(testWidget);
 
     testLayout->addWidget(osd);
     testWidget->setLayout(testLayout);
     testWidget->show();
+    */
 
     //    int status = 0;
     //    auto runTest = [&status, argc, argv](QObject *obj) {
