@@ -27,13 +27,24 @@ void AmqpConsumerWrapper::Start(QString topic)
 
 void AmqpConsumerWrapper::onConnected()
 {
-    QAmqpExchange *exchange = client->createExchange("fa-fcs-hmi:"+config->getExchange());
+    qDebug()<<Q_FUNC_INFO;
+
+    QAmqpExchange *exchange = client->createExchange(config->getExchange());
     connect(exchange, &QAmqpExchange::declared, this, &AmqpConsumerWrapper::onExchangeDeclared);
     exchange->declare(stringToExchangeType(config->getExchangeType()));
+
+    QAmqpQueue *queue = client->createQueue();
+    connect(queue, &QAmqpQueue::declared, this, &AmqpConsumerWrapper::onQueueDeclared);
+    connect(queue, &QAmqpQueue::bound, this, &AmqpConsumerWrapper::onQueueBounded);
+    connect(queue, &QAmqpQueue::messageReceived, this, &AmqpConsumerWrapper::onMessageReceived);
+    queue->declare();
+
 }
 
 void AmqpConsumerWrapper::onExchangeDeclared()
 {
+    qDebug()<<Q_FUNC_INFO;
+
     QAmqpQueue *queue = client->createQueue();
     connect(queue, &QAmqpQueue::declared, this, &AmqpConsumerWrapper::onQueueDeclared);
     connect(queue, &QAmqpQueue::bound, this, &AmqpConsumerWrapper::onQueueBounded);
@@ -43,15 +54,19 @@ void AmqpConsumerWrapper::onExchangeDeclared()
 
 void AmqpConsumerWrapper::onQueueDeclared()
 {
+    qDebug()<<Q_FUNC_INFO;
+
     QAmqpQueue *queue = qobject_cast<QAmqpQueue*>(sender());
     if (!queue) return;
 
-    queue->bind("fa-fcs-hmi:"+config->getExchange(), config->getRoutingKey());
+    queue->bind(config->getExchange(), config->getRoutingKey());
 
 }
 
 void AmqpConsumerWrapper::onQueueBounded()
 {
+    qDebug()<<Q_FUNC_INFO;
+
     QAmqpQueue *queue = qobject_cast<QAmqpQueue*>(sender());
     if (!queue) return;
 
