@@ -32,17 +32,25 @@ FrameOSD::~FrameOSD()
 
 void FrameOSD::onChangePositionMode(bool manual_mode)
 {
-    OSDInputModeRequest mode(
+    InputModeModel mode(
                 manual_mode,
                 currentMode.getSpeed(),
                 currentMode.getInersia()
                 );
-    _cmsMode->set(mode);
+    currentMode = mode;
+    lastUpdateMode = "position";
+
+    _cmsMode->set(OSDInputModeRequest(
+                      currentMode.getPosition(),
+                      currentMode.getSpeed(),
+                      currentMode.getInersia()
+                      ));
 }
 
 void FrameOSD::onChangeInputModeResponse(BaseResponse<InputModeModel> resp)
 {
     if (resp.getHttpCode() != 0) {
+        resetToPrevMode();
         QMessageBox::warning(this, "Request Error", QString("Failed to input mode with error: %1").arg(resp.getMessage()));
         return;
     }
@@ -84,4 +92,25 @@ void FrameOSD::setup()
     connect(ui->widgetPosition, &FrameOSDPosition::signalChangePositionMode, this, &FrameOSD::onChangePositionMode);
     connect(_cmsMode, &OSDCMSInputMode::signal_setModeResponse, this, &FrameOSD::onChangeInputModeResponse);
     connect(this, &FrameOSD::signalOnResponse, ui->widgetPosition, &FrameOSDPosition::onModeChangeResponse);
+}
+
+void FrameOSD::resetToPrevMode()
+{
+    if (lastUpdateMode == "position") {
+        InputModeModel mode(
+                    !currentMode.getPosition(),
+                    currentMode.getSpeed(),
+                    currentMode.getInersia()
+                    );
+        currentMode = mode;
+        ui->widgetPosition->resetModeIndex();
+    } else if (lastUpdateMode == "speed") {
+        InputModeModel mode(
+                    currentMode.getPosition(),
+                    !currentMode.getSpeed(),
+                    currentMode.getInersia()
+                    );
+        currentMode = mode;
+//        ui->widgetGyro->resetModeIndex();
+    }
 }

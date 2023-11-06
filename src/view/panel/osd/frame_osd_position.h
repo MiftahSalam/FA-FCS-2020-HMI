@@ -27,6 +27,7 @@ public:
     ~FrameOSDPosition();
 
     void setup(const OSDPositionProp& prop);
+    void resetModeIndex();
 
 public slots:
     void onModeChangeResponse(InputModeModel mode);
@@ -36,12 +37,15 @@ signals:
 
 private slots:
     void onModeChange(int index);
+    void onAfterModeReset();
 
 private:
     Ui::FrameOSDPosition *ui;
     OSDCMSPositionData* _cmsPos;
 
     OSD_MODE currentMode;
+    int currentModeIndx;
+    bool afterResetModeIndx;
 
     void manualUiSetup();
     void autoUiSetup();

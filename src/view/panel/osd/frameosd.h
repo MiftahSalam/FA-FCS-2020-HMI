@@ -30,8 +30,10 @@ private:
     Ui::FrameOSD *ui;
     OSDCMSInputMode* _cmsMode;
     InputModeModel currentMode;
+    QString lastUpdateMode;
 
     void setup();
+    void resetToPrevMode();
 };
 
 #endif // FRAMEOSD_H

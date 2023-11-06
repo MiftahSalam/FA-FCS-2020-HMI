@@ -1,4 +1,5 @@
 #include "frame_osd_position.h"
+#include "qtimer.h"
 #include "ui_frame_osd_position.h"
 #include "src/di/di.h"
 
@@ -11,7 +12,9 @@ FrameOSDPosition::FrameOSDPosition(QWidget *parent) :
 
     //init combobox mode (should be auto by default. make sure to sync with osd server)
     currentMode = OSD_MODE::AUTO;
-    ui->mode->setCurrentModeIndex(0);
+    currentModeIndx = 0;
+    afterResetModeIndx = false;
+    ui->mode->setCurrentModeIndex(currentModeIndx);
     autoUiSetup();
     connect(ui->mode, &FrameOSDMode::signal_currentModeChange, this, &FrameOSDPosition::onModeChange);
 }
@@ -29,6 +32,12 @@ void FrameOSDPosition::setup(const OSDPositionProp &prop)
 
 }
 
+void FrameOSDPosition::resetModeIndex()
+{
+    afterResetModeIndx = true;
+    ui->mode->setCurrentModeIndex(currentModeIndx);
+}
+
 void FrameOSDPosition::onModeChangeResponse(InputModeModel mode)
 {
     Q_UNUSED(mode); //temporary
@@ -36,14 +45,21 @@ void FrameOSDPosition::onModeChangeResponse(InputModeModel mode)
     qDebug()<<Q_FUNC_INFO;
 
     if (mode.getPosition()) {
+        currentModeIndx = int(OSD_MODE::MANUAL);
         manualUiSetup();
     } else {
+        currentModeIndx = int(OSD_MODE::AUTO);
         autoUiSetup();
     }
 }
 
 void FrameOSDPosition::onModeChange(int index)
 {
+    if (afterResetModeIndx) {
+        QTimer::singleShot(10, this, &FrameOSDPosition::onAfterModeReset);
+        return;
+    }
+
     currentMode = (OSD_MODE)index;
     switch (currentMode) {
     case OSD_MODE::AUTO:
@@ -55,6 +71,11 @@ void FrameOSDPosition::onModeChange(int index)
     default:
         break;
     }
+}
+
+void FrameOSDPosition::onAfterModeReset()
+{
+    afterResetModeIndx = false;
 }
 
 void FrameOSDPosition::autoUiSetup()
