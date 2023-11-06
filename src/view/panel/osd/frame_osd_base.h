@@ -4,7 +4,7 @@
 #include "qtimer.h"
 #include "src/model/osd/input_mode_model.h"
 
-class FrameOSDBase
+template <typename Model> class FrameOSDBase
 {
 public:
     virtual void setup() = 0;
@@ -12,6 +12,7 @@ public:
 
 public slots:
     virtual void onModeChangeResponse(InputModeModel mode) = 0;
+    virtual void onStreamReceive(Model model) = 0;
 
 protected:
     QTimer *timer;

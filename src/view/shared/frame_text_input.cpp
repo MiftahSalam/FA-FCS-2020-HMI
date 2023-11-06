@@ -39,6 +39,12 @@ void FrameTextInput::setModeManual()
     ui->textInput->setStyleSheet(COLOR_MANUAL_STYLESHEET);
 }
 
+void FrameTextInput::setValue(QString val)
+{
+    setStatusOk();
+    ui->textInput->setText(val);
+}
+
 FrameTextInput::~FrameTextInput()
 {
     delete ui;

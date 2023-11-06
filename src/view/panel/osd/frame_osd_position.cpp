@@ -29,8 +29,9 @@ FrameOSDPosition::FrameOSDPosition(QWidget *parent) :
 
     timer = new QTimer(this);
     connect(timer, &QTimer::timeout, this, &FrameOSDPosition::onTimeout);
-    timer->setInterval(1000);
+    timer->start(1000);
 
+    connect(_streamPos, &OSDStreamPosition::signalDataProcessed, this, &FrameOSDPosition::onStreamReceive);
 }
 
 FrameOSDPosition::~FrameOSDPosition()
@@ -129,4 +130,15 @@ void FrameOSDPosition::onTimeout()
     //update ui
     qDebug()<<Q_FUNC_INFO;
 
+}
+
+
+void FrameOSDPosition::onStreamReceive(PositionModel model)
+{
+    qDebug()<<Q_FUNC_INFO<<"position: lat ->"<<model.getLatitude()<<", lon ->"<<model.getLongitude();
+    if (currentMode == OSD_MODE::MANUAL) {
+        return;
+    }
+
+    ui->inputLatitude->setValue(Utils::latDecToStringDegree(model.getLatitude()));
 }

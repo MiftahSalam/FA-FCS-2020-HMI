@@ -19,7 +19,7 @@ struct OSDPositionProp
     TextInputProp lon;
 };
 
-class FrameOSDPosition : public QWidget, public FrameOSDBase
+class FrameOSDPosition : public QWidget, public FrameOSDBase<PositionModel>
 {
     Q_OBJECT
 
@@ -32,6 +32,7 @@ public:
 
 public slots:
     void onModeChangeResponse(InputModeModel mode) override;
+    void onStreamReceive(PositionModel model) override;
 
 signals:
     void signalChangePositionMode(bool manual_mode);

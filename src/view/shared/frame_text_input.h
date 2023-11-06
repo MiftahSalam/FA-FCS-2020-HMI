@@ -29,6 +29,7 @@ public:
     void setStatusOk();
     void setStatusFailed();
     void setModeManual();
+    void setValue(QString val);
 
 private:
     Ui::FrameTextInput *ui;
