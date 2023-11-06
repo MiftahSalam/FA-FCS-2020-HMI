@@ -3,7 +3,7 @@
 
 #include <QWidget>
 
-#include "src/usecase/osd/cms/osd_cms_input_mode.h"
+#include "src/view/panel/osd/frame_osd_base.h"
 #include "src/view/shared/constant_ui.h"
 #include "src/view/shared/frame_text_input.h"
 
@@ -18,7 +18,7 @@ struct OSDPositionProp
     TextInputProp lon;
 };
 
-class FrameOSDPosition : public QWidget
+class FrameOSDPosition : public QWidget, public FrameOSDBase
 {
     Q_OBJECT
 
@@ -26,18 +26,18 @@ public:
     explicit FrameOSDPosition(QWidget *parent = nullptr);
     ~FrameOSDPosition();
 
-    void setup(const OSDPositionProp& prop);
-    void resetModeIndex();
+    void setup() override;
+    void resetModeIndex() override;
 
 public slots:
-    void onModeChangeResponse(InputModeModel mode);
+    void onModeChangeResponse(InputModeModel mode) override;
 
 signals:
     void signalChangePositionMode(bool manual_mode);
 
 private slots:
-    void onModeChange(int index);
-    void onAfterModeReset();
+    void onModeChange(int index) override;
+    void onAfterModeReset() override;
 
 private:
     Ui::FrameOSDPosition *ui;
@@ -47,8 +47,8 @@ private:
     int currentModeIndx;
     bool afterResetModeIndx;
 
-    void manualUiSetup();
-    void autoUiSetup();
+    void manualUiSetup() override;
+    void autoUiSetup() override;
 };
 
 #endif // FRAME_OSD_POSITION_H

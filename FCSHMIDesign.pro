@@ -82,6 +82,7 @@ HEADERS += \
     src/usecase/osd/osd_service.h \
     src/view/mainwindow.h \
     src/view/panel/gun/framegun.h \
+    src/view/panel/osd/frame_osd_base.h \
     src/view/panel/osd/frame_osd_gyro.h \
     src/view/panel/osd/frame_osd_mode.h \
     src/view/panel/osd/frame_osd_position.h \

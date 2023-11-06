@@ -79,15 +79,7 @@ void FrameOSD::setup()
                                    "Roll:", "deg", "rollInput", "0.0"
                                },
                            });
-    ui->widgetPosition->setup(OSDPositionProp{
-                                   "Position",
-                                   TextInputProp{
-                                       "Latitude:", "deg", "latInput", Utils::latDecToStringDegree(12.544)
-                                   },
-                                   TextInputProp{
-                                       "Longitude:", "deg", "latInput", "0.0"
-                                   },
-                               });
+    ui->widgetPosition->setup();
 
     connect(ui->widgetPosition, &FrameOSDPosition::signalChangePositionMode, this, &FrameOSD::onChangePositionMode);
     connect(_cmsMode, &OSDCMSInputMode::signal_setModeResponse, this, &FrameOSD::onChangeInputModeResponse);

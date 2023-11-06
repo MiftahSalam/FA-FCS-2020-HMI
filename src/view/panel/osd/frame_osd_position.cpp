@@ -1,7 +1,9 @@
 #include "frame_osd_position.h"
 #include "qtimer.h"
+
 #include "ui_frame_osd_position.h"
 #include "src/di/di.h"
+#include "src/shared/utils/utils.h"
 
 FrameOSDPosition::FrameOSDPosition(QWidget *parent) :
     QWidget(parent),
@@ -15,7 +17,13 @@ FrameOSDPosition::FrameOSDPosition(QWidget *parent) :
     currentModeIndx = 0;
     afterResetModeIndx = false;
     ui->mode->setCurrentModeIndex(currentModeIndx);
-    autoUiSetup();
+    ui->pushButton->setEnabled(false);
+
+    ui->inputLatitude->setInputEnable(false);
+    ui->inputLatitude->setStatusFailed();
+
+    ui->inputLongitude->setInputEnable(false);
+    ui->inputLongitude->setStatusFailed();
     connect(ui->mode, &FrameOSDMode::signal_currentModeChange, this, &FrameOSDPosition::onModeChange);
 }
 
@@ -24,8 +32,17 @@ FrameOSDPosition::~FrameOSDPosition()
     delete ui;
 }
 
-void FrameOSDPosition::setup(const OSDPositionProp &prop)
+void FrameOSDPosition::setup()
 {
+    OSDPositionProp prop{
+        "Position",
+        TextInputProp{
+            "Latitude:", "deg", "latInput", Utils::latDecToStringDegree(12.544)
+        },
+        TextInputProp{
+            "Longitude:", "deg", "latInput", "0.0"
+        },
+    };
     ui->groupBox->setTitle(prop.title);
     ui->inputLatitude->setup(prop.lat);
     ui->inputLongitude->setup(prop.lon);
