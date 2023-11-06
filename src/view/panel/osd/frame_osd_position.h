@@ -3,6 +3,7 @@
 
 #include <QWidget>
 
+#include "src/usecase/osd/cms/osd_cms_input_mode.h"
 #include "src/view/shared/constant_ui.h"
 #include "src/view/shared/frame_text_input.h"
 
@@ -26,6 +27,12 @@ public:
     ~FrameOSDPosition();
 
     void setup(const OSDPositionProp& prop);
+
+public slots:
+    void onModeChangeResponse(InputModeModel mode);
+
+signals:
+    void signalChangePositionMode(bool manual_mode);
 
 private slots:
     void onModeChange(int index);

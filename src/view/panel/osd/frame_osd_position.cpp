@@ -29,15 +29,28 @@ void FrameOSDPosition::setup(const OSDPositionProp &prop)
 
 }
 
+void FrameOSDPosition::onModeChangeResponse(InputModeModel mode)
+{
+    Q_UNUSED(mode); //temporary
+    //handle response
+    qDebug()<<Q_FUNC_INFO;
+
+    if (mode.getPosition()) {
+        manualUiSetup();
+    } else {
+        autoUiSetup();
+    }
+}
+
 void FrameOSDPosition::onModeChange(int index)
 {
     currentMode = (OSD_MODE)index;
     switch (currentMode) {
     case OSD_MODE::AUTO:
-        autoUiSetup();
+        emit signalChangePositionMode(false);
         break;
     case OSD_MODE::MANUAL:
-        manualUiSetup();
+        emit signalChangePositionMode(true);
         break;
     default:
         break;

@@ -1,4 +1,5 @@
 #include "frameosd.h"
+#include "src/di/di.h"
 #include "src/shared/utils/utils.h"
 #include "ui_frameosd.h"
 //#include "global.h"
@@ -13,8 +14,12 @@
 
 FrameOSD::FrameOSD(QWidget *parent) :
     QFrame(parent),
-    ui(new Ui::FrameOSD)
+    ui(new Ui::FrameOSD),
+    _cmsMode(DI::getInstance()->getOSDCMSService()->getServiceOSDCMSMode()),
+    currentMode(InputModeModel(false, false, false))
 {
+    ;
+
     ui->setupUi(this);
 
     setup();
@@ -23,6 +28,33 @@ FrameOSD::FrameOSD(QWidget *parent) :
 FrameOSD::~FrameOSD()
 {
     delete ui;
+}
+
+void FrameOSD::onChangePositionMode(bool manual_mode)
+{
+    OSDInputModeRequest mode(
+                manual_mode,
+                currentMode.getSpeed(),
+                currentMode.getInersia()
+                );
+    _cmsMode->set(mode);
+}
+
+void FrameOSD::onChangeInputModeResponse(BaseResponse<InputModeModel> resp)
+{
+    if (resp.getHttpCode() != 0) {
+        QMessageBox::warning(this, "Request Error", QString("Failed to input mode with error: %1").arg(resp.getMessage()));
+        return;
+    }
+
+    qDebug()<<Q_FUNC_INFO<<"resp code:"<<resp.getHttpCode()
+           <<"resp msg:"<<resp.getMessage()
+          <<"resp data inersiamode: "<<resp.getData()->getInersia()
+         <<"resp data position mode: "<<resp.getData()->getPosition()
+        <<"resp data speed mode: "<<resp.getData()->getSpeed()
+           ;
+
+    emit signalOnResponse(*resp.getData());
 }
 
 void FrameOSD::setup()
@@ -49,4 +81,7 @@ void FrameOSD::setup()
                                    },
                                });
 
+    connect(ui->widgetPosition, &FrameOSDPosition::signalChangePositionMode, this, &FrameOSD::onChangePositionMode);
+    connect(_cmsMode, &OSDCMSInputMode::signal_setModeResponse, this, &FrameOSD::onChangeInputModeResponse);
+    connect(this, &FrameOSD::signalOnResponse, ui->widgetPosition, &FrameOSDPosition::onModeChangeResponse);
 }
