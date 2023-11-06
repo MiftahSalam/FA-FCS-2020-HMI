@@ -7,9 +7,15 @@ const QString COMMON_CONFIG_PATH = QDir::homePath()+QDir::separator()+".fa-hmi.c
 Configuration::Configuration()
 {
     osdCmsConfig = OSDCmsConfig::getInstance(COMMON_CONFIG_PATH);
+    amqpConfig = AMQPConfig::getInstance(COMMON_CONFIG_PATH);
 }
 
 OSDCmsConfig *Configuration::getOsdCmsConfig() const
 {
     return osdCmsConfig;
+}
+
+AMQPConfig *Configuration::getAmqpConfig() const
+{
+    return amqpConfig;
 }

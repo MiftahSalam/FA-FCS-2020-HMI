@@ -4,6 +4,7 @@
 
 #include "src/shared/config/configuration.h"
 #include "src/usecase/osd/cms/osd_cms.h"
+#include "src/usecase/osd/stream/osd_stream.h"
 
 class DI
 {
@@ -15,6 +16,8 @@ public:
     Configuration *getConfig() const;
     OSDCMS *getOSDCMSService() const;
 
+    OSDStream *getServiceOSDStream() const;
+
 protected:
     DI();
 
@@ -23,6 +26,7 @@ private:
 
     Configuration *config;
     OSDCMS *serviceOSDCMS;
+    OSDStream *serviceOSDStream;
 };
 
 #endif // DI_H

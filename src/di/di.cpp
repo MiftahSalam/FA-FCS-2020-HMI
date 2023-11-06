@@ -6,6 +6,12 @@ DI::DI()
 {
     config = new Configuration();
     serviceOSDCMS = new OSDCMS(nullptr, config->getOsdCmsConfig());
+    serviceOSDStream = new OSDStream(nullptr, config->getAmqpConfig());
+}
+
+OSDStream *DI::getServiceOSDStream() const
+{
+    return serviceOSDStream;
 }
 
 DI *DI::getInstance()

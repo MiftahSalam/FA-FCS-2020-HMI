@@ -3,6 +3,7 @@
 
 #include <QWidget>
 
+#include "src/usecase/osd/stream/osd_stream_position.h"
 #include "src/view/panel/osd/frame_osd_base.h"
 #include "src/view/shared/constant_ui.h"
 #include "src/view/shared/frame_text_input.h"
@@ -38,10 +39,12 @@ signals:
 private slots:
     void onModeChange(int index) override;
     void onAfterModeReset() override;
+    void onTimeout() override;
 
 private:
     Ui::FrameOSDPosition *ui;
-    OSDCMSPositionData* _cmsPos;
+    OSDCMSPositionData *_cmsPos;
+    OSDStreamPosition* _streamPos;
 
     OSD_MODE currentMode;
     int currentModeIndx;

@@ -1,0 +1,55 @@
+#include "osd_stream_position.h"
+#include "src/shared/common/errors/err_json_parse.h"
+#include "src/shared/common/errors/err_object_creation.h"
+#include "src/shared/utils/utils.h"
+
+OSDStreamPosition* OSDStreamPosition::positionStream = nullptr;
+
+OSDStreamPosition::OSDStreamPosition(AMQPConfig *config)
+    : cfg(config)
+{
+    if(config == nullptr) {
+        throw ErrObjectCreation();
+    }
+
+    AMQPOptions *opt = new AMQPOptions(
+                config->getInstance("")->getServerAddress(),
+                "fa-fcs-hmi:position",
+                "position",
+                "topic",
+                "*.position",
+                QStringList()
+                );
+    consumer = new AmqpConsumerWrapper(this, opt);
+    connect(consumer, &AmqpConsumerWrapper::signalForwardMessage, this, &OSDStreamPosition::onDataReceived);
+    consumer->Connect();
+}
+
+OSDStreamPosition *OSDStreamPosition::getInstance(AMQPConfig *config = nullptr)
+{
+    if (positionStream == nullptr) {
+        if(config == nullptr) {
+            throw ErrObjectCreation();
+        }
+
+        positionStream = new OSDStreamPosition(config);
+    }
+
+    return positionStream;
+}
+
+void OSDStreamPosition::onDataReceived(QByteArray data)
+{
+    try {
+        QJsonObject respObj = Utils::byteArrayToJsonObject(data);
+        PositionModel model(respObj["latitude"].toDouble(-91),respObj["longitude"].toDouble(-181));
+
+        qDebug()<<Q_FUNC_INFO<<"data position: lat ->"<<model.getLatitude()<<"lon ->"<<model.getLongitude();
+
+        emit signalDataProcessed(model);
+    } catch (ErrJsonParse &e) {
+        qDebug()<<Q_FUNC_INFO<<"caught error: "<<e.getMessage();
+    }  catch (...) {
+        qDebug()<<Q_FUNC_INFO<<"caught unkbnown error";
+    }
+}

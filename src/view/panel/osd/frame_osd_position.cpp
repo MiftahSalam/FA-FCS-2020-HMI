@@ -8,7 +8,8 @@
 FrameOSDPosition::FrameOSDPosition(QWidget *parent) :
     QWidget(parent),
     ui(new Ui::FrameOSDPosition),
-    _cmsPos(DI::getInstance()->getOSDCMSService()->getServiceOSDCMSPosition())
+    _cmsPos(DI::getInstance()->getOSDCMSService()->getServiceOSDCMSPosition()),
+    _streamPos(DI::getInstance()->getServiceOSDStream()->getServiceOSDStreamPosition())
 {
     ui->setupUi(this);
 
@@ -25,6 +26,11 @@ FrameOSDPosition::FrameOSDPosition(QWidget *parent) :
     ui->inputLongitude->setInputEnable(false);
     ui->inputLongitude->setStatusFailed();
     connect(ui->mode, &FrameOSDMode::signal_currentModeChange, this, &FrameOSDPosition::onModeChange);
+
+    timer = new QTimer(this);
+    connect(timer, &QTimer::timeout, this, &FrameOSDPosition::onTimeout);
+    timer->setInterval(1000);
+
 }
 
 FrameOSDPosition::~FrameOSDPosition()
@@ -115,4 +121,12 @@ void FrameOSDPosition::manualUiSetup()
 
     ui->inputLongitude->setInputEnable(true);
     ui->inputLongitude->setModeManual();
+}
+
+
+void FrameOSDPosition::onTimeout()
+{
+    //update ui
+    qDebug()<<Q_FUNC_INFO;
+
 }

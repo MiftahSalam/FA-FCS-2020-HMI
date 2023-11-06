@@ -18,6 +18,8 @@ const QPair<int, QString> ERROR_CODE_JSON_PARSE(31, "error when parse json");
 const QPair<int, QString> ERROR_CODE_HTTP_RESPONSE_UNKNOWN(40, "unknown http response error");
 const QPair<int, QString> ERROR_CODE_HTTP_RESPONSE_CONNECTION_REFUSED(41, "cannot connect to http server");
 
+const QPair<int, QString> ERROR_CODE_AMQP_INVALID_EXCHANGE_TYPE(51, "amqp invalid exchange type config");
+
 class BaseError: public QException
 {
 public:
