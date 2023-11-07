@@ -18,11 +18,12 @@ public:
 
     // AmqpConsumerBase interface
     void Connect() override;
-    void Reconnect() override;
+    void Check() override;
     void Start(QString topic) override;
 
 private slots:
     void onConnected();
+    void onDisconnected();
     void onExchangeDeclared();
     void onQueueDeclared();
     void onQueueBounded();
@@ -34,6 +35,9 @@ signals:
 private:
     AMQPOptions *config;
     QAmqpClient* client;
+    QAmqpExchange *currentExchange;
+    QAmqpQueue *currentQueue;
+    bool deleted;
 
     QAmqpExchange::ExchangeType stringToExchangeType(QString type);
 };

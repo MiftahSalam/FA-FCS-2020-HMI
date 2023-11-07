@@ -18,6 +18,7 @@ SOURCES += \
     src/infra/http/http_client_wrapper.cpp \
     src/infra/messaging/amqp/amqp_consumer_wrapper.cpp \
     src/infra/messaging/amqp/amqp_options.cpp \
+    src/infra/messaging/tcp/tcp_messaging_wrapper.cpp \
     src/main.cpp \
     src/model/osd/cms/osd_input_mode_request.cpp \
     src/model/osd/cms/osd_set_position_request.cpp \
@@ -27,11 +28,13 @@ SOURCES += \
     src/shared/common/errors/err_base.cpp \
     src/shared/common/errors/err_http.cpp \
     src/shared/common/errors/err_json_parse.cpp \
+    src/shared/common/errors/err_messaging.cpp \
     src/shared/common/errors/err_object_creation.cpp \
     src/shared/common/errors/err_open_file.cpp \
     src/shared/common/errors/helper_err.cpp \
     src/shared/config/amqp_config.cpp \
     src/shared/config/configuration.cpp \
+    src/shared/config/messaging_tcp_config.cpp \
     src/shared/config/osd_cms_config.cpp \
     src/shared/utils/utils.cpp \
     src/usecase/osd/cms/osd_cms.cpp \
@@ -68,6 +71,7 @@ HEADERS += \
     src/infra/messaging/amqp/amqp_consumer_base.h \
     src/infra/messaging/amqp/amqp_consumer_wrapper.h \
     src/infra/messaging/amqp/amqp_options.h \
+    src/infra/messaging/tcp/tcp_messaging_wrapper.h \
     src/model/base_request.h \
     src/model/base_response.h \
     src/model/osd/cms/osd_input_mode_request.h \
@@ -78,12 +82,14 @@ HEADERS += \
     src/shared/common/errors/err_base.h \
     src/shared/common/errors/err_http.h \
     src/shared/common/errors/err_json_parse.h \
+    src/shared/common/errors/err_messaging.h \
     src/shared/common/errors/err_object_creation.h \
     src/shared/common/errors/err_open_file.h \
     src/shared/common/errors/helper_err.h \
     src/shared/config/amqp_config.h \
     src/shared/config/base_config.h \
     src/shared/config/configuration.h \
+    src/shared/config/messaging_tcp_config.h \
     src/shared/config/osd_cms_config.h \
     src/shared/utils/utils.h \
     src/usecase/osd/cms/i_osd_cms.h \

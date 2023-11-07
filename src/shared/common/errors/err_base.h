@@ -20,6 +20,8 @@ const QPair<int, QString> ERROR_CODE_HTTP_RESPONSE_CONNECTION_REFUSED(41, "canno
 
 const QPair<int, QString> ERROR_CODE_AMQP_INVALID_EXCHANGE_TYPE(51, "amqp invalid exchange type config");
 
+const QPair<int, QString> ERROR_CODE_MESSAGING_INVALID_TCP_CONFIG(61, "messaging invalid tcp  config");
+
 class BaseError: public QException
 {
 public:

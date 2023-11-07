@@ -6,7 +6,8 @@ DI::DI()
 {
     config = new Configuration();
     serviceOSDCMS = new OSDCMS(nullptr, config->getOsdCmsConfig());
-    serviceOSDStream = new OSDStream(nullptr, config->getAmqpConfig());
+    serviceOSDStream = new OSDStream(nullptr, config->getTcpMessageConfig());
+//    serviceOSDStream = new OSDStream(nullptr, config->getAmqpConfig());
 }
 
 OSDStream *DI::getServiceOSDStream() const

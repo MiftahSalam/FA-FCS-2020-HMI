@@ -27,6 +27,8 @@ FrameOSDPosition::FrameOSDPosition(QWidget *parent) :
     ui->inputLongitude->setStatusFailed();
     connect(ui->mode, &FrameOSDMode::signal_currentModeChange, this, &FrameOSDPosition::onModeChange);
 
+    timestamp = QDateTime::currentDateTime();
+
     timer = new QTimer(this);
     connect(timer, &QTimer::timeout, this, &FrameOSDPosition::onTimeout);
     timer->start(1000);
@@ -129,7 +131,7 @@ void FrameOSDPosition::onTimeout()
 {
     //update ui
     qDebug()<<Q_FUNC_INFO;
-
+    _streamPos->check();
 }
 
 

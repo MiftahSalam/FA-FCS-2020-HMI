@@ -5,13 +5,15 @@
 
 OSDStreamPosition* OSDStreamPosition::positionStream = nullptr;
 
-OSDStreamPosition::OSDStreamPosition(AMQPConfig *config)
+OSDStreamPosition::OSDStreamPosition(TcpMessagingOpts *config)
+//OSDStreamPosition::OSDStreamPosition(AMQPConfig *config)
     : cfg(config)
 {
     if(config == nullptr) {
         throw ErrObjectCreation();
     }
 
+    /*
     AMQPOptions *opt = new AMQPOptions(
                 config->getInstance("")->getServerAddress(),
                 "fa-fcs-hmi:position",
@@ -23,9 +25,13 @@ OSDStreamPosition::OSDStreamPosition(AMQPConfig *config)
     consumer = new AmqpConsumerWrapper(this, opt);
     connect(consumer, &AmqpConsumerWrapper::signalForwardMessage, this, &OSDStreamPosition::onDataReceived);
     consumer->Connect();
+    */
+    consumer = new TcpMessagingWrapper(this, config);
+    connect(consumer, &TcpMessagingWrapper::signalForwardMessage, this, &OSDStreamPosition::onDataReceived);
 }
 
-OSDStreamPosition *OSDStreamPosition::getInstance(AMQPConfig *config = nullptr)
+OSDStreamPosition *OSDStreamPosition::getInstance(TcpMessagingOpts *config = nullptr)
+//OSDStreamPosition *OSDStreamPosition::getInstance(AMQPConfig *config = nullptr)
 {
     if (positionStream == nullptr) {
         if(config == nullptr) {
@@ -36,6 +42,12 @@ OSDStreamPosition *OSDStreamPosition::getInstance(AMQPConfig *config = nullptr)
     }
 
     return positionStream;
+}
+
+void OSDStreamPosition::check()
+{
+//    qDebug()<<Q_FUNC_INFO;
+    consumer->checkConnection();
 }
 
 void OSDStreamPosition::onDataReceived(QByteArray data)

@@ -47,10 +47,6 @@ private:
     OSDCMSPositionData *_cmsPos;
     OSDStreamPosition* _streamPos;
 
-    OSD_MODE currentMode;
-    int currentModeIndx;
-    bool afterResetModeIndx;
-
     void manualUiSetup() override;
     void autoUiSetup() override;
 };

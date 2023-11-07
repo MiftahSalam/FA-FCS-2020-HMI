@@ -7,7 +7,7 @@ class AmqpConsumerBase
 {
 public:
     virtual void Connect() = 0;
-    virtual void Reconnect() = 0;
+    virtual void Check() = 0;
     virtual void Start(QString topic) = 0;
 
 protected:

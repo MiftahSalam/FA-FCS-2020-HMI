@@ -1,9 +1,10 @@
 #ifndef OSDSTREAMPOSITION_H
 #define OSDSTREAMPOSITION_H
 
-#include "src/infra/messaging/amqp/amqp_consumer_wrapper.h"
+#include "src/infra/messaging/tcp/tcp_messaging_wrapper.h"
 #include "src/model/osd/position_model.h"
-#include "src/shared/config/amqp_config.h"
+//#include "src/shared/config/amqp_config.h"
+#include "src/shared/config/messaging_tcp_config.h"
 #include "src/usecase/osd/stream/IOSDStream.h"
 
 #include <QObject>
@@ -14,14 +15,18 @@ class OSDStreamPosition : public QObject, public IOSDStream<PositionModel>
 public:
     OSDStreamPosition(OSDStreamPosition &other) = delete;
     void operator=(const OSDStreamPosition&) = delete;
-    static OSDStreamPosition* getInstance(AMQPConfig *config);
+    static OSDStreamPosition* getInstance(TcpMessagingOpts *config);
+//    static OSDStreamPosition* getInstance(AMQPConfig *config);
+
+    void check();
 
 signals:
     // IOSDStream interface
     void signalDataProcessed(PositionModel data) override;
 
 protected:
-    OSDStreamPosition(AMQPConfig *config = nullptr);
+    OSDStreamPosition(TcpMessagingOpts *config = nullptr);
+//    OSDStreamPosition(AMQPConfig *config = nullptr);
 
     // IOSDStream interface
 private slots:
@@ -30,8 +35,10 @@ private slots:
 private:
     static OSDStreamPosition *positionStream;
 
-    AmqpConsumerWrapper *consumer;
-    AMQPConfig *cfg;
+//    AmqpConsumerWrapper *consumer;
+    TcpMessagingWrapper *consumer;
+    TcpMessagingOpts *cfg;
+//    AMQPConfig *cfg;
 };
 
 #endif // OSDSTREAMPOSITION_H
