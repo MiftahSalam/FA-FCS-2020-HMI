@@ -131,7 +131,15 @@ void FrameOSDPosition::onTimeout()
 {
     //update ui
     qDebug()<<Q_FUNC_INFO;
-    _streamPos->check();
+    auto currError = _streamPos->check();
+    if (currError.getCode() == ERROR_CODE_MESSAGING_NOT_CONNECTED.first) {
+        notConnectedUiSetup();
+    } else if (currError.getCode() == ERROR_CODE_MESSAGING_NO_DATA.first) {
+        noDataUiSetup();
+    } else if (currError.getCode() == ERROR_CODE_MESSAGING_DATA_INVALID_FORMAT.first) {
+        invalidDataUiSetup();
+    }
+
 }
 
 
@@ -143,4 +151,50 @@ void FrameOSDPosition::onStreamReceive(PositionModel model)
     }
 
     ui->inputLatitude->setValue(Utils::latDecToStringDegree(model.getLatitude()));
+}
+
+void FrameOSDPosition::notConnectedUiSetup()
+{
+    if (currentMode == OSD_MODE::MANUAL) {
+        return;
+    }
+
+    ui->pushButton->setEnabled(false);
+
+    ui->inputLatitude->setInputEnable(false);
+    ui->inputLatitude->setStatusFailed();
+
+    ui->inputLongitude->setInputEnable(false);
+    ui->inputLongitude->setStatusFailed();
+
+}
+
+void FrameOSDPosition::noDataUiSetup()
+{
+    if (currentMode == OSD_MODE::MANUAL) {
+        return;
+    }
+
+    ui->pushButton->setEnabled(false);
+
+    ui->inputLatitude->setInputEnable(false);
+    ui->inputLatitude->setStatusFailed();
+
+    ui->inputLongitude->setInputEnable(false);
+    ui->inputLongitude->setStatusFailed();
+}
+
+void FrameOSDPosition::invalidDataUiSetup()
+{
+    if (currentMode == OSD_MODE::MANUAL) {
+        return;
+    }
+
+    ui->pushButton->setEnabled(false);
+
+    ui->inputLatitude->setInputEnable(false);
+    ui->inputLatitude->setStatusFailed();
+
+    ui->inputLongitude->setInputEnable(false);
+    ui->inputLongitude->setStatusFailed();
 }

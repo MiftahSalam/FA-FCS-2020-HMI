@@ -18,7 +18,7 @@ public:
     static OSDStreamPosition* getInstance(TcpMessagingOpts *config);
 //    static OSDStreamPosition* getInstance(AMQPConfig *config);
 
-    void check();
+    BaseError check() override;
 
 signals:
     // IOSDStream interface

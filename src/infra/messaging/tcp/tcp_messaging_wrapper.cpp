@@ -1,5 +1,7 @@
 #include "tcp_messaging_wrapper.h"
+#include "src/shared/common/errors/err_messaging.h"
 #include "src/shared/common/errors/err_object_creation.h"
+#include "src/shared/common/errors/err_messaging.h"
 
 TcpMessagingWrapper::TcpMessagingWrapper(QObject *parent, TcpMessagingOpts *cfg)
     : QObject{parent}, config(cfg), currentError(0, "")
@@ -16,9 +18,10 @@ TcpMessagingWrapper::TcpMessagingWrapper(QObject *parent, TcpMessagingOpts *cfg)
 
     QDateTime now = QDateTime::currentDateTime();
     timestampDelay = now;
+    timestampHeartBeat = now;
 }
 
-void TcpMessagingWrapper::checkConnection()
+BaseError TcpMessagingWrapper::checkConnection()
 {
     qDebug()<<Q_FUNC_INFO<<"state"<<consumer->state();
 
@@ -26,7 +29,18 @@ void TcpMessagingWrapper::checkConnection()
         consumer->connectToHost(config->ip, config->port);
     }
 
-
+    QDateTime now = QDateTime::currentDateTime();
+    auto deltaDelay = timestampDelay.msecsTo(now);
+    auto deltaHB = timestampHeartBeat.msecsTo(now);
+    if (consumer->state() != QTcpSocket::ConnectedState) {
+        return ErrMessagingNotConnected();
+    } else if (deltaHB > config->timeout) {
+        return ErrMessagingDataNoData();
+    } else if (deltaDelay > config->timeout) {
+        return ErrMessagingDataInvalidFormat();
+    } else {
+        return NoError();
+    }
 }
 
 void TcpMessagingWrapper::onConnected()

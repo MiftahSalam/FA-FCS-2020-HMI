@@ -44,10 +44,10 @@ OSDStreamPosition *OSDStreamPosition::getInstance(TcpMessagingOpts *config = nul
     return positionStream;
 }
 
-void OSDStreamPosition::check()
+BaseError OSDStreamPosition::check()
 {
 //    qDebug()<<Q_FUNC_INFO;
-    consumer->checkConnection();
+    return consumer->checkConnection();
 }
 
 void OSDStreamPosition::onDataReceived(QByteArray data)

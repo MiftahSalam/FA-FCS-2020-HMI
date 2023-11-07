@@ -30,6 +30,9 @@ private slots:
 private:
     virtual void manualUiSetup() = 0;
     virtual void autoUiSetup() = 0;
+    virtual void notConnectedUiSetup() = 0;
+    virtual void noDataUiSetup() = 0;
+    virtual void invalidDataUiSetup() = 0;
 };
 
 #endif // FRAME_OSD_BASE_H

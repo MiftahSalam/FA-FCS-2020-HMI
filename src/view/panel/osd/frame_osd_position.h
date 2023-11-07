@@ -49,6 +49,11 @@ private:
 
     void manualUiSetup() override;
     void autoUiSetup() override;
+
+private:
+    void notConnectedUiSetup() override;
+    void noDataUiSetup() override;
+    void invalidDataUiSetup() override;
 };
 
 #endif // FRAME_OSD_POSITION_H

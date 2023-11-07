@@ -9,4 +9,23 @@ public:
     ErrMessagingTcpConfig();
 };
 
+
+class ErrMessagingDataInvalidFormat: public BaseError
+{
+public:
+    ErrMessagingDataInvalidFormat();
+};
+
+class ErrMessagingDataNoData: public BaseError
+{
+public:
+    ErrMessagingDataNoData();
+};
+
+class ErrMessagingNotConnected: public BaseError
+{
+public:
+    ErrMessagingNotConnected();
+};
+
 #endif // ERRMESSAGINGTCPCONFIG_H

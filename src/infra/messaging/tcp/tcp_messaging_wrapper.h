@@ -14,7 +14,7 @@ class TcpMessagingWrapper : public QObject
 public:
     explicit TcpMessagingWrapper(QObject *parent = nullptr, TcpMessagingOpts *cfg = nullptr);
 
-    void checkConnection();
+    BaseError checkConnection();
 
 signals:
     void signalForwardMessage(QByteArray msg);
