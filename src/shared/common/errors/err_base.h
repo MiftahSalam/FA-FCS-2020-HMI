@@ -25,6 +25,10 @@ const QPair<int, QString> ERROR_CODE_MESSAGING_NOT_CONNECTED(62, "messaging not 
 const QPair<int, QString> ERROR_CODE_MESSAGING_NO_DATA(63, "messaging no data received");
 const QPair<int, QString> ERROR_CODE_MESSAGING_DATA_INVALID_FORMAT(64, "messaging invalid data format");
 
+const QPair<int, QString> ERROR_CODE_OSD_DATA_INVALID_FORMAT(71, "osd data invalid format");
+const QPair<int, QString> ERROR_CODE_OSD_DATA_CONVERSION(72, "osd data cannot convert data");
+const QPair<int, QString> ERROR_CODE_OSD_DATA_OUT_OF_RANGE(73, "osd data out of range");
+
 class BaseError: public QException
 {
 public:

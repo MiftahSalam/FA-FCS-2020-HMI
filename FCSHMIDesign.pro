@@ -31,6 +31,7 @@ SOURCES += \
     src/shared/common/errors/err_messaging.cpp \
     src/shared/common/errors/err_object_creation.cpp \
     src/shared/common/errors/err_open_file.cpp \
+    src/shared/common/errors/err_osd_data.cpp \
     src/shared/common/errors/helper_err.cpp \
     src/shared/config/amqp_config.cpp \
     src/shared/config/configuration.cpp \
@@ -85,6 +86,7 @@ HEADERS += \
     src/shared/common/errors/err_messaging.h \
     src/shared/common/errors/err_object_creation.h \
     src/shared/common/errors/err_open_file.h \
+    src/shared/common/errors/err_osd_data.h \
     src/shared/common/errors/helper_err.h \
     src/shared/config/amqp_config.h \
     src/shared/config/base_config.h \

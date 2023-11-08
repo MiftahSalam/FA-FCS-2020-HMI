@@ -58,6 +58,13 @@ void OSDStreamPosition::onDataReceived(QByteArray data)
 
         qDebug()<<Q_FUNC_INFO<<"data position: lat ->"<<model.getLatitude()<<"lon ->"<<model.getLongitude();
 
+        //check source mode manual
+        if (respObj.contains("source")) {
+            if (respObj["source"].toString().contains("manual")) {
+                return;
+            }
+        }
+
         emit signalDataProcessed(model);
     } catch (ErrJsonParse &e) {
         qDebug()<<Q_FUNC_INFO<<"caught error: "<<e.getMessage();

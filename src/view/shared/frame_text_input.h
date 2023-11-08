@@ -30,6 +30,7 @@ public:
     void setStatusFailed();
     void setModeManual();
     void setValue(QString val);
+    QString getCurrentValue() const;
 
 private:
     Ui::FrameTextInput *ui;

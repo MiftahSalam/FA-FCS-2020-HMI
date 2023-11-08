@@ -61,6 +61,7 @@ void AmqpConsumerWrapper::Check()
 
 void AmqpConsumerWrapper::Start(QString topic)
 {
+    Q_UNUSED(topic);
 }
 
 void AmqpConsumerWrapper::onConnected()

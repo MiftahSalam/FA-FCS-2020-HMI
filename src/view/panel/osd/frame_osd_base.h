@@ -3,6 +3,7 @@
 
 #include "qtimer.h"
 #include "src/model/osd/input_mode_model.h"
+#include "src/model/osd/position_model.h"
 #include "src/view/shared/constant_ui.h"
 
 template <typename Model> class FrameOSDBase
@@ -14,6 +15,7 @@ public:
 public slots:
     virtual void onModeChangeResponse(InputModeModel mode) = 0;
     virtual void onStreamReceive(Model model) = 0;
+    virtual void onDataResponse(PositionModel data) = 0;
 
 protected:
     QTimer *timer;
@@ -33,6 +35,7 @@ private:
     virtual void notConnectedUiSetup() = 0;
     virtual void noDataUiSetup() = 0;
     virtual void invalidDataUiSetup() = 0;
+    virtual bool validateInput() = 0;
 };
 
 #endif // FRAME_OSD_BASE_H

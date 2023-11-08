@@ -41,8 +41,12 @@ void FrameTextInput::setModeManual()
 
 void FrameTextInput::setValue(QString val)
 {
-    setStatusOk();
     ui->textInput->setText(val);
+}
+
+QString FrameTextInput::getCurrentValue() const
+{
+    return ui->textInput->text();
 }
 
 FrameTextInput::~FrameTextInput()
