@@ -8,6 +8,7 @@
 #include <QObject>
 #include <QTcpSocket>
 
+//tcp messaging implementation class
 class TcpMessagingWrapper : public QObject
 {
     Q_OBJECT
