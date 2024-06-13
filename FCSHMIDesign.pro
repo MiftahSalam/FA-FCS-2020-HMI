@@ -10,14 +10,14 @@ QT       += core gui network testlib
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
+#DEFINES += USE_AMQP
+
 TARGET = fa_fcs_hmi
 TEMPLATE = app
 
 SOURCES += \
     src/di/di.cpp \
     src/infra/http/http_client_wrapper.cpp \
-    src/infra/messaging/amqp/amqp_consumer_wrapper.cpp \
-    src/infra/messaging/amqp/amqp_options.cpp \
     src/infra/messaging/tcp/tcp_messaging_wrapper.cpp \
     src/main.cpp \
     src/model/osd/cms/osd_input_mode_request.cpp \
@@ -69,9 +69,6 @@ SOURCES += \
 HEADERS += \
     src/di/di.h \
     src/infra/http/http_client_wrapper.h \
-    src/infra/messaging/amqp/amqp_consumer_base.h \
-    src/infra/messaging/amqp/amqp_consumer_wrapper.h \
-    src/infra/messaging/amqp/amqp_options.h \
     src/infra/messaging/tcp/tcp_messaging_wrapper.h \
     src/model/base_request.h \
     src/model/base_response.h \
@@ -140,6 +137,17 @@ FORMS += \
     src/view/panel/wap/weapon_assign/frame_weapon_assign.ui \
     src/view/shared/frame_text_input.ui \
     src/view/tda/frametda.ui
+
+contains(DEFINES, USE_AMQP) {
+    HEADERS += \
+        src/infra/messaging/amqp/amqp_consumer_base.h \
+        src/infra/messaging/amqp/amqp_consumer_wrapper.h \
+        src/infra/messaging/amqp/amqp_options.h
+
+    SOURCES += \
+        src/infra/messaging/amqp/amqp_consumer_wrapper.cpp \
+        src/infra/messaging/amqp/amqp_options.cpp
+}
 
 RESOURCES += \
     src/view/assets/hmi_fa_fcs.qrc
