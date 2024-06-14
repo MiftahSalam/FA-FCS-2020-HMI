@@ -14,7 +14,7 @@
    </rect>
   </property>
   <property name="windowTitle">
-   <string>MainWindow</string>
+   <string>FA Gun</string>
   </property>
   <property name="styleSheet">
    <string notr="true"/>
@@ -91,6 +91,7 @@
           <font>
            <family>DejaVu Sans</family>
            <pointsize>30</pointsize>
+           <weight>75</weight>
            <italic>false</italic>
            <bold>true</bold>
           </font>

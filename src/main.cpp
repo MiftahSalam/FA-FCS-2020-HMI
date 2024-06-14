@@ -60,6 +60,7 @@ int main(int argc, char *argv[])
 
     MainWindow w(nullptr, di);
     w.showMaximized();
+//    w.showFullScreen();
     ////    w.showFullScreen();
     //    w.show();
 

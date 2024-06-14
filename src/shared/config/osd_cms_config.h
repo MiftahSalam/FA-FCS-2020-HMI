@@ -4,6 +4,7 @@
 #include <QString>
 
 #include "base_config.h"
+#include <qdebug.h>
 
 class OSDCmsConfig: public BaseConfig
 {
@@ -13,6 +14,8 @@ public:
     ~OSDCmsConfig();
 
     static OSDCmsConfig* getInstance(const QString path);
+//    qDebug() << OSDCmsConfig;
+//    qDebug()<< OSDCmsConfig ;
 
     QString getManualDataUrl() const;
     QString getModeUrl() const;
