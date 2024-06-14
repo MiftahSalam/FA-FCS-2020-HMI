@@ -13,6 +13,7 @@ MainWindow::MainWindow(QWidget *parent, DI* di):
 {
     ui->setupUi(this);
 
+    //panel layout
     ui->gridLayout->removeWidget(ui->frameTDA);
     ui->gridLayout->removeWidget(ui->frameBottomGun);
     ui->gridLayout->removeWidget(ui->frameBottomOSD);
