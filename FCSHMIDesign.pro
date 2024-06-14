@@ -147,10 +147,9 @@ contains(DEFINES, USE_AMQP) {
     SOURCES += \
         src/infra/messaging/amqp/amqp_consumer_wrapper.cpp \
         src/infra/messaging/amqp/amqp_options.cpp
+
+    unix:!macx: LIBS += -lqamqp
 }
 
 RESOURCES += \
     src/view/assets/hmi_fa_fcs.qrc
-
-
-unix:!macx: LIBS += -lqamqp
