@@ -33,6 +33,8 @@ public slots:
     void onModeChangeResponse(InputModeModel mode) override;
     void onDataResponse(PositionModel data) override;
     void onStreamReceive(PositionModel model) override;
+    //added by riyadhi
+    void onUpdateAutoUi();
 
 signals:
     void signalChangePositionMode(bool manual_mode);
