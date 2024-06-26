@@ -22,6 +22,7 @@ SOURCES += \
     src/main.cpp \
     src/model/osd/cms/osd_input_mode_request.cpp \
     src/model/osd/cms/osd_set_position_request.cpp \
+    src/model/osd/gyro_model.cpp \
     src/model/osd/input_mode_model.cpp \
     src/model/osd/position_model.cpp \
     src/shared/common/errors/err_amqp.cpp \
@@ -74,6 +75,7 @@ HEADERS += \
     src/model/base_response.h \
     src/model/osd/cms/osd_input_mode_request.h \
     src/model/osd/cms/osd_set_position_request.h \
+    src/model/osd/gyro_model.h \
     src/model/osd/input_mode_model.h \
     src/model/osd/position_model.h \
     src/shared/common/errors/err_amqp.h \

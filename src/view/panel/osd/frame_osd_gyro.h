@@ -19,7 +19,7 @@ struct OSDGyroProp
     TextInputProp roll;
 };
 
-class FrameOSDGyro : public QWidget
+class FrameOSDGyro : public QWidget, public FrameOSDBase<GyroModel>
 {
     Q_OBJECT
 

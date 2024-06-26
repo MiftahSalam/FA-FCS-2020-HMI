@@ -31,7 +31,7 @@ void FrameOSDGyro::onModeChange(int index)
     qDebug()<<"Status Gyro :" << index;
 
 //    if (afterResetModeIndx) {
-//        QTimer::singleShot(10, this, &FrameOSDPosition::onAfterModeReset);
+//        QTimer::singleShot(10, this, &FrameOSDGyro::onAfterModeReset);
 //        return;
 //    }
 
@@ -48,6 +48,10 @@ void FrameOSDGyro::onModeChange(int index)
 //    }
 }
 
+//void FrameOSDGyro::onAfterModeReset()
+//{
+//    afterResetModeIndx = false;
+//}
 FrameOSDGyro::~FrameOSDGyro()
 {
     delete ui;

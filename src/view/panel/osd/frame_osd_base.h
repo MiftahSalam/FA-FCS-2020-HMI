@@ -4,6 +4,7 @@
 #include "qtimer.h"
 #include "src/model/osd/input_mode_model.h"
 #include "src/model/osd/position_model.h"
+#include "src/model/osd/gyro_model.h"
 #include "src/view/shared/constant_ui.h"
 
 template <typename Model> class FrameOSDBase
