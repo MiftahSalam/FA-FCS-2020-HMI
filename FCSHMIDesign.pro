@@ -56,6 +56,8 @@ SOURCES += \
     src/view/panel/wap/track_engagement/frame_track_engage.cpp \
     src/view/panel/wap/weapon_assign/frame_weapon_assign.cpp \
     src/view/shared/frame_text_input.cpp \
+    src/view/tda/components/tda_compass_object.cpp \
+    src/view/tda/components/tda_object_base.cpp \
     src/view/tda/frametda.cpp \
     src/view/tda/rceventhandler.cpp \
     src/view/tda/tda_global.cpp \
@@ -113,6 +115,8 @@ HEADERS += \
     src/view/panel/wap/weapon_assign/frame_weapon_assign.h \
     src/view/shared/constant_ui.h \
     src/view/shared/frame_text_input.h \
+    src/view/tda/components/tda_compass_object.h \
+    src/view/tda/components/tda_object_base.h \
     src/view/tda/frametda.h \
     src/view/tda/rceventhandler.h \
     src/view/tda/tda_global.h \

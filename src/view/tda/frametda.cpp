@@ -1,4 +1,5 @@
 #include "frametda.h"
+#include "src/view/tda/components/tda_compass_object.h"
 #include "ui_frametda.h"
 
 #include <math.h>
@@ -14,9 +15,39 @@ FrameTDA::FrameTDA(QWidget *parent) :
 {
     ui->setupUi(this);
 
+    timer = new QTimer(this);
+    connect(timer, &QTimer::timeout, this, &FrameTDA::timeOut);
+
+    TdaCompassObject *compass = new TdaCompassObject(this);
+    objectItems << compass;
+
+    timer->start(1000);
 }
 
 FrameTDA::~FrameTDA()
 {
     delete ui;
+}
+
+void FrameTDA::paintEvent(QPaintEvent *event)
+{
+    qDebug()<<Q_FUNC_INFO<<"size:"<<size();
+
+    QPainter painter(this);
+    int side = qMin(this->width(), this->height()) / 2;
+    QPoint center_point = QPoint(this->width() / 2, this->height() / 2);
+
+    painter.setRenderHint(QPainter::Antialiasing);
+    painter.drawRect(0,0, width(), height());
+    painter.setPen(Qt::SolidLine);
+
+    foreach (TDAObjectBase *obj, objectItems)
+    {
+        obj->Draw(&painter, side, this->width(), this->height(), center_point);
+    }
+}
+
+void FrameTDA::timeOut()
+{
+    update();
 }
