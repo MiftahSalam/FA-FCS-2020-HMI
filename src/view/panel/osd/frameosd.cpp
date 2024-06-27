@@ -58,6 +58,8 @@ void FrameOSD::onPositionDataResponse(BaseResponse<PositionModel> resp)
     if (resp.getHttpCode() != 0) {
         resetToPrevMode();
         QMessageBox::warning(this, "Request Error", QString("Failed to change manual data with error: %1").arg(resp.getMessage()));
+
+
         return;
     }
 
@@ -75,6 +77,9 @@ void FrameOSD::onChangeInputModeResponse(BaseResponse<InputModeModel> resp)
     if (resp.getHttpCode() != 0) {
         resetToPrevMode();
         QMessageBox::warning(this, "Request Error", QString("Failed to input mode with error: %1").arg(resp.getMessage()));
+        //added by riyadhi
+        emit signalupdateAutoUi();
+        //
         return;
     }
 
@@ -112,6 +117,9 @@ void FrameOSD::setup()
     connect(_cmsMode, &OSDCMSInputMode::signal_setModeResponse, this, &FrameOSD::onChangeInputModeResponse);
 
     connect(_cmsPosition, &OSDCMSPositionData::signal_setPositionResponse, this, &FrameOSD::onPositionDataResponse);
+
+    //added by riyadhi
+    connect(this, &FrameOSD::signalupdateAutoUi, ui->widgetPosition, &FrameOSDPosition::onUpdateAutoUi);
 }
 
 void FrameOSD::resetToPrevMode()
