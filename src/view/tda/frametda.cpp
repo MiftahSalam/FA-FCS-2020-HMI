@@ -31,15 +31,14 @@ FrameTDA::~FrameTDA()
 
 void FrameTDA::paintEvent(QPaintEvent *event)
 {
-    qDebug()<<Q_FUNC_INFO<<"size:"<<size();
+    Q_UNUSED(event);
 
     QPainter painter(this);
-    int side = qMin(this->width(), this->height()) / 2;
     QPoint center_point = QPoint(this->width() / 2, this->height() / 2);
+    int side = qMin(this->width(), this->height()) / 2;
 
     painter.setRenderHint(QPainter::Antialiasing);
     painter.drawRect(0,0, width(), height());
-    painter.setPen(Qt::SolidLine);
 
     foreach (TDAObjectBase *obj, objectItems)
     {

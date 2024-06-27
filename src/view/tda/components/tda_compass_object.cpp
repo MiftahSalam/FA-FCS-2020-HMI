@@ -31,26 +31,31 @@ void TdaCompassObject::Draw(QPainter *painter, const int &side, const int &width
         /*
          * compass ring text
         */
-        int brnCor = 0;
+        int headingCorrection = 0;
         int brn;
         double buf_j;
-        int margin_a = 5;
-        int margin_b = 15;
+        int margin_x = 15;
+        int margin_y = 5;
+        int textWidth = 30;
+        int textheight = 15;
+        int textInterval = 12;
+        int textIntervalDegree = 360/textInterval;
+        int degreeAccumulator = 0;
 
         if(heading_up)
-            brnCor =  -static_cast<int>(bearing);
+            headingCorrection =  -static_cast<int>(bearing);
 
         QString text;
-        for(int j=0;j<12;j++)
+        for(int j=0;j<textInterval;j++)
         {
-            if(j<9)
-                brn = (j*30)+90;
+            if(degreeAccumulator < 270)
+                brn = (j*textIntervalDegree)+90;
             else
-                brn = (j*30)-270;
+                brn = (j*textIntervalDegree)-270;
 
             QTextStream(&text)<<brn;
 
-            buf_j = (j*30)+brnCor;
+            buf_j = (j*textIntervalDegree)+headingCorrection;
 
             /*
             */
@@ -62,9 +67,9 @@ void TdaCompassObject::Draw(QPainter *painter, const int &side, const int &width
                     buf_j += 360;
             }
 
-            double x = static_cast<double>(side-30)*cos((buf_j)*M_PI/180);
-            double y = static_cast<double>(side-30)*sin((buf_j)*M_PI/180);
-            QRect rect(static_cast<int>(x)-margin_b,static_cast<int>(y)-margin_a,30,15);
+            double x = static_cast<double>(side-textWidth)*cos((buf_j)*M_PI/180);
+            double y = static_cast<double>(side-textWidth)*sin((buf_j)*M_PI/180);
+            QRect rect(static_cast<int>(x)-margin_x,static_cast<int>(y)-margin_y,textWidth,textheight);
             QTextOption opt;
             opt.setAlignment(Qt::AlignHCenter);
             QFont font;
@@ -73,6 +78,8 @@ void TdaCompassObject::Draw(QPainter *painter, const int &side, const int &width
             painter->setFont(font);
             painter->drawText(rect,text,opt);
             text.clear();
+
+            degreeAccumulator += textIntervalDegree;
         }
 
         /*
@@ -81,35 +88,30 @@ void TdaCompassObject::Draw(QPainter *painter, const int &side, const int &width
         if(heading_up)
             painter->rotate(-bearing);
 
-        for(int j=0;j<180;j++)
+        int tickStep = 2;
+        int tickStepLong = textIntervalDegree;
+        int tickStepIteration = 360/tickStep;
+        for(int j=0;j<tickStepIteration;j++)
         {
-            margin_a = 10;
-            margin_b = 5;
-
+            margin_y = 10;
+            margin_x = 5;
 
             QPoint p1(-center_point+off_center);
-            //                QPoint p1(-off_center.x(),-off_center.y());
-            //            QPoint p1(-height/4,-height/4);
-            //            QPoint p1(0,-height/4);
-            QPoint p2((side-10)*qCos(j*2*M_PI/180.),(side-10)*qSin(j*2*M_PI/180.));
+            QPoint p2((side-10)*qCos(j*tickStep*M_PI/180.),(side-10)*qSin(j*tickStep*M_PI/180.));
             QLineF line1(p1,p2);
             QLineF line2;
-            //            QPoint p3 = line1.pointAt(0.95).toPoint();
 
             line2.setP1(p2);
             line2.setAngle(line1.angle());
-            //            line2.setLength(-10);
-            //            qDebug()<<Q_FUNC_INFO<<"j"<<j<<"p2"<<p2;
-            //            qDebug()<<Q_FUNC_INFO<<"line2"<<line2;
 
-            if(j%15==0)
+            if(j%tickStepLong==0)
             {
-                line2.setLength(-margin_a);
+                line2.setLength(-margin_y);
                 painter->drawLine(line2);
             }
             else
             {
-                line2.setLength(-margin_b);
+                line2.setLength(-margin_x);
                 painter->drawLine(line2);
             }
         }
