@@ -18,7 +18,7 @@ struct OSDPositionProp
     TextInputProp lon;
 };
 
-class FrameOSDPosition : public QWidget, public FrameOSDBase<PositionModel>
+class FrameOSDPosition : public QWidget, public FrameOSDBase<PositionModel, PositionModel>
 {
     Q_OBJECT
 
