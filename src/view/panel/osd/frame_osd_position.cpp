@@ -104,6 +104,7 @@ void FrameOSDPosition::onModeChange(int index)
         break;
     case OSD_MODE::MANUAL:
         emit signalChangePositionMode(true);
+        manualUiSetup();
         break;
     default:
         break;
@@ -166,6 +167,12 @@ void FrameOSDPosition::onStreamReceive(PositionModel model)
 
     ui->inputLongitude->setValue(Utils::lonDecToStringDegree(model.getLongitude()));
     ui->inputLongitude->setStatusOk();
+}
+
+void FrameOSDPosition::onUpdateAutoUi()
+{
+//    qDebug()<<"UPdate UIIII";
+    autoUiSetup();
 }
 
 void FrameOSDPosition::notConnectedUiSetup()

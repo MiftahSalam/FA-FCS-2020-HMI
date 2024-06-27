@@ -24,6 +24,8 @@ signals:
     void signalOnModeResponse(InputModeModel resp);
 
     void signalOnPositionDataResponse(PositionModel resp);
+    //added by riyadhi
+    void signalupdateAutoUi();
 
 private slots:
     void onChangePositionMode(bool manual_mode);
