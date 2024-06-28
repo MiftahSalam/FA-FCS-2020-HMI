@@ -1,9 +1,9 @@
-#include "rceventhandler.h"
+#include "tda_event_filter.h"
 #include <QContextMenuEvent>
 #include <QMouseEvent>
 #include <QDebug>
 
-bool RCEventHandler::eventFilter(QObject *obj, QEvent *event)
+bool TdaEventFilter::eventFilter(QObject *obj, QEvent *event)
 {
     // you may handle multiple objects checking "obj" parameter
      if (event->type() == QEvent::ContextMenu) {
@@ -42,4 +42,10 @@ bool RCEventHandler::eventFilter(QObject *obj, QEvent *event)
     }
     else
         return QObject::eventFilter(obj, event);
+}
+
+TdaEventFilter::TdaEventFilter(QObject *parent)
+    : QObject{parent}
+{
+
 }

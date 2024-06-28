@@ -6,7 +6,7 @@
 #include <QAction>
 #include <QMenu>
 
-#include "src/view/tda/rceventhandler.h"
+#include "src/view/tda/events/tda_event_filter.h"
 #include "src/view/tda/tda_global.h"
 
 
@@ -43,7 +43,7 @@ private:
     QLabel *symbol;
     QLabel *no_track;
     QString current_symbol_image;
-    RCEventHandler *rc_radarevent;
+    TdaEventFilter *rc_radarevent;
     trackParam trackDat;
 
     QString identity2String(Identity identity);

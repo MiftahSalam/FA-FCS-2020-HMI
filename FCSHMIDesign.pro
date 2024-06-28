@@ -59,8 +59,8 @@ SOURCES += \
     src/view/tda/components/tda_compass_object.cpp \
     src/view/tda/components/tda_object_base.cpp \
     src/view/tda/components/track/track.cpp \
+    src/view/tda/events/tda_event_filter.cpp \
     src/view/tda/frametda.cpp \
-    src/view/tda/rceventhandler.cpp \
     src/view/tda/tda_global.cpp \
     test/shared/config/test_osd_cms_config.cpp \
     test/shared/errors/test_base_error.cpp \
@@ -118,8 +118,8 @@ HEADERS += \
     src/view/tda/components/tda_compass_object.h \
     src/view/tda/components/tda_object_base.h \
     src/view/tda/components/track/track.h \
+    src/view/tda/events/tda_event_filter.h \
     src/view/tda/frametda.h \
-    src/view/tda/rceventhandler.h \
     src/view/tda/tda_global.h \
     test/shared/config/test_osd_cms_config.h \
     test/shared/errors/test_base_error.h \
