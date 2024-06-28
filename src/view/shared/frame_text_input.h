@@ -2,6 +2,7 @@
 #define FRAME_TEXT_INPUT_H
 
 #include "src/usecase/osd/cms/osd_cms_position_data.h"
+#include "src/usecase/osd/cms/osd_cms_gyro_data.h"
 #include <QFrame>
 
 namespace Ui {

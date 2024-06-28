@@ -7,6 +7,7 @@
 #include "src/shared/config/osd_cms_config.h"
 #include "src/usecase/osd/cms/osd_cms_input_mode.h"
 #include "src/usecase/osd/cms/osd_cms_position_data.h"
+#include "src/usecase/osd/cms/osd_cms_gyro_data.h"
 
 class OSDCMS : public QObject
 {
@@ -15,11 +16,13 @@ public:
     OSDCMS(QObject *parent = nullptr, OSDCmsConfig *cmsConfig = nullptr);
 
     OSDCMSPositionData *getServiceOSDCMSPosition() const;
+    OSDCMSGyroData *getServiceOSDCMSGyro() const;
     OSDCMSInputMode *getServiceOSDCMSMode() const;
 
 private:
     OSDCmsConfig *cfgCms;
     OSDCMSPositionData *serviceOSDCMSPosition;
+    OSDCMSGyroData *serviceOSDCMSGyro;
     OSDCMSInputMode *serviceOSDCMSMode;
 };
 
