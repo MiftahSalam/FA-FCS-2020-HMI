@@ -3,6 +3,7 @@
 
 #include "src/view/tda/components/tda_object_base.h"
 
+//TODO: TrackRepo listener inherit
 class TDATracksObject : public TDAZoomableObjectBase
 {
     Q_OBJECT
@@ -19,6 +20,14 @@ public:
     // TDAZoomableObjectBase interface
 public slots:
     void OnZoom(float range) override;
+
+    //TODO: implement track changed handler
+//    void OnTracksRemoved(QList<TrackDomain*> trList);
+    //    void OnTracksAdded(QList<TrackDomain*> trList);
+    //    void OnTrackPropertiesChanged(int tn, TrackProps props);
+
+private:
+    //TODO: add trackRepo member
 };
 
 #endif // TDATRACKSOBJECT_H

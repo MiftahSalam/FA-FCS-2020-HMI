@@ -18,6 +18,12 @@ FrameTDA::FrameTDA(QWidget *parent) :
     timer = new QTimer(this);
     connect(timer, &QTimer::timeout, this, &FrameTDA::timeOut);
 
+    //TODO: setup status bar (mouse & track selected)
+
+    //TODO: setup event filter
+
+    //TODO: setup popup menu
+
     TdaCompassObject *compass = new TdaCompassObject(this);
     TDATracksObject *tracksObject = new TDATracksObject(this);
     objectItems << compass << tracksObject;
