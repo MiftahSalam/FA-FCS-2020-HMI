@@ -47,6 +47,7 @@ OSDStreamPosition *OSDStreamPosition::getInstance(TcpMessagingOpts *config = nul
 BaseError OSDStreamPosition::check()
 {
 //    qDebug()<<Q_FUNC_INFO;
+    //TODO: check no data error, invalid data error, etc
     return consumer->checkConnection();
 }
 
