@@ -1,5 +1,6 @@
 #include "frametda.h"
 #include "src/view/tda/components/tda_compass_object.h"
+#include "src/view/tda/components/track/tda_tracks_object.h"
 #include "ui_frametda.h"
 
 #include <math.h>

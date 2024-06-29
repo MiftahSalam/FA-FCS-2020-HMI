@@ -37,6 +37,8 @@ private:
 
    QList<TDAObjectBase*> objectItems;
    QTimer *timer;
+
+   float currentRange;
 };
 
 #endif // FRAMETDA_H

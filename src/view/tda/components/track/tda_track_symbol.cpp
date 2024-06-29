@@ -10,4 +10,6 @@ TdaTrackSymbol::TdaTrackSymbol(QWidget *parent, trackParam param)
     setPixmap(QPixmap::fromImage(image));
     setStyleSheet(QString::fromUtf8("color: rgba(255, 255, 255);background-color: rgb(0,0,0,0);"));
     setScaledContents(true);
+
+    //TODO: event filter
 }
