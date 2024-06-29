@@ -59,8 +59,7 @@ void FrameOSD::onPositionDataResponse(BaseResponse<PositionModel> resp)
     if (resp.getHttpCode() != 0) {
         resetToPrevMode();
         QMessageBox::warning(this, "Request Error", QString("Failed to change manual data with error: %1").arg(resp.getMessage()));
-
-
+        emit signalupdateAutoUi();
         return;
     }
 
@@ -100,6 +99,7 @@ void FrameOSD::onGyroDataResponse(BaseResponse<GyroModel> resp)
     if (resp.getHttpCode() != 0) {
         resetToPrevMode();
         QMessageBox::warning(this, "Request Error", QString("Failed to change manual data with error: %1").arg(resp.getMessage()));
+        emit signalupdateAutoUi();
         return;
     }
 
@@ -154,8 +154,8 @@ void FrameOSD::setup()
     connect(_cmsMode, &OSDCMSInputMode::signal_setModeResponse, this, &FrameOSD::onChangeInputModeResponse);
 
     //added by riyadhi
-    connect(this, &FrameOSD::signalupdateAutoUi, ui->widgetPosition, &FrameOSDPosition::onUpdateAutoUi);
-
+    connect(this, &FrameOSD::signalupdateAutoUi, ui->widgetPosition, &FrameOSDPosition::onUpdatePositionAutoUi);
+    connect(this, &FrameOSD::signalupdateAutoUi, ui->widgetGyro, &FrameOSDGyro::onUpdateGyroAutoUi);
 }
 
 void FrameOSD::resetToPrevMode()
@@ -182,5 +182,6 @@ void FrameOSD::resetToPrevMode()
                     currentMode.getSpeed(),
                     !currentMode.getInersia());
         ui->widgetGyro->resetModeIndex();
+        currentMode = mode;
     }
 }

@@ -118,6 +118,7 @@ void FrameOSDPosition::onAfterModeReset()
 
 void FrameOSDPosition::autoUiSetup()
 {
+
     ui->pushButton->setEnabled(false);
 
     ui->inputLatitude->setInputEnable(false);
@@ -169,7 +170,7 @@ void FrameOSDPosition::onStreamReceive(PositionModel model)
     ui->inputLongitude->setStatusOk();
 }
 
-void FrameOSDPosition::onUpdateAutoUi()
+void FrameOSDPosition::onUpdatePositionAutoUi()
 {
 //    qDebug()<<"UPdate UIIII";
     autoUiSetup();

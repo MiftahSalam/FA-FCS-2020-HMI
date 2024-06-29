@@ -34,6 +34,7 @@ public slots:
     void onModeChangeResponse(InputModeModel mode) override;
     void onDataResponse(GyroModel data) override;
     void onStreamReceive(GyroModel model) override;
+    void onUpdateGyroAutoUi();
 
 signals:
     void signalChangeGyroMode(bool manual_mode);

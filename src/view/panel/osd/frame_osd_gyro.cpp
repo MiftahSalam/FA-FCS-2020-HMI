@@ -57,6 +57,7 @@ void FrameOSDGyro::onModeChange(int index)
         break;
     case OSD_MODE::MANUAL:
         emit signalChangeGyroMode(true);
+        manualUiSetup();
         break;
     default:
         break;
@@ -81,10 +82,6 @@ void FrameOSDGyro::onTimeout()
     }
 }
 
-//void FrameOSDGyro::onAfterModeReset()
-//{
-//    afterResetModeIndx = false;
-//}
 FrameOSDGyro::~FrameOSDGyro()
 {
     delete ui;
@@ -156,6 +153,12 @@ void FrameOSDGyro::onStreamReceive(GyroModel model)
     ui->inputRoll->setValue(QString::number(model.getRoll()));
     ui->inputRoll->setStatusOk();
 
+}
+
+void FrameOSDGyro::onUpdateGyroAutoUi()
+{
+
+    autoUiSetup();
 }
 
 void FrameOSDGyro::on_pushButton_clicked()
