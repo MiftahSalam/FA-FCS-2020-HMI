@@ -1,7 +1,7 @@
 #include "osd_base_entity.h"
 
-OSDBaseEntity::OSDBaseEntity(const std::string &source, const std::string &status, const bool &mode) : _source(source),
-    _status(status), _manualMode(mode)
+OSDBaseEntity::OSDBaseEntity(const std::string &source, const std::string &status, const OSD_MODE &mode) : _source(source),
+    _status(status), _mode(mode)
 {}
 
 std::string OSDBaseEntity::source() const
@@ -24,12 +24,12 @@ void OSDBaseEntity::setStatus(const std::string &newStatus)
     _status = newStatus;
 }
 
-bool OSDBaseEntity::manualMode() const
+OSD_MODE OSDBaseEntity::mode() const
 {
-    return _manualMode;
+    return _mode;
 }
 
-void OSDBaseEntity::setManualMode(bool newManualMode)
+void OSDBaseEntity::setMode(OSD_MODE newManualMode)
 {
-    _manualMode = newManualMode;
+    _mode = newManualMode;
 }

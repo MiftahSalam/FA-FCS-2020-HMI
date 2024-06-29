@@ -6,7 +6,7 @@
 class OSDPositionEntity: public OSDBaseEntity
 {
 public:
-    OSDPositionEntity(double latitude, double longitude, const std::string &source, const std::string &status, const bool &mode);
+    OSDPositionEntity(double latitude, double longitude, const std::string &source, const std::string &status, const OSD_MODE &mode);
 
     double latitude() const;
     void setLatitude(double newLatitude);
