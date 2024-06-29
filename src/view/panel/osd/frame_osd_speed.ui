@@ -1,20 +1,20 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>FrameOSDPosition</class>
- <widget class="QWidget" name="FrameOSDPosition">
+ <class>FrameOSDSpeed</class>
+ <widget class="QWidget" name="FrameOSDSpeed">
   <property name="geometry">
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>358</width>
-    <height>326</height>
+    <width>343</width>
+    <height>362</height>
    </rect>
   </property>
   <property name="windowTitle">
-   <string>Frame</string>
+   <string>Form</string>
   </property>
-  <layout class="QGridLayout" name="gridLayout">
-   <item row="0" column="0">
+  <layout class="QVBoxLayout" name="verticalLayout_3">
+   <item>
     <widget class="QGroupBox" name="groupBox">
      <property name="title">
       <string>GroupBox</string>
@@ -29,10 +29,10 @@
          <enum>QLayout::SetMinimumSize</enum>
         </property>
         <item>
-         <widget class="FrameTextInput" name="inputLatitude" native="true"/>
+         <widget class="FrameTextInput" name="inputKnots" native="true"/>
         </item>
         <item>
-         <widget class="FrameTextInput" name="inputLongitude" native="true"/>
+         <widget class="FrameTextInput" name="inputCourse" native="true"/>
         </item>
         <item>
          <widget class="FrameOSDMode" name="mode" native="true"/>

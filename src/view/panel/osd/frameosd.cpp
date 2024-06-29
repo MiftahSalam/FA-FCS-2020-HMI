@@ -96,7 +96,7 @@ void FrameOSD::onChangeInputModeResponse(BaseResponse<InputModeModel> resp)
 void FrameOSD::setup()
 {
     ui->widgetGyro->setup(OSDGyroProp{
-                              "Gyro",
+                              "Inertia",
                               TextInputProp{
                                   "Heading:", "deg", "headingInput", "0.0"
                               },
