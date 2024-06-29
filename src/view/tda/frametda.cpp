@@ -19,7 +19,9 @@ FrameTDA::FrameTDA(QWidget *parent) :
     connect(timer, &QTimer::timeout, this, &FrameTDA::timeOut);
 
     TdaCompassObject *compass = new TdaCompassObject(this);
-    objectItems << compass;
+    TDATracksObject *tracksObject = new TDATracksObject(this);
+
+    objectItems << compass << tracksObject;
 
     timer->start(1000);
 }
