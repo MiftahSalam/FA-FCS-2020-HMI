@@ -1,14 +1,14 @@
-#ifndef RCEVENTHANDLER_H
-#define RCEVENTHANDLER_H
+#ifndef TDAEVENTFILTER_H
+#define TDAEVENTFILTER_H
 
 #include <QObject>
 #include <QPoint>
 
-class RCEventHandler : public QObject
+class TdaEventFilter : public QObject
 {
-Q_OBJECT
+    Q_OBJECT
 public:
-    explicit RCEventHandler(QObject *parent = 0) : QObject(parent) {}
+    explicit TdaEventFilter(QObject *parent = nullptr);
 
 protected:
     bool eventFilter(QObject *obj, QEvent *event);
@@ -22,4 +22,4 @@ signals:
     void hover_leave();
 };
 
-#endif // RCEVENTHANDLER_H
+#endif // TDAEVENTFILTER_H

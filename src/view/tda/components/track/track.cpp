@@ -73,7 +73,7 @@ void track::buildUI(trackParam param)
     /*
       track event handler
     */
-    rc_radarevent=new RCEventHandler(this);
+    rc_radarevent=new TdaEventFilter(this);
     connect(rc_radarevent,SIGNAL(send_rightButtonClicked(QPoint)),this,SLOT(RC_track(QPoint))); //tombol2 klik kanan track
     symbol->installEventFilter(rc_radarevent);
 //    qDebug() <<Q_FUNC_INFO <<"filter" <<symbol;

@@ -56,10 +56,15 @@ SOURCES += \
     src/view/panel/wap/track_engagement/frame_track_engage.cpp \
     src/view/panel/wap/weapon_assign/frame_weapon_assign.cpp \
     src/view/shared/frame_text_input.cpp \
+    src/view/tda/components/tda_compass_object.cpp \
+    src/view/tda/components/tda_object_base.cpp \
+    src/view/tda/components/track/tda_track_id.cpp \
+    src/view/tda/components/track/tda_track_symbol.cpp \
+    src/view/tda/components/track/tda_tracks_object.cpp \
+    src/view/tda/components/track/track.cpp \
+    src/view/tda/events/tda_event_filter.cpp \
     src/view/tda/frametda.cpp \
-    src/view/tda/rceventhandler.cpp \
     src/view/tda/tda_global.cpp \
-    src/view/tda/track/track.cpp \
     test/shared/config/test_osd_cms_config.cpp \
     test/shared/errors/test_base_error.cpp \
     test/shared/utils/test_utils.cpp \
@@ -113,10 +118,15 @@ HEADERS += \
     src/view/panel/wap/weapon_assign/frame_weapon_assign.h \
     src/view/shared/constant_ui.h \
     src/view/shared/frame_text_input.h \
+    src/view/tda/components/tda_compass_object.h \
+    src/view/tda/components/tda_object_base.h \
+    src/view/tda/components/track/tda_track_id.h \
+    src/view/tda/components/track/tda_track_symbol.h \
+    src/view/tda/components/track/tda_tracks_object.h \
+    src/view/tda/components/track/track.h \
+    src/view/tda/events/tda_event_filter.h \
     src/view/tda/frametda.h \
-    src/view/tda/rceventhandler.h \
     src/view/tda/tda_global.h \
-    src/view/tda/track/track.h \
     test/shared/config/test_osd_cms_config.h \
     test/shared/errors/test_base_error.h \
     test/shared/utils/test_utils.h \
