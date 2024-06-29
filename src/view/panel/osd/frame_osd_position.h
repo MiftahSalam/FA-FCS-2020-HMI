@@ -3,6 +3,7 @@
 
 #include <QWidget>
 
+#include "src/domain/osd/repository/osd_base_repository.h"
 #include "src/usecase/osd/stream/osd_stream_position.h"
 #include "src/view/panel/osd/frame_osd_base.h"
 #include "src/view/shared/frame_text_input.h"
@@ -51,6 +52,7 @@ private:
     Ui::FrameOSDPosition *ui;
     OSDCMSPositionData *_cmsPos;
     OSDStreamPosition* _streamPos;
+    OSDBaseRepository* _repoPos;
 
     // FrameOSDBase interface
     void manualUiSetup() override;

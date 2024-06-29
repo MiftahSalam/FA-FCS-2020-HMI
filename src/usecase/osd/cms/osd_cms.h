@@ -4,6 +4,7 @@
 #include <QNetworkReply>
 #include <QObject>
 
+#include "src/domain/osd/repository/osd_base_repository.h"
 #include "src/shared/config/osd_cms_config.h"
 #include "src/usecase/osd/cms/osd_cms_input_mode.h"
 #include "src/usecase/osd/cms/osd_cms_position_data.h"
@@ -16,11 +17,13 @@ public:
 
     OSDCMSPositionData *getServiceOSDCMSPosition() const;
     OSDCMSInputMode *getServiceOSDCMSMode() const;
+    OSDBaseRepository *getRepoOSDPosition() const;
 
 private:
     OSDCmsConfig *cfgCms;
     OSDCMSPositionData *serviceOSDCMSPosition;
     OSDCMSInputMode *serviceOSDCMSMode;
+    OSDBaseRepository *repoOSDPosition;
 };
 
 #endif // OSDCMS_H
