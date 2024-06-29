@@ -58,6 +58,7 @@ SOURCES += \
     src/view/shared/frame_text_input.cpp \
     src/view/tda/components/tda_compass_object.cpp \
     src/view/tda/components/tda_object_base.cpp \
+    src/view/tda/components/track/tda_tracks_object.cpp \
     src/view/tda/components/track/track.cpp \
     src/view/tda/events/tda_event_filter.cpp \
     src/view/tda/frametda.cpp \
@@ -117,6 +118,7 @@ HEADERS += \
     src/view/shared/frame_text_input.h \
     src/view/tda/components/tda_compass_object.h \
     src/view/tda/components/tda_object_base.h \
+    src/view/tda/components/track/tda_tracks_object.h \
     src/view/tda/components/track/track.h \
     src/view/tda/events/tda_event_filter.h \
     src/view/tda/frametda.h \
