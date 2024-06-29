@@ -2,13 +2,10 @@
 #define OSD_BASE_REPOSITORY_H
 
 #include "src/domain/osd/entity/osd_base_entity.h"
+
 class OSDBaseRepository
 {
 public:
-    void SetEntity(const OSDBaseEntity &entity);
-
-protected:
-    OSDBaseRepository(OSDBaseEntity* entity);
-    OSDBaseEntity *_entity;
+    virtual void SetEntity(const OSDBaseEntity &entity) = 0;
 };
 #endif // OSD_BASE_REPOSITORY_H

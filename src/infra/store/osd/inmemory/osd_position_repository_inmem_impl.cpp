@@ -5,7 +5,7 @@
 OSDPositionRepositoryInMemImpl* OSDPositionRepositoryInMemImpl::instance{nullptr};
 
 OSDPositionRepositoryInMemImpl::OSDPositionRepositoryInMemImpl(OSDPositionEntity *entity)
-    : OSDBaseRepository(entity)
+    : OSDBaseRepositoryInMemImpl(entity)
 {
 }
 
@@ -16,7 +16,7 @@ void OSDPositionRepositoryInMemImpl::SetEntity(const OSDPositionEntity &entity)
         qFatal("uninitiated entity: OSDPositionRepositoryInMemImpl");
     }
 
-    OSDBaseRepository::SetEntity(entity);
+    OSDBaseRepositoryInMemImpl::SetEntity(entity);
 
     OSDPositionEntity *posEntity = static_cast<OSDPositionEntity *>(_entity);
 
@@ -24,10 +24,10 @@ void OSDPositionRepositoryInMemImpl::SetEntity(const OSDPositionEntity &entity)
     posEntity->setLongitude(entity.longitude());
 }
 
-const OSDBaseRepository *OSDPositionRepositoryInMemImpl::GetInstance()
+OSDBaseRepository *OSDPositionRepositoryInMemImpl::GetInstance()
 {
     if (instance == nullptr) {
-        OSDPositionEntity* entity = new OSDPositionEntity(-91.0, -181.0, "", "", false);
+        OSDPositionEntity* entity = new OSDPositionEntity(-91.0, -181.0, "", "", OSD_MODE::AUTO);
         instance = new OSDPositionRepositoryInMemImpl(entity);
     }
 

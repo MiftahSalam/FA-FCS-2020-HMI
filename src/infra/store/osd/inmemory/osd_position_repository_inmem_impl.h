@@ -3,9 +3,9 @@
 
 
 #include "src/domain/osd/entity/osd_position_entity.h"
-#include "src/domain/osd/repository/osd_base_repository.h"
+#include "src/infra/store/osd/inmemory/osd_base_repository_inmem_impl.h"
 
-class OSDPositionRepositoryInMemImpl: public OSDBaseRepository
+class OSDPositionRepositoryInMemImpl: public OSDBaseRepositoryInMemImpl
 {
 private:
     OSDPositionRepositoryInMemImpl(OSDPositionEntity* entity);
@@ -16,7 +16,7 @@ public:
 
     // OSDBaseRepository interface
 public:
-   static const OSDBaseRepository *GetInstance();
+   static OSDBaseRepository *GetInstance();
 
 private:
     static OSDPositionRepositoryInMemImpl *instance;
