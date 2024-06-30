@@ -6,7 +6,8 @@
 #include "osd_cms.h"
 
 
-OSDCMS::OSDCMS(QObject *parent, OSDCmsConfig *cmsConfig, OSDRepository *repoOSD): QObject(parent), cfgCms(cmsConfig)
+OSDCMS::OSDCMS(QObject *parent, OSDCmsConfig *cmsConfig, OSDRepository *repoOSD)
+    : QObject(parent), cfgCms(cmsConfig)
 {
     if(cmsConfig == nullptr) {
         throw ErrObjectCreation();
@@ -16,8 +17,16 @@ OSDCMS::OSDCMS(QObject *parent, OSDCmsConfig *cmsConfig, OSDRepository *repoOSD)
         throw ErrObjectCreation();
     }
 
-    serviceOSDCMSPosition = OSDCMSPositionData::getInstance(new HttpClientWrapper(), cmsConfig, repoOSD->getRepoOSDPosition());
-    serviceOSDCMSMode = OSDCMSInputMode::getInstance(new HttpClientWrapper(), cmsConfig, repoOSD->getRepoOSDPosition());
+    serviceOSDCMSPosition = OSDCMSPositionData::getInstance(
+                new HttpClientWrapper(),
+                cmsConfig,
+                repoOSD->getRepoOSDPosition()
+                );
+    serviceOSDCMSMode = OSDCMSInputMode::getInstance(
+                new HttpClientWrapper(),
+                cmsConfig,
+                repoOSD->getRepoOSDPosition()
+                );
 }
 
 

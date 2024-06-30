@@ -13,7 +13,11 @@ class OSDCMS : public QObject
 {
     Q_OBJECT
 public:
-    OSDCMS(QObject *parent = nullptr, OSDCmsConfig *cmsConfig = nullptr, OSDRepository *repoOSD = nullptr);
+    OSDCMS(
+            QObject *parent = nullptr,
+            OSDCmsConfig *cmsConfig = nullptr,
+            OSDRepository *repoOSD = nullptr
+            );
 
     OSDCMSPositionData *getServiceOSDCMSPosition() const;
     OSDCMSInputMode *getServiceOSDCMSMode() const;

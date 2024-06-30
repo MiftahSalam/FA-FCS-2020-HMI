@@ -30,7 +30,6 @@ const OSDPositionEntity *OSDPositionRepositoryInMemImpl::GetPosition() const
     return _entity;
 }
 
-
 void OSDPositionRepositoryInMemImpl::SetSource(const std::string &source)
 {
     _entity->setSource(source);
