@@ -3,23 +3,31 @@
 
 
 #include "src/domain/osd/entity/osd_position_entity.h"
-#include "src/infra/store/osd/inmemory/osd_base_repository_inmem_impl.h"
+#include "src/domain/osd/repository/osd_position_repository.h"
 
-class OSDPositionRepositoryInMemImpl: public OSDBaseRepositoryInMemImpl
+class OSDPositionRepositoryInMemImpl: public OSDPositionRepository
 {
-private:
+public:
+   static OSDPositionRepository *GetInstance();
+
+   // OSDBaseRepository interface
+public:
+   void SetSource(const std::string &source) override;
+   void SetStatus(const std::string &status) override;
+   void SetMode(const OSD_MODE &mode) override;
+
+   // OSDPositionRepository interface
+public:
+    void SetPosition(const OSDPositionEntity &pos) override;
+    const OSDPositionEntity* GetPosition() const override;
+
+protected:
     OSDPositionRepositoryInMemImpl(OSDPositionEntity* entity);
-
-    // OSDBaseRepository interface
-public:
-    void SetEntity(const OSDPositionEntity &entity);
-
-    // OSDBaseRepository interface
-public:
-   static OSDBaseRepository *GetInstance();
 
 private:
     static OSDPositionRepositoryInMemImpl *instance;
+
+    OSDPositionEntity *_entity;
 };
 
 #endif // OSDPOSITIONREPOSITORYIMPL_H

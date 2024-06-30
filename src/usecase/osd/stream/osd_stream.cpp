@@ -10,14 +10,18 @@
 //    serviceOSDStreamPosition = OSDStreamPosition::getInstance(cfgAmqp);
 //}
 
-OSDStream::OSDStream(QObject *parent, MessagingTcpConfig *config): QObject(parent), consumerConfig(config)
+OSDStream::OSDStream(QObject *parent, MessagingTcpConfig *config, OSDRepository *repoOSD): QObject(parent), consumerConfig(config)
 {
     if(config == nullptr) {
         throw ErrObjectCreation();
     }
 
+    if(repoOSD == nullptr) {
+        throw ErrObjectCreation();
+    }
+
     TcpMessagingOpts* posStreamVal = config->getInstance("")->getContent().value("position");
-    serviceOSDStreamPosition = OSDStreamPosition::getInstance(posStreamVal);
+    serviceOSDStreamPosition = OSDStreamPosition::getInstance(posStreamVal, repoOSD->getRepoOSDPosition());
 }
 
 OSDStreamPosition *OSDStream::getServiceOSDStreamPosition() const

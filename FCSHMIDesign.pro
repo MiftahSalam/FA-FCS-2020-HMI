@@ -21,8 +21,8 @@ SOURCES += \
     src/domain/osd/entity/osd_position_entity.cpp \
     src/infra/http/http_client_wrapper.cpp \
     src/infra/messaging/tcp/tcp_messaging_wrapper.cpp \
-    src/infra/store/osd/inmemory/osd_base_repository_inmem_impl.cpp \
     src/infra/store/osd/inmemory/osd_position_repository_inmem_impl.cpp \
+    src/infra/store/osd/osd_repository.cpp \
     src/main.cpp \
     src/model/osd/cms/osd_input_mode_request.cpp \
     src/model/osd/cms/osd_set_position_request.cpp \
@@ -80,10 +80,11 @@ HEADERS += \
     src/domain/osd/entity/osd_base_entity.h \
     src/domain/osd/entity/osd_position_entity.h \
     src/domain/osd/repository/osd_base_repository.h \
+    src/domain/osd/repository/osd_position_repository.h \
     src/infra/http/http_client_wrapper.h \
     src/infra/messaging/tcp/tcp_messaging_wrapper.h \
-    src/infra/store/osd/inmemory/osd_base_repository_inmem_impl.h \
     src/infra/store/osd/inmemory/osd_position_repository_inmem_impl.h \
+    src/infra/store/osd/osd_repository.h \
     src/model/base_request.h \
     src/model/base_response.h \
     src/model/osd/cms/osd_input_mode_request.h \

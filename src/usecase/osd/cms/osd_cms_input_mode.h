@@ -2,6 +2,7 @@
 #define OSDINPUTMODE_H
 
 
+#include "src/domain/osd/repository/osd_base_repository.h"
 #include "src/infra/http/http_client_wrapper.h"
 #include "src/model/osd/cms/osd_input_mode_request.h"
 #include "src/model/osd/input_mode_model.h"
@@ -14,7 +15,11 @@ class OSDCMSInputMode: public HttpClientWrapper, public IOSDCMS<InputModeModel, 
 public:
     OSDCMSInputMode(OSDCMSInputMode &other) = delete;
     void operator=(const OSDCMSInputMode&) = delete;
-    static OSDCMSInputMode* getInstance(HttpClientWrapper *httpClient, OSDCmsConfig *cmsConfig);
+    static OSDCMSInputMode* getInstance(
+            HttpClientWrapper *httpClient,
+            OSDCmsConfig *cmsConfig,
+            OSDBaseRepository* repoPos
+            );
 
     void set(OSDInputModeRequest request) override;
 
@@ -22,7 +27,11 @@ signals:
     void signal_setModeResponse(BaseResponse<InputModeModel> response);
 
 protected:
-    OSDCMSInputMode(HttpClientWrapper *parent = nullptr, OSDCmsConfig *cmsConfig = nullptr);
+    OSDCMSInputMode(
+            HttpClientWrapper *parent = nullptr,
+            OSDCmsConfig *cmsConfig = nullptr,
+            OSDBaseRepository* repoPos = nullptr
+            );
 
 private slots:
     void onReplyFinished() override;
@@ -30,6 +39,7 @@ private slots:
 private:
     static OSDCMSInputMode *inputMode;
     OSDCmsConfig *cfgCms;
+    OSDBaseRepository* repoPos;
 
     BaseResponse<InputModeModel> toResponse(QByteArray raw) override;
     BaseResponse<InputModeModel> errorResponse(QNetworkReply::NetworkError err) override;

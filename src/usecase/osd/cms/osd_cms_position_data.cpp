@@ -6,18 +6,19 @@
 
 OSDCMSPositionData* OSDCMSPositionData::positionData = nullptr;
 
-OSDCMSPositionData::OSDCMSPositionData(HttpClientWrapper *parent, OSDCmsConfig *cmsConfig): HttpClientWrapper(parent), cfgCms(cmsConfig)
+OSDCMSPositionData::OSDCMSPositionData(
+        HttpClientWrapper *parent,
+        OSDCmsConfig *cmsConfig,
+        OSDBaseRepository *repoPos
+        ): HttpClientWrapper(parent), cfgCms(cmsConfig), repoPos(repoPos)
 {
-    if(cmsConfig == nullptr) {
-        throw ErrObjectCreation();
-    }
-    if(parent == nullptr) {
-        throw ErrObjectCreation();
-    }
-
 }
 
-OSDCMSPositionData *OSDCMSPositionData::getInstance(HttpClientWrapper *httpClient = nullptr, OSDCmsConfig *cmsConfig = nullptr)
+OSDCMSPositionData *OSDCMSPositionData::getInstance(
+        HttpClientWrapper *httpClient = nullptr,
+        OSDCmsConfig *cmsConfig = nullptr,
+        OSDBaseRepository *repoPos
+        )
 {
     if (positionData == nullptr) {
         if(cmsConfig == nullptr) {
@@ -28,7 +29,11 @@ OSDCMSPositionData *OSDCMSPositionData::getInstance(HttpClientWrapper *httpClien
             throw ErrObjectCreation();
         }
 
-        positionData = new OSDCMSPositionData(httpClient, cmsConfig);
+        if(repoPos == nullptr) {
+            throw ErrObjectCreation();
+        }
+
+        positionData = new OSDCMSPositionData(httpClient, cmsConfig, repoPos);
     }
 
     return positionData;
@@ -57,6 +62,9 @@ void OSDCMSPositionData::onReplyFinished()
     }
 
     resp = toResponse(respRaw);
+
+    //TODO: Update repo
+//    repoPos->SetEntity(); //temp
 
     emit signal_setPositionResponse(resp);
 }

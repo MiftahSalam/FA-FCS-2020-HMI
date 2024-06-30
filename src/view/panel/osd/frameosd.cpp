@@ -18,8 +18,6 @@ FrameOSD::FrameOSD(QWidget *parent) :
     _cmsPosition(DI::getInstance()->getOSDCMSService()->getServiceOSDCMSPosition()),
     currentMode(InputModeModel(false, false, false))
 {
-    ;
-
     ui->setupUi(this);
 
     setup();

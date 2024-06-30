@@ -5,9 +5,15 @@ DI* DI::di = nullptr;
 DI::DI()
 {
     config = new Configuration();
-    serviceOSDCMS = new OSDCMS(nullptr, config->getOsdCmsConfig());
-    serviceOSDStream = new OSDStream(nullptr, config->getTcpMessageConfig());
-//    serviceOSDStream = new OSDStream(nullptr, config->getAmqpConfig());
+    repoOSD = new OSDRepository(nullptr);
+    serviceOSDCMS = new OSDCMS(nullptr, config->getOsdCmsConfig(), repoOSD);
+    serviceOSDStream = new OSDStream(nullptr, config->getTcpMessageConfig(), repoOSD);
+    //    serviceOSDStream = new OSDStream(nullptr, config->getAmqpConfig());
+}
+
+OSDRepository *DI::getRepoOSD() const
+{
+    return repoOSD;
 }
 
 OSDStream *DI::getServiceOSDStream() const

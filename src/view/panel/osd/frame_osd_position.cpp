@@ -11,8 +11,7 @@ FrameOSDPosition::FrameOSDPosition(QWidget *parent) :
     QWidget(parent),
     ui(new Ui::FrameOSDPosition),
     _cmsPos(DI::getInstance()->getOSDCMSService()->getServiceOSDCMSPosition()),
-    _streamPos(DI::getInstance()->getServiceOSDStream()->getServiceOSDStreamPosition()),
-    _repoPos(DI::getInstance()->getOSDCMSService()->getRepoOSDPosition())
+    _streamPos(DI::getInstance()->getServiceOSDStream()->getServiceOSDStreamPosition())
 {
     ui->setupUi(this);
 
