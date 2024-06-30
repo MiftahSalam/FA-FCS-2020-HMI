@@ -16,6 +16,7 @@ FrameOSD::FrameOSD(QWidget *parent) :
     ui(new Ui::FrameOSD),
     _cmsMode(DI::getInstance()->getOSDCMSService()->getServiceOSDCMSMode()),
     _cmsPosition(DI::getInstance()->getOSDCMSService()->getServiceOSDCMSPosition()),
+    _cmsSpeed(DI::getInstance()->getOSDCMSService()->getServiceOSDCMSSpeed()),
     currentMode(InputModeModel(false, false, false))
 {
     ;
@@ -72,6 +73,46 @@ void FrameOSD::onPositionDataResponse(BaseResponse<PositionModel> resp)
     emit signalOnPositionDataResponse(*resp.getData());
 }
 
+void FrameOSD::onChangeSpeedMode(bool manual_mode)
+{
+    InputModeModel mode(
+                currentMode.getPosition(),
+                manual_mode,
+                currentMode.getInersia()
+                );
+    currentMode = mode;
+    lastUpdateMode = "speed";
+
+    _cmsMode->set(OSDInputModeRequest(
+                      currentMode.getPosition(),
+                      currentMode.getSpeed(),
+                      currentMode.getInersia()
+                      ));
+}
+
+void FrameOSD::onChangeSpeedData(float sog, float cog)
+{
+    _cmsSpeed->set(OSDSetSpeedRequest(sog, cog));
+}
+
+void FrameOSD::onSpeedDataResponse(BaseResponse<SpeedModel> resp)
+{
+    if (resp.getHttpCode() != 0) {
+        resetToPrevMode();
+        QMessageBox::warning(this, "Request Error", QString("Failed to change manual data with error: %1").arg(resp.getMessage()));
+        emit signalupdateAutoUi();
+        return;
+    }
+
+    qDebug()<<Q_FUNC_INFO<<"resp code:"<<resp.getHttpCode()
+           <<"resp msg:"<<resp.getMessage()
+          <<"resp data speed: "<<resp.getData()->getSpeed_OG()
+         <<"resp data course: "<<resp.getData()->getCourse_OG()
+          ;
+
+    emit signalOnSpeedDataResponse(*resp.getData());
+}
+
 void FrameOSD::onChangeInputModeResponse(BaseResponse<InputModeModel> resp)
 {
     if (resp.getHttpCode() != 0) {
@@ -108,18 +149,28 @@ void FrameOSD::setup()
                               },
                           });
     ui->widgetPosition->setup();
+    ui->widgetSpeed->setup();
 
     connect(ui->widgetPosition, &FrameOSDPosition::signalChangePositionMode, this, &FrameOSD::onChangePositionMode);
     connect(ui->widgetPosition, &FrameOSDPosition::signalChangePositionData, this, &FrameOSD::onChangePositionData);
     connect(this, &FrameOSD::signalOnModeResponse, ui->widgetPosition, &FrameOSDPosition::onModeChangeResponse);
     connect(this, &FrameOSD::signalOnPositionDataResponse, ui->widgetPosition, &FrameOSDPosition::onDataResponse);
 
-    connect(_cmsMode, &OSDCMSInputMode::signal_setModeResponse, this, &FrameOSD::onChangeInputModeResponse);
+    connect(ui->widgetSpeed, &FrameOSDSpeed::signalChangeSpeedMode, this, &FrameOSD::onChangeSpeedMode);
+    connect(ui->widgetSpeed, &FrameOSDSpeed::signalChangeSpeedData, this, &FrameOSD::onChangeSpeedData);
+    connect(this, &FrameOSD::signalOnModeResponse, ui->widgetSpeed, &FrameOSDSpeed::onModeChangeResponse);
+    connect(this, &FrameOSD::signalOnSpeedDataResponse, ui->widgetSpeed, &FrameOSDSpeed::onDataResponse);
 
     connect(_cmsPosition, &OSDCMSPositionData::signal_setPositionResponse, this, &FrameOSD::onPositionDataResponse);
+    connect(_cmsSpeed, &OSDCMSSpeedData::signal_setSpeedResponse, this, &FrameOSD::onSpeedDataResponse);
+
+
+    connect(_cmsMode, &OSDCMSInputMode::signal_setModeResponse, this, &FrameOSD::onChangeInputModeResponse);
+
 
     //added by riyadhi
     connect(this, &FrameOSD::signalupdateAutoUi, ui->widgetPosition, &FrameOSDPosition::onUpdateAutoUi);
+    connect(this, &FrameOSD::signalupdateAutoUi, ui->widgetSpeed, &FrameOSDSpeed::onUpdateAutoUi);
 }
 
 void FrameOSD::resetToPrevMode()
@@ -139,6 +190,7 @@ void FrameOSD::resetToPrevMode()
                     currentMode.getInersia()
                     );
         currentMode = mode;
+        ui->widgetSpeed->resetModeIndex();
         //        ui->widgetGyro->resetModeIndex();
     }
 }

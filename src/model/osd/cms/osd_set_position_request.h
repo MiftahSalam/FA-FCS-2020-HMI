@@ -7,12 +7,12 @@ class OSDSetPositionRequest: public BaseModel<OSDSetPositionRequest>
 {
 public:
     OSDSetPositionRequest();
-    OSDSetPositionRequest(double lat, double longi);
+    OSDSetPositionRequest(double lat, double lon);
 
     double getLatitude() const;
     double getLongitude() const;
     void setLatitude(const double lat);
-    void setLongitude(const double lat);
+    void setLongitude(const double lon);
 
 private:
     double latitude, longitude;

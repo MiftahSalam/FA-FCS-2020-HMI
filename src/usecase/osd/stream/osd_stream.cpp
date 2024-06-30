@@ -18,9 +18,16 @@ OSDStream::OSDStream(QObject *parent, MessagingTcpConfig *config): QObject(paren
 
     TcpMessagingOpts* posStreamVal = config->getInstance("")->getContent().value("position");
     serviceOSDStreamPosition = OSDStreamPosition::getInstance(posStreamVal);
+    TcpMessagingOpts* speedStreamVal = config->getInstance("")->getContent().value("speed");
+    serviceOSDStreamSpeed = OSDStreamSpeed::getInstance(speedStreamVal);
 }
 
 OSDStreamPosition *OSDStream::getServiceOSDStreamPosition() const
 {
     return serviceOSDStreamPosition;
+}
+
+OSDStreamSpeed *OSDStream::getServiceOSDStreamSpeed() const
+{
+    return serviceOSDStreamSpeed;
 }
