@@ -17,13 +17,17 @@ TEMPLATE = app
 
 SOURCES += \
     src/di/di.cpp \
+    src/domain/track/entity/track_base_entity.cpp \
     src/infra/http/http_client_wrapper.cpp \
     src/infra/messaging/tcp/tcp_messaging_wrapper.cpp \
+    src/infra/store/track/inmem/track_arpa_repository_inmem_impl.cpp \
+    src/infra/store/track/track_repository.cpp \
     src/main.cpp \
     src/model/osd/cms/osd_input_mode_request.cpp \
     src/model/osd/cms/osd_set_position_request.cpp \
     src/model/osd/input_mode_model.cpp \
     src/model/osd/position_model.cpp \
+    src/model/track/arpa/track_arpa_model.cpp \
     src/shared/common/errors/err_amqp.cpp \
     src/shared/common/errors/err_base.cpp \
     src/shared/common/errors/err_http.cpp \
@@ -44,6 +48,7 @@ SOURCES += \
     src/usecase/osd/osd_service.cpp \
     src/usecase/osd/stream/osd_stream.cpp \
     src/usecase/osd/stream/osd_stream_position.cpp \
+    src/usecase/track/stream/arpa/track_arpa_stream.cpp \
     src/view/mainwindow.cpp \
     src/view/panel/gun/framegun.cpp \
     src/view/panel/osd/frame_osd_gyro.cpp \
@@ -73,14 +78,19 @@ SOURCES += \
 
 HEADERS += \
     src/di/di.h \
+    src/domain/track/entity/track_base_entity.h \
+    src/domain/track/repository/track_base_repository.h \
     src/infra/http/http_client_wrapper.h \
     src/infra/messaging/tcp/tcp_messaging_wrapper.h \
+    src/infra/store/track/inmem/track_arpa_repository_inmem_impl.h \
+    src/infra/store/track/track_repository.h \
     src/model/base_request.h \
     src/model/base_response.h \
     src/model/osd/cms/osd_input_mode_request.h \
     src/model/osd/cms/osd_set_position_request.h \
     src/model/osd/input_mode_model.h \
     src/model/osd/position_model.h \
+    src/model/track/arpa/track_arpa_model.h \
     src/shared/common/errors/err_amqp.h \
     src/shared/common/errors/err_base.h \
     src/shared/common/errors/err_http.h \
@@ -104,6 +114,8 @@ HEADERS += \
     src/usecase/osd/stream/IOSDStream.h \
     src/usecase/osd/stream/osd_stream.h \
     src/usecase/osd/stream/osd_stream_position.h \
+    src/usecase/track/stream/arpa/track_arpa_stream.h \
+    src/usecase/track/stream/track_stream_base.h \
     src/view/mainwindow.h \
     src/view/panel/gun/framegun.h \
     src/view/panel/osd/frame_osd_base.h \
