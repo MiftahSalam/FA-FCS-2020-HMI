@@ -34,7 +34,7 @@ public slots:
     void onDataResponse(PositionModel data) override;
     void onStreamReceive(PositionModel model) override;
     //added by riyadhi
-    void onUpdateAutoUi();
+    void onUpdatePositionAutoUi();
 
 signals:
     void signalChangePositionMode(bool manual_mode);

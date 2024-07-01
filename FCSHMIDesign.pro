@@ -21,7 +21,9 @@ SOURCES += \
     src/infra/messaging/tcp/tcp_messaging_wrapper.cpp \
     src/main.cpp \
     src/model/osd/cms/osd_input_mode_request.cpp \
+    src/model/osd/cms/osd_set_gyro_request.cpp \
     src/model/osd/cms/osd_set_position_request.cpp \
+    src/model/osd/gyro_model.cpp \
     src/model/osd/input_mode_model.cpp \
     src/model/osd/position_model.cpp \
     src/shared/common/errors/err_amqp.cpp \
@@ -39,10 +41,12 @@ SOURCES += \
     src/shared/config/osd_cms_config.cpp \
     src/shared/utils/utils.cpp \
     src/usecase/osd/cms/osd_cms.cpp \
+    src/usecase/osd/cms/osd_cms_gyro_data.cpp \
     src/usecase/osd/cms/osd_cms_input_mode.cpp \
     src/usecase/osd/cms/osd_cms_position_data.cpp \
     src/usecase/osd/osd_service.cpp \
     src/usecase/osd/stream/osd_stream.cpp \
+    src/usecase/osd/stream/osd_stream_gyro.cpp \
     src/usecase/osd/stream/osd_stream_position.cpp \
     src/view/mainwindow.cpp \
     src/view/panel/gun/framegun.cpp \
@@ -78,7 +82,9 @@ HEADERS += \
     src/model/base_request.h \
     src/model/base_response.h \
     src/model/osd/cms/osd_input_mode_request.h \
+    src/model/osd/cms/osd_set_gyro_request.h \
     src/model/osd/cms/osd_set_position_request.h \
+    src/model/osd/gyro_model.h \
     src/model/osd/input_mode_model.h \
     src/model/osd/position_model.h \
     src/shared/common/errors/err_amqp.h \
@@ -98,11 +104,13 @@ HEADERS += \
     src/shared/utils/utils.h \
     src/usecase/osd/cms/i_osd_cms.h \
     src/usecase/osd/cms/osd_cms.h \
+    src/usecase/osd/cms/osd_cms_gyro_data.h \
     src/usecase/osd/cms/osd_cms_input_mode.h \
     src/usecase/osd/cms/osd_cms_position_data.h \
     src/usecase/osd/osd_service.h \
     src/usecase/osd/stream/IOSDStream.h \
     src/usecase/osd/stream/osd_stream.h \
+    src/usecase/osd/stream/osd_stream_gyro.h \
     src/usecase/osd/stream/osd_stream_position.h \
     src/view/mainwindow.h \
     src/view/panel/gun/framegun.h \

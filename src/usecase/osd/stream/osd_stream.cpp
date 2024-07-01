@@ -18,9 +18,17 @@ OSDStream::OSDStream(QObject *parent, MessagingTcpConfig *config): QObject(paren
 
     TcpMessagingOpts* posStreamVal = config->getInstance("")->getContent().value("position");
     serviceOSDStreamPosition = OSDStreamPosition::getInstance(posStreamVal);
+
+    TcpMessagingOpts* gyroStreamVal = config->getInstance("")->getContent().value("inertia");
+    serviceOSDStreamGyro = OSDStreamGyro::getInstance(gyroStreamVal);
 }
 
 OSDStreamPosition *OSDStream::getServiceOSDStreamPosition() const
 {
     return serviceOSDStreamPosition;
+}
+
+OSDStreamGyro *OSDStream::getServiceOSDStreamGyro() const
+{
+    return serviceOSDStreamGyro;
 }

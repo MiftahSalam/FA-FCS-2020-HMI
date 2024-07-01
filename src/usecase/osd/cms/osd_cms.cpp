@@ -13,6 +13,7 @@ OSDCMS::OSDCMS(QObject *parent, OSDCmsConfig *cmsConfig): QObject(parent), cfgCm
     }
 
     serviceOSDCMSPosition = OSDCMSPositionData::getInstance(new HttpClientWrapper(), cmsConfig);
+    serviceOSDCMSGyro = OSDCMSGyroData::getInstance(new HttpClientWrapper(), cmsConfig);
     serviceOSDCMSMode = OSDCMSInputMode::getInstance(new HttpClientWrapper(), cmsConfig);
 }
 
@@ -20,6 +21,11 @@ OSDCMS::OSDCMS(QObject *parent, OSDCmsConfig *cmsConfig): QObject(parent), cfgCm
 OSDCMSPositionData *OSDCMS::getServiceOSDCMSPosition() const
 {
     return serviceOSDCMSPosition;
+}
+
+OSDCMSGyroData *OSDCMS::getServiceOSDCMSGyro() const
+{
+    return serviceOSDCMSGyro;
 }
 
 OSDCMSInputMode *OSDCMS::getServiceOSDCMSMode() const
