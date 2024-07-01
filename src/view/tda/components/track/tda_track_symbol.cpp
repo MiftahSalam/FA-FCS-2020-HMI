@@ -3,7 +3,9 @@
 TdaTrackSymbol::TdaTrackSymbol(QWidget *parent, trackParam param)
     : QLabel(parent), currentParam(param)
 {
+    // TODO: real image load
     QImage image(currentImagePath);
+
     setObjectName(QString::fromUtf8("symbol"));
     setFrameShape(QFrame::NoFrame);
     setGeometry(QRect(0,0,width()/3,height()));
