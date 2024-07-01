@@ -258,7 +258,7 @@ bool FrameOSDGyro::validateInput()
 
     if ((valueroll < -30) || (valueroll > 30))
     {
-        QMessageBox::critical(this, "Fatal Error Pitch", "Invalid input : out of range.\nValid input : -30 - 30");
+        QMessageBox::critical(this, "Fatal Error Roll", "Invalid input : out of range.\nValid input : -30 - 30");
         return false;
     }
 

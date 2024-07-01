@@ -106,8 +106,8 @@ void FrameOSD::onGyroDataResponse(BaseResponse<GyroModel> resp)
     qDebug()<<Q_FUNC_INFO<<"resp code:"<<resp.getHttpCode()
            <<"resp msg:"<<resp.getMessage()
           <<"resp data heading: "<<resp.getData()->getHeading()
-         <<"resp data heading: "<<resp.getData()->getPicth()
-        <<"resp data heading: "<<resp.getData()->getRoll()
+         <<"resp data Pitch: "<<resp.getData()->getPicth()
+        <<"resp data Roll: "<<resp.getData()->getRoll()
           ;
 
     emit signalOnGyroDataResponse(*resp.getData());
