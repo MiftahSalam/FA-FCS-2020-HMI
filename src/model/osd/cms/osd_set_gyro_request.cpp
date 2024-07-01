@@ -24,19 +24,19 @@ double OSDSetGyroRequest::getRoll() const
     return roll;
 }
 
-void OSDSetGyroRequest::setHeading(const double hdg)
+void OSDSetGyroRequest::setHeading(const double _hdg)
 {
-    heading = hdg;
+    heading = _hdg;
 }
 
-void OSDSetGyroRequest::setPitch(const double pit)
+void OSDSetGyroRequest::setPitch(const double _pitch)
 {
-    pitch = pit;
+    pitch = _pitch;
 }
 
-void OSDSetGyroRequest::setRoll(const double rol)
+void OSDSetGyroRequest::setRoll(const double _roll)
 {
-    roll = rol;
+    roll = _roll;
 }
 
 QByteArray OSDSetGyroRequest::toJSON()

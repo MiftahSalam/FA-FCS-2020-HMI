@@ -16,9 +16,9 @@ public:
     double getPitch() const;
     double getRoll() const;
 
-    void setHeading(const double hdg);
-    void setPitch(const double pit);
-    void setRoll(const double rol);
+    void setHeading(const double _hdg);
+    void setPitch(const double _pitch);
+    void setRoll(const double _roll);
 
 private:
     double heading, pitch, roll;
