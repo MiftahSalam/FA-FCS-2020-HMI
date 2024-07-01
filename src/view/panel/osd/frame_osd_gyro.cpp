@@ -144,14 +144,24 @@ void FrameOSDGyro::onStreamReceive(GyroModel model)
         return;
     }
 
+    //validity pitch roll stream check
+
     ui->inputHeading->setValue(QString::number(model.getHeading()));
     ui->inputHeading->setStatusOk();
 
     ui->inputPitch->setValue(QString::number(model.getPicth()));
+    if (model.getPicth() == 90){
+        ui->inputPitch->setStatusFailed();
+    }else{
     ui->inputPitch->setStatusOk();
+    }
 
     ui->inputRoll->setValue(QString::number(model.getRoll()));
+    if (model.getRoll() == 90){
+        ui->inputRoll->setStatusFailed();
+    }else{
     ui->inputRoll->setStatusOk();
+    }
 
 }
 

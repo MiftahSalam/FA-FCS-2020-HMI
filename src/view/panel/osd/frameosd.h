@@ -27,6 +27,7 @@ signals:
     void signalOnPositionDataResponse(PositionModel resp);
     //added by riyadhi
     void signalupdateAutoUi();
+    void signalGyroUpdateAutoUi();
     void signalOnGyroDataResponse(GyroModel resp);
 
 private slots:
