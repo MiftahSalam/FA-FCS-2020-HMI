@@ -37,6 +37,7 @@ SOURCES += \
     src/shared/config/configuration.cpp \
     src/shared/config/messaging_tcp_config.cpp \
     src/shared/config/osd_cms_config.cpp \
+    src/shared/utils/track/track_utils.cpp \
     src/shared/utils/utils.cpp \
     src/usecase/osd/cms/osd_cms.cpp \
     src/usecase/osd/cms/osd_cms_input_mode.cpp \
@@ -95,6 +96,7 @@ HEADERS += \
     src/shared/config/configuration.h \
     src/shared/config/messaging_tcp_config.h \
     src/shared/config/osd_cms_config.h \
+    src/shared/utils/track/track_utils.h \
     src/shared/utils/utils.h \
     src/usecase/osd/cms/i_osd_cms.h \
     src/usecase/osd/cms/osd_cms.h \
