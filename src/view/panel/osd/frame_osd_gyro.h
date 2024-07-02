@@ -1,6 +1,7 @@
 #ifndef FRAME_OSD_GYRO_H
 #define FRAME_OSD_GYRO_H
 
+#include "src/usecase/osd/cms/osd_cms_input_mode.h"
 #include "src/usecase/osd/stream/osd_stream_gyro.h"
 #include "src/view/panel/osd/frame_osd_base.h"
 #include "src/view/shared/frame_text_input.h"
@@ -31,7 +32,7 @@ public:
     void resetModeIndex() override;
 
 public slots:
-    void onModeChangeResponse(BaseResponse<InputModeModel> mode, bool needConfirm) override;
+    void onModeChangeResponse(const QString datafisis, BaseResponse<InputModeModel> mode, bool needConfirm) override;
     void onDataResponse(BaseResponse<GyroModel> data) override;
     void onStreamReceive(GyroModel model) override;
     void onUpdateGyroAutoUi();
@@ -45,12 +46,12 @@ private slots:
     void onAfterModeReset() override;
     void onTimeout() override;
 
-
     void on_pushButton_clicked();
 
 private:
     Ui::FrameOSDGyro *ui;
     OSDCMSGyroData *_cmsGyro;
+    OSDCMSInputMode *_cmsMode;
     OSDStreamGyro* _streamGyro;
 
     void manualUiSetup() override;
@@ -61,8 +62,6 @@ private:
     void invalidDataUiSetup() override;
 
     bool validateInput() override;
-
-
 };
 
 #endif // FRAME_OSD_GYRO_H

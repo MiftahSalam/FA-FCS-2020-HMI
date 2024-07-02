@@ -18,7 +18,6 @@ OSDCMSInputMode::OSDCMSInputMode(
     repoPos(repoPos)
 {
     synced = false;
-    requestFinish = true;
 
     if(parent == nullptr) {
         throw ErrObjectCreation();
@@ -66,7 +65,6 @@ void OSDCMSInputMode::set(OSDInputModeRequest request)
 
 void OSDCMSInputMode::setDataMode(const QString &dataFisis, const bool manualMode)
 {
-    OSDInputModeRequest mode;
     if (dataFisis == "position") {
         currentMode.setPosition(manualMode);
     } else if (dataFisis == "inertia") {
@@ -76,13 +74,10 @@ void OSDCMSInputMode::setDataMode(const QString &dataFisis, const bool manualMod
         return;
     }
 
-//    if (requestFinish) {
-        requestSync = false;
-        set(currentMode);
-//    }
-
+    requestSync = false;
     lastUpdateMode = dataFisis;
-    //    requestFinish = false;
+
+    set(currentMode);
 }
 
 const OSDInputModeRequest OSDCMSInputMode::getDataMode() const
@@ -95,11 +90,9 @@ void OSDCMSInputMode::sync()
     if(!synced) {
         qDebug()<<Q_FUNC_INFO<<"syncing";
 
-//        if (requestFinish) {
-            requestSync = true;
-//            requestFinish = false;
-            set(currentMode);
-//        }
+        lastUpdateMode = "";
+        requestSync = true;
+        set(currentMode);
     }
 }
 
@@ -111,13 +104,12 @@ void OSDCMSInputMode::onReplyFinished()
     qDebug()<<Q_FUNC_INFO<<"respRaw: "<<respRaw;
     qDebug()<<Q_FUNC_INFO<<"err: "<<respErr;
 
-//    requestFinish = true;
     BaseResponse<InputModeModel> resp = errorResponse(httpResponse->error());
     if(resp.getHttpCode() != 0) {
         resetToPrevMode();
         synced = false;
 
-        emit signal_setModeResponse(resp, !requestSync);
+        emit signal_setModeResponse(lastUpdateMode, resp, !requestSync);
 
         return;
     }
@@ -129,7 +121,7 @@ void OSDCMSInputMode::onReplyFinished()
     //TODO: update repo
     //    repoPos->SetEntity(); //temp
 
-    emit signal_setModeResponse(resp, !requestSync);
+    emit signal_setModeResponse(lastUpdateMode, resp, !requestSync);
 }
 
 void OSDCMSInputMode::onTimerTimeout()
@@ -183,11 +175,10 @@ BaseResponse<InputModeModel> OSDCMSInputMode::errorResponse(QNetworkReply::Netwo
 
 void OSDCMSInputMode::resetToPrevMode()
 {
-    if (lastUpdateMode == "position") {
-        currentMode.setPosition(previousMode.getPosition());
-//        ui->widgetPosition->resetModeIndex();
-    } else if (lastUpdateMode == "inertia"){
-        currentMode.setPosition(previousMode.getInersia());
-//        ui->widgetGyro->resetModeIndex();
-    }
+    currentMode = previousMode;
+//    if (lastUpdateMode == "position") {
+//        currentMode.setPosition(previousMode.getPosition());
+//    } else if (lastUpdateMode == "inertia"){
+//        currentMode.setPosition(previousMode.getInersia());
+//    }
 }

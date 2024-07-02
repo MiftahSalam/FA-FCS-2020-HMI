@@ -30,6 +30,7 @@ FrameOSDPosition::FrameOSDPosition(QWidget *parent) :
 
     ui->inputLongitude->setInputEnable(false);
     ui->inputLongitude->setStatusFailed();
+
     connect(ui->mode, &FrameOSDMode::signal_currentModeChange, this, &FrameOSDPosition::onModeChange);
 
     timestamp = QDateTime::currentDateTime();
@@ -96,8 +97,12 @@ void FrameOSDPosition::onDataResponse(BaseResponse<PositionModel> resp)
     }
 }
 
-void FrameOSDPosition::onModeChangeResponse(BaseResponse<InputModeModel> resp, bool needConfirm)
+void FrameOSDPosition::onModeChangeResponse(const QString datafisis, BaseResponse<InputModeModel> resp, bool needConfirm)
 {
+    if (datafisis != "position") {
+        return;
+    }
+
     qDebug()<<Q_FUNC_INFO<<"resp code:"<<resp.getHttpCode()<<"resp msg:"<<resp.getMessage();
     qDebug()<<Q_FUNC_INFO<<"needConfirm:"<<needConfirm;
 
@@ -126,7 +131,6 @@ void FrameOSDPosition::onModeChangeResponse(BaseResponse<InputModeModel> resp, b
     default:
         break;
     }
-
 }
 
 void FrameOSDPosition::onModeChange(int index)
@@ -160,7 +164,6 @@ void FrameOSDPosition::onAfterModeReset()
 
 void FrameOSDPosition::autoUiSetup()
 {
-
     ui->pushButton->setEnabled(false);
 
     ui->inputLatitude->setInputEnable(false);
@@ -185,6 +188,7 @@ void FrameOSDPosition::onTimeout()
 {
     //update ui
     qDebug()<<Q_FUNC_INFO;
+
     auto currError = _streamPos->check();
     if (currError.getCode() == ERROR_CODE_MESSAGING_NOT_CONNECTED.first) {
         notConnectedUiSetup();
@@ -241,7 +245,6 @@ void FrameOSDPosition::notConnectedUiSetup()
 
     ui->inputLongitude->setInputEnable(false);
     ui->inputLongitude->setStatusFailed();
-
 }
 
 void FrameOSDPosition::noDataUiSetup()

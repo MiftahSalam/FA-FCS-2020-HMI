@@ -28,7 +28,7 @@ public:
     const OSDInputModeRequest getDataMode() const;
 
 signals:
-    void signal_setModeResponse(BaseResponse<InputModeModel> response, bool needConfirm);
+    void signal_setModeResponse(const QString datafisis, BaseResponse<InputModeModel> response, bool needConfirm);
 
 protected:
     OSDCMSInputMode(
@@ -53,7 +53,6 @@ private:
     QString lastUpdateMode;
     bool synced;
     bool requestSync;
-    bool requestFinish;
 
     BaseResponse<InputModeModel> toResponse(QByteArray raw) override;
     BaseResponse<InputModeModel> errorResponse(QNetworkReply::NetworkError err) override;
