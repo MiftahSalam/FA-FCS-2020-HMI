@@ -31,7 +31,7 @@ public:
     void resetModeIndex() override;
 
 public slots:
-    void onModeChangeResponse(BaseResponse<InputModeModel> resp) override;
+    void onModeChangeResponse(BaseResponse<InputModeModel> resp, bool needConfirm) override;
     void onDataResponse(BaseResponse<PositionModel> data) override;
     void onStreamReceive(PositionModel model) override;
     //added by riyadhi

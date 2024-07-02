@@ -7,6 +7,7 @@ class GyroModel
 {
 public:
     GyroModel(double heading, double pitch, double roll);
+    GyroModel(){};
 
     static GyroModel FromJsonObject(QJsonObject obj);
 

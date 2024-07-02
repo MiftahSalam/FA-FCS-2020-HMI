@@ -8,6 +8,7 @@ class InputModeModel
 {
 public:
     InputModeModel(bool position, bool speed, bool inersia);
+    InputModeModel(){};
 
     static InputModeModel fromJsonObject(QJsonObject obj);
 

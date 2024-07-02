@@ -14,14 +14,14 @@ public:
     virtual void resetModeIndex() = 0; //handler when set mode request failed
 
 public slots:
-    virtual void onModeChangeResponse(BaseResponse<InputModeModel> mode) = 0; //handler set mode response from server
+    virtual void onModeChangeResponse(BaseResponse<InputModeModel> mode, bool needConfirm) = 0; //handler set mode response from server
     virtual void onStreamReceive(DataStreamModel model) = 0; //handler data stream input
     virtual void onDataResponse(BaseResponse<DataResponseModel> data) = 0; //handler manual data response from server
 
 protected:
     QTimer *timer; //timer to update ui
     QDateTime timestamp;
-    OSD_MODE currentMode;  //hold current data fisis mode
+//    OSD_MODE currentMode;  //hold current data fisis mode
     OSD_MODE prevMode;  //hold previous data fisis mode
     int currentModeIndx; //hold current data fisis mode combobox index
     int prevModeIndx; //hold previous data fisis mode combobox index

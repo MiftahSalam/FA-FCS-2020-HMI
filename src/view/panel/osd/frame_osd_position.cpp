@@ -17,7 +17,7 @@ FrameOSDPosition::FrameOSDPosition(QWidget *parent) :
     ui->setupUi(this);
 
     //init combobox mode (should be auto by default. make sure to sync with osd server)
-    currentMode = OSD_MODE::AUTO;
+//    currentMode = OSD_MODE::AUTO;
     prevMode = OSD_MODE::AUTO;
     currentModeIndx = 0;
     prevModeIndx = 0;
@@ -71,9 +71,11 @@ void FrameOSDPosition::resetModeIndex()
     afterResetModeIndx = true;
 
     currentModeIndx = prevModeIndx;
-    currentMode = prevMode;
+//    currentMode = prevMode;
 
-    ui->mode->setCurrentModeIndex(currentModeIndx);
+//    disconnect(ui->mode, &FrameOSDMode::signal_currentModeChange, this, &FrameOSDPosition::onModeChange);
+//    ui->mode->setCurrentModeIndex(currentModeIndx);
+//    connect(ui->mode, &FrameOSDMode::signal_currentModeChange, this, &FrameOSDPosition::onModeChange);
 }
 
 void FrameOSDPosition::onDataResponse(BaseResponse<PositionModel> resp)
@@ -87,46 +89,62 @@ void FrameOSDPosition::onDataResponse(BaseResponse<PositionModel> resp)
 //        autoUiSetup();
         return;
 
-        qDebug()<<Q_FUNC_INFO<<"resp data getLatitude: "<<resp.getData()->getLatitude()
-             <<"resp data getLongitude: "<<resp.getData()->getLongitude()
+        qDebug()<<Q_FUNC_INFO<<"resp data getLatitude: "<<resp.getData().getLatitude()
+             <<"resp data getLongitude: "<<resp.getData().getLongitude()
               ;
 
     }
 }
 
-void FrameOSDPosition::onModeChangeResponse(BaseResponse<InputModeModel> resp)
+void FrameOSDPosition::onModeChangeResponse(BaseResponse<InputModeModel> resp, bool needConfirm)
 {
     qDebug()<<Q_FUNC_INFO<<"resp code:"<<resp.getHttpCode()<<"resp msg:"<<resp.getMessage();
+    qDebug()<<Q_FUNC_INFO<<"needConfirm:"<<needConfirm;
 
     if (resp.getHttpCode() != 0) {
         resetModeIndex();
-        QMessageBox::warning(this, "Request Error", QString("Failed to input mode with error: %1").arg(resp.getMessage()));
+        if (needConfirm) {
+            QMessageBox::warning(this, "Request Error", QString("Failed to input mode with error: %1").arg(resp.getMessage()));
+        }
 
         return;
     }
 
-    qDebug()<<Q_FUNC_INFO<<"resp code:"<<"resp data position mode: "<<resp.getData()->getPosition();
+    qDebug()<<Q_FUNC_INFO<<"resp code:"<<"resp data position mode: "<<resp.getData().getPosition();
 
-    prevMode = currentMode;
-    prevModeIndx = currentModeIndx;
+//    prevMode = currentMode;
+//    prevModeIndx = currentModeIndx;
+
+    auto currentMode = (OSD_MODE)resp.getData().getPosition();
+    switch (currentMode) {
+    case OSD_MODE::AUTO:
+        autoUiSetup();
+        break;
+    case OSD_MODE::MANUAL:
+        manualUiSetup();
+        break;
+    default:
+        break;
+    }
+
 }
 
 void FrameOSDPosition::onModeChange(int index)
 {
-    if (afterResetModeIndx) {
-        QTimer::singleShot(10, this, &FrameOSDPosition::onAfterModeReset);
-        return;
-    }
+//    if (afterResetModeIndx) {
+//        QTimer::singleShot(10, this, &FrameOSDPosition::onAfterModeReset);
+//        return;
+//    }
 
     bool manual_mode;
-    currentMode = (OSD_MODE)index;
-    switch (currentMode) {
+    switch ((OSD_MODE)index) {
     case OSD_MODE::AUTO:
         manual_mode = false;
+//        autoUiSetup();
         break;
     case OSD_MODE::MANUAL:
         manual_mode = true;
-        manualUiSetup();
+//        manualUiSetup();
         break;
     default:
         break;
@@ -176,11 +194,22 @@ void FrameOSDPosition::onTimeout()
         invalidDataUiSetup();
     }
 
+    disconnect(ui->mode, &FrameOSDMode::signal_currentModeChange, this, &FrameOSDPosition::onModeChange);
+    auto curMode = _cmsMode->getDataMode();
+    if (curMode.getPosition()) {
+        ui->mode->setCurrentModeIndex(1);
+        manualUiSetup();
+    } else {
+        ui->mode->setCurrentModeIndex(0);
+        autoUiSetup();
+    }
+    connect(ui->mode, &FrameOSDMode::signal_currentModeChange, this, &FrameOSDPosition::onModeChange);
 }
 
 void FrameOSDPosition::onStreamReceive(PositionModel model)
 {
     qDebug()<<Q_FUNC_INFO<<"position: lat ->"<<model.getLatitude()<<", lon ->"<<model.getLongitude();
+    auto currentMode = (OSD_MODE)_cmsMode->getDataMode().getPosition();
     if (currentMode == OSD_MODE::MANUAL) {
         return;
     }
@@ -200,6 +229,7 @@ void FrameOSDPosition::onUpdatePositionAutoUi()
 
 void FrameOSDPosition::notConnectedUiSetup()
 {
+    auto currentMode = (OSD_MODE)_cmsMode->getDataMode().getPosition();
     if (currentMode == OSD_MODE::MANUAL) {
         return;
     }
@@ -216,6 +246,7 @@ void FrameOSDPosition::notConnectedUiSetup()
 
 void FrameOSDPosition::noDataUiSetup()
 {
+    auto currentMode = (OSD_MODE)_cmsMode->getDataMode().getPosition();
     if (currentMode == OSD_MODE::MANUAL) {
         return;
     }
@@ -231,6 +262,7 @@ void FrameOSDPosition::noDataUiSetup()
 
 void FrameOSDPosition::invalidDataUiSetup()
 {
+    auto currentMode = (OSD_MODE)_cmsMode->getDataMode().getPosition();
     if (currentMode == OSD_MODE::MANUAL) {
         return;
     }

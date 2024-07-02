@@ -15,7 +15,7 @@ FrameOSDGyro::FrameOSDGyro(QWidget *parent) :
 {
     ui->setupUi(this);
 
-    currentMode = OSD_MODE::AUTO;
+//    currentMode = OSD_MODE::AUTO;
     currentModeIndx = 0;
     afterResetModeIndx = false;
     ui->mode->setCurrentModeIndex(currentModeIndx);
@@ -50,7 +50,7 @@ void FrameOSDGyro::onModeChange(int index)
         return;
     }
 
-    currentMode = (OSD_MODE)index;
+    auto currentMode = (OSD_MODE)index;
     switch (currentMode) {
     case OSD_MODE::AUTO:
         emit signalChangeGyroMode(false);
@@ -113,23 +113,25 @@ void FrameOSDGyro::resetModeIndex()
     ui->mode->setCurrentModeIndex(currentModeIndx);
 }
 
-void FrameOSDGyro::onModeChangeResponse(InputModeModel mode)
+void FrameOSDGyro::onModeChangeResponse(BaseResponse<InputModeModel> resp, bool needConfirm)
 {
-    Q_UNUSED(mode); //temporary
-    //handle response
-    qDebug()<<Q_FUNC_INFO;
+    qDebug()<<Q_FUNC_INFO<<"resp code:"<<resp.getHttpCode()
+           <<"resp msg:"<<resp.getMessage()
+         <<"resp data position mode: "<<resp.getData().getPosition()
+          ;
 
-    if (mode.getInersia()) {
-        currentModeIndx = int(OSD_MODE::MANUAL);
-        manualUiSetup();
-        ui->pushButton->click();
-    } else {
-        currentModeIndx = int(OSD_MODE::AUTO);
-        autoUiSetup();
+    if (resp.getHttpCode() != 0) {
+        resetModeIndex();
+        QMessageBox::warning(this, "Request Error", QString("Failed to input mode with error: %1").arg(resp.getMessage()));
+
+        return;
     }
+
+//    prevMode = currentMode;
+    prevModeIndx = currentModeIndx;
 }
 
-void FrameOSDGyro::onDataResponse(GyroModel data)
+void FrameOSDGyro::onDataResponse(BaseResponse<GyroModel> data)
 {
     Q_UNUSED(data); //temporary
     //todo handle response
@@ -140,9 +142,9 @@ void FrameOSDGyro::onStreamReceive(GyroModel model)
 {
     qDebug()<<Q_FUNC_INFO<<"Inertia: Heading ->"<<model.getHeading()
            <<", Pitch ->"<<model.getPicth()<<", Roll ->"<<model.getRoll();
-    if (currentMode == OSD_MODE::MANUAL) {
-        return;
-    }
+//    if (currentMode == OSD_MODE::MANUAL) {
+//        return;
+//    }
 
     //validity pitch roll stream check
 
@@ -218,27 +220,27 @@ void FrameOSDGyro::autoUiSetup()
 
 void FrameOSDGyro::notConnectedUiSetup()
 {
-    if (currentMode == OSD_MODE::MANUAL) {
-        return;
-    }
+//    if (currentMode == OSD_MODE::MANUAL) {
+//        return;
+//    }
 
     autoUiSetup();
 }
 
 void FrameOSDGyro::noDataUiSetup()
 {
-    if (currentMode == OSD_MODE::MANUAL) {
-        return;
-    }
+//    if (currentMode == OSD_MODE::MANUAL) {
+//        return;
+//    }
 
     autoUiSetup();
 }
 
 void FrameOSDGyro::invalidDataUiSetup()
 {
-    if (currentMode == OSD_MODE::MANUAL) {
-        return;
-    }
+//    if (currentMode == OSD_MODE::MANUAL) {
+//        return;
+//    }
 
     autoUiSetup();
 }

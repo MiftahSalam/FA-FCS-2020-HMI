@@ -77,9 +77,9 @@ BaseResponse<PositionModel> OSDCMSPositionData::toResponse(QByteArray raw)
         QString respMsg = respObj["message"].toString();
         QJsonObject respData = respObj["data"].toObject();
         PositionModel model(respData["latitude"].toDouble(-91),respData["longitude"].toDouble(-181));
-        BaseResponse<PositionModel> resp(respCode, respMsg, &model);
+        BaseResponse<PositionModel> resp(respCode, respMsg, model);
 
-        qDebug()<<Q_FUNC_INFO<<"resp"<<resp.getHttpCode()<<resp.getMessage()<<resp.getData()->getLatitude()<<resp.getData()->getLongitude();
+        qDebug()<<Q_FUNC_INFO<<"resp"<<resp.getHttpCode()<<resp.getMessage()<<resp.getData().getLatitude()<<resp.getData().getLongitude();
 
         return resp;
     } catch (ErrJsonParse &e) {
@@ -89,22 +89,24 @@ BaseResponse<PositionModel> OSDCMSPositionData::toResponse(QByteArray raw)
     }
 
     ErrUnknown status;
-    return BaseResponse<PositionModel>(status.getCode(), status.getMessage(), nullptr);
+    PositionModel model(-91, -181);
+    return BaseResponse<PositionModel>(status.getCode(), status.getMessage(), model);
 }
 
 BaseResponse<PositionModel> OSDCMSPositionData::errorResponse(QNetworkReply::NetworkError err)
 {
+    PositionModel model(-91, -181);
     try {
         ErrHelper::throwHttpError(err);
     } catch (BaseError &e) {
         qDebug()<<Q_FUNC_INFO<<"caught error: "<<e.getMessage();
-        return BaseResponse<PositionModel>(e.getCode(), e.getMessage(), nullptr);
+        return BaseResponse<PositionModel>(e.getCode(), e.getMessage(), model);
     }  catch (...) {
         qDebug()<<Q_FUNC_INFO<<"caught unkbnown error";
         ErrUnknown status;
-        return BaseResponse<PositionModel>(status.getCode(), status.getMessage(), nullptr);
+        return BaseResponse<PositionModel>(status.getCode(), status.getMessage(), model);
     }
 
     NoError status;
-    return BaseResponse<PositionModel>(status.getCode(), status.getMessage(), nullptr);
+    return BaseResponse<PositionModel>(status.getCode(), status.getMessage(), model);
 }

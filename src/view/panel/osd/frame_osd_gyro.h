@@ -31,8 +31,8 @@ public:
     void resetModeIndex() override;
 
 public slots:
-    void onModeChangeResponse(InputModeModel mode) override;
-    void onDataResponse(GyroModel data) override;
+    void onModeChangeResponse(BaseResponse<InputModeModel> mode, bool needConfirm) override;
+    void onDataResponse(BaseResponse<GyroModel> data) override;
     void onStreamReceive(GyroModel model) override;
     void onUpdateGyroAutoUi();
 

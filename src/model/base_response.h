@@ -6,7 +6,7 @@
 template <typename T> class BaseResponse
 {
 public:
-    BaseResponse(int code, QString msg, T *respData) {
+    BaseResponse(int code, QString msg, const T respData) {
         httpCode = code;
         message = msg;
         data = respData;
@@ -18,14 +18,14 @@ public:
     QString getMessage() const {
         return message;
     }
-    T *getData() const {
+    T getData() const {
         return data;
     }
 
 private:
     int httpCode;
     QString message;
-    T* data;
+    T data;
 };
 
 #endif // BASERESPONSE_H

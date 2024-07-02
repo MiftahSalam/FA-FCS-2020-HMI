@@ -2,6 +2,8 @@
 #define OSDINPUTMODE_H
 
 
+#include <QTimer>
+
 #include "src/domain/osd/repository/osd_base_repository.h"
 #include "src/infra/http/http_client_wrapper.h"
 #include "src/model/osd/cms/osd_input_mode_request.h"
@@ -23,9 +25,10 @@ public:
 
     void set(OSDInputModeRequest request) override;
     void setDataMode(const QString &dataFisis, const bool manualMode);
+    const OSDInputModeRequest getDataMode() const;
 
 signals:
-    void signal_setModeResponse(BaseResponse<InputModeModel> response);
+    void signal_setModeResponse(BaseResponse<InputModeModel> response, bool needConfirm);
 
 protected:
     OSDCMSInputMode(
@@ -37,12 +40,20 @@ protected:
 private slots:
     void onReplyFinished() override;
 
+    void onTimerTimeout();
+    void sync();
+
 private:
     static OSDCMSInputMode *inputMode;
     OSDInputModeRequest currentMode;
+    OSDInputModeRequest previousMode;
     OSDCmsConfig *cfgCms;
     OSDBaseRepository* repoPos;
+    QTimer *timer;
     QString lastUpdateMode;
+    bool synced;
+    bool requestSync;
+    bool requestFinish;
 
     BaseResponse<InputModeModel> toResponse(QByteArray raw) override;
     BaseResponse<InputModeModel> errorResponse(QNetworkReply::NetworkError err) override;
