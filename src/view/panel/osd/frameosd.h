@@ -1,9 +1,6 @@
 #ifndef FRAMEOSD_H
 #define FRAMEOSD_H
 
-#include "src/usecase/osd/cms/osd_cms_input_mode.h"
-#include "src/usecase/osd/cms/osd_cms_position_data.h"
-#include "src/usecase/osd/cms/osd_cms_gyro_data.h"
 #include <QFrame>
 #include <QDebug>
 #include <QTimer>
@@ -21,36 +18,10 @@ public:
     explicit FrameOSD(QWidget *parent = 0);
     ~FrameOSD();
 
-signals:
-    void signalOnModeResponse(InputModeModel resp);
-
-    void signalOnPositionDataResponse(PositionModel resp);
-    //added by riyadhi
-    void signalupdateAutoUi();
-    void signalGyroUpdateAutoUi();
-    void signalOnGyroDataResponse(GyroModel resp);
-
-private slots:
-    void onChangePositionMode(bool manual_mode);
-    void onChangePositionData(float lat, float lon);
-    void onPositionDataResponse(BaseResponse<PositionModel> resp);
-
-    void onChangeGyroMode(bool manual_mode);
-    void onChangeGyroData(float heading, float pitch, float roll);
-    void onGyroDataResponse(BaseResponse<GyroModel> resp);
-
-    void onChangeInputModeResponse(BaseResponse<InputModeModel> resp);
-
 private:
     Ui::FrameOSD *ui;
-    OSDCMSInputMode* _cmsMode;
-    OSDCMSPositionData* _cmsPosition;
-    OSDCMSGyroData* _cmsGyro;
-    InputModeModel currentMode;
-    QString lastUpdateMode;
 
     void setup();
-    void resetToPrevMode();
 };
 
 #endif // FRAMEOSD_H
