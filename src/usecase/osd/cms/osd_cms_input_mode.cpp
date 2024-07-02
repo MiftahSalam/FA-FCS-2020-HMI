@@ -6,19 +6,36 @@
 
 OSDCMSInputMode* OSDCMSInputMode::inputMode = nullptr;
 
-OSDCMSInputMode::OSDCMSInputMode(HttpClientWrapper *parent, OSDCmsConfig *cmsConfig): HttpClientWrapper(parent), cfgCms(cmsConfig)
+OSDCMSInputMode::OSDCMSInputMode(
+        HttpClientWrapper *parent,
+        OSDCmsConfig *cmsConfig,
+        OSDBaseRepository *repoPos
+        ): HttpClientWrapper(parent), cfgCms(cmsConfig), repoPos(repoPos)
 {
-    if(cmsConfig == nullptr) {
-        throw ErrObjectCreation();
-    }
     if(parent == nullptr) {
         throw ErrObjectCreation();
     }
 }
 
-OSDCMSInputMode *OSDCMSInputMode::getInstance(HttpClientWrapper *httpClient = nullptr, OSDCmsConfig *cmsConfig = nullptr)
+OSDCMSInputMode *OSDCMSInputMode::getInstance(
+        HttpClientWrapper *httpClient = nullptr,
+        OSDCmsConfig *cmsConfig = nullptr,
+        OSDBaseRepository *repoPos =nullptr
+        )
 {
     if (inputMode == nullptr) {
+        if(cmsConfig == nullptr) {
+            throw ErrObjectCreation();
+        }
+
+        if(httpClient == nullptr) {
+            throw ErrObjectCreation();
+        }
+
+        if(repoPos == nullptr) {
+            throw ErrObjectCreation();
+        }
+
         inputMode = new OSDCMSInputMode(httpClient, cmsConfig);
     }
 
@@ -48,6 +65,9 @@ void OSDCMSInputMode::onReplyFinished()
     }
 
     resp = toResponse(respRaw);
+
+    //TODO: update repo
+//    repoPos->SetEntity(); //temp
 
     emit signal_setModeResponse(resp);
 }

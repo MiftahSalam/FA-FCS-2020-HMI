@@ -1,6 +1,7 @@
 #ifndef OSDCMSPOSITIONDATA_H
 #define OSDCMSPOSITIONDATA_H
 
+#include "src/domain/osd/repository/osd_base_repository.h"
 #include "src/infra/http/http_client_wrapper.h"
 #include "src/model/osd/cms/osd_set_position_request.h"
 #include "src/model/base_response.h"
@@ -14,7 +15,11 @@ class OSDCMSPositionData : public HttpClientWrapper, public IOSDCMS<PositionMode
 public:
     OSDCMSPositionData(OSDCMSPositionData &other) = delete;
     void operator=(const OSDCMSPositionData&) = delete;
-    static OSDCMSPositionData* getInstance(HttpClientWrapper *httpClient, OSDCmsConfig *cmsConfig);
+    static OSDCMSPositionData* getInstance(
+            HttpClientWrapper *httpClient,
+            OSDCmsConfig *cmsConfig,
+            OSDBaseRepository* repoPos = nullptr
+            );
 
     void set(OSDSetPositionRequest request) override;
 
@@ -22,7 +27,11 @@ signals:
     void signal_setPositionResponse(BaseResponse<PositionModel> response);
 
 protected:
-    OSDCMSPositionData(HttpClientWrapper *parent = nullptr, OSDCmsConfig *cmsConfig = nullptr);
+    OSDCMSPositionData(
+            HttpClientWrapper *parent = nullptr,
+            OSDCmsConfig *cmsConfig = nullptr,
+            OSDBaseRepository* repoPos = nullptr
+            );
 
 private slots:
     void onReplyFinished() override;
@@ -30,6 +39,7 @@ private slots:
 private:
     static OSDCMSPositionData *positionData;
     OSDCmsConfig *cfgCms;
+    OSDBaseRepository* repoPos;
 
     BaseResponse<PositionModel> toResponse(QByteArray raw) override;
     BaseResponse<PositionModel> errorResponse(QNetworkReply::NetworkError err) override;

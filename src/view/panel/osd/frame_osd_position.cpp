@@ -139,7 +139,6 @@ void FrameOSDPosition::manualUiSetup()
     ui->inputLongitude->setModeManual();
 }
 
-
 void FrameOSDPosition::onTimeout()
 {
     //update ui
@@ -154,7 +153,6 @@ void FrameOSDPosition::onTimeout()
     }
 
 }
-
 
 void FrameOSDPosition::onStreamReceive(PositionModel model)
 {
@@ -237,8 +235,6 @@ void FrameOSDPosition::on_pushButton_clicked()
         QMessageBox::critical(this, "Fatal Error Position", "Invalid position input" );
     }
 }
-
-
 
 bool FrameOSDPosition::validateInput()
 {

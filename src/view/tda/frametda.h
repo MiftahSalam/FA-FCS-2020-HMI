@@ -11,6 +11,7 @@
 #include <QSettings>
 #include <QMenu>
 
+#include "src/infra/store/osd/osd_repository.h"
 #include "src/view/tda/components/tda_object_base.h"
 
 // ==== TDA ==== //
@@ -36,6 +37,7 @@ private:
    Ui::FrameTDA *ui;
 
    QList<TDAObjectBase*> objectItems;
+   OSDRepository *osdRepo;
    QTimer *timer;
 
    float currentRange;
