@@ -24,12 +24,7 @@ class FrameOSDPosition : public QWidget, public FrameOSDBase<PositionModel, Posi
     Q_OBJECT
 
 public:
-    explicit FrameOSDPosition(
-            QWidget *parent = nullptr,
-            OSDCMSInputMode* modeCms = nullptr,
-            OSDCMSPositionData* posCms = nullptr,
-            OSDStreamPosition* posStream = nullptr
-            );
+    explicit FrameOSDPosition(QWidget *parent = nullptr);
     ~FrameOSDPosition();
 
     void setup() override;

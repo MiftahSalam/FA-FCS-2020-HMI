@@ -2,21 +2,17 @@
 #include "qtimer.h"
 
 #include "ui_frame_osd_position.h"
+#include "src/di/di.h"
 #include "src/shared/utils/utils.h"
 
 #include <QMessageBox>
 
-FrameOSDPosition::FrameOSDPosition(
-        QWidget *parent,
-        OSDCMSInputMode* modeCms,
-        OSDCMSPositionData* posCms,
-        OSDStreamPosition* posStream
-        ) :
+FrameOSDPosition::FrameOSDPosition(QWidget *parent) :
     QWidget(parent),
     ui(new Ui::FrameOSDPosition),
-    _cmsPos(posCms),
-    _cmsMode(modeCms),
-    _streamPos(posStream)
+    _cmsPos(DI::getInstance()->getOSDCMSService()->getServiceOSDCMSPosition()),
+    _cmsMode(DI::getInstance()->getOSDCMSService()->getServiceOSDCMSMode()),
+    _streamPos(DI::getInstance()->getServiceOSDStream()->getServiceOSDStreamPosition())
 {
     ui->setupUi(this);
 
@@ -100,10 +96,7 @@ void FrameOSDPosition::onDataResponse(BaseResponse<PositionModel> resp)
 
 void FrameOSDPosition::onModeChangeResponse(BaseResponse<InputModeModel> resp)
 {
-    qDebug()<<Q_FUNC_INFO<<"resp code:"<<resp.getHttpCode()
-           <<"resp msg:"<<resp.getMessage()
-         <<"resp data position mode: "<<resp.getData()->getPosition()
-          ;
+    qDebug()<<Q_FUNC_INFO<<"resp code:"<<resp.getHttpCode()<<"resp msg:"<<resp.getMessage();
 
     if (resp.getHttpCode() != 0) {
         resetModeIndex();
@@ -111,6 +104,8 @@ void FrameOSDPosition::onModeChangeResponse(BaseResponse<InputModeModel> resp)
 
         return;
     }
+
+    qDebug()<<Q_FUNC_INFO<<"resp code:"<<"resp data position mode: "<<resp.getData()->getPosition();
 
     prevMode = currentMode;
     prevModeIndx = currentModeIndx;
