@@ -3,6 +3,7 @@
 
 #include <QWidget>
 
+#include "src/usecase/osd/cms/osd_cms_input_mode.h"
 #include "src/usecase/osd/stream/osd_stream_position.h"
 #include "src/view/panel/osd/frame_osd_base.h"
 #include "src/view/shared/frame_text_input.h"
@@ -23,15 +24,20 @@ class FrameOSDPosition : public QWidget, public FrameOSDBase<PositionModel, Posi
     Q_OBJECT
 
 public:
-    explicit FrameOSDPosition(QWidget *parent = nullptr);
+    explicit FrameOSDPosition(
+            QWidget *parent = nullptr,
+            OSDCMSInputMode* modeCms = nullptr,
+            OSDCMSPositionData* posCms = nullptr,
+            OSDStreamPosition* posStream = nullptr
+            );
     ~FrameOSDPosition();
 
     void setup() override;
     void resetModeIndex() override;
 
 public slots:
-    void onModeChangeResponse(InputModeModel mode) override;
-    void onDataResponse(PositionModel data) override;
+    void onModeChangeResponse(BaseResponse<InputModeModel> resp) override;
+    void onDataResponse(BaseResponse<PositionModel> data) override;
     void onStreamReceive(PositionModel model) override;
     //added by riyadhi
     void onUpdatePositionAutoUi();
@@ -50,6 +56,7 @@ private slots:
 private:
     Ui::FrameOSDPosition *ui;
     OSDCMSPositionData *_cmsPos;
+    OSDCMSInputMode *_cmsMode;
     OSDStreamPosition* _streamPos;
 
     // FrameOSDBase interface

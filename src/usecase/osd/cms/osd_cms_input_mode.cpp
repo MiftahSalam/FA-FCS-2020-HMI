@@ -10,7 +10,11 @@ OSDCMSInputMode::OSDCMSInputMode(
         HttpClientWrapper *parent,
         OSDCmsConfig *cmsConfig,
         OSDBaseRepository *repoPos
-        ): HttpClientWrapper(parent), cfgCms(cmsConfig), repoPos(repoPos)
+        ):
+    HttpClientWrapper(parent),
+    currentMode(OSDInputModeRequest(false, false, false)),
+    cfgCms(cmsConfig),
+    repoPos(repoPos)
 {
     if(parent == nullptr) {
         throw ErrObjectCreation();
@@ -51,6 +55,24 @@ void OSDCMSInputMode::set(OSDInputModeRequest request)
     connect(httpResponse, &QNetworkReply::finished, this, &OSDCMSInputMode::onReplyFinished);
 }
 
+void OSDCMSInputMode::setDataMode(const QString &dataFisis, const bool manualMode)
+{
+    OSDInputModeRequest mode;
+    if (dataFisis == "position") {
+        currentMode.setPosition(manualMode);
+
+    } else if (dataFisis == "inertia") {
+        currentMode.setInersia(manualMode);
+    } else {
+        // TODO: handle invalid datafisis
+        return;
+    }
+
+    lastUpdateMode = dataFisis;
+
+    set(currentMode);
+}
+
 void OSDCMSInputMode::onReplyFinished()
 {
     QByteArray respRaw = httpResponse->readAll();
@@ -60,6 +82,7 @@ void OSDCMSInputMode::onReplyFinished()
 
     BaseResponse<InputModeModel> resp = errorResponse(httpResponse->error());
     if(resp.getHttpCode() != 0) {
+        resetToPrevMode();
         emit signal_setModeResponse(resp);
         return;
     }
@@ -67,7 +90,7 @@ void OSDCMSInputMode::onReplyFinished()
     resp = toResponse(respRaw);
 
     //TODO: update repo
-//    repoPos->SetEntity(); //temp
+    //    repoPos->SetEntity(); //temp
 
     emit signal_setModeResponse(resp);
 }
@@ -112,4 +135,15 @@ BaseResponse<InputModeModel> OSDCMSInputMode::errorResponse(QNetworkReply::Netwo
 
     NoError status;
     return BaseResponse<InputModeModel>(status.getCode(), status.getMessage(), nullptr);
+}
+
+void OSDCMSInputMode::resetToPrevMode()
+{
+    if (lastUpdateMode == "position") {
+        currentMode.setPosition(!currentMode.getPosition());
+//        ui->widgetPosition->resetModeIndex();
+    } else if (lastUpdateMode == "inertia"){
+        currentMode.setPosition(!currentMode.getInersia());
+//        ui->widgetGyro->resetModeIndex();
+    }
 }

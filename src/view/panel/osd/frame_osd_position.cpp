@@ -2,22 +2,29 @@
 #include "qtimer.h"
 
 #include "ui_frame_osd_position.h"
-#include "src/di/di.h"
 #include "src/shared/utils/utils.h"
 
 #include <QMessageBox>
 
-FrameOSDPosition::FrameOSDPosition(QWidget *parent) :
+FrameOSDPosition::FrameOSDPosition(
+        QWidget *parent,
+        OSDCMSInputMode* modeCms,
+        OSDCMSPositionData* posCms,
+        OSDStreamPosition* posStream
+        ) :
     QWidget(parent),
     ui(new Ui::FrameOSDPosition),
-    _cmsPos(DI::getInstance()->getOSDCMSService()->getServiceOSDCMSPosition()),
-    _streamPos(DI::getInstance()->getServiceOSDStream()->getServiceOSDStreamPosition())
+    _cmsPos(posCms),
+    _cmsMode(modeCms),
+    _streamPos(posStream)
 {
     ui->setupUi(this);
 
     //init combobox mode (should be auto by default. make sure to sync with osd server)
     currentMode = OSD_MODE::AUTO;
+    prevMode = OSD_MODE::AUTO;
     currentModeIndx = 0;
+    prevModeIndx = 0;
     afterResetModeIndx = false;
     ui->mode->setCurrentModeIndex(currentModeIndx);
     ui->pushButton->setEnabled(false);
@@ -35,6 +42,7 @@ FrameOSDPosition::FrameOSDPosition(QWidget *parent) :
     connect(timer, &QTimer::timeout, this, &FrameOSDPosition::onTimeout);
     timer->start(1000);
 
+    connect(_cmsMode, &OSDCMSInputMode::signal_setModeResponse, this, &FrameOSDPosition::onModeChangeResponse);
     connect(_streamPos, &OSDStreamPosition::signalDataProcessed, this, &FrameOSDPosition::onStreamReceive);
 }
 
@@ -64,30 +72,48 @@ void FrameOSDPosition::setup()
 void FrameOSDPosition::resetModeIndex()
 {
     afterResetModeIndx = true;
+
+    currentModeIndx = prevModeIndx;
+    currentMode = prevMode;
+
     ui->mode->setCurrentModeIndex(currentModeIndx);
 }
 
-void FrameOSDPosition::onDataResponse(PositionModel data)
+void FrameOSDPosition::onDataResponse(BaseResponse<PositionModel> resp)
 {
-    Q_UNUSED(data); //temporary
-    //todo handle response
-    qDebug()<<Q_FUNC_INFO;
+    qDebug()<<Q_FUNC_INFO<<"resp code:"<<resp.getHttpCode()
+           <<"resp msg:"<<resp.getMessage()
+          <<"resp data getLatitude: "<<resp.getData()->getLatitude()
+         <<"resp data getLongitude: "<<resp.getData()->getLongitude()
+          ;
+
+    if (resp.getHttpCode() != 0) {
+        ui->mode->setCurrentModeIndex((int)OSD_MODE::AUTO);
+
+        QMessageBox::warning(this, "Request Error", QString("Failed to change manual data with error: %1").arg(resp.getMessage()));
+//        emit signalupdateAutoUi();
+//        signalGyroUpdateAutoUi();
+        autoUiSetup();
+        return;
+    }
 }
 
-void FrameOSDPosition::onModeChangeResponse(InputModeModel mode)
+void FrameOSDPosition::onModeChangeResponse(BaseResponse<InputModeModel> resp)
 {
-    Q_UNUSED(mode); //temporary
-    //handle response
-    qDebug()<<Q_FUNC_INFO;
+    qDebug()<<Q_FUNC_INFO<<"resp code:"<<resp.getHttpCode()
+           <<"resp msg:"<<resp.getMessage()
+         <<"resp data position mode: "<<resp.getData()->getPosition()
+          ;
 
-    if (mode.getPosition()) {
-        currentModeIndx = int(OSD_MODE::MANUAL);
-        manualUiSetup();
-        ui->pushButton->click();
-    } else {
-        currentModeIndx = int(OSD_MODE::AUTO);
-        autoUiSetup();
+    if (resp.getHttpCode() != 0) {
+        resetModeIndex();
+        QMessageBox::warning(this, "Request Error", QString("Failed to input mode with error: %1").arg(resp.getMessage()));
+
+        return;
     }
+
+    prevMode = currentMode;
+    prevModeIndx = currentModeIndx;
 }
 
 void FrameOSDPosition::onModeChange(int index)
@@ -97,18 +123,21 @@ void FrameOSDPosition::onModeChange(int index)
         return;
     }
 
+    bool manual_mode;
     currentMode = (OSD_MODE)index;
     switch (currentMode) {
     case OSD_MODE::AUTO:
-        emit signalChangePositionMode(false);
+        manual_mode = false;
         break;
     case OSD_MODE::MANUAL:
-        emit signalChangePositionMode(true);
+        manual_mode = true;
         manualUiSetup();
         break;
     default:
         break;
     }
+
+    _cmsMode->setDataMode("position", manual_mode);
 }
 
 void FrameOSDPosition::onAfterModeReset()
@@ -230,7 +259,8 @@ void FrameOSDPosition::on_pushButton_clicked()
         float lat = Utils::latStrToDegree(ui->inputLatitude->getCurrentValue());
         float lon = Utils::lonStrToDegree(ui->inputLongitude->getCurrentValue());
 
-        emit signalChangePositionData(lat,lon);
+        _cmsPos->set(OSDSetPositionRequest(lat, lon));
+//        emit signalChangePositionData(lat,lon);
     } catch (...) {
         QMessageBox::critical(this, "Fatal Error Position", "Invalid position input" );
     }

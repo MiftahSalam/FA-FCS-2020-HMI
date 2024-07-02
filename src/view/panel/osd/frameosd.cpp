@@ -139,8 +139,8 @@ void FrameOSD::setup()
     ui->widgetPosition->setup();
     ui->widgetGyro->setup();
 
-    connect(ui->widgetPosition, &FrameOSDPosition::signalChangePositionMode, this, &FrameOSD::onChangePositionMode);
-    connect(ui->widgetPosition, &FrameOSDPosition::signalChangePositionData, this, &FrameOSD::onChangePositionData);
+//    connect(ui->widgetPosition, &FrameOSDPosition::signalChangePositionMode, this, &FrameOSD::onChangePositionMode);
+//    connect(ui->widgetPosition, &FrameOSDPosition::signalChangePositionData, this, &FrameOSD::onChangePositionData);
     connect(this, &FrameOSD::signalOnModeResponse, ui->widgetPosition, &FrameOSDPosition::onModeChangeResponse);
     connect(this, &FrameOSD::signalOnPositionDataResponse, ui->widgetPosition, &FrameOSDPosition::onDataResponse);
     connect(_cmsPosition, &OSDCMSPositionData::signal_setPositionResponse, this, &FrameOSD::onPositionDataResponse);

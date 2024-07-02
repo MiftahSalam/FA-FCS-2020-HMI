@@ -22,6 +22,7 @@ public:
             );
 
     void set(OSDInputModeRequest request) override;
+    void setDataMode(const QString &dataFisis, const bool manualMode);
 
 signals:
     void signal_setModeResponse(BaseResponse<InputModeModel> response);
@@ -38,12 +39,15 @@ private slots:
 
 private:
     static OSDCMSInputMode *inputMode;
+    OSDInputModeRequest currentMode;
     OSDCmsConfig *cfgCms;
     OSDBaseRepository* repoPos;
+    QString lastUpdateMode;
 
     BaseResponse<InputModeModel> toResponse(QByteArray raw) override;
     BaseResponse<InputModeModel> errorResponse(QNetworkReply::NetworkError err) override;
 
+    void resetToPrevMode();
 };
 
 #endif // OSDINPUTMODE_H
