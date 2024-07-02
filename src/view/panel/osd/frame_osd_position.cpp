@@ -38,6 +38,7 @@ FrameOSDPosition::FrameOSDPosition(QWidget *parent) :
     connect(timer, &QTimer::timeout, this, &FrameOSDPosition::onTimeout);
     timer->start(1000);
 
+    connect(_cmsPos, &OSDCMSPositionData::signal_setPositionResponse, this, &FrameOSDPosition::onDataResponse);
     connect(_cmsMode, &OSDCMSInputMode::signal_setModeResponse, this, &FrameOSDPosition::onModeChangeResponse);
     connect(_streamPos, &OSDStreamPosition::signalDataProcessed, this, &FrameOSDPosition::onStreamReceive);
 }
@@ -77,20 +78,19 @@ void FrameOSDPosition::resetModeIndex()
 
 void FrameOSDPosition::onDataResponse(BaseResponse<PositionModel> resp)
 {
-    qDebug()<<Q_FUNC_INFO<<"resp code:"<<resp.getHttpCode()
-           <<"resp msg:"<<resp.getMessage()
-          <<"resp data getLatitude: "<<resp.getData()->getLatitude()
-         <<"resp data getLongitude: "<<resp.getData()->getLongitude()
-          ;
+    qDebug()<<Q_FUNC_INFO<<"resp code:"<<resp.getHttpCode()<<"resp msg:"<<resp.getMessage();
 
     if (resp.getHttpCode() != 0) {
-        ui->mode->setCurrentModeIndex((int)OSD_MODE::AUTO);
+//        ui->mode->setCurrentModeIndex((int)OSD_MODE::AUTO);
 
         QMessageBox::warning(this, "Request Error", QString("Failed to change manual data with error: %1").arg(resp.getMessage()));
-//        emit signalupdateAutoUi();
-//        signalGyroUpdateAutoUi();
-        autoUiSetup();
+//        autoUiSetup();
         return;
+
+        qDebug()<<Q_FUNC_INFO<<"resp data getLatitude: "<<resp.getData()->getLatitude()
+             <<"resp data getLongitude: "<<resp.getData()->getLongitude()
+              ;
+
     }
 }
 
