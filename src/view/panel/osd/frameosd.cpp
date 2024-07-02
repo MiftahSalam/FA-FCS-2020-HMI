@@ -19,8 +19,6 @@ FrameOSD::FrameOSD(QWidget *parent) :
     _cmsGyro(DI::getInstance()->getOSDCMSService()->getServiceOSDCMSGyro()),
     currentMode(InputModeModel(false, false, false))
 {
-    ;
-
     ui->setupUi(this);
 
     setup();

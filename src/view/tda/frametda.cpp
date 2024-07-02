@@ -1,4 +1,5 @@
 #include "frametda.h"
+#include "src/di/di.h"
 #include "src/view/tda/components/tda_compass_object.h"
 #include "src/view/tda/components/track/tda_tracks_object.h"
 #include "ui_frametda.h"
@@ -29,6 +30,7 @@ FrameTDA::FrameTDA(QWidget *parent) :
     TDATracksObject *tracksObject = new TDATracksObject(this);
     objectItems << compass << tracksObject;
 
+    osdRepo = DI::getInstance()->getRepoOSD(); //temp
 
     timer->start(1000);
 }
@@ -58,4 +60,7 @@ void FrameTDA::paintEvent(QPaintEvent *event)
 void FrameTDA::timeOut()
 {
     update();
+
+    auto pos = osdRepo->getRepoOSDPosition()->GetPosition(); //temp test
+    qDebug()<<Q_FUNC_INFO<<pos->latitude();
 }

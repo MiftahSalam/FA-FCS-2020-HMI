@@ -5,18 +5,29 @@
 #include "src/shared/common/errors/err_object_creation.h"
 #include "osd_cms.h"
 
-
-OSDCMS::OSDCMS(QObject *parent, OSDCmsConfig *cmsConfig): QObject(parent), cfgCms(cmsConfig)
+OSDCMS::OSDCMS(QObject *parent, OSDCmsConfig *cmsConfig, OSDRepository *repoOSD)
+    : QObject(parent), cfgCms(cmsConfig)
 {
-    if(cmsConfig == nullptr) {
+    if (cmsConfig == nullptr)
+    {
         throw ErrObjectCreation();
     }
 
-    serviceOSDCMSPosition = OSDCMSPositionData::getInstance(new HttpClientWrapper(), cmsConfig);
-    serviceOSDCMSGyro = OSDCMSGyroData::getInstance(new HttpClientWrapper(), cmsConfig);
-    serviceOSDCMSMode = OSDCMSInputMode::getInstance(new HttpClientWrapper(), cmsConfig);
-}
+    if (repoOSD == nullptr)
+    {
+        throw ErrObjectCreation();
+    }
 
+    serviceOSDCMSPosition = OSDCMSPositionData::getInstance(
+                new HttpClientWrapper(),
+                cmsConfig,
+                repoOSD->getRepoOSDPosition());
+    serviceOSDCMSGyro = OSDCMSGyroData::getInstance(new HttpClientWrapper(), cmsConfig);
+    serviceOSDCMSMode = OSDCMSInputMode::getInstance(
+                new HttpClientWrapper(),
+                cmsConfig,
+                repoOSD->getRepoOSDPosition());
+}
 
 OSDCMSPositionData *OSDCMS::getServiceOSDCMSPosition() const
 {
