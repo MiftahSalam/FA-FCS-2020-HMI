@@ -10,7 +10,12 @@
 //    serviceOSDStreamPosition = OSDStreamPosition::getInstance(cfgAmqp);
 //}
 
-OSDStream::OSDStream(QObject *parent, MessagingTcpConfig *config, OSDRepository *repoOSD) : QObject(parent), consumerConfig(config)
+OSDStream::OSDStream(
+        QObject *parent,
+        MessagingTcpConfig *config,
+        OSDRepository *repoOSD,
+        OSDCMS *osdService
+        ): QObject(parent), consumerConfig(config), serviceOSDCMS(osdService)
 {
     if (config == nullptr)
     {
@@ -22,11 +27,24 @@ OSDStream::OSDStream(QObject *parent, MessagingTcpConfig *config, OSDRepository 
         throw ErrObjectCreation();
     }
 
+    if (osdService == nullptr)
+    {
+        throw ErrObjectCreation();
+    }
+
     TcpMessagingOpts *posStreamVal = config->getInstance("")->getContent().value("position");
-    serviceOSDStreamPosition = OSDStreamPosition::getInstance(posStreamVal, repoOSD->getRepoOSDPosition());
+    serviceOSDStreamPosition = OSDStreamPosition::getInstance(
+                posStreamVal,
+                repoOSD->getRepoOSDPosition(),
+                osdService->getServiceOSDCMSMode()
+                );
 
     TcpMessagingOpts *gyroStreamVal = config->getInstance("")->getContent().value("inertia");
-    serviceOSDStreamGyro = OSDStreamGyro::getInstance(gyroStreamVal);
+    serviceOSDStreamGyro = OSDStreamGyro::getInstance(
+                gyroStreamVal,
+                repoOSD->getRepoOSDInertia(),
+                osdService->getServiceOSDCMSMode()
+                );
 }
 
 OSDStreamPosition *OSDStream::getServiceOSDStreamPosition() const

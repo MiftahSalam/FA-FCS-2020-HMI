@@ -5,25 +5,37 @@
 
 OSDStreamGyro* OSDStreamGyro::gyroStream = nullptr;
 
-OSDStreamGyro::OSDStreamGyro(TcpMessagingOpts *config)
-    :cfg(config)
+OSDStreamGyro::OSDStreamGyro(
+        TcpMessagingOpts *config,
+        OSDInertiaRepository *repoInertia,
+        OSDCMSInputMode *modeService
+        )
+    :cfg(config), _repoInertia(repoInertia), serviceMode(modeService)
 {
-    if(config == nullptr) {
-        throw ErrObjectCreation();
-    }
-
     consumer = new TcpMessagingWrapper(this, config);
     connect(consumer, &TcpMessagingWrapper::signalForwardMessage, this, &OSDStreamGyro::onDataReceived);
 }
 
-OSDStreamGyro *OSDStreamGyro::getInstance(TcpMessagingOpts *config)
+OSDStreamGyro *OSDStreamGyro::getInstance(
+        TcpMessagingOpts *config,
+        OSDInertiaRepository *repoInertia,
+        OSDCMSInputMode *modeService
+        )
 {
     if (gyroStream == nullptr) {
         if(config == nullptr) {
             throw ErrObjectCreation();
         }
 
-        gyroStream = new OSDStreamGyro(config);
+        if(repoInertia == nullptr) {
+            throw ErrObjectCreation();
+        }
+
+        if(modeService == nullptr) {
+            throw ErrObjectCreation();
+        }
+
+        gyroStream = new OSDStreamGyro(config, repoInertia, modeService);
     }
 
     return gyroStream;
@@ -32,6 +44,7 @@ OSDStreamGyro *OSDStreamGyro::getInstance(TcpMessagingOpts *config)
 
 BaseError OSDStreamGyro::check()
 {
+    //TODO: check no data error, invalid data error, etc
     return consumer->checkConnection();
 }
 
@@ -48,6 +61,19 @@ void OSDStreamGyro::onDataReceived(QByteArray data)
             if (respObj["source"].toString().contains("manual")) {
                 return;
             }
+        }
+
+        auto inertiaMode = serviceMode->getDataMode().getInersia();
+        if (!inertiaMode) {
+            //TODO: update repo
+            _repoInertia->SetInertia(OSDInertiaEntity(
+                                      model.getHeading(),
+                                      model.getPicth(),
+                                      model.getRoll(),
+                                      respObj["source"].toString().toStdString(),
+                                      respObj["status"].toString().toStdString(),
+                                      OSD_MODE::AUTO
+                                  ));
         }
 
         emit signalDataProcessed(model);

@@ -6,17 +6,22 @@
 
 OSDCMSGyroData* OSDCMSGyroData::gyroData = nullptr;
 
-OSDCMSGyroData::OSDCMSGyroData(HttpClientWrapper *parent, OSDCmsConfig *cmsConfig): HttpClientWrapper(parent), cfgCms(cmsConfig)
+OSDCMSGyroData::OSDCMSGyroData(
+        HttpClientWrapper *parent,
+        OSDCmsConfig *cmsConfig,
+        OSDInertiaRepository *repoInertia
+        ): HttpClientWrapper(parent), cfgCms(cmsConfig), repoInertia(repoInertia)
 {
-    if(cmsConfig == nullptr) {
-        throw ErrObjectCreation();
-    }
     if(parent == nullptr) {
         throw ErrObjectCreation();
     }
 }
 
-OSDCMSGyroData *OSDCMSGyroData::getInstance(HttpClientWrapper *httpClient = nullptr, OSDCmsConfig *cmsConfig = nullptr)
+OSDCMSGyroData *OSDCMSGyroData::getInstance(
+        HttpClientWrapper *httpClient = nullptr,
+        OSDCmsConfig *cmsConfig = nullptr,
+        OSDInertiaRepository *repoInertia
+        )
 {
     if (gyroData == nullptr) {
         if(cmsConfig == nullptr) {
@@ -27,7 +32,11 @@ OSDCMSGyroData *OSDCMSGyroData::getInstance(HttpClientWrapper *httpClient = null
             throw ErrObjectCreation();
         }
 
-        gyroData = new OSDCMSGyroData(httpClient, cmsConfig);
+        if(repoInertia == nullptr) {
+            throw ErrObjectCreation();
+        }
+
+        gyroData = new OSDCMSGyroData(httpClient, cmsConfig, repoInertia);
     }
 
     return gyroData;
@@ -36,7 +45,7 @@ OSDCMSGyroData *OSDCMSGyroData::getInstance(HttpClientWrapper *httpClient = null
 
 void OSDCMSGyroData::set(OSDSetGyroRequest request)
 {
-    QNetworkRequest httpReq = QNetworkRequest(cfgCms->getInstance("")->getManualDataUrl()+"/gyro");
+    QNetworkRequest httpReq = QNetworkRequest(cfgCms->getInstance("")->getManualDataUrl()+"/inertia");
     httpReq.setHeader(QNetworkRequest::ContentTypeHeader, "application/json");
 
     httpResponse = httpClient.put(httpReq, request.toJSON());
@@ -59,6 +68,16 @@ void OSDCMSGyroData::onReplyFinished()
 
     resp = toResponse(respRaw);
 
+    //TODO: update repo
+    repoInertia->SetInertia(OSDInertiaEntity(
+                             resp.getData().getHeading(),
+                             resp.getData().getPicth(),
+                             resp.getData().getRoll(),
+                             "manual",
+                             "",
+                             OSD_MODE::MANUAL //temp
+                             ));
+
     emit signal_setGyroResponse(resp);
 
 }
@@ -71,9 +90,9 @@ BaseResponse<GyroModel> OSDCMSGyroData::toResponse(QByteArray raw)
         QString respMsg = respObj["message"].toString();
         QJsonObject respData = respObj["data"].toObject();
         GyroModel model(respData["heading"].toDouble(),respData["pitch"].toDouble(),respData["roll"].toDouble());
-        BaseResponse<GyroModel> resp(respCode, respMsg, &model);
+        BaseResponse<GyroModel> resp(respCode, respMsg, model);
 
-        qDebug()<<Q_FUNC_INFO<<"resp"<<resp.getHttpCode()<<resp.getMessage()<<resp.getData()->getHeading()<<resp.getData()->getPicth()<<resp.getData()->getRoll();
+        qDebug()<<Q_FUNC_INFO<<"resp"<<resp.getHttpCode()<<resp.getMessage()<<resp.getData().getHeading()<<resp.getData().getPicth()<<resp.getData().getRoll();
 
         return resp;
     } catch (ErrJsonParse &e) {
@@ -83,24 +102,26 @@ BaseResponse<GyroModel> OSDCMSGyroData::toResponse(QByteArray raw)
     }
 
     ErrUnknown status;
-    return BaseResponse<GyroModel>(status.getCode(), status.getMessage(), nullptr);
+    GyroModel model(-1, 90, 90);
+    return BaseResponse<GyroModel>(status.getCode(), status.getMessage(), model);
 
 }
 
 BaseResponse<GyroModel> OSDCMSGyroData::errorResponse(QNetworkReply::NetworkError err)
 {
+    GyroModel model(-1, 90, 90);
     try {
         ErrHelper::throwHttpError(err);
     } catch (BaseError &e) {
         qDebug()<<Q_FUNC_INFO<<"caught error: "<<e.getMessage();
-        return BaseResponse<GyroModel>(e.getCode(), e.getMessage(), nullptr);
+        return BaseResponse<GyroModel>(e.getCode(), e.getMessage(), model);
     }  catch (...) {
         qDebug()<<Q_FUNC_INFO<<"caught unkbnown error";
         ErrUnknown status;
-        return BaseResponse<GyroModel>(status.getCode(), status.getMessage(), nullptr);
+        return BaseResponse<GyroModel>(status.getCode(), status.getMessage(), model);
     }
 
     NoError status;
-    return BaseResponse<GyroModel>(status.getCode(), status.getMessage(), nullptr);
+    return BaseResponse<GyroModel>(status.getCode(), status.getMessage(), model);
 
 }

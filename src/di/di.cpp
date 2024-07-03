@@ -7,7 +7,7 @@ DI::DI()
     config = new Configuration();
     repoOSD = new OSDRepository(nullptr);
     serviceOSDCMS = new OSDCMS(nullptr, config->getOsdCmsConfig(), repoOSD);
-    serviceOSDStream = new OSDStream(nullptr, config->getTcpMessageConfig(), repoOSD);
+    serviceOSDStream = new OSDStream(nullptr, config->getTcpMessageConfig(), repoOSD, serviceOSDCMS);
     //    serviceOSDStream = new OSDStream(nullptr, config->getAmqpConfig());
 }
 

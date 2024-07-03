@@ -8,13 +8,23 @@ OSDCMSInputMode* OSDCMSInputMode::inputMode = nullptr;
 
 OSDCMSInputMode::OSDCMSInputMode(
         HttpClientWrapper *parent,
-        OSDCmsConfig *cmsConfig,
-        OSDBaseRepository *repoPos
-        ): HttpClientWrapper(parent), cfgCms(cmsConfig), repoPos(repoPos)
+        OSDCmsConfig *cmsConfig
+        ):
+    HttpClientWrapper(parent),
+    currentMode(OSDInputModeRequest(false, false, false)),
+    previousMode(OSDInputModeRequest(false, false, false)),
+    cfgCms(cmsConfig)
 {
+    synced = false;
+
     if(parent == nullptr) {
         throw ErrObjectCreation();
     }
+
+    timer = new QTimer(this);
+    connect(timer, &QTimer::timeout, this, &OSDCMSInputMode::onTimerTimeout);
+
+    timer->start(1000);
 }
 
 OSDCMSInputMode *OSDCMSInputMode::getInstance(
@@ -51,25 +61,70 @@ void OSDCMSInputMode::set(OSDInputModeRequest request)
     connect(httpResponse, &QNetworkReply::finished, this, &OSDCMSInputMode::onReplyFinished);
 }
 
-void OSDCMSInputMode::onReplyFinished()
+void OSDCMSInputMode::setDataMode(const QString &dataFisis, const bool manualMode)
 {
-    QByteArray respRaw = httpResponse->readAll();
-
-    qDebug()<<Q_FUNC_INFO<<"respRaw: "<<respRaw;
-    qDebug()<<Q_FUNC_INFO<<"err: "<<httpResponse->error();
-
-    BaseResponse<InputModeModel> resp = errorResponse(httpResponse->error());
-    if(resp.getHttpCode() != 0) {
-        emit signal_setModeResponse(resp);
+    if (dataFisis == "position") {
+        currentMode.setPosition(manualMode);
+    } else if (dataFisis == "inertia") {
+        currentMode.setInersia(manualMode);
+    } else {
+        // TODO: handle invalid datafisis
         return;
     }
 
+    requestSync = false;
+    lastUpdateMode = dataFisis;
+
+    set(currentMode);
+}
+
+const OSDInputModeRequest OSDCMSInputMode::getDataMode() const
+{
+    return currentMode;
+}
+
+void OSDCMSInputMode::sync()
+{
+    if(!synced) {
+        qDebug()<<Q_FUNC_INFO<<"syncing";
+
+        lastUpdateMode = "";
+        requestSync = true;
+        set(currentMode);
+    }
+}
+
+void OSDCMSInputMode::onReplyFinished()
+{
+    QByteArray respRaw = httpResponse->readAll();
+    auto respErr = httpResponse->error();
+
+    qDebug()<<Q_FUNC_INFO<<"respRaw: "<<respRaw;
+    qDebug()<<Q_FUNC_INFO<<"err: "<<respErr;
+
+    BaseResponse<InputModeModel> resp = errorResponse(httpResponse->error());
+    if(resp.getHttpCode() != 0) {
+        resetToPrevMode();
+        synced = false;
+
+        emit signal_setModeResponse(lastUpdateMode, resp, !requestSync);
+
+        return;
+    }
+
+    synced = true;
     resp = toResponse(respRaw);
 
+    previousMode = currentMode;
     //TODO: update repo
-//    repoPos->SetEntity(); //temp
+    //    repoInputMode->SetEntity(); //temp
 
-    emit signal_setModeResponse(resp);
+    emit signal_setModeResponse(lastUpdateMode, resp, !requestSync);
+}
+
+void OSDCMSInputMode::onTimerTimeout()
+{
+    sync();
 }
 
 BaseResponse<InputModeModel> OSDCMSInputMode::toResponse(QByteArray raw)
@@ -84,7 +139,7 @@ BaseResponse<InputModeModel> OSDCMSInputMode::toResponse(QByteArray raw)
                 respData["speed"].toBool(),
                 respData["inersia"].toBool()
                 );
-        BaseResponse<InputModeModel> resp(respCode, respMsg, &model);
+        BaseResponse<InputModeModel> resp(respCode, respMsg, model);
 
         return resp;
     } catch (ErrJsonParse &e) {
@@ -94,22 +149,37 @@ BaseResponse<InputModeModel> OSDCMSInputMode::toResponse(QByteArray raw)
     }
 
     ErrUnknown status;
-    return BaseResponse<InputModeModel>(status.getCode(), status.getMessage(), nullptr);
+    InputModeModel model(false, false, false);
+    return BaseResponse<InputModeModel>(status.getCode(), status.getMessage(), model);
 }
 
 BaseResponse<InputModeModel> OSDCMSInputMode::errorResponse(QNetworkReply::NetworkError err)
 {
+    InputModeModel model(false, false, false);
     try {
         ErrHelper::throwHttpError(err);
     } catch (BaseError &e) {
         qDebug()<<Q_FUNC_INFO<<"caught error: "<<e.getMessage();
-        return BaseResponse<InputModeModel>(e.getCode(), e.getMessage(), nullptr);
+        return BaseResponse<InputModeModel>(e.getCode(), e.getMessage(), model);
     }  catch (...) {
         qDebug()<<Q_FUNC_INFO<<"caught unkbnown error";
         ErrUnknown status;
-        return BaseResponse<InputModeModel>(status.getCode(), status.getMessage(), nullptr);
+        return BaseResponse<InputModeModel>(status.getCode(), status.getMessage(), model);
     }
 
     NoError status;
-    return BaseResponse<InputModeModel>(status.getCode(), status.getMessage(), nullptr);
+    return BaseResponse<InputModeModel>(status.getCode(), status.getMessage(), model);
+}
+
+void OSDCMSInputMode::resetToPrevMode()
+{
+    //TODO: update repo
+    //    repoInputMode->SetEntity(); //temp
+
+    currentMode = previousMode;
+//    if (lastUpdateMode == "position") {
+//        currentMode.setPosition(previousMode.getPosition());
+//    } else if (lastUpdateMode == "inertia"){
+//        currentMode.setPosition(previousMode.getInersia());
+//    }
 }

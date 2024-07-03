@@ -9,15 +9,18 @@ OSDCMSPositionData* OSDCMSPositionData::positionData = nullptr;
 OSDCMSPositionData::OSDCMSPositionData(
         HttpClientWrapper *parent,
         OSDCmsConfig *cmsConfig,
-        OSDBaseRepository *repoPos
+        OSDPositionRepository *repoPos
         ): HttpClientWrapper(parent), cfgCms(cmsConfig), repoPos(repoPos)
 {
+    if(parent == nullptr) {
+        throw ErrObjectCreation();
+    }
 }
 
 OSDCMSPositionData *OSDCMSPositionData::getInstance(
         HttpClientWrapper *httpClient = nullptr,
         OSDCmsConfig *cmsConfig = nullptr,
-        OSDBaseRepository *repoPos
+        OSDPositionRepository *repoPos
         )
 {
     if (positionData == nullptr) {
@@ -63,8 +66,14 @@ void OSDCMSPositionData::onReplyFinished()
 
     resp = toResponse(respRaw);
 
-    //TODO: Update repo
-//    repoPos->SetEntity(); //temp
+    //TODO: update repo
+    repoPos->SetPosition(OSDPositionEntity(
+                             resp.getData().getLatitude(),
+                             resp.getData().getLongitude(),
+                             "manual",
+                             "",
+                             OSD_MODE::MANUAL //temp
+                             ));
 
     emit signal_setPositionResponse(resp);
 }
@@ -77,9 +86,9 @@ BaseResponse<PositionModel> OSDCMSPositionData::toResponse(QByteArray raw)
         QString respMsg = respObj["message"].toString();
         QJsonObject respData = respObj["data"].toObject();
         PositionModel model(respData["latitude"].toDouble(-91),respData["longitude"].toDouble(-181));
-        BaseResponse<PositionModel> resp(respCode, respMsg, &model);
+        BaseResponse<PositionModel> resp(respCode, respMsg, model);
 
-        qDebug()<<Q_FUNC_INFO<<"resp"<<resp.getHttpCode()<<resp.getMessage()<<resp.getData()->getLatitude()<<resp.getData()->getLongitude();
+        qDebug()<<Q_FUNC_INFO<<"resp"<<resp.getHttpCode()<<resp.getMessage()<<resp.getData().getLatitude()<<resp.getData().getLongitude();
 
         return resp;
     } catch (ErrJsonParse &e) {
@@ -89,22 +98,24 @@ BaseResponse<PositionModel> OSDCMSPositionData::toResponse(QByteArray raw)
     }
 
     ErrUnknown status;
-    return BaseResponse<PositionModel>(status.getCode(), status.getMessage(), nullptr);
+    PositionModel model(-91, -181);
+    return BaseResponse<PositionModel>(status.getCode(), status.getMessage(), model);
 }
 
 BaseResponse<PositionModel> OSDCMSPositionData::errorResponse(QNetworkReply::NetworkError err)
 {
+    PositionModel model(-91, -181);
     try {
         ErrHelper::throwHttpError(err);
     } catch (BaseError &e) {
         qDebug()<<Q_FUNC_INFO<<"caught error: "<<e.getMessage();
-        return BaseResponse<PositionModel>(e.getCode(), e.getMessage(), nullptr);
+        return BaseResponse<PositionModel>(e.getCode(), e.getMessage(), model);
     }  catch (...) {
         qDebug()<<Q_FUNC_INFO<<"caught unkbnown error";
         ErrUnknown status;
-        return BaseResponse<PositionModel>(status.getCode(), status.getMessage(), nullptr);
+        return BaseResponse<PositionModel>(status.getCode(), status.getMessage(), model);
     }
 
     NoError status;
-    return BaseResponse<PositionModel>(status.getCode(), status.getMessage(), nullptr);
+    return BaseResponse<PositionModel>(status.getCode(), status.getMessage(), model);
 }

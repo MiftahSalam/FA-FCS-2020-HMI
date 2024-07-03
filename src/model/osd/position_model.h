@@ -7,6 +7,7 @@ class PositionModel
 {
 public:
     PositionModel(double lat, double lon);
+    PositionModel(){};
 
     static PositionModel fromJsonObject(QJsonObject obj);
 

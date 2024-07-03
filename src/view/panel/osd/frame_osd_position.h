@@ -3,6 +3,7 @@
 
 #include <QWidget>
 
+#include "src/usecase/osd/cms/osd_cms_input_mode.h"
 #include "src/usecase/osd/stream/osd_stream_position.h"
 #include "src/view/panel/osd/frame_osd_base.h"
 #include "src/view/shared/frame_text_input.h"
@@ -30,8 +31,8 @@ public:
     void resetModeIndex() override;
 
 public slots:
-    void onModeChangeResponse(InputModeModel mode) override;
-    void onDataResponse(PositionModel data) override;
+    void onModeChangeResponse(const QString datafisis, BaseResponse<InputModeModel> resp, bool needConfirm) override;
+    void onDataResponse(BaseResponse<PositionModel> data) override;
     void onStreamReceive(PositionModel model) override;
     //added by riyadhi
     void onUpdatePositionAutoUi();
@@ -50,6 +51,7 @@ private slots:
 private:
     Ui::FrameOSDPosition *ui;
     OSDCMSPositionData *_cmsPos;
+    OSDCMSInputMode *_cmsMode;
     OSDStreamPosition* _streamPos;
 
     // FrameOSDBase interface

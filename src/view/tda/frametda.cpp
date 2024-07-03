@@ -62,5 +62,6 @@ void FrameTDA::timeOut()
     update();
 
     auto pos = osdRepo->getRepoOSDPosition()->GetPosition(); //temp test
-    qDebug()<<Q_FUNC_INFO<<pos->latitude();
+    auto inertia = osdRepo->getRepoOSDInertia()->GetInertia(); //temp test
+    qDebug()<<Q_FUNC_INFO<<pos->latitude()<<inertia->heading();
 }
