@@ -51,9 +51,11 @@ void FrameOSDGyro::onModeChange(int index)
     switch ((OSD_MODE)index) {
     case OSD_MODE::AUTO:
         manual_mode = false;
+        currentMode = OSD_MODE::AUTO;
         break;
     case OSD_MODE::MANUAL:
         manual_mode = true;
+        currentMode = OSD_MODE::MANUAL;
         break;
     default:
         break;
@@ -153,7 +155,7 @@ void FrameOSDGyro::onModeChangeResponse(const QString datafisis, BaseResponse<In
 
     qDebug()<<Q_FUNC_INFO<<"resp code:"<<"resp data inertia mode: "<<resp.getData().getInersia();
 
-    auto currentMode = (OSD_MODE)resp.getData().getInersia();
+//    auto currentMode = (OSD_MODE)resp.getData().getInersia();
     switch (currentMode) {
     case OSD_MODE::AUTO:
         autoUiSetup();
