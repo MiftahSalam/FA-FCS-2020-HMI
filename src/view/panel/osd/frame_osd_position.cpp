@@ -120,7 +120,7 @@ void FrameOSDPosition::onModeChangeResponse(const QString datafisis, BaseRespons
 //    prevMode = currentMode;
 //    prevModeIndx = currentModeIndx;
 
-    auto currentMode = (OSD_MODE)resp.getData().getPosition();
+//    auto currentMode = (OSD_MODE)resp.getData().getPosition();
     switch (currentMode) {
     case OSD_MODE::AUTO:
         autoUiSetup();
@@ -145,10 +145,12 @@ void FrameOSDPosition::onModeChange(int index)
     switch ((OSD_MODE)index) {
     case OSD_MODE::AUTO:
         manual_mode = false;
+        currentMode = OSD_MODE::AUTO;
 //        autoUiSetup();
         break;
     case OSD_MODE::MANUAL:
         manual_mode = true;
+        currentMode = OSD_MODE::MANUAL;
 //        manualUiSetup();
         break;
     default:
