@@ -6,17 +6,22 @@
 
 OSDCMSGyroData* OSDCMSGyroData::gyroData = nullptr;
 
-OSDCMSGyroData::OSDCMSGyroData(HttpClientWrapper *parent, OSDCmsConfig *cmsConfig): HttpClientWrapper(parent), cfgCms(cmsConfig)
+OSDCMSGyroData::OSDCMSGyroData(
+        HttpClientWrapper *parent,
+        OSDCmsConfig *cmsConfig,
+        OSDInertiaRepository *repoInertia
+        ): HttpClientWrapper(parent), cfgCms(cmsConfig), repoInertia(repoInertia)
 {
-    if(cmsConfig == nullptr) {
-        throw ErrObjectCreation();
-    }
     if(parent == nullptr) {
         throw ErrObjectCreation();
     }
 }
 
-OSDCMSGyroData *OSDCMSGyroData::getInstance(HttpClientWrapper *httpClient = nullptr, OSDCmsConfig *cmsConfig = nullptr)
+OSDCMSGyroData *OSDCMSGyroData::getInstance(
+        HttpClientWrapper *httpClient = nullptr,
+        OSDCmsConfig *cmsConfig = nullptr,
+        OSDInertiaRepository *repoInertia
+        )
 {
     if (gyroData == nullptr) {
         if(cmsConfig == nullptr) {
@@ -27,7 +32,11 @@ OSDCMSGyroData *OSDCMSGyroData::getInstance(HttpClientWrapper *httpClient = null
             throw ErrObjectCreation();
         }
 
-        gyroData = new OSDCMSGyroData(httpClient, cmsConfig);
+        if(repoInertia == nullptr) {
+            throw ErrObjectCreation();
+        }
+
+        gyroData = new OSDCMSGyroData(httpClient, cmsConfig, repoInertia);
     }
 
     return gyroData;
@@ -58,6 +67,16 @@ void OSDCMSGyroData::onReplyFinished()
     }
 
     resp = toResponse(respRaw);
+
+    //TODO: update repo
+    repoInertia->SetInertia(OSDInertiaEntity(
+                             resp.getData().getHeading(),
+                             resp.getData().getPicth(),
+                             resp.getData().getRoll(),
+                             "manual",
+                             "",
+                             OSD_MODE::MANUAL //temp
+                             ));
 
     emit signal_setGyroResponse(resp);
 

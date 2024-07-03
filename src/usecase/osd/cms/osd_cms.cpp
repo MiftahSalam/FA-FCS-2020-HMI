@@ -22,7 +22,10 @@ OSDCMS::OSDCMS(QObject *parent, OSDCmsConfig *cmsConfig, OSDRepository *repoOSD)
                 new HttpClientWrapper(),
                 cmsConfig,
                 repoOSD->getRepoOSDPosition());
-    serviceOSDCMSGyro = OSDCMSGyroData::getInstance(new HttpClientWrapper(), cmsConfig);
+    serviceOSDCMSGyro = OSDCMSGyroData::getInstance(
+                new HttpClientWrapper(),
+                cmsConfig,
+                repoOSD->getRepoOSDInertia());
     serviceOSDCMSMode = OSDCMSInputMode::getInstance(
                 new HttpClientWrapper(),
                 cmsConfig,
