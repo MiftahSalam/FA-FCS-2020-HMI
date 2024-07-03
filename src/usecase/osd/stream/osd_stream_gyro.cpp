@@ -5,14 +5,22 @@
 
 OSDStreamGyro* OSDStreamGyro::gyroStream = nullptr;
 
-OSDStreamGyro::OSDStreamGyro(TcpMessagingOpts *config, OSDInertiaRepository *repoInertia)
-    :cfg(config), _repoInertia(repoInertia)
+OSDStreamGyro::OSDStreamGyro(
+        TcpMessagingOpts *config,
+        OSDInertiaRepository *repoInertia,
+        OSDCMSInputMode *modeService
+        )
+    :cfg(config), _repoInertia(repoInertia), serviceMode(modeService)
 {
     consumer = new TcpMessagingWrapper(this, config);
     connect(consumer, &TcpMessagingWrapper::signalForwardMessage, this, &OSDStreamGyro::onDataReceived);
 }
 
-OSDStreamGyro *OSDStreamGyro::getInstance(TcpMessagingOpts *config, OSDInertiaRepository *repoInertia)
+OSDStreamGyro *OSDStreamGyro::getInstance(
+        TcpMessagingOpts *config,
+        OSDInertiaRepository *repoInertia,
+        OSDCMSInputMode *modeService
+        )
 {
     if (gyroStream == nullptr) {
         if(config == nullptr) {
@@ -23,7 +31,11 @@ OSDStreamGyro *OSDStreamGyro::getInstance(TcpMessagingOpts *config, OSDInertiaRe
             throw ErrObjectCreation();
         }
 
-        gyroStream = new OSDStreamGyro(config, repoInertia);
+        if(modeService == nullptr) {
+            throw ErrObjectCreation();
+        }
+
+        gyroStream = new OSDStreamGyro(config, repoInertia, modeService);
     }
 
     return gyroStream;
@@ -44,21 +56,24 @@ void OSDStreamGyro::onDataReceived(QByteArray data)
 
         qDebug()<<Q_FUNC_INFO<<"data gyro: heading ->"<<model.getHeading()<<"pitch ->"<<model.getPicth()<<"roll ->"<<model.getRoll();
 
-        //TODO: update repo
-        _repoInertia->SetInertia(OSDInertiaEntity(
-                                  model.getHeading(),
-                                  model.getPicth(),
-                                  model.getRoll(),
-                                  respObj["source"].toString().toStdString(),
-                                  respObj["status"].toString().toStdString(),
-                                  OSD_MODE::AUTO
-                              ));
-
         //check source mode manual
         if (respObj.contains("source")) {
             if (respObj["source"].toString().contains("manual")) {
                 return;
             }
+        }
+
+        auto inertiaMode = serviceMode->getDataMode().getInersia();
+        if (!inertiaMode) {
+            //TODO: update repo
+            _repoInertia->SetInertia(OSDInertiaEntity(
+                                      model.getHeading(),
+                                      model.getPicth(),
+                                      model.getRoll(),
+                                      respObj["source"].toString().toStdString(),
+                                      respObj["status"].toString().toStdString(),
+                                      OSD_MODE::AUTO
+                                  ));
         }
 
         emit signalDataProcessed(model);

@@ -6,6 +6,7 @@
 #include "src/model/osd/position_model.h"
 //#include "src/shared/config/amqp_config.h"
 #include "src/shared/config/messaging_tcp_config.h"
+#include "src/usecase/osd/cms/osd_cms_input_mode.h"
 #include "src/usecase/osd/stream/IOSDStream.h"
 
 #include <QObject>
@@ -16,7 +17,11 @@ class OSDStreamPosition : public QObject, public IOSDStream<PositionModel>
 public:
     OSDStreamPosition(OSDStreamPosition &other) = delete;
     void operator=(const OSDStreamPosition&) = delete;
-    static OSDStreamPosition* getInstance(TcpMessagingOpts *config, OSDPositionRepository *_repoPos);
+    static OSDStreamPosition* getInstance(
+            TcpMessagingOpts *config,
+            OSDPositionRepository *_repoPos,
+            OSDCMSInputMode *modeService
+            );
 //    static OSDStreamPosition* getInstance(AMQPConfig *config);
 
     BaseError check() override;
@@ -26,7 +31,11 @@ signals:
     void signalDataProcessed(PositionModel data) override;
 
 protected:
-    OSDStreamPosition(TcpMessagingOpts *config = nullptr, OSDPositionRepository *repoPos = nullptr);
+    OSDStreamPosition(
+            TcpMessagingOpts *config = nullptr,
+            OSDPositionRepository *repoPos = nullptr,
+            OSDCMSInputMode *modeService = nullptr
+            );
 //    OSDStreamPosition(AMQPConfig *config = nullptr);
 
     // IOSDStream interface
@@ -40,6 +49,7 @@ private:
     TcpMessagingWrapper *consumer;
     TcpMessagingOpts *cfg;
     OSDPositionRepository* _repoPos;
+    OSDCMSInputMode *serviceMode;
     // TODO: add input mode repo
 //    AMQPConfig *cfg;
 };

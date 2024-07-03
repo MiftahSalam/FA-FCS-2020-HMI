@@ -21,7 +21,7 @@ public slots:
 protected:
     QTimer *timer; //timer to update ui
     QDateTime timestamp;
-//    OSD_MODE currentMode;  //hold current data fisis mode
+    OSD_MODE currentMode;  //hold current data fisis mode
     OSD_MODE prevMode;  //hold previous data fisis mode
     int currentModeIndx; //hold current data fisis mode combobox index
     int prevModeIndx; //hold previous data fisis mode combobox index

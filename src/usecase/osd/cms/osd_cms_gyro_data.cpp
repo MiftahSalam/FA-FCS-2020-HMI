@@ -45,7 +45,7 @@ OSDCMSGyroData *OSDCMSGyroData::getInstance(
 
 void OSDCMSGyroData::set(OSDSetGyroRequest request)
 {
-    QNetworkRequest httpReq = QNetworkRequest(cfgCms->getInstance("")->getManualDataUrl()+"/gyro");
+    QNetworkRequest httpReq = QNetworkRequest(cfgCms->getInstance("")->getManualDataUrl()+"/inertia");
     httpReq.setHeader(QNetworkRequest::ContentTypeHeader, "application/json");
 
     httpResponse = httpClient.put(httpReq, request.toJSON());

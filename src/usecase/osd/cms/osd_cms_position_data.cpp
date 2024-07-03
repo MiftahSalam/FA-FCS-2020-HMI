@@ -12,6 +12,9 @@ OSDCMSPositionData::OSDCMSPositionData(
         OSDPositionRepository *repoPos
         ): HttpClientWrapper(parent), cfgCms(cmsConfig), repoPos(repoPos)
 {
+    if(parent == nullptr) {
+        throw ErrObjectCreation();
+    }
 }
 
 OSDCMSPositionData *OSDCMSPositionData::getInstance(

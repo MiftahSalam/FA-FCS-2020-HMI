@@ -17,10 +17,10 @@ FrameOSDPosition::FrameOSDPosition(QWidget *parent) :
     ui->setupUi(this);
 
     //init combobox mode (should be auto by default. make sure to sync with osd server)
-//    currentMode = OSD_MODE::AUTO;
-    prevMode = OSD_MODE::AUTO;
+    currentMode = OSD_MODE::AUTO;
+//    prevMode = OSD_MODE::AUTO;
     currentModeIndx = 0;
-    prevModeIndx = 0;
+//    prevModeIndx = 0;
     afterResetModeIndx = false;
     ui->mode->setCurrentModeIndex(currentModeIndx);
     ui->pushButton->setEnabled(false);
@@ -199,16 +199,26 @@ void FrameOSDPosition::onTimeout()
         invalidDataUiSetup();
     }
 
-    disconnect(ui->mode, &FrameOSDMode::signal_currentModeChange, this, &FrameOSDPosition::onModeChange);
     auto curMode = _cmsMode->getDataMode();
-    if (curMode.getPosition()) {
-        ui->mode->setCurrentModeIndex(1);
-        manualUiSetup();
-    } else {
-        ui->mode->setCurrentModeIndex(0);
-        autoUiSetup();
+    bool posMode = curMode.getPosition();
+    if ((OSD_MODE)posMode != currentMode) {
+        disconnect(ui->mode, &FrameOSDMode::signal_currentModeChange, this, &FrameOSDPosition::onModeChange);
+        if (posMode) {
+            ui->mode->setCurrentModeIndex(1);
+            manualUiSetup();
+
+            float lat = Utils::latStrToDegree(ui->inputLatitude->getCurrentValue());
+            float lon = Utils::lonStrToDegree(ui->inputLongitude->getCurrentValue());
+
+            _cmsPos->set(OSDSetPositionRequest(lat, lon));
+        } else {
+            ui->mode->setCurrentModeIndex(0);
+            autoUiSetup();
+        }
+        connect(ui->mode, &FrameOSDMode::signal_currentModeChange, this, &FrameOSDPosition::onModeChange);
+
+        currentMode = (OSD_MODE)posMode;
     }
-    connect(ui->mode, &FrameOSDMode::signal_currentModeChange, this, &FrameOSDPosition::onModeChange);
 }
 
 void FrameOSDPosition::onStreamReceive(PositionModel model)

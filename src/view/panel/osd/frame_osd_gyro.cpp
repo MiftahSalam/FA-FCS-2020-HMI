@@ -16,6 +16,7 @@ FrameOSDGyro::FrameOSDGyro(QWidget *parent) :
     ui->setupUi(this);
 
     currentModeIndx = 0;
+    currentMode = OSD_MODE::AUTO;
     afterResetModeIndx = false;
     ui->mode->setCurrentModeIndex(currentModeIndx);
     ui->pushButton->setEnabled(false);
@@ -79,16 +80,26 @@ void FrameOSDGyro::onTimeout()
         invalidDataUiSetup();
     }
 
-    disconnect(ui->mode, &FrameOSDMode::signal_currentModeChange, this, &FrameOSDGyro::onModeChange);
     auto curMode = _cmsMode->getDataMode();
-    if (curMode.getInersia()) {
-        ui->mode->setCurrentModeIndex(1);
-        manualUiSetup();
-    } else {
-        ui->mode->setCurrentModeIndex(0);
-        autoUiSetup();
+    bool inertiaMode = curMode.getInersia();
+    if ((OSD_MODE)inertiaMode != currentMode) {
+        disconnect(ui->mode, &FrameOSDMode::signal_currentModeChange, this, &FrameOSDGyro::onModeChange);
+        if (inertiaMode) {
+            ui->mode->setCurrentModeIndex(1);
+            manualUiSetup();
+            _cmsGyro->set(OSDSetGyroRequest(
+                              ui->inputHeading->getCurrentValue().toFloat(),
+                              ui->inputPitch->getCurrentValue().toFloat(),
+                              ui->inputRoll->getCurrentValue().toFloat()
+                              ));
+        } else {
+            ui->mode->setCurrentModeIndex(0);
+            autoUiSetup();
+        }
+        connect(ui->mode, &FrameOSDMode::signal_currentModeChange, this, &FrameOSDGyro::onModeChange);
+
+        currentMode = (OSD_MODE)inertiaMode;
     }
-    connect(ui->mode, &FrameOSDMode::signal_currentModeChange, this, &FrameOSDGyro::onModeChange);
 }
 
 FrameOSDGyro::~FrameOSDGyro()
@@ -204,7 +215,6 @@ void FrameOSDGyro::onStreamReceive(GyroModel model)
 
 void FrameOSDGyro::onUpdateGyroAutoUi()
 {
-
     autoUiSetup();
 }
 

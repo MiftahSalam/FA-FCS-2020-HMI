@@ -5,10 +5,11 @@
 
 OSDStreamPosition* OSDStreamPosition::positionStream = nullptr;
 
-OSDStreamPosition::OSDStreamPosition(TcpMessagingOpts *config, OSDPositionRepository *repoPos)
+OSDStreamPosition::OSDStreamPosition(TcpMessagingOpts *config,
+        OSDPositionRepository *repoPos,
+        OSDCMSInputMode *modeService)
 //OSDStreamPosition::OSDStreamPosition(AMQPConfig *config)
-    : cfg(config), _repoPos(repoPos)
-
+    : cfg(config), _repoPos(repoPos), serviceMode(modeService)
 {
     /*
     AMQPOptions *opt = new AMQPOptions(
@@ -27,7 +28,11 @@ OSDStreamPosition::OSDStreamPosition(TcpMessagingOpts *config, OSDPositionReposi
     connect(consumer, &TcpMessagingWrapper::signalForwardMessage, this, &OSDStreamPosition::onDataReceived);
 }
 
-OSDStreamPosition *OSDStreamPosition::getInstance(TcpMessagingOpts *config = nullptr, OSDPositionRepository* repoPos = nullptr)
+OSDStreamPosition *OSDStreamPosition::getInstance(
+        TcpMessagingOpts *config = nullptr,
+        OSDPositionRepository* repoPos = nullptr,
+        OSDCMSInputMode *modeService = nullptr
+        )
 //OSDStreamPosition *OSDStreamPosition::getInstance(AMQPConfig *config = nullptr)
 {
     if (positionStream == nullptr) {
@@ -39,7 +44,11 @@ OSDStreamPosition *OSDStreamPosition::getInstance(TcpMessagingOpts *config = nul
             throw ErrObjectCreation();
         }
 
-        positionStream = new OSDStreamPosition(config, repoPos);
+        if(modeService == nullptr) {
+            throw ErrObjectCreation();
+        }
+
+        positionStream = new OSDStreamPosition(config, repoPos, modeService);
     }
 
     return positionStream;
@@ -60,20 +69,23 @@ void OSDStreamPosition::onDataReceived(QByteArray data)
 
         qDebug()<<Q_FUNC_INFO<<"data position: lat ->"<<model.getLatitude()<<"lon ->"<<model.getLongitude();
 
-        //TODO: update repo
-        _repoPos->SetPosition(OSDPositionEntity(
-                                  model.getLatitude(),
-                                  model.getLongitude(),
-                                  respObj["source"].toString().toStdString(),
-                                  respObj["status"].toString().toStdString(),
-                                  OSD_MODE::AUTO
-                              ));
-
         //check source mode manual
         if (respObj.contains("source")) {
             if (respObj["source"].toString().contains("manual")) {
                 return;
             }
+        }
+
+        auto positionMode = serviceMode->getDataMode().getPosition();
+        if (!positionMode) {
+            //TODO: update repo
+            _repoPos->SetPosition(OSDPositionEntity(
+                                      model.getLatitude(),
+                                      model.getLongitude(),
+                                      respObj["source"].toString().toStdString(),
+                                      respObj["status"].toString().toStdString(),
+                                      OSD_MODE::AUTO
+                                  ));
         }
 
         emit signalDataProcessed(model);
