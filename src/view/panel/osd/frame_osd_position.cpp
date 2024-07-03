@@ -127,6 +127,7 @@ void FrameOSDPosition::onModeChangeResponse(const QString datafisis, BaseRespons
         break;
     case OSD_MODE::MANUAL:
         manualUiSetup();
+        // TODO: get manual data from server
         break;
     default:
         break;

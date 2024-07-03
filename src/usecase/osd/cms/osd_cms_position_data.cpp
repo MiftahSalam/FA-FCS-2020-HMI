@@ -9,7 +9,7 @@ OSDCMSPositionData* OSDCMSPositionData::positionData = nullptr;
 OSDCMSPositionData::OSDCMSPositionData(
         HttpClientWrapper *parent,
         OSDCmsConfig *cmsConfig,
-        OSDBaseRepository *repoPos
+        OSDPositionRepository *repoPos
         ): HttpClientWrapper(parent), cfgCms(cmsConfig), repoPos(repoPos)
 {
 }
@@ -17,7 +17,7 @@ OSDCMSPositionData::OSDCMSPositionData(
 OSDCMSPositionData *OSDCMSPositionData::getInstance(
         HttpClientWrapper *httpClient = nullptr,
         OSDCmsConfig *cmsConfig = nullptr,
-        OSDBaseRepository *repoPos
+        OSDPositionRepository *repoPos
         )
 {
     if (positionData == nullptr) {
@@ -63,8 +63,14 @@ void OSDCMSPositionData::onReplyFinished()
 
     resp = toResponse(respRaw);
 
-    //TODO: Update repo
-//    repoPos->SetEntity(); //temp
+    //TODO: update repo
+    repoPos->SetPosition(OSDPositionEntity(
+                             resp.getData().getLatitude(),
+                             resp.getData().getLongitude(),
+                             "manual",
+                             "",
+                             OSD_MODE::MANUAL //temp
+                             ));
 
     emit signal_setPositionResponse(resp);
 }

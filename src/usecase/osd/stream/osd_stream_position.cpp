@@ -5,7 +5,7 @@
 
 OSDStreamPosition* OSDStreamPosition::positionStream = nullptr;
 
-OSDStreamPosition::OSDStreamPosition(TcpMessagingOpts *config, OSDBaseRepository *repoPos)
+OSDStreamPosition::OSDStreamPosition(TcpMessagingOpts *config, OSDPositionRepository *repoPos)
 //OSDStreamPosition::OSDStreamPosition(AMQPConfig *config)
     : cfg(config), _repoPos(repoPos)
 
@@ -27,7 +27,7 @@ OSDStreamPosition::OSDStreamPosition(TcpMessagingOpts *config, OSDBaseRepository
     connect(consumer, &TcpMessagingWrapper::signalForwardMessage, this, &OSDStreamPosition::onDataReceived);
 }
 
-OSDStreamPosition *OSDStreamPosition::getInstance(TcpMessagingOpts *config = nullptr, OSDBaseRepository* repoPos = nullptr)
+OSDStreamPosition *OSDStreamPosition::getInstance(TcpMessagingOpts *config = nullptr, OSDPositionRepository* repoPos = nullptr)
 //OSDStreamPosition *OSDStreamPosition::getInstance(AMQPConfig *config = nullptr)
 {
     if (positionStream == nullptr) {
@@ -47,7 +47,7 @@ OSDStreamPosition *OSDStreamPosition::getInstance(TcpMessagingOpts *config = nul
 
 BaseError OSDStreamPosition::check()
 {
-//    qDebug()<<Q_FUNC_INFO;
+    //    qDebug()<<Q_FUNC_INFO;
     //TODO: check no data error, invalid data error, etc
     return consumer->checkConnection();
 }
@@ -59,6 +59,15 @@ void OSDStreamPosition::onDataReceived(QByteArray data)
         PositionModel model(respObj["latitude"].toDouble(-91),respObj["longitude"].toDouble(-181));
 
         qDebug()<<Q_FUNC_INFO<<"data position: lat ->"<<model.getLatitude()<<"lon ->"<<model.getLongitude();
+
+        //TODO: update repo
+        _repoPos->SetPosition(OSDPositionEntity(
+                                  model.getLatitude(),
+                                  model.getLongitude(),
+                                  respObj["source"].toString().toStdString(),
+                                  respObj["status"].toString().toStdString(),
+                                  OSD_MODE::AUTO
+                              ));
 
         //check source mode manual
         if (respObj.contains("source")) {
@@ -73,7 +82,4 @@ void OSDStreamPosition::onDataReceived(QByteArray data)
     }  catch (...) {
         qDebug()<<Q_FUNC_INFO<<"caught unkbnown error";
     }
-
-    //TODO: update repo
-//    _repoPos->SetEntity(); //temp
 }

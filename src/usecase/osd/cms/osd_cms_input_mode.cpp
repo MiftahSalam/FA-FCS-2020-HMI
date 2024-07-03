@@ -8,14 +8,12 @@ OSDCMSInputMode* OSDCMSInputMode::inputMode = nullptr;
 
 OSDCMSInputMode::OSDCMSInputMode(
         HttpClientWrapper *parent,
-        OSDCmsConfig *cmsConfig,
-        OSDBaseRepository *repoPos
+        OSDCmsConfig *cmsConfig
         ):
     HttpClientWrapper(parent),
     currentMode(OSDInputModeRequest(false, false, false)),
     previousMode(OSDInputModeRequest(false, false, false)),
-    cfgCms(cmsConfig),
-    repoPos(repoPos)
+    cfgCms(cmsConfig)
 {
     synced = false;
 
@@ -119,7 +117,7 @@ void OSDCMSInputMode::onReplyFinished()
 
     previousMode = currentMode;
     //TODO: update repo
-    //    repoPos->SetEntity(); //temp
+    //    repoInputMode->SetEntity(); //temp
 
     emit signal_setModeResponse(lastUpdateMode, resp, !requestSync);
 }
@@ -175,6 +173,9 @@ BaseResponse<InputModeModel> OSDCMSInputMode::errorResponse(QNetworkReply::Netwo
 
 void OSDCMSInputMode::resetToPrevMode()
 {
+    //TODO: update repo
+    //    repoInputMode->SetEntity(); //temp
+
     currentMode = previousMode;
 //    if (lastUpdateMode == "position") {
 //        currentMode.setPosition(previousMode.getPosition());

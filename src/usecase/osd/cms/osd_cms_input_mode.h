@@ -33,9 +33,7 @@ signals:
 protected:
     OSDCMSInputMode(
             HttpClientWrapper *parent = nullptr,
-            OSDCmsConfig *cmsConfig = nullptr,
-            OSDBaseRepository* repoPos = nullptr
-            );
+            OSDCmsConfig *cmsConfig = nullptr);
 
 private slots:
     void onReplyFinished() override;
@@ -48,7 +46,7 @@ private:
     OSDInputModeRequest currentMode;
     OSDInputModeRequest previousMode;
     OSDCmsConfig *cfgCms;
-    OSDBaseRepository* repoPos;
+    // TODO: add input mode repo
     QTimer *timer;
     QString lastUpdateMode;
     bool synced;
