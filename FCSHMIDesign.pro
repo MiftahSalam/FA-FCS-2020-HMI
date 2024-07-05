@@ -20,6 +20,7 @@ SOURCES += \
     src/domain/osd/entity/osd_base_entity.cpp \
     src/domain/osd/entity/osd_inertia_entity.cpp \
     src/domain/osd/entity/osd_position_entity.cpp \
+    src/domain/osd/entity/osd_speed_entity.cpp \
     src/infra/http/http_client_wrapper.cpp \
     src/infra/messaging/tcp/tcp_messaging_wrapper.cpp \
     src/infra/store/osd/inmemory/osd_inertia_repository_inmem_impl.cpp \
@@ -87,6 +88,7 @@ HEADERS += \
     src/domain/osd/entity/osd_base_entity.h \
     src/domain/osd/entity/osd_inertia_entity.h \
     src/domain/osd/entity/osd_position_entity.h \
+    src/domain/osd/entity/osd_speed_entity.h \
     src/domain/osd/repository/osd_base_repository.h \
     src/domain/osd/repository/osd_inertia_repository.h \
     src/domain/osd/repository/osd_position_repository.h \

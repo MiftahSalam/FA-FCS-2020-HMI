@@ -11,7 +11,7 @@ namespace Ui {
 class FrameOSDSpeed;
 }
 
-struct OSDGyroProp
+struct OSDSpeedProp
 {
     QString title;
     TextInputProp speed;
