@@ -1,7 +1,6 @@
 #ifndef DI_H
 #define DI_H
 
-
 #include "src/infra/store/osd/osd_repository.h"
 #include "src/shared/config/configuration.h"
 #include "src/usecase/osd/cms/osd_cms.h"
@@ -11,8 +10,8 @@ class DI
 {
 public:
     DI(DI &other) = delete;
-    void operator=(const DI&) = delete;
-    static DI* getInstance();
+    void operator=(const DI &) = delete;
+    static DI *getInstance();
 
     Configuration *getConfig() const;
     OSDCMS *getOSDCMSService() const;
@@ -27,6 +26,7 @@ private:
 
     Configuration *config;
     OSDRepository *repoOSD;
+    // TODO: add track repository
     OSDCMS *serviceOSDCMS;
     OSDStream *serviceOSDStream;
 };
