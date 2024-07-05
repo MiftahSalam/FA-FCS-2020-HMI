@@ -17,18 +17,24 @@ TEMPLATE = app
 
 SOURCES += \
     src/di/di.cpp \
+    src/domain/gun/entity/gun_barrel_entity.cpp \
+    src/domain/gun/entity/gun_status_command_entity.cpp \
+    src/domain/gun/entity/gun_status_feedback_entity.cpp \
     src/domain/osd/entity/osd_base_entity.cpp \
     src/domain/osd/entity/osd_inertia_entity.cpp \
     src/domain/osd/entity/osd_position_entity.cpp \
     src/domain/track/entity/track_base_entity.cpp \
     src/infra/http/http_client_wrapper.cpp \
     src/infra/messaging/tcp/tcp_messaging_wrapper.cpp \
+    src/infra/store/gun/gun_repository.cpp \
+    src/infra/store/gun/inmemory/gun_command_repository_inmem_impl.cpp \
     src/infra/store/osd/inmemory/osd_inertia_repository_inmem_impl.cpp \
     src/infra/store/osd/inmemory/osd_position_repository_inmem_impl.cpp \
     src/infra/store/osd/osd_repository.cpp \
     src/infra/store/track/inmem/track_arpa_repository_inmem_impl.cpp \
     src/infra/store/track/track_repository.cpp \
     src/main.cpp \
+    src/model/gun/cms/gun_command_request.cpp \
     src/model/osd/cms/osd_input_mode_request.cpp \
     src/model/osd/cms/osd_set_gyro_request.cpp \
     src/model/osd/cms/osd_set_position_request.cpp \
@@ -50,6 +56,8 @@ SOURCES += \
     src/shared/config/messaging_tcp_config.cpp \
     src/shared/config/osd_cms_config.cpp \
     src/shared/utils/utils.cpp \
+    src/usecase/gun/cms/gun_command_service.cpp \
+    src/usecase/gun/stream/gun_feedback_stream.cpp \
     src/usecase/osd/cms/osd_cms.cpp \
     src/usecase/osd/cms/osd_cms_gyro_data.cpp \
     src/usecase/osd/cms/osd_cms_input_mode.cpp \
@@ -88,6 +96,12 @@ SOURCES += \
 
 HEADERS += \
     src/di/di.h \
+    src/domain/gun/entity/gun_barrel_entity.h \
+    src/domain/gun/entity/gun_status_command_entity.h \
+    src/domain/gun/entity/gun_status_feedback_entity.h \
+    src/domain/gun/repository/gun_base_repository.h \
+    src/domain/gun/repository/gun_command_repository.h \
+    src/domain/gun/repository/gun_feedback_repository.h \
     src/domain/osd/entity/osd_base_entity.h \
     src/domain/osd/entity/osd_inertia_entity.h \
     src/domain/osd/entity/osd_position_entity.h \
@@ -98,6 +112,8 @@ HEADERS += \
     src/domain/track/repository/track_base_repository.h \
     src/infra/http/http_client_wrapper.h \
     src/infra/messaging/tcp/tcp_messaging_wrapper.h \
+    src/infra/store/gun/gun_repository.h \
+    src/infra/store/gun/inmemory/gun_command_repository_inmem_impl.h \
     src/infra/store/osd/inmemory/osd_inertia_repository_inmem_impl.h \
     src/infra/store/osd/inmemory/osd_position_repository_inmem_impl.h \
     src/infra/store/osd/osd_repository.h \
@@ -105,6 +121,7 @@ HEADERS += \
     src/infra/store/track/track_repository.h \
     src/model/base_request.h \
     src/model/base_response.h \
+    src/model/gun/cms/gun_command_request.h \
     src/model/osd/cms/osd_input_mode_request.h \
     src/model/osd/cms/osd_set_gyro_request.h \
     src/model/osd/cms/osd_set_position_request.h \
@@ -127,6 +144,8 @@ HEADERS += \
     src/shared/config/messaging_tcp_config.h \
     src/shared/config/osd_cms_config.h \
     src/shared/utils/utils.h \
+    src/usecase/gun/cms/gun_command_service.h \
+    src/usecase/gun/stream/gun_feedback_stream.h \
     src/usecase/osd/cms/i_osd_cms.h \
     src/usecase/osd/cms/osd_cms.h \
     src/usecase/osd/cms/osd_cms_gyro_data.h \
