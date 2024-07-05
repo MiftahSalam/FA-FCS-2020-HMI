@@ -59,6 +59,7 @@ SOURCES += \
     src/view/panel/osd/frame_osd_gyro.cpp \
     src/view/panel/osd/frame_osd_mode.cpp \
     src/view/panel/osd/frame_osd_position.cpp \
+    src/view/panel/osd/frame_osd_speed.cpp \
     src/view/panel/osd/frameosd.cpp \
     src/view/panel/wap/engagement_data/frame_engage_data.cpp \
     src/view/panel/wap/framewap.cpp \
@@ -133,6 +134,7 @@ HEADERS += \
     src/view/panel/osd/frame_osd_gyro.h \
     src/view/panel/osd/frame_osd_mode.h \
     src/view/panel/osd/frame_osd_position.h \
+    src/view/panel/osd/frame_osd_speed.h \
     src/view/panel/osd/frameosd.h \
     src/view/panel/wap/engagement_data/frame_engage_data.h \
     src/view/panel/wap/framewap.h \
@@ -162,6 +164,7 @@ FORMS += \
     src/view/panel/osd/frame_osd_gyro.ui \
     src/view/panel/osd/frame_osd_mode.ui \
     src/view/panel/osd/frame_osd_position.ui \
+    src/view/panel/osd/frame_osd_speed.ui \
     src/view/panel/osd/frameosd.ui \
     src/view/panel/wap/engagement_data/frame_engage_data.ui \
     src/view/panel/wap/framewap.ui \
