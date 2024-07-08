@@ -45,6 +45,13 @@ OSDStream::OSDStream(
                 repoOSD->getRepoOSDInertia(),
                 osdService->getServiceOSDCMSMode()
                 );
+
+    TcpMessagingOpts *speedStreamVal = config->getInstance("")->getContent().value("speed");
+    serviceOSDStreamSpeed = OSDStreamSpeed::getInstance(
+                speedStreamVal,
+                repoOSD->getRepoOSDSpeed(),
+                osdService->getServiceOSDCMSMode()
+                );
 }
 
 OSDStreamPosition *OSDStream::getServiceOSDStreamPosition() const
@@ -56,3 +63,9 @@ OSDStreamGyro *OSDStream::getServiceOSDStreamGyro() const
 {
     return serviceOSDStreamGyro;
 }
+
+OSDStreamSpeed *OSDStream::getServiceOSDStreamSpeed() const
+{
+    return serviceOSDStreamSpeed;
+}
+

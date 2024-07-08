@@ -25,14 +25,17 @@ SOURCES += \
     src/infra/messaging/tcp/tcp_messaging_wrapper.cpp \
     src/infra/store/osd/inmemory/osd_inertia_repository_inmem_impl.cpp \
     src/infra/store/osd/inmemory/osd_position_repository_inmem_impl.cpp \
+    src/infra/store/osd/inmemory/osd_speed_repository_inmem_impl.cpp \
     src/infra/store/osd/osd_repository.cpp \
     src/main.cpp \
     src/model/osd/cms/osd_input_mode_request.cpp \
     src/model/osd/cms/osd_set_gyro_request.cpp \
     src/model/osd/cms/osd_set_position_request.cpp \
+    src/model/osd/cms/osd_set_speed_request.cpp \
     src/model/osd/gyro_model.cpp \
     src/model/osd/input_mode_model.cpp \
     src/model/osd/position_model.cpp \
+    src/model/osd/speed_model.cpp \
     src/shared/common/errors/err_amqp.cpp \
     src/shared/common/errors/err_base.cpp \
     src/shared/common/errors/err_http.cpp \
@@ -51,10 +54,12 @@ SOURCES += \
     src/usecase/osd/cms/osd_cms_gyro_data.cpp \
     src/usecase/osd/cms/osd_cms_input_mode.cpp \
     src/usecase/osd/cms/osd_cms_position_data.cpp \
+    src/usecase/osd/cms/osd_cms_speed_data.cpp \
     src/usecase/osd/osd_service.cpp \
     src/usecase/osd/stream/osd_stream.cpp \
     src/usecase/osd/stream/osd_stream_gyro.cpp \
     src/usecase/osd/stream/osd_stream_position.cpp \
+    src/usecase/osd/stream/osd_stream_speed.cpp \
     src/view/mainwindow.cpp \
     src/view/panel/gun/framegun.cpp \
     src/view/panel/osd/frame_osd_gyro.cpp \
@@ -92,19 +97,23 @@ HEADERS += \
     src/domain/osd/repository/osd_base_repository.h \
     src/domain/osd/repository/osd_inertia_repository.h \
     src/domain/osd/repository/osd_position_repository.h \
+    src/domain/osd/repository/osd_speed_repository.h \
     src/infra/http/http_client_wrapper.h \
     src/infra/messaging/tcp/tcp_messaging_wrapper.h \
     src/infra/store/osd/inmemory/osd_inertia_repository_inmem_impl.h \
     src/infra/store/osd/inmemory/osd_position_repository_inmem_impl.h \
+    src/infra/store/osd/inmemory/osd_speed_repository_inmem_impl.h \
     src/infra/store/osd/osd_repository.h \
     src/model/base_request.h \
     src/model/base_response.h \
     src/model/osd/cms/osd_input_mode_request.h \
     src/model/osd/cms/osd_set_gyro_request.h \
     src/model/osd/cms/osd_set_position_request.h \
+    src/model/osd/cms/osd_set_speed_request.h \
     src/model/osd/gyro_model.h \
     src/model/osd/input_mode_model.h \
     src/model/osd/position_model.h \
+    src/model/osd/speed_model.h \
     src/shared/common/errors/err_amqp.h \
     src/shared/common/errors/err_base.h \
     src/shared/common/errors/err_http.h \
@@ -125,11 +134,13 @@ HEADERS += \
     src/usecase/osd/cms/osd_cms_gyro_data.h \
     src/usecase/osd/cms/osd_cms_input_mode.h \
     src/usecase/osd/cms/osd_cms_position_data.h \
+    src/usecase/osd/cms/osd_cms_speed_data.h \
     src/usecase/osd/osd_service.h \
     src/usecase/osd/stream/IOSDStream.h \
     src/usecase/osd/stream/osd_stream.h \
     src/usecase/osd/stream/osd_stream_gyro.h \
     src/usecase/osd/stream/osd_stream_position.h \
+    src/usecase/osd/stream/osd_stream_speed.h \
     src/view/mainwindow.h \
     src/view/panel/gun/framegun.h \
     src/view/panel/osd/frame_osd_base.h \
