@@ -3,6 +3,7 @@
 
 #include "src/domain/osd/repository/osd_inertia_repository.h"
 #include "src/domain/osd/repository/osd_position_repository.h"
+#include "src/domain/osd/repository/osd_waterspeed_repository.h"
 #include <QObject>
 
 class OSDRepository : public QObject
@@ -14,10 +15,12 @@ public:
     OSDPositionRepository *getRepoOSDPosition() const;
 
     OSDInertiaRepository *getRepoOSDInertia() const;
+    OSDWaterSpeedRepository *getRepoOSDWaterSpeed() const;
 
 private:
     OSDPositionRepository *repoOSDPosition;
     OSDInertiaRepository *repoOSDInertia;
+    OSDWaterSpeedRepository *repoOSDWaterSpeed;
 };
 
 #endif // OSDREPOSITORY_H

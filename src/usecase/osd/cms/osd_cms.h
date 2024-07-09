@@ -9,6 +9,7 @@
 #include "src/usecase/osd/cms/osd_cms_input_mode.h"
 #include "src/usecase/osd/cms/osd_cms_position_data.h"
 #include "src/usecase/osd/cms/osd_cms_gyro_data.h"
+#include "src/usecase/osd/cms/osd_cms_waterspeed_data.h"
 
 class OSDCMS : public QObject
 {
@@ -20,15 +21,17 @@ public:
             OSDRepository *repoOSD = nullptr
             );
 
+    OSDCMSInputMode *getServiceOSDCMSMode() const;
     OSDCMSPositionData *getServiceOSDCMSPosition() const;
     OSDCMSGyroData *getServiceOSDCMSGyro() const;
-    OSDCMSInputMode *getServiceOSDCMSMode() const;
+    OSDCMSWaterSpeedData *getServiceOSDCMSWaterSpeed() const;
 
 private:
     OSDCmsConfig *cfgCms;
+    OSDCMSInputMode *serviceOSDCMSMode;
     OSDCMSPositionData *serviceOSDCMSPosition;
     OSDCMSGyroData *serviceOSDCMSGyro;
-    OSDCMSInputMode *serviceOSDCMSMode;
+    OSDCMSWaterSpeedData *serviceOSDCMSWaterSpeed;
 };
 
 #endif // OSDCMS_H
