@@ -38,10 +38,8 @@ SOURCES += \
     src/model/osd/gyro_model.cpp \
     src/model/osd/input_mode_model.cpp \
     src/model/osd/position_model.cpp \
-
     src/model/osd/speed_model.cpp \
     src/model/track/arpa/track_arpa_model.cpp \
-
     src/shared/common/errors/err_amqp.cpp \
     src/shared/common/errors/err_base.cpp \
     src/shared/common/errors/err_http.cpp \
@@ -65,11 +63,8 @@ SOURCES += \
     src/usecase/osd/stream/osd_stream.cpp \
     src/usecase/osd/stream/osd_stream_gyro.cpp \
     src/usecase/osd/stream/osd_stream_position.cpp \
-
     src/usecase/osd/stream/osd_stream_speed.cpp \
-
     src/usecase/track/stream/arpa/track_arpa_stream.cpp \
-
     src/view/mainwindow.cpp \
     src/view/panel/gun/framegun.cpp \
     src/view/panel/osd/frame_osd_gyro.cpp \
@@ -107,12 +102,9 @@ HEADERS += \
     src/domain/osd/repository/osd_base_repository.h \
     src/domain/osd/repository/osd_inertia_repository.h \
     src/domain/osd/repository/osd_position_repository.h \
-
     src/domain/osd/repository/osd_speed_repository.h \
-
     src/domain/track/entity/track_base_entity.h \
     src/domain/track/repository/track_base_repository.h \
-
     src/infra/http/http_client_wrapper.h \
     src/infra/messaging/tcp/tcp_messaging_wrapper.h \
     src/infra/store/osd/inmemory/osd_inertia_repository_inmem_impl.h \
@@ -130,11 +122,8 @@ HEADERS += \
     src/model/osd/gyro_model.h \
     src/model/osd/input_mode_model.h \
     src/model/osd/position_model.h \
-
     src/model/osd/speed_model.h \
-
     src/model/track/arpa/track_arpa_model.h \
-
     src/shared/common/errors/err_amqp.h \
     src/shared/common/errors/err_base.h \
     src/shared/common/errors/err_http.h \
@@ -161,12 +150,9 @@ HEADERS += \
     src/usecase/osd/stream/osd_stream.h \
     src/usecase/osd/stream/osd_stream_gyro.h \
     src/usecase/osd/stream/osd_stream_position.h \
-
     src/usecase/osd/stream/osd_stream_speed.h \
-
     src/usecase/track/stream/arpa/track_arpa_stream.h \
     src/usecase/track/stream/track_stream_base.h \
-
     src/view/mainwindow.h \
     src/view/panel/gun/framegun.h \
     src/view/panel/osd/frame_osd_base.h \
