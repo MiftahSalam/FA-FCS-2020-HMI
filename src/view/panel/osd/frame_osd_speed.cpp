@@ -206,7 +206,7 @@ void FrameOSDSpeed::on_pushButton_clicked()
 
         _cmsSpeed->set(OSDSetSpeedRequest(speed, course));
     } catch (...) {
-        QMessageBox::critical(this, "Fatal Error Inertia", "Invalid value input" );
+        QMessageBox::critical(this, "Fatal Error Speed", "Invalid value input" );
     }
 }
 
