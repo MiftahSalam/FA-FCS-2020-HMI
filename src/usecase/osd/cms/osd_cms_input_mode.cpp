@@ -67,7 +67,9 @@ void OSDCMSInputMode::setDataMode(const QString &dataFisis, const bool manualMod
         currentMode.setPosition(manualMode);
     } else if (dataFisis == "inertia") {
         currentMode.setInersia(manualMode);
-    } else {
+    } else if (dataFisis == "speed"){
+        currentMode.setSpeed(manualMode);
+    }else{
         // TODO: handle invalid datafisis
         return;
     }

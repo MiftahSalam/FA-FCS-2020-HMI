@@ -29,6 +29,9 @@
    <item>
     <widget class="FrameOSDPosition" name="widgetPosition" native="true"/>
    </item>
+   <item>
+    <widget class="FrameOSDSpeed" name="widgetSpeed" native="true"/>
+   </item>
   </layout>
  </widget>
  <customwidgets>
@@ -42,6 +45,12 @@
    <class>FrameOSDPosition</class>
    <extends>QWidget</extends>
    <header>src/view/panel/osd/frame_osd_position.h</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>FrameOSDSpeed</class>
+   <extends>QWidget</extends>
+   <header>src/view/panel/osd/frame_osd_speed.h</header>
    <container>1</container>
   </customwidget>
  </customwidgets>
