@@ -20,6 +20,7 @@ SOURCES += \
     src/domain/osd/entity/osd_base_entity.cpp \
     src/domain/osd/entity/osd_inertia_entity.cpp \
     src/domain/osd/entity/osd_position_entity.cpp \
+    src/domain/osd/entity/osd_waterspeed_entity.cpp \
     src/domain/track/entity/track_base_entity.cpp \
     src/infra/http/http_client_wrapper.cpp \
     src/infra/messaging/tcp/tcp_messaging_wrapper.cpp \
@@ -32,6 +33,7 @@ SOURCES += \
     src/model/osd/cms/osd_input_mode_request.cpp \
     src/model/osd/cms/osd_set_gyro_request.cpp \
     src/model/osd/cms/osd_set_position_request.cpp \
+    src/model/osd/cms/osd_set_waterspeed_request.cpp \
     src/model/osd/gyro_model.cpp \
     src/model/osd/input_mode_model.cpp \
     src/model/osd/position_model.cpp \
@@ -64,6 +66,7 @@ SOURCES += \
     src/view/panel/osd/frame_osd_gyro.cpp \
     src/view/panel/osd/frame_osd_mode.cpp \
     src/view/panel/osd/frame_osd_position.cpp \
+    src/view/panel/osd/frame_osd_waterspeed.cpp \
     src/view/panel/osd/frameosd.cpp \
     src/view/panel/wap/engagement_data/frame_engage_data.cpp \
     src/view/panel/wap/framewap.cpp \
@@ -91,9 +94,11 @@ HEADERS += \
     src/domain/osd/entity/osd_base_entity.h \
     src/domain/osd/entity/osd_inertia_entity.h \
     src/domain/osd/entity/osd_position_entity.h \
+    src/domain/osd/entity/osd_waterspeed_entity.h \
     src/domain/osd/repository/osd_base_repository.h \
     src/domain/osd/repository/osd_inertia_repository.h \
     src/domain/osd/repository/osd_position_repository.h \
+    src/domain/osd/repository/osd_waterspeed_repository.h \
     src/domain/track/entity/track_base_entity.h \
     src/domain/track/repository/track_base_repository.h \
     src/infra/http/http_client_wrapper.h \
@@ -108,6 +113,7 @@ HEADERS += \
     src/model/osd/cms/osd_input_mode_request.h \
     src/model/osd/cms/osd_set_gyro_request.h \
     src/model/osd/cms/osd_set_position_request.h \
+    src/model/osd/cms/osd_set_waterspeed_request.h \
     src/model/osd/gyro_model.h \
     src/model/osd/input_mode_model.h \
     src/model/osd/position_model.h \
@@ -145,6 +151,7 @@ HEADERS += \
     src/view/panel/osd/frame_osd_gyro.h \
     src/view/panel/osd/frame_osd_mode.h \
     src/view/panel/osd/frame_osd_position.h \
+    src/view/panel/osd/frame_osd_waterspeed.h \
     src/view/panel/osd/frameosd.h \
     src/view/panel/wap/engagement_data/frame_engage_data.h \
     src/view/panel/wap/framewap.h \
@@ -174,6 +181,7 @@ FORMS += \
     src/view/panel/osd/frame_osd_gyro.ui \
     src/view/panel/osd/frame_osd_mode.ui \
     src/view/panel/osd/frame_osd_position.ui \
+    src/view/panel/osd/frame_osd_waterspeed.ui \
     src/view/panel/osd/frameosd.ui \
     src/view/panel/wap/engagement_data/frame_engage_data.ui \
     src/view/panel/wap/framewap.ui \

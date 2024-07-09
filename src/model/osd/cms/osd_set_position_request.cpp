@@ -9,12 +9,12 @@ OSDSetPositionRequest::OSDSetPositionRequest(double lat, double lon): latitude(l
 
 double OSDSetPositionRequest::getLatitude() const
 {
-    return longitude;
+    return latitude;
 }
 
 double OSDSetPositionRequest::getLongitude() const
 {
-    return latitude;
+    return longitude;
 }
 
 void OSDSetPositionRequest::setLatitude(const double lat)

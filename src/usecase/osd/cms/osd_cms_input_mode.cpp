@@ -11,8 +11,8 @@ OSDCMSInputMode::OSDCMSInputMode(
         OSDCmsConfig *cmsConfig
         ):
     HttpClientWrapper(parent),
-    currentMode(OSDInputModeRequest(false, false, false)),
-    previousMode(OSDInputModeRequest(false, false, false)),
+    currentMode(OSDInputModeRequest(false, false, false, false)),
+    previousMode(OSDInputModeRequest(false, false, false, false)),
     cfgCms(cmsConfig)
 {
     synced = false;
