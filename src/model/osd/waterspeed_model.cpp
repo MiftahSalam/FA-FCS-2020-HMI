@@ -15,12 +15,12 @@ WaterSpeedModel WaterSpeedModel::fromJsonObject(QJsonObject obj)
     return model;
 }
 
-double WaterSpeedModel::getWaterSpeed() const
+double WaterSpeedModel::getW_Speed() const
 {
     return waterspeed;
 }
 
-double WaterSpeedModel::getWaterCourse() const
+double WaterSpeedModel::getW_Course() const
 {
     return watercourse;
 }

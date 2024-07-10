@@ -45,6 +45,13 @@ OSDStream::OSDStream(
                 repoOSD->getRepoOSDInertia(),
                 osdService->getServiceOSDCMSMode()
                 );
+
+    TcpMessagingOpts *waterspeedStreamVal = config->getInstance("")->getContent().value("waterspeed");
+    serviceOSDStreamWaterSpeed = OSDStreamWaterSpeed::getInstance(
+                waterspeedStreamVal,
+                repoOSD->getRepoOSDWaterSpeed(),
+                osdService->getServiceOSDCMSMode()
+                );
 }
 
 OSDStreamPosition *OSDStream::getServiceOSDStreamPosition() const
@@ -55,4 +62,9 @@ OSDStreamPosition *OSDStream::getServiceOSDStreamPosition() const
 OSDStreamGyro *OSDStream::getServiceOSDStreamGyro() const
 {
     return serviceOSDStreamGyro;
+}
+
+OSDStreamWaterSpeed *OSDStream::getServiceOSDStreamWaterSpeed() const
+{
+    return serviceOSDStreamWaterSpeed;
 }
