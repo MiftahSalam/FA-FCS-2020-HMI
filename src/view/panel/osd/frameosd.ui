@@ -30,10 +30,10 @@
     <widget class="FrameOSDPosition" name="widgetPosition" native="true"/>
    </item>
    <item>
-    <widget class="FrameOSDWaterSpeed" name="widgetWaterSpeed" native="true"/>
+    <widget class="FrameOSDSpeed" name="widgetSpeed" native="true"/>
    </item>
    <item>
-    <widget class="FrameOSDSpeed" name="widgetSpeed" native="true"/>
+    <widget class="FrameOSDWaterSpeed" name="widgetWaterSpeed" native="true"/>
    </item>
   </layout>
  </widget>
