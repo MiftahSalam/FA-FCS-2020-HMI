@@ -41,11 +41,8 @@ SOURCES += \
     src/model/osd/input_mode_model.cpp \
     src/model/osd/position_model.cpp \
     src/model/osd/waterspeed_model.cpp \
-    src/model/osd/cms/osd_set_speed_request.cpp \
-    src/model/osd/gyro_model.cpp \
-    src/model/osd/input_mode_model.cpp \
-    src/model/osd/position_model.cpp \
     src/model/osd/speed_model.cpp \
+    src/model/osd/cms/osd_set_speed_request.cpp \    
     src/model/track/arpa/track_arpa_model.cpp \
     src/shared/common/errors/err_amqp.cpp \
     src/shared/common/errors/err_base.cpp \
