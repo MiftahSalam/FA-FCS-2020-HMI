@@ -28,6 +28,7 @@ void FrameOSD::setup()
     ui->widgetPosition->setup();
     ui->widgetGyro->setup();
     ui->widgetWaterSpeed->setup();
+    ui->widgetSpeed->setup();
 
 //    connect(ui->widgetPosition, &FrameOSDPosition::signalChangePositionMode, this, &FrameOSD::onChangePositionMode);
 //    connect(ui->widgetPosition, &FrameOSDPosition::signalChangePositionData, this, &FrameOSD::onChangePositionData);

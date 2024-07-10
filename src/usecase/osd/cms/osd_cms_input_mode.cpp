@@ -69,8 +69,9 @@ void OSDCMSInputMode::setDataMode(const QString &dataFisis, const bool manualMod
         currentMode.setInersia(manualMode);
     } else if (dataFisis == "waterspeed") {
         currentMode.setWaterSpeed(manualMode);
-    }
-    else {
+    } else if (dataFisis == "speed"){
+        currentMode.setSpeed(manualMode);
+    }else{
         // TODO: handle invalid datafisis
         return;
     }

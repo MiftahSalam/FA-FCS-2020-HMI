@@ -1,7 +1,6 @@
 #ifndef OSDINERTIAREPOSITORYINMEMIMPL_H
 #define OSDINERTIAREPOSITORYINMEMIMPL_H
 
-
 #include "src/domain/osd/entity/osd_inertia_entity.h"
 #include "src/domain/osd/repository/osd_inertia_repository.h"
 

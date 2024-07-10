@@ -4,6 +4,7 @@
 #include "src/usecase/osd/cms/osd_cms_position_data.h"
 #include "src/usecase/osd/cms/osd_cms_gyro_data.h"
 #include "src/usecase/osd/cms/osd_cms_waterspeed_data.h"
+#include "src/usecase/osd/cms/osd_cms_speed_data.h"
 #include <QFrame>
 
 namespace Ui {
