@@ -10,14 +10,12 @@ public:
 
     double waterspeed() const;
     void setWaterSpeed(double newWaterSpeed);
-    void resetWaterSpeed();
     double watercourse() const;
     void setWaterCourse(double newWaterCourse);
-    void resetWaterCourse();
 
 private:
-    double _waterspeed;
-    double _watercourse;
+    double _speed;
+    double _course;
 };
 
 #endif // OSDWATERSPEEDENTITY_H

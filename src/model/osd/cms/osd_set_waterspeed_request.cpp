@@ -2,36 +2,36 @@
 #include "qjsondocument.h"
 #include "qjsonobject.h"
 
-OSDSetWaterSpeedRequest::OSDSetWaterSpeedRequest(double w_speed, double w_course): waterspeed(w_speed), watercourse(w_course)
+OSDSetWaterSpeedRequest::OSDSetWaterSpeedRequest(double w_speed, double w_course): speed(w_speed), course(w_course)
 {
 
 }
 
-double OSDSetWaterSpeedRequest::getWaterSpeed() const
+double OSDSetWaterSpeedRequest::getSpeed() const
 {
-    return waterspeed;
+    return speed;
 }
 
-double OSDSetWaterSpeedRequest::getWaterCourse() const
+double OSDSetWaterSpeedRequest::getCourse() const
 {
-    return watercourse;
+    return course;
 }
 
-void OSDSetWaterSpeedRequest::setWaterSpeed(const double w_speed)
+void OSDSetWaterSpeedRequest::setSpeed(const double w_speed)
 {
-    waterspeed = w_speed;
+    speed = w_speed;
 }
 
-void OSDSetWaterSpeedRequest::setWaterCourse(const double w_course)
+void OSDSetWaterSpeedRequest::setCourse(const double w_course)
 {
-    watercourse = w_course;
+    course = w_course;
 }
 
 QByteArray OSDSetWaterSpeedRequest::toJSON()
 {
     QJsonObject obj;
-    obj["waterspeed"] = waterspeed;
-    obj["watercourse"] = watercourse;
+    obj["waterspeed"] = speed;
+    obj["watercourse"] = course;
 
     return QJsonDocument(obj).toJson();
 }

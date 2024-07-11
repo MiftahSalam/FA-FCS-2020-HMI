@@ -9,13 +9,13 @@ public:
     OSDSetWaterSpeedRequest();
     OSDSetWaterSpeedRequest(double w_speed, double w_course);
 
-    double getWaterSpeed() const;
-    double getWaterCourse() const;
-    void setWaterSpeed(const double w_speed);
-    void setWaterCourse(const double w_course);
+    double getSpeed() const;
+    double getCourse() const;
+    void setSpeed(const double w_speed);
+    void setCourse(const double w_course);
 
 private:
-    double waterspeed, watercourse;
+    double speed, course;
 
     // BaseModel interface
 public:

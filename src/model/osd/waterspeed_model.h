@@ -15,7 +15,7 @@ public:
     double getCourse() const;
 
 private:
-    double waterspeed, watercourse;
+    double speed, course;
 
 };
 

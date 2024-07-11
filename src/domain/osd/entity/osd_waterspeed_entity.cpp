@@ -1,27 +1,27 @@
 #include "osd_waterspeed_entity.h"
 
 OSDWaterSpeedEntity::OSDWaterSpeedEntity(double waterspeed, double watercourse, const std::string &source, const std::string &status, const OSD_MODE &mode) : OSDBaseEntity(source, status, mode),
-    _waterspeed(waterspeed),
-    _watercourse(watercourse)
+    _speed(waterspeed),
+    _course(watercourse)
 {}
 
 double OSDWaterSpeedEntity::waterspeed() const
 {
-    return _waterspeed;
+    return _speed;
 }
 
 void OSDWaterSpeedEntity::setWaterSpeed(double newWaterSpeed)
 {
-    _waterspeed = newWaterSpeed;
+    _speed = newWaterSpeed;
 }
 
 double OSDWaterSpeedEntity::watercourse() const
 {
-    return _watercourse;
+    return _course;
 }
 
 void OSDWaterSpeedEntity::setWaterCourse(double newWaterCourse)
 {
-    _watercourse = newWaterCourse;
+    _course = newWaterCourse;
 }
 

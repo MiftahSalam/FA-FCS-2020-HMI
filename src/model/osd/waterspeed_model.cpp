@@ -1,6 +1,6 @@
 #include "waterspeed_model.h"
 
-WaterSpeedModel::WaterSpeedModel(double w_speed, double w_course): waterspeed(w_speed), watercourse(w_course)
+WaterSpeedModel::WaterSpeedModel(double w_speed, double w_course): speed(w_speed), course(w_course)
 {
 
 }
@@ -17,10 +17,10 @@ WaterSpeedModel WaterSpeedModel::fromJsonObject(QJsonObject obj)
 
 double WaterSpeedModel::getSpeed() const
 {
-    return waterspeed;
+    return speed;
 }
 
 double WaterSpeedModel::getCourse() const
 {
-    return watercourse;
+    return course;
 }

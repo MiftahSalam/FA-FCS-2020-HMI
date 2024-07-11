@@ -46,7 +46,7 @@ OSDStream::OSDStream(
                 osdService->getServiceOSDCMSMode()
                 );
 
-    TcpMessagingOpts *waterspeedStreamVal = config->getInstance("")->getContent().value("water_speed");
+    TcpMessagingOpts *waterspeedStreamVal = config->getInstance("")->getContent().value("waterspeed");
     serviceOSDStreamWaterSpeed = OSDStreamWaterSpeed::getInstance(
                 waterspeedStreamVal,
                 repoOSD->getRepoOSDWaterSpeed(),
