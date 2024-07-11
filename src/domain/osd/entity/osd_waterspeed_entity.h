@@ -6,11 +6,11 @@
 class OSDWaterSpeedEntity: public OSDBaseEntity
 {
 public:
-    OSDWaterSpeedEntity(double waterspeed, double watercourse, const std::string &source, const std::string &status, const OSD_MODE &mode);
+    OSDWaterSpeedEntity(double getSpeed, double getCourse, const std::string &source, const std::string &status, const OSD_MODE &mode);
 
-    double waterspeed() const;
+    double getSpeed() const;
     void setWaterSpeed(double newWaterSpeed);
-    double watercourse() const;
+    double getCourse() const;
     void setWaterCourse(double newWaterCourse);
 
 private:
