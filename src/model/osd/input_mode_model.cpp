@@ -1,10 +1,11 @@
 #include "input_mode_model.h"
 
-InputModeModel::InputModeModel(bool position, bool speed, bool inersia)
+InputModeModel::InputModeModel(bool position, bool speed, bool inersia, bool waterspeed)
 {
     this->position = position;
     this->speed = speed;
     this->inersia = inersia;
+    this->waterspeed = waterspeed;
 }
 
 InputModeModel InputModeModel::fromJsonObject(QJsonObject obj)
@@ -12,7 +13,8 @@ InputModeModel InputModeModel::fromJsonObject(QJsonObject obj)
     InputModeModel model(
                 obj.value("position").toBool(false),
                 obj.value("speed").toBool(false),
-                obj.value("inersia").toBool(false)
+                obj.value("inertia").toBool(false),
+                obj.value("water_speed").toBool(false)
                 );
 
     return model;
@@ -30,4 +32,9 @@ bool InputModeModel::getSpeed() const
 bool InputModeModel::getInersia() const
 {
     return inersia;
+}
+
+bool InputModeModel::getWaterSpeed() const
+{
+    return waterspeed;
 }

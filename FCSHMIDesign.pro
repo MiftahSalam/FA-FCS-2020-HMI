@@ -23,6 +23,7 @@ SOURCES += \
     src/domain/osd/entity/osd_base_entity.cpp \
     src/domain/osd/entity/osd_inertia_entity.cpp \
     src/domain/osd/entity/osd_position_entity.cpp \
+    src/domain/osd/entity/osd_waterspeed_entity.cpp \
     src/domain/osd/entity/osd_speed_entity.cpp \
     src/domain/track/entity/track_base_entity.cpp \
     src/infra/http/http_client_wrapper.cpp \
@@ -31,6 +32,7 @@ SOURCES += \
     src/infra/store/gun/inmemory/gun_command_repository_inmem_impl.cpp \
     src/infra/store/osd/inmemory/osd_inertia_repository_inmem_impl.cpp \
     src/infra/store/osd/inmemory/osd_position_repository_inmem_impl.cpp \
+    src/infra/store/osd/inmemory/osd_waterspeed_repository_inmem_impl.cpp \
     src/infra/store/osd/inmemory/osd_speed_repository_inmem_impl.cpp \
     src/infra/store/osd/osd_repository.cpp \
     src/infra/store/track/inmem/track_arpa_repository_inmem_impl.cpp \
@@ -40,10 +42,12 @@ SOURCES += \
     src/model/osd/cms/osd_input_mode_request.cpp \
     src/model/osd/cms/osd_set_gyro_request.cpp \
     src/model/osd/cms/osd_set_position_request.cpp \
+    src/model/osd/cms/osd_set_waterspeed_request.cpp \
     src/model/osd/cms/osd_set_speed_request.cpp \
     src/model/osd/gyro_model.cpp \
     src/model/osd/input_mode_model.cpp \
     src/model/osd/position_model.cpp \
+    src/model/osd/waterspeed_model.cpp \
     src/model/osd/speed_model.cpp \
     src/model/track/arpa/track_arpa_model.cpp \
     src/shared/common/errors/err_amqp.cpp \
@@ -67,11 +71,13 @@ SOURCES += \
     src/usecase/osd/cms/osd_cms_gyro_data.cpp \
     src/usecase/osd/cms/osd_cms_input_mode.cpp \
     src/usecase/osd/cms/osd_cms_position_data.cpp \
+    src/usecase/osd/cms/osd_cms_waterspeed_data.cpp \
     src/usecase/osd/cms/osd_cms_speed_data.cpp \
     src/usecase/osd/osd_service.cpp \
     src/usecase/osd/stream/osd_stream.cpp \
     src/usecase/osd/stream/osd_stream_gyro.cpp \
     src/usecase/osd/stream/osd_stream_position.cpp \
+    src/usecase/osd/stream/osd_stream_waterspeed.cpp \
     src/usecase/osd/stream/osd_stream_speed.cpp \
     src/usecase/track/stream/arpa/track_arpa_stream.cpp \
     src/view/mainwindow.cpp \
@@ -79,6 +85,7 @@ SOURCES += \
     src/view/panel/osd/frame_osd_gyro.cpp \
     src/view/panel/osd/frame_osd_mode.cpp \
     src/view/panel/osd/frame_osd_position.cpp \
+    src/view/panel/osd/frame_osd_waterspeed.cpp \
     src/view/panel/osd/frame_osd_speed.cpp \
     src/view/panel/osd/frameosd.cpp \
     src/view/panel/wap/engagement_data/frame_engage_data.cpp \
@@ -113,6 +120,11 @@ HEADERS += \
     src/domain/osd/entity/osd_base_entity.h \
     src/domain/osd/entity/osd_inertia_entity.h \
     src/domain/osd/entity/osd_position_entity.h \
+    src/domain/osd/entity/osd_waterspeed_entity.h \
+    src/domain/osd/repository/osd_base_repository.h \
+    src/domain/osd/repository/osd_inertia_repository.h \
+    src/domain/osd/repository/osd_position_repository.h \
+    src/domain/osd/repository/osd_waterspeed_repository.h \
     src/domain/osd/entity/osd_speed_entity.h \
     src/domain/osd/repository/osd_base_repository.h \
     src/domain/osd/repository/osd_inertia_repository.h \
@@ -126,6 +138,7 @@ HEADERS += \
     src/infra/store/gun/inmemory/gun_command_repository_inmem_impl.h \
     src/infra/store/osd/inmemory/osd_inertia_repository_inmem_impl.h \
     src/infra/store/osd/inmemory/osd_position_repository_inmem_impl.h \
+    src/infra/store/osd/inmemory/osd_waterspeed_repository_inmem_impl.h \
     src/infra/store/osd/inmemory/osd_speed_repository_inmem_impl.h \
     src/infra/store/osd/osd_repository.h \
     src/infra/store/track/inmem/track_arpa_repository_inmem_impl.h \
@@ -136,6 +149,11 @@ HEADERS += \
     src/model/osd/cms/osd_input_mode_request.h \
     src/model/osd/cms/osd_set_gyro_request.h \
     src/model/osd/cms/osd_set_position_request.h \
+    src/model/osd/cms/osd_set_waterspeed_request.h \
+    src/model/osd/gyro_model.h \
+    src/model/osd/input_mode_model.h \
+    src/model/osd/position_model.h \
+    src/model/osd/waterspeed_model.h \
     src/model/osd/cms/osd_set_speed_request.h \
     src/model/osd/gyro_model.h \
     src/model/osd/input_mode_model.h \
@@ -165,12 +183,14 @@ HEADERS += \
     src/usecase/osd/cms/osd_cms_gyro_data.h \
     src/usecase/osd/cms/osd_cms_input_mode.h \
     src/usecase/osd/cms/osd_cms_position_data.h \
+    src/usecase/osd/cms/osd_cms_waterspeed_data.h \
     src/usecase/osd/cms/osd_cms_speed_data.h \
     src/usecase/osd/osd_service.h \
     src/usecase/osd/stream/IOSDStream.h \
     src/usecase/osd/stream/osd_stream.h \
     src/usecase/osd/stream/osd_stream_gyro.h \
     src/usecase/osd/stream/osd_stream_position.h \
+    src/usecase/osd/stream/osd_stream_waterspeed.h \
     src/usecase/osd/stream/osd_stream_speed.h \
     src/usecase/track/stream/arpa/track_arpa_stream.h \
     src/usecase/track/stream/track_stream_base.h \
@@ -180,6 +200,7 @@ HEADERS += \
     src/view/panel/osd/frame_osd_gyro.h \
     src/view/panel/osd/frame_osd_mode.h \
     src/view/panel/osd/frame_osd_position.h \
+    src/view/panel/osd/frame_osd_waterspeed.h \
     src/view/panel/osd/frame_osd_speed.h \
     src/view/panel/osd/frameosd.h \
     src/view/panel/wap/engagement_data/frame_engage_data.h \
@@ -210,6 +231,7 @@ FORMS += \
     src/view/panel/osd/frame_osd_gyro.ui \
     src/view/panel/osd/frame_osd_mode.ui \
     src/view/panel/osd/frame_osd_position.ui \
+    src/view/panel/osd/frame_osd_waterspeed.ui \
     src/view/panel/osd/frame_osd_speed.ui \
     src/view/panel/osd/frameosd.ui \
     src/view/panel/wap/engagement_data/frame_engage_data.ui \

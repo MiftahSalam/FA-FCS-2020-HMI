@@ -9,8 +9,8 @@ SpeedModel::SpeedModel(double speed, double course):
 SpeedModel SpeedModel::FromJsonObject(QJsonObject obj)
 {
     SpeedModel model(
-                obj.value("speed").toDouble(),
-                obj.value("course").toDouble()
+                obj.value("sog").toDouble(),
+                obj.value("cog").toDouble()
                 );
 
     return model;

@@ -1,59 +1,54 @@
-#include "osd_stream_speed.h"
+#include "osd_stream_waterspeed.h"
 #include "src/shared/common/errors/err_json_parse.h"
 #include "src/shared/common/errors/err_object_creation.h"
 #include "src/shared/utils/utils.h"
 
-OSDStreamSpeed* OSDStreamSpeed::speedStream = nullptr;
+OSDStreamWaterSpeed* OSDStreamWaterSpeed::waterspeedStream = nullptr;
 
-OSDStreamSpeed::OSDStreamSpeed(
-        TcpMessagingOpts *config,
-        OSDSpeedRepository *repoSpeed,
-        OSDCMSInputMode *modeService
-        )
-    :cfg(config), _repoSpeed(repoSpeed), serviceMode(modeService)
+OSDStreamWaterSpeed::OSDStreamWaterSpeed(TcpMessagingOpts *config,
+        OSDWaterSpeedRepository *repoWP,
+        OSDCMSInputMode *modeService)
+    : cfg(config), _repoWP(repoWP), serviceMode(modeService)
 {
     consumer = new TcpMessagingWrapper(this, config);
-    connect(consumer, &TcpMessagingWrapper::signalForwardMessage, this, &OSDStreamSpeed::onDataReceived);
+    connect(consumer, &TcpMessagingWrapper::signalForwardMessage, this, &OSDStreamWaterSpeed::onDataReceived);
 }
 
-OSDStreamSpeed *OSDStreamSpeed::getInstance(
-        TcpMessagingOpts *config,
-        OSDSpeedRepository *repoSpeed,
-        OSDCMSInputMode *modeService
+OSDStreamWaterSpeed *OSDStreamWaterSpeed::getInstance(
+        TcpMessagingOpts *config = nullptr,
+        OSDWaterSpeedRepository* repoWP = nullptr,
+        OSDCMSInputMode *modeService = nullptr
         )
 {
-    if (speedStream == nullptr) {
+    if (waterspeedStream == nullptr) {
         if(config == nullptr) {
             throw ErrObjectCreation();
         }
-
-        if(repoSpeed == nullptr) {
+        if(repoWP == nullptr) {
             throw ErrObjectCreation();
         }
-
         if(modeService == nullptr) {
             throw ErrObjectCreation();
         }
-
-        speedStream = new OSDStreamSpeed(config, repoSpeed, modeService);
+        waterspeedStream = new OSDStreamWaterSpeed(config, repoWP, modeService);
     }
-
-    return speedStream;
+    return waterspeedStream;
 }
 
-BaseError OSDStreamSpeed::check()
+BaseError OSDStreamWaterSpeed::check()
 {
+    //    qDebug()<<Q_FUNC_INFO;
     //TODO: check no data error, invalid data error, etc
     return consumer->checkConnection();
 }
 
-void OSDStreamSpeed::onDataReceived(QByteArray data)
+void OSDStreamWaterSpeed::onDataReceived(QByteArray data)
 {
     try {
         QJsonObject respObj = Utils::byteArrayToJsonObject(data);
-        SpeedModel model(respObj["sog"].toDouble(),respObj["cog"].toDouble());
+        WaterSpeedModel model(respObj["speed"].toDouble(),respObj["course"].toDouble());
 
-        qDebug()<<Q_FUNC_INFO<<"data speed: SOG ->"<<model.getSpeed()<<"COG ->"<<model.getCourse();
+        qDebug()<<Q_FUNC_INFO<<"data Water Speed: water speed ->"<<model.getSpeed()<<"water course ->"<<model.getCourse();
 
         //check source mode manual
         if (respObj.contains("source")) {
@@ -62,10 +57,10 @@ void OSDStreamSpeed::onDataReceived(QByteArray data)
             }
         }
 
-        auto speedMode = serviceMode->getDataMode().getSpeed();
-        if (!speedMode) {
+        auto waterspeedMode = serviceMode->getDataMode().getWaterSpeed();
+        if (!waterspeedMode) {
             //TODO: update repo
-            _repoSpeed->SetSpeed(OSDSpeedEntity(
+            _repoWP->SetWaterSpeed(OSDWaterSpeedEntity(
                                       model.getSpeed(),
                                       model.getCourse(),
                                       respObj["source"].toString().toStdString(),
@@ -73,7 +68,6 @@ void OSDStreamSpeed::onDataReceived(QByteArray data)
                                       OSD_MODE::AUTO
                                   ));
         }
-
         emit signalDataProcessed(model);
     } catch (ErrJsonParse &e) {
         qDebug()<<Q_FUNC_INFO<<"caught error: "<<e.getMessage();
@@ -81,4 +75,3 @@ void OSDStreamSpeed::onDataReceived(QByteArray data)
         qDebug()<<Q_FUNC_INFO<<"caught unkbnown error";
     }
 }
-

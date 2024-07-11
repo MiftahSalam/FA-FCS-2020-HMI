@@ -7,6 +7,7 @@
 #include "src/usecase/osd/cms/osd_cms.h"
 #include "src/usecase/osd/stream/osd_stream_position.h"
 #include "src/usecase/osd/stream/osd_stream_gyro.h"
+#include "src/usecase/osd/stream/osd_stream_waterspeed.h"
 #include "src/usecase/osd/stream/osd_stream_speed.h"
 
 #include <QObject>
@@ -25,14 +26,16 @@ public:
 
     OSDStreamPosition *getServiceOSDStreamPosition() const;
     OSDStreamGyro *getServiceOSDStreamGyro() const;
+    OSDStreamWaterSpeed *getServiceOSDStreamWaterSpeed() const;
     OSDStreamSpeed *getServiceOSDStreamSpeed() const;
-
+    
 private:
     MessagingTcpConfig *consumerConfig;
 //    AMQPConfig *cfgAmqp;
     OSDCMS *serviceOSDCMS;
     OSDStreamPosition *serviceOSDStreamPosition;
     OSDStreamGyro *serviceOSDStreamGyro;
+    OSDStreamWaterSpeed *serviceOSDStreamWaterSpeed;
     OSDStreamSpeed *serviceOSDStreamSpeed;
 };
 

@@ -31,7 +31,7 @@ OSDStream::OSDStream(
     {
         throw ErrObjectCreation();
     }
-
+// ambil nilai dari config
     TcpMessagingOpts *posStreamVal = config->getInstance("")->getContent().value("position");
     serviceOSDStreamPosition = OSDStreamPosition::getInstance(
                 posStreamVal,
@@ -43,6 +43,13 @@ OSDStream::OSDStream(
     serviceOSDStreamGyro = OSDStreamGyro::getInstance(
                 gyroStreamVal,
                 repoOSD->getRepoOSDInertia(),
+                osdService->getServiceOSDCMSMode()
+                );
+
+    TcpMessagingOpts *waterspeedStreamVal = config->getInstance("")->getContent().value("water_speed");
+    serviceOSDStreamWaterSpeed = OSDStreamWaterSpeed::getInstance(
+                waterspeedStreamVal,
+                repoOSD->getRepoOSDWaterSpeed(),
                 osdService->getServiceOSDCMSMode()
                 );
 
@@ -64,8 +71,12 @@ OSDStreamGyro *OSDStream::getServiceOSDStreamGyro() const
     return serviceOSDStreamGyro;
 }
 
+OSDStreamWaterSpeed *OSDStream::getServiceOSDStreamWaterSpeed() const
+{
+    return serviceOSDStreamWaterSpeed;
+}
+
 OSDStreamSpeed *OSDStream::getServiceOSDStreamSpeed() const
 {
     return serviceOSDStreamSpeed;
 }
-

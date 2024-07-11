@@ -91,6 +91,7 @@
           <font>
            <family>DejaVu Sans</family>
            <pointsize>30</pointsize>
+           <weight>75</weight>
            <italic>false</italic>
            <bold>true</bold>
           </font>

@@ -30,10 +30,19 @@ OSDCMS::OSDCMS(QObject *parent, OSDCmsConfig *cmsConfig, OSDRepository *repoOSD)
                 new HttpClientWrapper(),
                 cmsConfig,
                 repoOSD->getRepoOSDInertia());
+    serviceOSDCMSWaterSpeed = OSDCMSWaterSpeedData::getInstance(
+                new HttpClientWrapper(),
+                cmsConfig,
+                repoOSD->getRepoOSDWaterSpeed());
     serviceOSDCMSSpeed = OSDCMSSpeedData::getInstance(
                 new HttpClientWrapper(),
                 cmsConfig,
                 repoOSD->getRepoOSDSpeed());
+}
+
+OSDCMSInputMode *OSDCMS::getServiceOSDCMSMode() const
+{
+    return serviceOSDCMSMode;
 }
 
 OSDCMSPositionData *OSDCMS::getServiceOSDCMSPosition() const
@@ -51,7 +60,7 @@ OSDCMSSpeedData *OSDCMS::getServiceOSDCMSSpeed() const
     return serviceOSDCMSSpeed;
 }
 
-OSDCMSInputMode *OSDCMS::getServiceOSDCMSMode() const
+OSDCMSWaterSpeedData *OSDCMS::getServiceOSDCMSWaterSpeed() const
 {
-    return serviceOSDCMSMode;
+    return serviceOSDCMSWaterSpeed;
 }
