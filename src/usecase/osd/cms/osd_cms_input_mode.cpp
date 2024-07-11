@@ -141,7 +141,7 @@ BaseResponse<InputModeModel> OSDCMSInputMode::toResponse(QByteArray raw)
         InputModeModel model(
                     respData["position"].toBool(),
                 respData["speed"].toBool(),
-                respData["inersia"].toBool(),
+                respData["inertia"].toBool(),
                 respData["waterspeed"].toBool()
                 );
         BaseResponse<InputModeModel> resp(respCode, respMsg, model);

@@ -11,8 +11,8 @@ public:
 
     static WaterSpeedModel fromJsonObject(QJsonObject obj);
 
-    double getW_Speed() const;
-    double getW_Course() const;
+    double getSpeed() const;
+    double getCourse() const;
 
 private:
     double waterspeed, watercourse;

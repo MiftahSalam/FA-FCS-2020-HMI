@@ -48,7 +48,7 @@ void OSDStreamWaterSpeed::onDataReceived(QByteArray data)
         QJsonObject respObj = Utils::byteArrayToJsonObject(data);
         WaterSpeedModel model(respObj["speed"].toDouble(),respObj["course"].toDouble());
 
-        qDebug()<<Q_FUNC_INFO<<"data Water Speed: water speed ->"<<model.getW_Speed()<<"water course ->"<<model.getW_Course();
+        qDebug()<<Q_FUNC_INFO<<"data Water Speed: water speed ->"<<model.getSpeed()<<"water course ->"<<model.getCourse();
 
         //check source mode manual
         if (respObj.contains("source")) {
@@ -61,8 +61,8 @@ void OSDStreamWaterSpeed::onDataReceived(QByteArray data)
         if (!waterspeedMode) {
             //TODO: update repo
             _repoWP->SetWaterSpeed(OSDWaterSpeedEntity(
-                                      model.getW_Speed(),
-                                      model.getW_Course(),
+                                      model.getSpeed(),
+                                      model.getCourse(),
                                       respObj["source"].toString().toStdString(),
                                       respObj["status"].toString().toStdString(),
                                       OSD_MODE::AUTO

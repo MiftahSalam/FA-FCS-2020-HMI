@@ -66,8 +66,8 @@ void OSDCMSWaterSpeedData::onReplyFinished()
 
     //TODO: update repo
     repoWS->SetWaterSpeed(OSDWaterSpeedEntity(
-                             resp.getData().getW_Speed(),
-                             resp.getData().getW_Course(),
+                             resp.getData().getSpeed(),
+                             resp.getData().getCourse(),
                              "manual",
                              "",
                              OSD_MODE::MANUAL //temp
@@ -86,7 +86,7 @@ BaseResponse<WaterSpeedModel> OSDCMSWaterSpeedData::toResponse(QByteArray raw)
         WaterSpeedModel model(respData["waterspeed"].toDouble(),respData["watercourse"].toDouble());
         BaseResponse<WaterSpeedModel> resp(respCode, respMsg, model);
 
-        qDebug()<<Q_FUNC_INFO<<"resp"<<resp.getHttpCode()<<resp.getMessage()<<resp.getData().getW_Speed()<<resp.getData().getW_Course();
+        qDebug()<<Q_FUNC_INFO<<"resp"<<resp.getHttpCode()<<resp.getMessage()<<resp.getData().getSpeed()<<resp.getData().getCourse();
 
         return resp;
     } catch (ErrJsonParse &e) {

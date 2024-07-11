@@ -77,8 +77,8 @@ void FrameOSDWaterSpeed::onDataResponse(BaseResponse<WaterSpeedModel> resp)
 //        autoUiSetup();
         return;
 
-        qDebug()<<Q_FUNC_INFO<<"resp data getWaterSpeed: "<<resp.getData().getW_Speed()
-             <<"resp data getWaterCourse: "<<resp.getData().getW_Course()
+        qDebug()<<Q_FUNC_INFO<<"resp data getWaterSpeed: "<<resp.getData().getSpeed()
+             <<"resp data getWaterCourse: "<<resp.getData().getCourse()
               ;
     }
 }
@@ -200,16 +200,16 @@ void FrameOSDWaterSpeed::onTimeout()
 
 void FrameOSDWaterSpeed::onStreamReceive(WaterSpeedModel model)
 {
-    qDebug()<<Q_FUNC_INFO<<"waterspeed: speed ->"<<model.getW_Speed()<<", course ->"<<model.getW_Course();
+    qDebug()<<Q_FUNC_INFO<<"waterspeed: speed ->"<<model.getSpeed()<<", course ->"<<model.getCourse();
     auto currentMode = (OSD_MODE)_cmsMode->getDataMode().getWaterSpeed();
     if (currentMode == OSD_MODE::MANUAL) {
         return;
     }
 
-    ui->inputWaterSpeed->setValue(QString::number(model.getW_Speed()));
+    ui->inputWaterSpeed->setValue(QString::number(model.getSpeed()));
     ui->inputWaterSpeed->setStatusOk();
 
-    ui->inputWaterCourse->setValue(QString::number(model.getW_Course()));
+    ui->inputWaterCourse->setValue(QString::number(model.getCourse()));
     ui->inputWaterCourse->setStatusOk();
 }
 
