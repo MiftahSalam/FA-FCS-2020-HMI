@@ -5,6 +5,7 @@ GunRepository::GunRepository(QObject *parent)
     : QObject{parent}
 {
     repoGunCmd = GunCommandRepositoryInMemImpl::GetInstance();
+    // TODO: add repo gun feedback
 }
 
 GunCommandRepository *GunRepository::getRepoGunCmd() const

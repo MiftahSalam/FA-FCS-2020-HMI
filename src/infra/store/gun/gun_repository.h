@@ -14,7 +14,7 @@ public:
 
 private:
     GunCommandRepository *repoGunCmd;
-
+    // TODO: add repo gun feedback
 };
 
 #endif // GUNREPOSITORY_H

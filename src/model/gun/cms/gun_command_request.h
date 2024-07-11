@@ -8,6 +8,8 @@ class GunCommandRequest: public BaseModel<GunCommandRequest>
 public:
     GunCommandRequest();
 
+    // TODO: add members
+
     // BaseModel interface
 public:
     QByteArray toJSON() override;

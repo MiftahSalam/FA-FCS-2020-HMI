@@ -9,6 +9,7 @@ class GunFeedbackStream : public QObject
 public:
     explicit GunFeedbackStream(QObject *parent = nullptr);
 
+    // TODO: add members and implementation
 signals:
 
 };
