@@ -10,7 +10,7 @@ double OSDWaterSpeedEntity::getSpeed() const
     return _speed;
 }
 
-void OSDWaterSpeedEntity::setWaterSpeed(double newWaterSpeed)
+void OSDWaterSpeedEntity::setSpeed(double newWaterSpeed)
 {
     _speed = newWaterSpeed;
 }
@@ -20,7 +20,7 @@ double OSDWaterSpeedEntity::getCourse() const
     return _course;
 }
 
-void OSDWaterSpeedEntity::setWaterCourse(double newWaterCourse)
+void OSDWaterSpeedEntity::setCourse(double newWaterCourse)
 {
     _course = newWaterCourse;
 }

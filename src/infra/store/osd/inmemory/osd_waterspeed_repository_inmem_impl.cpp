@@ -21,8 +21,8 @@ OSDWaterSpeedRepository *OSDWaterSpeedRepositoryInMemImpl::GetInstance()
 
 void OSDWaterSpeedRepositoryInMemImpl::SetWaterSpeed(const OSDWaterSpeedEntity &w_speed)
 {
-    _entity->setWaterSpeed(w_speed.getSpeed());
-    _entity->setWaterSpeed(w_speed.getCourse());
+    _entity->setSpeed(w_speed.getSpeed());
+    _entity->setSpeed(w_speed.getCourse());
 }
 
 const OSDWaterSpeedEntity *OSDWaterSpeedRepositoryInMemImpl::GetWaterSpeed() const

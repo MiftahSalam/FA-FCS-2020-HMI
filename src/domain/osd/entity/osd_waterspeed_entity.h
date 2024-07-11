@@ -9,9 +9,9 @@ public:
     OSDWaterSpeedEntity(double getSpeed, double getCourse, const std::string &source, const std::string &status, const OSD_MODE &mode);
 
     double getSpeed() const;
-    void setWaterSpeed(double newWaterSpeed);
+    void setSpeed(double newWaterSpeed);
     double getCourse() const;
-    void setWaterCourse(double newWaterCourse);
+    void setCourse(double newWaterCourse);
 
 private:
     double _speed;
