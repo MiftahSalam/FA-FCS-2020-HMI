@@ -26,12 +26,6 @@ GunCommandRepository *GunCommandRepositoryInMemImpl::GetInstance()
     return instance;
 }
 
-
-void GunCommandRepositoryInMemImpl::SetBarrel(const GunBarrelEntity &barrel)
-{
-
-}
-
 void GunCommandRepositoryInMemImpl::SetStatus(const GunStatusCommandEntity &status)
 {
 }
@@ -61,5 +55,10 @@ const GunBarrelEntity *GunCommandRepositoryInMemImpl::GetBarrel() const
 }
 
 const GunStatusCommandEntity *GunCommandRepositoryInMemImpl::GetStatus() const
+{
+}
+
+
+void GunCommandRepositoryInMemImpl::SetBarrel(const float &azimuth, const float &elevation)
 {
 }
