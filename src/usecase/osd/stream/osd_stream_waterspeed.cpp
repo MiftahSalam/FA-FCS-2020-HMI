@@ -46,7 +46,7 @@ void OSDStreamWaterSpeed::onDataReceived(QByteArray data)
 {
     try {
         QJsonObject respObj = Utils::byteArrayToJsonObject(data);
-        WaterSpeedModel model(respObj["waterspeed"].toDouble(),respObj["watercourse"].toDouble());
+        WaterSpeedModel model(respObj["speed"].toDouble(),respObj["course"].toDouble());
 
         qDebug()<<Q_FUNC_INFO<<"data Water Speed: water speed ->"<<model.getW_Speed()<<"water course ->"<<model.getW_Course();
 

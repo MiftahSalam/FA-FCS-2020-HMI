@@ -8,8 +8,8 @@ WaterSpeedModel::WaterSpeedModel(double w_speed, double w_course): waterspeed(w_
 WaterSpeedModel WaterSpeedModel::fromJsonObject(QJsonObject obj)
 {
     WaterSpeedModel model(
-                obj.value("waterspeed").toDouble(),
-                obj.value("watercourse").toDouble()
+                obj.value("speed").toDouble(),
+                obj.value("course").toDouble()
                 );
 
     return model;
