@@ -86,7 +86,7 @@ BaseResponse<SpeedModel> OSDCMSSpeedData::toResponse(QByteArray raw)
         int respCode = respObj["code"].toInt();
         QString respMsg = respObj["message"].toString();
         QJsonObject respData = respObj["data"].toObject();
-        SpeedModel model(respData["speed"].toDouble(),respData["course"].toDouble());
+        SpeedModel model(respData["sog"].toDouble(),respData["cog"].toDouble());
         BaseResponse<SpeedModel> resp(respCode, respMsg, model);
 
         qDebug()<<Q_FUNC_INFO<<"resp"<<resp.getHttpCode()<<resp.getMessage()<<resp.getData().getSpeed()<<resp.getData().getCourse();

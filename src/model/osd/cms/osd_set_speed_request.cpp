@@ -31,8 +31,8 @@ void OSDSetSpeedRequest::setCourse(const double _cog)
 QByteArray OSDSetSpeedRequest::toJSON()
 {
     QJsonObject obj;
-    obj["speed"] = speed;
-    obj["course"] = course;
+    obj["sog"] = speed;
+    obj["cog"] = course;
 
     return QJsonDocument(obj).toJson();
 }

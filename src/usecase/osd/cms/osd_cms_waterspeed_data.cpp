@@ -83,7 +83,7 @@ BaseResponse<WaterSpeedModel> OSDCMSWaterSpeedData::toResponse(QByteArray raw)
         int respCode = respObj["code"].toInt();
         QString respMsg = respObj["message"].toString();
         QJsonObject respData = respObj["data"].toObject();
-        WaterSpeedModel model(respData["waterspeed"].toDouble(),respData["watercourse"].toDouble());
+        WaterSpeedModel model(respData["speed"].toDouble(),respData["course"].toDouble());
         BaseResponse<WaterSpeedModel> resp(respCode, respMsg, model);
 
         qDebug()<<Q_FUNC_INFO<<"resp"<<resp.getHttpCode()<<resp.getMessage()<<resp.getData().getSpeed()<<resp.getData().getCourse();

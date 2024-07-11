@@ -30,8 +30,8 @@ void OSDSetWaterSpeedRequest::setCourse(const double w_course)
 QByteArray OSDSetWaterSpeedRequest::toJSON()
 {
     QJsonObject obj;
-    obj["waterspeed"] = speed;
-    obj["watercourse"] = course;
+    obj["speed"] = speed;
+    obj["course"] = course;
 
     return QJsonDocument(obj).toJson();
 }

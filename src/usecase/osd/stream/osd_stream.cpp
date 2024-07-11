@@ -31,7 +31,7 @@ OSDStream::OSDStream(
     {
         throw ErrObjectCreation();
     }
-
+// ambil nilai dari config
     TcpMessagingOpts *posStreamVal = config->getInstance("")->getContent().value("position");
     serviceOSDStreamPosition = OSDStreamPosition::getInstance(
                 posStreamVal,
