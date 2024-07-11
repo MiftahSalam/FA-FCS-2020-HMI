@@ -60,7 +60,7 @@ QByteArray OSDInputModeRequest::toJSON()
     obj["position"] = position;
     obj["speed"] = speed;
     obj["inertia"] = inersia;
-    obj["waterspeed"] = waterspeed;
+    obj["water_speed"] = waterspeed;
 
     return QJsonDocument(obj).toJson();
 }

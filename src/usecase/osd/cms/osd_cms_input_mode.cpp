@@ -67,7 +67,7 @@ void OSDCMSInputMode::setDataMode(const QString &dataFisis, const bool manualMod
         currentMode.setPosition(manualMode);
     } else if (dataFisis == "inertia") {
         currentMode.setInersia(manualMode);
-    } else if (dataFisis == "waterspeed") {
+    } else if (dataFisis == "water_speed") {
         currentMode.setWaterSpeed(manualMode);
     } else if (dataFisis == "speed"){
         currentMode.setSpeed(manualMode);
@@ -142,7 +142,7 @@ BaseResponse<InputModeModel> OSDCMSInputMode::toResponse(QByteArray raw)
                     respData["position"].toBool(),
                 respData["speed"].toBool(),
                 respData["inertia"].toBool(),
-                respData["waterspeed"].toBool()
+                respData["water_speed"].toBool()
                 );
         BaseResponse<InputModeModel> resp(respCode, respMsg, model);
 

@@ -85,7 +85,7 @@ void FrameOSDWaterSpeed::onDataResponse(BaseResponse<WaterSpeedModel> resp)
 
 void FrameOSDWaterSpeed::onModeChangeResponse(const QString datafisis, BaseResponse<InputModeModel> resp, bool needConfirm)
 {
-    if (datafisis != "waterspeed") {
+    if (datafisis != "water_speed") {
         return;
     }
 
@@ -133,7 +133,7 @@ void FrameOSDWaterSpeed::onModeChange(int index)
         break;
     }
 
-    _cmsMode->setDataMode("waterspeed", manual_mode);
+    _cmsMode->setDataMode("water_speed", manual_mode);
 }
 
 void FrameOSDWaterSpeed::onAfterModeReset()

@@ -42,7 +42,7 @@ OSDCMSWaterSpeedData *OSDCMSWaterSpeedData::getInstance(
 
 void OSDCMSWaterSpeedData::set(OSDSetWaterSpeedRequest request)
 {
-    QNetworkRequest httpReq = QNetworkRequest(cfgCms->getInstance("")->getManualDataUrl()+"/waterspeed");
+    QNetworkRequest httpReq = QNetworkRequest(cfgCms->getInstance("")->getManualDataUrl()+"/water-speed");
     httpReq.setHeader(QNetworkRequest::ContentTypeHeader, "application/json");
 
     httpResponse = httpClient.put(httpReq, request.toJSON());

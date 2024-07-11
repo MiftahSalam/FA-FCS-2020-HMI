@@ -14,7 +14,7 @@ InputModeModel InputModeModel::fromJsonObject(QJsonObject obj)
                 obj.value("position").toBool(false),
                 obj.value("speed").toBool(false),
                 obj.value("inertia").toBool(false),
-                obj.value("waterspeed").toBool(false)
+                obj.value("water_speed").toBool(false)
                 );
 
     return model;
