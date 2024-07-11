@@ -324,30 +324,30 @@ void FrameOSDGyro::invalidDataUiSetup()
 
 bool FrameOSDGyro::validateInput()
 {
-    bool ok1,ok2,ok3;
+    bool ok;
 
     QString Heading = ui->inputHeading->getCurrentValue();
-    float valueheading = Heading.toFloat(&ok1);
+    float valueheading = Heading.toFloat(&ok);
 
-    if ((valueheading < 0) || (valueheading > 360) || (!ok1))
+    if ((valueheading < 0) || (valueheading > 360) || (!ok))
     {
         QMessageBox::critical(this, "Fatal Error Heading", "Invalid input : out of range.\nValid input : 0-360");
         return false;
     }
 
     QString Pitch = ui->inputPitch->getCurrentValue();
-    float valuepitch = Pitch.toFloat(&ok2);
+    float valuepitch = Pitch.toFloat(&ok);
 
-    if ((valuepitch < -30) || (valuepitch > 30) || (!ok2))
+    if ((valuepitch < -30) || (valuepitch > 30) || (!ok))
     {
         QMessageBox::critical(this, "Fatal Error Pitch", "Invalid input : out of range.\nValid input : -30 - 30");
         return false;
     }
 
     QString Roll = ui->inputRoll->getCurrentValue();
-    float valueroll = Roll.toFloat(&ok3);
+    float valueroll = Roll.toFloat(&ok);
 
-    if ((valueroll < -30) || (valueroll > 30) || (!ok3))
+    if ((valueroll < -30) || (valueroll > 30) || (!ok))
     {
         QMessageBox::critical(this, "Fatal Error Roll", "Invalid input : out of range.\nValid input : -30 - 30");
         return false;
