@@ -415,15 +415,15 @@ bool FrameOSDPosition::validateInput()
             return false;
         }
 
-        float valueminn = minn.toFloat()/60.0;
-        if ((!ok) || (valueminn >= 1))
+        float valueminn = minn.toFloat(&ok1)/60.0;
+        if ((!ok1) || (valueminn >= 1))
         {
             QMessageBox::critical(this, "Fatal Error Longitude", "Invalid minute input value.\nValid input : 00-59" );
             return false;
         }
 
-        float valuesecc = secc.toFloat()/3600.0;
-        if ((!ok) || (valuesecc > (1.0/60.0)))
+        float valuesecc = secc.toFloat(&ok1)/3600.0;
+        if ((!ok1) || (valuesecc > (1.0/60.0)))
         {
             QMessageBox::critical(this, "Fatal Error Longitude", "Invalid second input value.\nValid input : 00-59" );
             return false;
