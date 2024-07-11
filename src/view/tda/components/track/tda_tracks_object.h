@@ -28,6 +28,10 @@ public slots:
 
 private:
     //TODO: add trackRepo member
+
+    //TODO: add tracksList member
+
+    //TODO: add track ui generator method
 };
 
 #endif // TDATRACKSOBJECT_H

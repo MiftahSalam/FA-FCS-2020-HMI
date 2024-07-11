@@ -59,6 +59,7 @@ SOURCES += \
     src/shared/config/configuration.cpp \
     src/shared/config/messaging_tcp_config.cpp \
     src/shared/config/osd_cms_config.cpp \
+    src/shared/utils/track/track_utils.cpp \
     src/shared/utils/utils.cpp \
     src/usecase/gun/cms/gun_command_service.cpp \
     src/usecase/gun/stream/gun_feedback_stream.cpp \
@@ -155,6 +156,7 @@ HEADERS += \
     src/shared/config/configuration.h \
     src/shared/config/messaging_tcp_config.h \
     src/shared/config/osd_cms_config.h \
+    src/shared/utils/track/track_utils.h \
     src/shared/utils/utils.h \
     src/usecase/gun/cms/gun_command_service.h \
     src/usecase/gun/stream/gun_feedback_stream.h \
