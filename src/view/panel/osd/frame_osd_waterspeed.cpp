@@ -264,20 +264,20 @@ void FrameOSDWaterSpeed::on_pushButton_clicked()
 
 bool FrameOSDWaterSpeed::validateInput()
 {
-    bool ok1,ok2;
+    bool ok;
     QString wSpeed = ui->inputWaterSpeed->getCurrentValue();
-    float value_wSpeed = wSpeed.toFloat(&ok1);
+    float value_wSpeed = wSpeed.toFloat(&ok);
 
-    if ((value_wSpeed < -150) || (value_wSpeed > 150) || (!ok1))
+    if ((value_wSpeed < -150) || (value_wSpeed > 150) || (!ok))
     {
         QMessageBox::critical(this, "Fatal Error Water Speed", "Invalid input : out of range.\nValid input : -150 to 150");
         return false;
     }
 
     QString wCourse = ui->inputWaterCourse->getCurrentValue();
-    float value_wCourse = wCourse.toFloat(&ok2);
+    float value_wCourse = wCourse.toFloat(&ok);
 
-    if ((value_wCourse < 0) || (value_wCourse > 360) || (!ok2))
+    if ((value_wCourse < 0) || (value_wCourse > 360) || (!ok))
     {
         QMessageBox::critical(this, "Fatal Error Water Course", "Invalid input : out of range.\nValid input : 0 to 360");
         return false;
