@@ -262,21 +262,23 @@ void FrameOSDSpeed::invalidDataUiSetup()
 
 bool FrameOSDSpeed::validateInput()
 {
-    QString Speed = ui->inputSpeed->getCurrentValue();
-    float valuespeed = Speed.toFloat();
+    bool ok;
 
-    if ((valuespeed < -150) || (valuespeed > 150))
+    QString Speed = ui->inputSpeed->getCurrentValue();
+    float valuespeed = Speed.toFloat(&ok);
+
+    if ((valuespeed < -150) || (valuespeed > 150) || (!ok))
     {
-        QMessageBox::critical(this, "Fatal Error Speed", "Invalid input : out of range.\nValid input : -150 - 150");
+        QMessageBox::critical(this, "Fatal Error Speed", "Invalid input : out of range.\nValid input : -150 to 150");
         return false;
     }
 
     QString Course = ui->inputCourse->getCurrentValue();
-    float valuecourse = Course.toFloat();
+    float valuecourse = Course.toFloat(&ok);
 
-    if ((valuecourse < 0) || (valuecourse > 360))
+    if ((valuecourse < 0) || (valuecourse > 360) || (!ok))
     {
-        QMessageBox::critical(this, "Fatal Error Course", "Invalid input : out of range.\nValid input : 0 - 360");
+        QMessageBox::critical(this, "Fatal Error Course", "Invalid input : out of range.\nValid input : 0 to 360");
         return false;
     }
 

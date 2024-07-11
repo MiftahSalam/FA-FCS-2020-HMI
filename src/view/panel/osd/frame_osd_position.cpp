@@ -407,22 +407,21 @@ bool FrameOSDPosition::validateInput()
 
     //    qDebug() <<degg  <<minn <<secc <<signn;
 
-        bool ok1;
-        float valuedegg = degg.toFloat(&ok1);
-        if (!ok1)
+        float valuedegg = degg.toFloat(&ok);
+        if (!ok)
         {
             QMessageBox::critical(this, "Fatal Error Longitude", "Invalid degree input value.\nValid input : 00-180" );
             return false;
         }
 
-        float valueminn = minn.toFloat()/60.0;
+        float valueminn = minn.toFloat(&ok)/60.0;
         if ((!ok) || (valueminn >= 1))
         {
             QMessageBox::critical(this, "Fatal Error Longitude", "Invalid minute input value.\nValid input : 00-59" );
             return false;
         }
 
-        float valuesecc = secc.toFloat()/3600.0;
+        float valuesecc = secc.toFloat(&ok)/3600.0;
         if ((!ok) || (valuesecc > (1.0/60.0)))
         {
             QMessageBox::critical(this, "Fatal Error Longitude", "Invalid second input value.\nValid input : 00-59" );
