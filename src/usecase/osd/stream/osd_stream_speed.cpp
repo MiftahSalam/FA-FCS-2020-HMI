@@ -51,7 +51,7 @@ void OSDStreamSpeed::onDataReceived(QByteArray data)
 {
     try {
         QJsonObject respObj = Utils::byteArrayToJsonObject(data);
-        SpeedModel model(respObj["speed"].toDouble(),respObj["course"].toDouble());
+        SpeedModel model(respObj["sog"].toDouble(),respObj["cog"].toDouble());
 
         qDebug()<<Q_FUNC_INFO<<"data speed: SOG ->"<<model.getSpeed()<<"COG ->"<<model.getCourse();
 
