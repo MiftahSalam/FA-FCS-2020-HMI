@@ -17,6 +17,7 @@ TEMPLATE = app
 
 SOURCES += \
     src/di/di.cpp \
+    src/domain/engagement/entity/weapon_track_assign_entity.cpp \
     src/domain/gun/entity/gun_barrel_entity.cpp \
     src/domain/gun/entity/gun_status_command_entity.cpp \
     src/domain/gun/entity/gun_status_feedback_entity.cpp \
@@ -39,6 +40,7 @@ SOURCES += \
     src/infra/store/track/inmem/track_arpa_repository_inmem_impl.cpp \
     src/infra/store/track/track_repository.cpp \
     src/infra/store/weapon_assign/inmemory/weapon_assignment_repository_inmem_impl.cpp \
+    src/infra/store/weapon_track_assign/weapon_track_assignment_repository_inmem_impl.cpp \
     src/main.cpp \
     src/model/gun/cms/gun_command_request.cpp \
     src/model/osd/cms/osd_input_mode_request.cpp \
@@ -67,6 +69,7 @@ SOURCES += \
     src/shared/config/osd_cms_config.cpp \
     src/shared/utils/track/track_utils.cpp \
     src/shared/utils/utils.cpp \
+    src/usecase/engagement/weapon_track_assign_service.cpp \
     src/usecase/gun/cms/gun_command_service.cpp \
     src/usecase/gun/stream/gun_feedback_stream.cpp \
     src/usecase/osd/cms/osd_cms.cpp \
@@ -114,6 +117,8 @@ SOURCES += \
 
 HEADERS += \
     src/di/di.h \
+    src/domain/engagement/entity/weapon_track_assign_entity.h \
+    src/domain/engagement/repository/weapon_track_assign_repository.h \
     src/domain/gun/entity/gun_barrel_entity.h \
     src/domain/gun/entity/gun_status_command_entity.h \
     src/domain/gun/entity/gun_status_feedback_entity.h \
@@ -149,6 +154,7 @@ HEADERS += \
     src/infra/store/track/inmem/track_arpa_repository_inmem_impl.h \
     src/infra/store/track/track_repository.h \
     src/infra/store/weapon_assign/inmemory/weapon_assignment_repository_inmem_impl.h \
+    src/infra/store/weapon_track_assign/weapon_track_assignment_repository_inmem_impl.h \
     src/model/base_request.h \
     src/model/base_response.h \
     src/model/gun/cms/gun_command_request.h \
@@ -182,6 +188,7 @@ HEADERS += \
     src/shared/config/osd_cms_config.h \
     src/shared/utils/track/track_utils.h \
     src/shared/utils/utils.h \
+    src/usecase/engagement/weapon_track_assign_service.h \
     src/usecase/gun/cms/gun_command_service.h \
     src/usecase/gun/stream/gun_feedback_stream.h \
     src/usecase/osd/cms/i_osd_cms.h \
