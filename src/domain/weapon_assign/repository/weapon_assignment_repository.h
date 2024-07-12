@@ -4,7 +4,7 @@
 #include "src/domain/weapon_assign/entity/weapon_assign_entity.h"
 #include <list>
 
-class WeaponAssignment
+class WeaponAssignmentRepository
 {
 public:
     virtual bool AddAssignment(const WeaponAssign &wa) = 0;
