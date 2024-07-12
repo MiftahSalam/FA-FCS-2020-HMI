@@ -206,11 +206,14 @@ void FrameOSDWind::onStreamReceive(WindModel model)
         return;
     }
 
+
+
     ui->inputSpeed->setValue(QString::number(model.getSpeed()));
-    ui->inputSpeed->setStatusOk();
+//    ui->inputSpeed->setStatusOk();
 
     ui->inputDirection->setValue(QString::number(model.getDirection()));
-    ui->inputDirection->setStatusOk();
+//    ui->inputDirection->setStatusOk();
+    validateInputStream();
 }
 
 void FrameOSDWind::onUpdateWindAutoUi()
@@ -284,6 +287,30 @@ bool FrameOSDWind::validateInput()
     }
 
     return true;
+}
+
+void FrameOSDWind::validateInputStream()
+{
+    bool ok;
+    QString _speed = ui->inputSpeed->getCurrentValue();
+    float value_speed = _speed.toFloat(&ok);
+
+    if ((value_speed < -150) || (value_speed > 150) || (!ok))
+    {
+        ui->inputSpeed->setStatusFailed();
+    }else{
+        ui->inputSpeed->setStatusOk();
+    }
+
+    QString _direction = ui->inputDirection->getCurrentValue();
+    float value_direction = _direction.toFloat(&ok);
+
+    if ((value_direction < 0) || (value_direction > 360) || (!ok))
+    {
+        ui->inputDirection->setStatusFailed();
+    }else{
+        ui->inputDirection->setStatusOk();
+    }
 }
 
 FrameOSDWind::~FrameOSDWind()
