@@ -17,6 +17,7 @@ TEMPLATE = app
 
 SOURCES += \
     src/di/di.cpp \
+    src/domain/engagement/entity/engagement_data_correction_entity.cpp \
     src/domain/engagement/entity/engagement_data_entity.cpp \
     src/domain/engagement/entity/weapon_track_assign_entity.cpp \
     src/domain/gun/entity/gun_barrel_entity.cpp \
@@ -31,6 +32,7 @@ SOURCES += \
     src/domain/weapon_assign/entity/weapon_assign_entity.cpp \
     src/infra/http/http_client_wrapper.cpp \
     src/infra/messaging/tcp/tcp_messaging_wrapper.cpp \
+    src/infra/store/engagement/inmemory/engagement_data_correction_inmem_impl.cpp \
     src/infra/store/engagement/inmemory/engagement_data_repository_inmem_impl.cpp \
     src/infra/store/gun/gun_repository.cpp \
     src/infra/store/gun/inmemory/gun_command_repository_inmem_impl.cpp \
@@ -44,6 +46,7 @@ SOURCES += \
     src/infra/store/weapon_assign/inmemory/weapon_assignment_repository_inmem_impl.cpp \
     src/infra/store/weapon_track_assign/weapon_track_assignment_repository_inmem_impl.cpp \
     src/main.cpp \
+    src/model/engagement/cms/engagement_correction_set_request.cpp \
     src/model/engagement/engagement_data_model.cpp \
     src/model/gun/cms/gun_command_request.cpp \
     src/model/osd/cms/osd_input_mode_request.cpp \
@@ -72,6 +75,7 @@ SOURCES += \
     src/shared/config/osd_cms_config.cpp \
     src/shared/utils/track/track_utils.cpp \
     src/shared/utils/utils.cpp \
+    src/usecase/engagement/cms/engagement_data_correction_40mm_service.cpp \
     src/usecase/engagement/stream/engagement_data_40mm_stream.cpp \
     src/usecase/engagement/weapon_track_assign_service.cpp \
     src/usecase/gun/cms/gun_command_service.cpp \
@@ -121,8 +125,10 @@ SOURCES += \
 
 HEADERS += \
     src/di/di.h \
+    src/domain/engagement/entity/engagement_data_correction_entity.h \
     src/domain/engagement/entity/engagement_data_entity.h \
     src/domain/engagement/entity/weapon_track_assign_entity.h \
+    src/domain/engagement/repository/engagement_data_correction_repository.h \
     src/domain/engagement/repository/engagement_data_repository.h \
     src/domain/engagement/repository/weapon_track_assign_repository.h \
     src/domain/gun/entity/gun_barrel_entity.h \
@@ -150,6 +156,7 @@ HEADERS += \
     src/domain/weapon_assign/repository/weapon_assignment_repository.h \
     src/infra/http/http_client_wrapper.h \
     src/infra/messaging/tcp/tcp_messaging_wrapper.h \
+    src/infra/store/engagement/inmemory/engagement_data_correction_inmem_impl.h \
     src/infra/store/engagement/inmemory/engagement_data_repository_inmem_impl.h \
     src/infra/store/gun/gun_repository.h \
     src/infra/store/gun/inmemory/gun_command_repository_inmem_impl.h \
@@ -164,6 +171,7 @@ HEADERS += \
     src/infra/store/weapon_track_assign/weapon_track_assignment_repository_inmem_impl.h \
     src/model/base_request.h \
     src/model/base_response.h \
+    src/model/engagement/cms/engagement_correction_set_request.h \
     src/model/engagement/engagement_data_model.h \
     src/model/gun/cms/gun_command_request.h \
     src/model/osd/cms/osd_input_mode_request.h \
@@ -196,6 +204,7 @@ HEADERS += \
     src/shared/config/osd_cms_config.h \
     src/shared/utils/track/track_utils.h \
     src/shared/utils/utils.h \
+    src/usecase/engagement/cms/engagement_data_correction_40mm_service.h \
     src/usecase/engagement/stream/engagement_data_40mm_stream.h \
     src/usecase/engagement/stream/engagement_data_base_stream.h \
     src/usecase/engagement/weapon_track_assign_service.h \

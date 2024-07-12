@@ -22,7 +22,9 @@ private:
 
     // TODO: gun cms config
 
-    // TODO: track assignment config
+    // TODO: track assignment cms config
+
+    // TODO: engagement correction cms config
 
     //    AMQPConfig *amqpConfig;
     MessagingTcpConfig *tcpMessageConfig;
