@@ -33,11 +33,16 @@ private:
     GunRepository *repoGun;
     // TODO: add track repository
 
+    // TODO: add weapon assignment repository
+
     OSDCMS *serviceOSDCMS;
     // TODO: add gun command service
 
+    // TODO: add weapon assignment service
+
     OSDStream *serviceOSDStream;
     // TODO: add gun stream service
+
 };
 
 #endif // DI_H

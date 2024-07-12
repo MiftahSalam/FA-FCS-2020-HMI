@@ -26,6 +26,7 @@ SOURCES += \
     src/domain/osd/entity/osd_waterspeed_entity.cpp \
     src/domain/osd/entity/osd_speed_entity.cpp \
     src/domain/track/entity/track_base_entity.cpp \
+    src/domain/weapon_assign/entity/weapon_assign_entity.cpp \
     src/infra/http/http_client_wrapper.cpp \
     src/infra/messaging/tcp/tcp_messaging_wrapper.cpp \
     src/infra/store/gun/gun_repository.cpp \
@@ -37,6 +38,7 @@ SOURCES += \
     src/infra/store/osd/osd_repository.cpp \
     src/infra/store/track/inmem/track_arpa_repository_inmem_impl.cpp \
     src/infra/store/track/track_repository.cpp \
+    src/infra/store/weapon_assign/inmemory/weapon_assignment_repository_inmem_impl.cpp \
     src/main.cpp \
     src/model/gun/cms/gun_command_request.cpp \
     src/model/osd/cms/osd_input_mode_request.cpp \
@@ -80,6 +82,7 @@ SOURCES += \
     src/usecase/osd/stream/osd_stream_waterspeed.cpp \
     src/usecase/osd/stream/osd_stream_speed.cpp \
     src/usecase/track/stream/arpa/track_arpa_stream.cpp \
+    src/usecase/weapon_assign/weapon_assign_service.cpp \
     src/view/mainwindow.cpp \
     src/view/panel/gun/framegun.cpp \
     src/view/panel/osd/frame_osd_gyro.cpp \
@@ -132,6 +135,8 @@ HEADERS += \
     src/domain/osd/repository/osd_speed_repository.h \
     src/domain/track/entity/track_base_entity.h \
     src/domain/track/repository/track_base_repository.h \
+    src/domain/weapon_assign/entity/weapon_assign_entity.h \
+    src/domain/weapon_assign/repository/weapon_assignment_repository.h \
     src/infra/http/http_client_wrapper.h \
     src/infra/messaging/tcp/tcp_messaging_wrapper.h \
     src/infra/store/gun/gun_repository.h \
@@ -143,6 +148,7 @@ HEADERS += \
     src/infra/store/osd/osd_repository.h \
     src/infra/store/track/inmem/track_arpa_repository_inmem_impl.h \
     src/infra/store/track/track_repository.h \
+    src/infra/store/weapon_assign/inmemory/weapon_assignment_repository_inmem_impl.h \
     src/model/base_request.h \
     src/model/base_response.h \
     src/model/gun/cms/gun_command_request.h \
@@ -194,6 +200,7 @@ HEADERS += \
     src/usecase/osd/stream/osd_stream_speed.h \
     src/usecase/track/stream/arpa/track_arpa_stream.h \
     src/usecase/track/stream/track_stream_base.h \
+    src/usecase/weapon_assign/weapon_assign_service.h \
     src/view/mainwindow.h \
     src/view/panel/gun/framegun.h \
     src/view/panel/osd/frame_osd_base.h \

@@ -8,9 +8,12 @@ DI::DI()
 
     repoOSD = new OSDRepository(nullptr);
     repoGun = new GunRepository(nullptr);
+    // TODO: add weapon assignment repository
 
     serviceOSDCMS = new OSDCMS(nullptr, config->getOsdCmsConfig(), repoOSD);
     // TODO: add gun command service
+
+    // TODO: add weapon assignment service
 
     serviceOSDStream = new OSDStream(nullptr, config->getTcpMessageConfig(), repoOSD, serviceOSDCMS);
     // TODO: add gun stream service
