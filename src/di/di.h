@@ -35,13 +35,19 @@ private:
 
     // TODO: add weapon assignment repository
 
+    // TODO: add weapon track engagement repository
+
     OSDCMS *serviceOSDCMS;
     // TODO: add gun command service
 
     // TODO: add weapon assignment service
 
+    // TODO: add weapon track engagement service
+
     OSDStream *serviceOSDStream;
     // TODO: add gun stream service
+
+    // TODO: add weapon track engagement stream service
 
 };
 
