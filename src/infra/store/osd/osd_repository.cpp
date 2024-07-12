@@ -3,6 +3,8 @@
 #include "src/infra/store/osd/inmemory/osd_inertia_repository_inmem_impl.h"
 #include "src/infra/store/osd/inmemory/osd_waterspeed_repository_inmem_impl.h"
 #include "src/infra/store/osd/inmemory/osd_speed_repository_inmem_impl.h"
+#include "src/infra/store/osd/inmemory/osd_wind_repository_inmem_impl.h"
+
 
 OSDRepository::OSDRepository(QObject *parent)
     : QObject{parent}
@@ -11,6 +13,7 @@ OSDRepository::OSDRepository(QObject *parent)
     repoOSDInertia = OSDInertiaRepositoryInMemImpl::GetInstance();
     repoOSDWaterSpeed = OSDWaterSpeedRepositoryInMemImpl::GetInstance();
     repoOSDSpeed = OSDSpeedRepositoryInMemImpl::GetInstance();
+    repoOSDWind = OSDWindRepositoryInMemImpl::GetInstance();
 }
 
 OSDPositionRepository *OSDRepository::getRepoOSDPosition() const
@@ -31,4 +34,9 @@ OSDWaterSpeedRepository *OSDRepository::getRepoOSDWaterSpeed() const
 OSDSpeedRepository *OSDRepository::getRepoOSDSpeed() const
 {
     return repoOSDSpeed;
+}
+
+OSDWindRepository *OSDRepository::getRepoOSDWind() const
+{
+    return repoOSDWind;
 }

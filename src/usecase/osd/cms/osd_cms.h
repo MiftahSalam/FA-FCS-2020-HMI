@@ -11,6 +11,7 @@
 #include "src/usecase/osd/cms/osd_cms_gyro_data.h"
 #include "src/usecase/osd/cms/osd_cms_waterspeed_data.h"
 #include "src/usecase/osd/cms/osd_cms_speed_data.h"
+#include "src/usecase/osd/cms/osd_cms_wind_data.h"
 
 class OSDCMS : public QObject
 {
@@ -27,6 +28,7 @@ public:
     OSDCMSGyroData *getServiceOSDCMSGyro() const;
     OSDCMSWaterSpeedData *getServiceOSDCMSWaterSpeed() const;
     OSDCMSSpeedData *getServiceOSDCMSSpeed() const;
+    OSDCMSWindData *getServiceOSDCMSWind() const;
 
 private:
     OSDCmsConfig *cfgCms;
@@ -35,6 +37,7 @@ private:
     OSDCMSGyroData *serviceOSDCMSGyro;
     OSDCMSWaterSpeedData *serviceOSDCMSWaterSpeed;
     OSDCMSSpeedData *serviceOSDCMSSpeed;
+    OSDCMSWindData *serviceOSDCMSWind;
 };
 
 #endif // OSDCMS_H

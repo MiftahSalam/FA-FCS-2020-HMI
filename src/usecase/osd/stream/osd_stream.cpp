@@ -59,6 +59,13 @@ OSDStream::OSDStream(
                 repoOSD->getRepoOSDSpeed(),
                 osdService->getServiceOSDCMSMode()
                 );
+
+    TcpMessagingOpts *windStreamVal = config->getInstance("")->getContent().value("wind");
+    serviceOSDStreamWind = OSDStreamWind::getInstance(
+                windStreamVal,
+                repoOSD->getRepoOSDWind(),
+                osdService->getServiceOSDCMSMode()
+                );
 }
 
 OSDStreamPosition *OSDStream::getServiceOSDStreamPosition() const
@@ -79,4 +86,9 @@ OSDStreamWaterSpeed *OSDStream::getServiceOSDStreamWaterSpeed() const
 OSDStreamSpeed *OSDStream::getServiceOSDStreamSpeed() const
 {
     return serviceOSDStreamSpeed;
+}
+
+OSDStreamWind *OSDStream::getServiceOSDStreamWind() const
+{
+    return serviceOSDStreamWind;
 }

@@ -35,6 +35,9 @@
    <item>
     <widget class="FrameOSDWaterSpeed" name="widgetWaterSpeed" native="true"/>
    </item>
+   <item>
+    <widget class="FrameOSDWind" name="widgetWind" native="true"/>
+   </item>
   </layout>
  </widget>
  <customwidgets>
@@ -60,6 +63,12 @@
    <class>FrameOSDSpeed</class>
    <extends>QWidget</extends>
    <header>src/view/panel/osd/frame_osd_speed.h</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>FrameOSDWind</class>
+   <extends>QWidget</extends>
+   <header>src/view/panel/osd/frame_osd_wind.h</header>
    <container>1</container>
   </customwidget>
  </customwidgets>
