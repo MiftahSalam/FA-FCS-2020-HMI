@@ -17,6 +17,7 @@ TEMPLATE = app
 
 SOURCES += \
     src/di/di.cpp \
+    src/domain/engagement/entity/engagement_data_entity.cpp \
     src/domain/engagement/entity/weapon_track_assign_entity.cpp \
     src/domain/gun/entity/gun_barrel_entity.cpp \
     src/domain/gun/entity/gun_status_command_entity.cpp \
@@ -30,6 +31,7 @@ SOURCES += \
     src/domain/weapon_assign/entity/weapon_assign_entity.cpp \
     src/infra/http/http_client_wrapper.cpp \
     src/infra/messaging/tcp/tcp_messaging_wrapper.cpp \
+    src/infra/store/engagement/inmemory/engagement_data_repository_inmem_impl.cpp \
     src/infra/store/gun/gun_repository.cpp \
     src/infra/store/gun/inmemory/gun_command_repository_inmem_impl.cpp \
     src/infra/store/osd/inmemory/osd_inertia_repository_inmem_impl.cpp \
@@ -117,7 +119,9 @@ SOURCES += \
 
 HEADERS += \
     src/di/di.h \
+    src/domain/engagement/entity/engagement_data_entity.h \
     src/domain/engagement/entity/weapon_track_assign_entity.h \
+    src/domain/engagement/repository/engagement_data_repository.h \
     src/domain/engagement/repository/weapon_track_assign_repository.h \
     src/domain/gun/entity/gun_barrel_entity.h \
     src/domain/gun/entity/gun_status_command_entity.h \
@@ -144,6 +148,7 @@ HEADERS += \
     src/domain/weapon_assign/repository/weapon_assignment_repository.h \
     src/infra/http/http_client_wrapper.h \
     src/infra/messaging/tcp/tcp_messaging_wrapper.h \
+    src/infra/store/engagement/inmemory/engagement_data_repository_inmem_impl.h \
     src/infra/store/gun/gun_repository.h \
     src/infra/store/gun/inmemory/gun_command_repository_inmem_impl.h \
     src/infra/store/osd/inmemory/osd_inertia_repository_inmem_impl.h \
