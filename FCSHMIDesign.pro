@@ -44,6 +44,7 @@ SOURCES += \
     src/infra/store/weapon_assign/inmemory/weapon_assignment_repository_inmem_impl.cpp \
     src/infra/store/weapon_track_assign/weapon_track_assignment_repository_inmem_impl.cpp \
     src/main.cpp \
+    src/model/engagement/engagement_data_model.cpp \
     src/model/gun/cms/gun_command_request.cpp \
     src/model/osd/cms/osd_input_mode_request.cpp \
     src/model/osd/cms/osd_set_gyro_request.cpp \
@@ -71,6 +72,7 @@ SOURCES += \
     src/shared/config/osd_cms_config.cpp \
     src/shared/utils/track/track_utils.cpp \
     src/shared/utils/utils.cpp \
+    src/usecase/engagement/stream/engagement_data_40mm_stream.cpp \
     src/usecase/engagement/weapon_track_assign_service.cpp \
     src/usecase/gun/cms/gun_command_service.cpp \
     src/usecase/gun/stream/gun_feedback_stream.cpp \
@@ -162,6 +164,7 @@ HEADERS += \
     src/infra/store/weapon_track_assign/weapon_track_assignment_repository_inmem_impl.h \
     src/model/base_request.h \
     src/model/base_response.h \
+    src/model/engagement/engagement_data_model.h \
     src/model/gun/cms/gun_command_request.h \
     src/model/osd/cms/osd_input_mode_request.h \
     src/model/osd/cms/osd_set_gyro_request.h \
@@ -193,6 +196,8 @@ HEADERS += \
     src/shared/config/osd_cms_config.h \
     src/shared/utils/track/track_utils.h \
     src/shared/utils/utils.h \
+    src/usecase/engagement/stream/engagement_data_40mm_stream.h \
+    src/usecase/engagement/stream/engagement_data_base_stream.h \
     src/usecase/engagement/weapon_track_assign_service.h \
     src/usecase/gun/cms/gun_command_service.h \
     src/usecase/gun/stream/gun_feedback_stream.h \
