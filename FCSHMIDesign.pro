@@ -25,6 +25,7 @@ SOURCES += \
     src/domain/osd/entity/osd_position_entity.cpp \
     src/domain/osd/entity/osd_speed_entity.cpp \
     src/domain/track/entity/track_base_entity.cpp \
+    src/domain/weapon_assign/entity/weapon_assign_entity.cpp \
     src/infra/http/http_client_wrapper.cpp \
     src/infra/messaging/tcp/tcp_messaging_wrapper.cpp \
     src/infra/store/gun/gun_repository.cpp \
@@ -120,6 +121,8 @@ HEADERS += \
     src/domain/osd/repository/osd_speed_repository.h \
     src/domain/track/entity/track_base_entity.h \
     src/domain/track/repository/track_base_repository.h \
+    src/domain/weapon_assign/entity/weapon_assign_entity.h \
+    src/domain/weapon_assign/repository/weapon_assignment_repository.h \
     src/infra/http/http_client_wrapper.h \
     src/infra/messaging/tcp/tcp_messaging_wrapper.h \
     src/infra/store/gun/gun_repository.h \
