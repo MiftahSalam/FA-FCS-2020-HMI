@@ -19,8 +19,21 @@ public:
 
 private:
     OSDCmsConfig *osdCmsConfig;
-//    AMQPConfig *amqpConfig;
+
+    // TODO: gun cms config
+
+    // TODO: track assignment cms config
+
+    // TODO: engagement correction cms config
+
+    //    AMQPConfig *amqpConfig;
     MessagingTcpConfig *tcpMessageConfig;
+
+    // TODO: gun messaging config
+
+    // TODO: track assigned messaging config
+
+    // TODO: track engagement messaging config
 };
 
 #endif // CONFIGURATION_H

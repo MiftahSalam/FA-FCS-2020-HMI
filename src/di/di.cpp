@@ -10,13 +10,24 @@ DI::DI()
     repoGun = new GunRepository(nullptr);
     // TODO: add weapon assignment repository
 
+    // TODO: add weapon track engagement repository
+
+    // TODO: add engagement correction repository
+
     serviceOSDCMS = new OSDCMS(nullptr, config->getOsdCmsConfig(), repoOSD);
     // TODO: add gun command service
 
     // TODO: add weapon assignment service
 
+    // TODO: add weapon track engagement service
+
+    // TODO: add engagement correction service
+
     serviceOSDStream = new OSDStream(nullptr, config->getTcpMessageConfig(), repoOSD, serviceOSDCMS);
     // TODO: add gun stream service
+
+    // TODO: add weapon track engagement stream service
+
     //    serviceOSDStream = new OSDStream(nullptr, config->getAmqpConfig());
 
 }
