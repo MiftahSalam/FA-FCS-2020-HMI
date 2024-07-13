@@ -11,8 +11,8 @@ OSDCMSInputMode::OSDCMSInputMode(
         OSDCmsConfig *cmsConfig
         ):
     HttpClientWrapper(parent),
-    currentMode(OSDInputModeRequest(false, false, false, false)),
-    previousMode(OSDInputModeRequest(false, false, false, false)),
+    currentMode(OSDInputModeRequest(false, false, false, false, false)),
+    previousMode(OSDInputModeRequest(false, false, false, false, false)),
     cfgCms(cmsConfig)
 {
     synced = false;
@@ -71,6 +71,8 @@ void OSDCMSInputMode::setDataMode(const QString &dataFisis, const bool manualMod
         currentMode.setWaterSpeed(manualMode);
     } else if (dataFisis == "speed"){
         currentMode.setSpeed(manualMode);
+    } else if (dataFisis == "wind"){
+        currentMode.setWind(manualMode);
     }else{
         // TODO: handle invalid datafisis
         return;
@@ -142,7 +144,8 @@ BaseResponse<InputModeModel> OSDCMSInputMode::toResponse(QByteArray raw)
                     respData["position"].toBool(),
                 respData["speed"].toBool(),
                 respData["inertia"].toBool(),
-                respData["water_speed"].toBool()
+                respData["water_speed"].toBool(),
+                respData["wind"].toBool()
                 );
         BaseResponse<InputModeModel> resp(respCode, respMsg, model);
 
@@ -154,13 +157,13 @@ BaseResponse<InputModeModel> OSDCMSInputMode::toResponse(QByteArray raw)
     }
 
     ErrUnknown status;
-    InputModeModel model(false, false, false, false);
+    InputModeModel model(false, false, false, false, false);
     return BaseResponse<InputModeModel>(status.getCode(), status.getMessage(), model);
 }
 
 BaseResponse<InputModeModel> OSDCMSInputMode::errorResponse(QNetworkReply::NetworkError err)
 {
-    InputModeModel model(false, false, false, false);
+    InputModeModel model(false, false, false, false, false);
     try {
         ErrHelper::throwHttpError(err);
     } catch (BaseError &e) {

@@ -8,7 +8,7 @@ class OSDInputModeRequest: public BaseModel<OSDInputModeRequest>
 {
 public:
     OSDInputModeRequest();
-    OSDInputModeRequest(bool position, bool speed, bool inersia, bool waterspeed);
+    OSDInputModeRequest(bool position, bool speed, bool inersia, bool waterspeed, bool wind);
 
     bool getPosition() const;
     void setPosition(bool newPosition);
@@ -18,6 +18,8 @@ public:
     void setInersia(bool newInersia);
     bool getWaterSpeed() const;
     void setWaterSpeed(bool newWaterSpeed);
+    bool getWind() const;
+    void setWind(bool newWind);
 
 
 private:
@@ -25,6 +27,7 @@ private:
     bool speed;
     bool inersia;
     bool waterspeed;
+    bool wind;
 
     // BaseModel interface
 public:
