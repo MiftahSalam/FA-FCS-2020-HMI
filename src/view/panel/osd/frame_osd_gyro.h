@@ -62,6 +62,7 @@ private:
     void invalidDataUiSetup() override;
 
     bool validateInput() override;
+    void validateInputStream();
 };
 
 #endif // FRAME_OSD_GYRO_H

@@ -198,21 +198,10 @@ void FrameOSDGyro::onStreamReceive(GyroModel model)
 
     //validity pitch roll stream check
     ui->inputHeading->setValue(QString::number(model.getHeading()));
-    ui->inputHeading->setStatusOk();
-
     ui->inputPitch->setValue(QString::number(model.getPicth()));
-    if (model.getPicth() == 90){
-        ui->inputPitch->setStatusFailed();
-    } else{
-        ui->inputPitch->setStatusOk();
-    }
-
     ui->inputRoll->setValue(QString::number(model.getRoll()));
-    if (model.getRoll() == 90){
-        ui->inputRoll->setStatusFailed();
-    } else{
-        ui->inputRoll->setStatusOk();
-    }
+
+    validateInputStream();
 }
 
 void FrameOSDGyro::onUpdateGyroAutoUi()
@@ -356,3 +345,40 @@ bool FrameOSDGyro::validateInput()
     return true;
 
 }
+
+void FrameOSDGyro::validateInputStream()
+{
+    bool ok;
+    QString Heading = ui->inputHeading->getCurrentValue();
+    float valueheading = Heading.toFloat(&ok);
+
+    if ((valueheading < 0) || (valueheading > 360) || (!ok))
+    {
+        ui->inputHeading->setStatusFailed();
+    }else{
+        ui->inputHeading->setStatusOk();
+    }
+
+    QString Pitch = ui->inputPitch->getCurrentValue();
+    float valuepitch = Pitch.toFloat(&ok);
+
+    if ((valuepitch < -30) || ( valuepitch > 30) || (!ok))
+    {
+        ui->inputPitch->setStatusFailed();
+    }else{
+        ui->inputPitch->setStatusOk();
+    }
+
+    QString Roll = ui->inputRoll->getCurrentValue();
+    float valueroll = Roll.toFloat(&ok);
+
+    if ((valueroll < -30) || (valueroll > 30) || (!ok))
+    {
+        ui->inputRoll->setStatusFailed();
+    }else{
+        ui->inputRoll->setStatusOk();
+    }
+}
+
+
+

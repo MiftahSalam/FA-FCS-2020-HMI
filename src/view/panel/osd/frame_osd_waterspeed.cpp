@@ -207,10 +207,9 @@ void FrameOSDWaterSpeed::onStreamReceive(WaterSpeedModel model)
     }
 
     ui->inputWaterSpeed->setValue(QString::number(model.getSpeed()));
-    ui->inputWaterSpeed->setStatusOk();
-
     ui->inputWaterCourse->setValue(QString::number(model.getCourse()));
-    ui->inputWaterCourse->setStatusOk();
+
+    validateInputStream();
 }
 
 void FrameOSDWaterSpeed::onUpdateWaterSpeedAutoUi()
@@ -284,6 +283,31 @@ bool FrameOSDWaterSpeed::validateInput()
     }
 
     return true;
+}
+
+void FrameOSDWaterSpeed::validateInputStream()
+{
+    bool ok;
+    QString wSpeed = ui->inputWaterSpeed->getCurrentValue();
+    float value_wSpeed = wSpeed.toFloat(&ok);
+
+    if ((value_wSpeed < -150) || (value_wSpeed > 150) || (!ok))
+    {
+        ui->inputWaterSpeed->setStatusFailed();
+    }else{
+        ui->inputWaterSpeed->setStatusOk();
+    }
+
+    QString wCourse = ui->inputWaterCourse->getCurrentValue();
+    float value_wCourse = wCourse.toFloat(&ok);
+
+    if ((value_wCourse < 0) || (value_wCourse > 360) || (!ok))
+    {
+       ui->inputWaterCourse->setStatusFailed();
+    }else{
+        ui->inputWaterCourse->setStatusOk();
+    }
+
 }
 
 

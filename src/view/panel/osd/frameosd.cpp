@@ -5,7 +5,8 @@
 //#include "math.h"
 
 #include <QMessageBox>
-#include <QRegExpValidator>
+// #include <QRegExpValidator>
+#include <QRegularExpressionValidator>
 
 #define NUMBER_RX "[0-9.-]+$"
 

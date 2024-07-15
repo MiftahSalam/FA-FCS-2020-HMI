@@ -232,10 +232,12 @@ void FrameOSDPosition::onStreamReceive(PositionModel model)
     }
 
     ui->inputLatitude->setValue(Utils::latDecToStringDegree(model.getLatitude()));
-    ui->inputLatitude->setStatusOk();
+    if (validateInputStreamLat())
+        ui->inputLatitude->setStatusOk();
 
     ui->inputLongitude->setValue(Utils::lonDecToStringDegree(model.getLongitude()));
-    ui->inputLongitude->setStatusOk();
+    if (validateInputStreamLon())
+        ui->inputLongitude->setStatusOk();
 }
 
 void FrameOSDPosition::onUpdatePositionAutoUi()
@@ -447,4 +449,143 @@ bool FrameOSDPosition::validateInput()
         //    qDebug() << Q_FUNC_INFO<<valuedegg << valueminn <<valuesecc <<valueLong;
 
         return true;
+}
+
+bool FrameOSDPosition::validateInputStreamLat()
+{
+    QString lat_str_trimmed = ui->inputLatitude->getCurrentValue();
+    lat_str_trimmed.remove(" ");
+
+    QString str = lat_str_trimmed;
+    QStringList list1 = str.split("-");
+
+    if(list1.size()<2)
+    {
+        ui->inputLatitude->setStatusFailed();
+        return false;
+    }
+
+    QString deg = list1.at(0);
+    QStringList list2 = list1.at(1).split("'");
+
+    if(list2.size()!=4)
+    {
+        ui->inputLatitude->setStatusFailed();
+        return false;
+    }
+
+    QString min = list2.at(0);
+    QString sec = list2.at(1);
+    QString sign = list2.at(3);
+
+    //    qDebug() << deg  <<min <<sec <<sign;
+
+    bool ok;
+    float valuedeg = deg.toFloat(&ok);
+    if (!ok)
+    {
+        ui->inputLatitude->setStatusFailed();
+        return false;
+    }
+
+    float valuemin = min.toFloat(&ok)/60.0;
+    if ((!ok) || (valuemin >= 1))
+    {
+        ui->inputLatitude->setStatusFailed();
+        return false;
+    }
+
+    float valuesec = sec.toFloat(&ok)/3600.0;
+    if ((!ok) || (valuesec > (1.0/60.0)))
+    {
+        ui->inputLatitude->setStatusFailed();
+        return false;
+    }
+
+    float valueLat = valuedeg+valuemin+valuesec;
+
+    if(sign == "S")
+        valueLat *= -1.0;
+    else if((sign != "S") && (sign != "N"))
+    {
+        ui->inputLatitude->setStatusFailed();
+        return false;
+    }
+
+    if ((valueLat < -90) || (valueLat > 90) )
+    {
+        ui->inputLatitude->setStatusFailed();
+        return false;
+    }
+
+    return true;
+}
+
+bool FrameOSDPosition::validateInputStreamLon()
+{
+    QString long_str_trimmed = ui->inputLongitude->getCurrentValue();
+    long_str_trimmed.remove(" ");
+
+    QString str1 = long_str_trimmed;
+    QStringList long_list1 = str1.split("-");
+
+    if(long_list1.size()<2)
+    {
+        ui->inputLongitude->setStatusFailed();
+        return false;
+    }
+
+    QString degg = long_list1.at(0);
+    QStringList long_list2 = long_list1.at(1).split("'");
+
+    if(long_list2.size()!=4)
+    {
+        ui->inputLongitude->setStatusFailed();
+        return false;
+    }
+
+    QString minn = long_list2.at(0);
+    QString secc = long_list2.at(1);
+    QString signn = long_list2.at(3);
+
+    //    qDebug() <<degg  <<minn <<secc <<signn;
+    bool ok;
+    float valuedegg = degg.toFloat(&ok);
+    if (!ok)
+    {
+        ui->inputLongitude->setStatusFailed();
+        return false;
+    }
+
+    float valueminn = minn.toFloat(&ok)/60.0;
+    if ((!ok) || (valueminn >= 1))
+    {
+        ui->inputLongitude->setStatusFailed();
+        return false;
+    }
+
+    float valuesecc = secc.toFloat(&ok)/3600.0;
+    if ((!ok) || (valuesecc > (1.0/60.0)))
+    {
+        ui->inputLongitude->setStatusFailed();
+        return false;
+    }
+
+    float valueLong = valuedegg+valueminn+valuesecc;
+
+    if(signn == "W")
+        valueLong *= -1.0;
+    else if ((signn != "W") && (signn != "E"))
+    {
+        ui->inputLongitude->setStatusFailed();
+        return false;
+    }
+
+    if ((valueLong < -180) || (valueLong > 180) )
+    {
+        ui->inputLongitude->setStatusFailed();
+        return false;
+    }
+
+    return true;
 }

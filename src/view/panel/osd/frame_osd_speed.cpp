@@ -182,10 +182,11 @@ void FrameOSDSpeed::onStreamReceive(SpeedModel model)
 
     //validity SOG COG stream check
     ui->inputSpeed->setValue(QString::number(model.getSpeed()));
-    ui->inputSpeed->setStatusOk();
+    // ui->inputSpeed->setStatusOk();
 
     ui->inputCourse->setValue(QString::number(model.getCourse()));
-    ui->inputCourse->setStatusOk();
+    // ui->inputCourse->setStatusOk();
+    validateInputStream();
 
 }
 
@@ -285,8 +286,31 @@ bool FrameOSDSpeed::validateInput()
     return true;
 }
 
+void FrameOSDSpeed::validateInputStream()
+{
+    bool ok;
+    QString Speed = ui->inputSpeed->getCurrentValue();
+    float valuespeed = Speed.toFloat(&ok);
+
+    if ((valuespeed < -150) || (valuespeed > 150) || (!ok))
+    {
+        ui->inputSpeed->setStatusFailed();
+    }else{
+        ui->inputSpeed->setStatusOk();
+    }
+
+    QString Course = ui->inputCourse->getCurrentValue();
+    float valuecourse = Course.toFloat(&ok);
+
+    if ((valuecourse < 0) || (valuecourse > 360) || (!ok))
+    {
+        ui->inputCourse->setStatusFailed();
+    }else{
+        ui->inputCourse->setStatusOk();
+    }
+}
+
 FrameOSDSpeed::~FrameOSDSpeed()
 {
     delete ui;
 }
-
