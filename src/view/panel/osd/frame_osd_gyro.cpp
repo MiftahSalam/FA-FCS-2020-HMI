@@ -6,8 +6,7 @@
 
 #include <QMessageBox>
 
-FrameOSDGyro::FrameOSDGyro(QWidget *parent) :
-    QWidget(parent),
+FrameOSDGyro::FrameOSDGyro(QWidget *parent) : QWidget(parent),
     ui(new Ui::FrameOSDGyro),
     _cmsGyro(DI::getInstance()->getOSDCMSService()->getServiceOSDCMSGyro()),
     _cmsMode(DI::getInstance()->getOSDCMSService()->getServiceOSDCMSMode()),
@@ -45,10 +44,11 @@ FrameOSDGyro::FrameOSDGyro(QWidget *parent) :
 
 void FrameOSDGyro::onModeChange(int index)
 {
-    qDebug()<<"Status Gyro :" << index;
+    qDebug() << "Status Gyro :" << index;
 
     bool manual_mode;
-    switch ((OSD_MODE)index) {
+    switch ((OSD_MODE)index)
+    {
     case OSD_MODE::AUTO:
         manual_mode = false;
         currentMode = OSD_MODE::AUTO;
@@ -71,30 +71,38 @@ void FrameOSDGyro::onAfterModeReset()
 
 void FrameOSDGyro::onTimeout()
 {
-    qDebug()<<Q_FUNC_INFO;
+    qDebug() << Q_FUNC_INFO;
 
     auto currError = _streamGyro->check();
-    if (currError.getCode() == ERROR_CODE_MESSAGING_NOT_CONNECTED.first) {
+    if (currError.getCode() == ERROR_CODE_MESSAGING_NOT_CONNECTED.first)
+    {
         notConnectedUiSetup();
-    } else if (currError.getCode() == ERROR_CODE_MESSAGING_NO_DATA.first) {
+    }
+    else if (currError.getCode() == ERROR_CODE_MESSAGING_NO_DATA.first)
+    {
         noDataUiSetup();
-    } else if (currError.getCode() == ERROR_CODE_MESSAGING_DATA_INVALID_FORMAT.first) {
+    }
+    else if (currError.getCode() == ERROR_CODE_MESSAGING_DATA_INVALID_FORMAT.first)
+    {
         invalidDataUiSetup();
     }
 
     auto curMode = _cmsMode->getDataMode();
     bool inertiaMode = curMode.getInersia();
-    if ((OSD_MODE)inertiaMode != currentMode) {
+    if ((OSD_MODE)inertiaMode != currentMode)
+    {
         disconnect(ui->mode, &FrameOSDMode::signal_currentModeChange, this, &FrameOSDGyro::onModeChange);
-        if (inertiaMode) {
+        if (inertiaMode)
+        {
             ui->mode->setCurrentModeIndex(1);
             manualUiSetup();
             _cmsGyro->set(OSDSetGyroRequest(
                               ui->inputHeading->getCurrentValue().toFloat(),
                               ui->inputPitch->getCurrentValue().toFloat(),
-                              ui->inputRoll->getCurrentValue().toFloat()
-                              ));
-        } else {
+                              ui->inputRoll->getCurrentValue().toFloat()));
+        }
+        else
+        {
             ui->mode->setCurrentModeIndex(0);
             autoUiSetup();
         }
@@ -114,15 +122,11 @@ void FrameOSDGyro::setup()
     OSDGyroProp prop{
         "Inertia",
         TextInputProp{
-            "Heading:", "deg", "HeadingInput", "0"
-        },
+            "Heading:", "deg", "HeadingInput", "0"},
         TextInputProp{
-            "Pitch:", "deg", "HeadingInput", "0"
-        },
+            "Pitch:", "deg", "HeadingInput", "0"},
         TextInputProp{
-            "Roll:", "deg", "RollInput", "0"
-        }
-    };
+            "Roll:", "deg", "RollInput", "0"}};
     ui->groupBox->setTitle(prop.title);
     ui->inputHeading->setup(prop.heading);
     ui->inputPitch->setup(prop.pitch);
@@ -137,26 +141,30 @@ void FrameOSDGyro::resetModeIndex()
 
 void FrameOSDGyro::onModeChangeResponse(const QString datafisis, BaseResponse<InputModeModel> resp, bool needConfirm)
 {
-    if (datafisis != "inertia") {
+    if (datafisis != "inertia")
+    {
         return;
     }
 
-    qDebug()<<Q_FUNC_INFO<<"resp code:"<<resp.getHttpCode()<<"resp msg:"<<resp.getMessage();
-    qDebug()<<Q_FUNC_INFO<<"needConfirm:"<<needConfirm;
+    qDebug() << Q_FUNC_INFO << "resp code:" << resp.getHttpCode() << "resp msg:" << resp.getMessage();
+    qDebug() << Q_FUNC_INFO << "needConfirm:" << needConfirm;
 
-    if (resp.getHttpCode() != 0) {
+    if (resp.getHttpCode() != 0)
+    {
         resetModeIndex();
-        if (needConfirm) {
+        if (needConfirm)
+        {
             QMessageBox::warning(this, "Request Error", QString("Failed to input mode with error: %1").arg(resp.getMessage()));
         }
 
         return;
     }
 
-    qDebug()<<Q_FUNC_INFO<<"resp code:"<<"resp data inertia mode: "<<resp.getData().getInersia();
+    qDebug() << Q_FUNC_INFO << "resp code:" << "resp data inertia mode: " << resp.getData().getInersia();
 
-//    auto currentMode = (OSD_MODE)resp.getData().getInersia();
-    switch (currentMode) {
+    //    auto currentMode = (OSD_MODE)resp.getData().getInersia();
+    switch (currentMode)
+    {
     case OSD_MODE::AUTO:
         autoUiSetup();
         break;
@@ -170,38 +178,57 @@ void FrameOSDGyro::onModeChangeResponse(const QString datafisis, BaseResponse<In
 
 void FrameOSDGyro::onDataResponse(BaseResponse<GyroModel> resp)
 {
-    //todo handle response
-    qDebug()<<Q_FUNC_INFO<<"resp code:"<<resp.getHttpCode()<<"resp msg:"<<resp.getMessage();
+    // todo handle response
+    qDebug() << Q_FUNC_INFO << "resp code:" << resp.getHttpCode() << "resp msg:" << resp.getMessage();
 
-    if (resp.getHttpCode() != 0) {
+    if (resp.getHttpCode() != 0)
+    {
         QMessageBox::warning(this, "Request Error", QString("Failed to change manual data with error: %1").arg(resp.getMessage()));
         return;
-
     }
 
-    qDebug()<<Q_FUNC_INFO
-           <<"resp data getHeading: "<<resp.getData().getHeading()
-          <<"resp data getPicth: "<<resp.getData().getPicth()
-         <<"resp data getRoll: "<<resp.getData().getRoll()
-           ;
+    qDebug() << Q_FUNC_INFO
+             << "resp data getHeading: " << resp.getData().getHeading()
+             << "resp data getPicth: " << resp.getData().getPicth()
+             << "resp data getRoll: " << resp.getData().getRoll();
 }
 
 void FrameOSDGyro::onStreamReceive(GyroModel model)
 {
-    qDebug()<<Q_FUNC_INFO<<"Inertia: Heading ->"<<model.getHeading()
-           <<", Pitch ->"<<model.getPicth()<<", Roll ->"<<model.getRoll();
+    qDebug() << Q_FUNC_INFO << "Inertia: Heading ->" << model.getHeading()
+             << ", Pitch ->" << model.getPicth() << ", Roll ->" << model.getRoll();
 
     auto currentMode = (OSD_MODE)_cmsMode->getDataMode().getInersia();
-    if (currentMode == OSD_MODE::MANUAL) {
+    if (currentMode == OSD_MODE::MANUAL)
+    {
         return;
     }
 
-    //validity pitch roll stream check
+    auto currStreamErr = _streamGyro->check();
+
+    // validity pitch roll stream check
     ui->inputHeading->setValue(QString::number(model.getHeading()));
     ui->inputPitch->setValue(QString::number(model.getPicth()));
     ui->inputRoll->setValue(QString::number(model.getRoll()));
 
-    validateInputStream();
+    if (currStreamErr.getCode() == ERROR_NO.first)
+    {
+        ui->inputHeading->setStatusOk();
+        ui->inputPitch->setStatusOk();
+        ui->inputRoll->setStatusOk();
+    }
+    else if (currStreamErr.getCode() == ERROR_CODE_OSD_DATA_PARTIALLY_INVALID.first)
+    {
+        ui->inputHeading->setStatusOk();
+        ui->inputPitch->setStatusFailed();
+        ui->inputRoll->setStatusFailed();
+    }
+    else
+    {
+        ui->inputHeading->setStatusFailed();
+        ui->inputPitch->setStatusFailed();
+        ui->inputRoll->setStatusFailed();
+    }
 }
 
 void FrameOSDGyro::onUpdateGyroAutoUi()
@@ -211,18 +238,22 @@ void FrameOSDGyro::onUpdateGyroAutoUi()
 
 void FrameOSDGyro::on_pushButton_clicked()
 {
-    if (!validateInput()) {
+    if (!validateInput())
+    {
         return;
     }
 
-    try {
+    try
+    {
         float heading = ui->inputHeading->getCurrentValue().toFloat();
         float pitch = ui->inputPitch->getCurrentValue().toFloat();
         float roll = ui->inputRoll->getCurrentValue().toFloat();
 
         _cmsGyro->set(OSDSetGyroRequest(heading, pitch, roll));
-    } catch (...) {
-        QMessageBox::critical(this, "Fatal Error Inertia", "Invalid value input" );
+    }
+    catch (...)
+    {
+        QMessageBox::critical(this, "Fatal Error Inertia", "Invalid value input");
     }
 }
 
@@ -257,7 +288,8 @@ void FrameOSDGyro::autoUiSetup()
 void FrameOSDGyro::notConnectedUiSetup()
 {
     auto currentMode = (OSD_MODE)_cmsMode->getDataMode().getInersia();
-    if (currentMode == OSD_MODE::MANUAL) {
+    if (currentMode == OSD_MODE::MANUAL)
+    {
         return;
     }
 
@@ -276,7 +308,8 @@ void FrameOSDGyro::notConnectedUiSetup()
 void FrameOSDGyro::noDataUiSetup()
 {
     auto currentMode = (OSD_MODE)_cmsMode->getDataMode().getInersia();
-    if (currentMode == OSD_MODE::MANUAL) {
+    if (currentMode == OSD_MODE::MANUAL)
+    {
         return;
     }
 
@@ -295,7 +328,8 @@ void FrameOSDGyro::noDataUiSetup()
 void FrameOSDGyro::invalidDataUiSetup()
 {
     auto currentMode = (OSD_MODE)_cmsMode->getDataMode().getInersia();
-    if (currentMode == OSD_MODE::MANUAL) {
+    if (currentMode == OSD_MODE::MANUAL)
+    {
         return;
     }
 
@@ -343,42 +377,4 @@ bool FrameOSDGyro::validateInput()
     }
 
     return true;
-
 }
-
-void FrameOSDGyro::validateInputStream()
-{
-    bool ok;
-    QString Heading = ui->inputHeading->getCurrentValue();
-    float valueheading = Heading.toFloat(&ok);
-
-    if ((valueheading < 0) || (valueheading > 360) || (!ok))
-    {
-        ui->inputHeading->setStatusFailed();
-    }else{
-        ui->inputHeading->setStatusOk();
-    }
-
-    QString Pitch = ui->inputPitch->getCurrentValue();
-    float valuepitch = Pitch.toFloat(&ok);
-
-    if ((valuepitch < -30) || ( valuepitch > 30) || (!ok))
-    {
-        ui->inputPitch->setStatusFailed();
-    }else{
-        ui->inputPitch->setStatusOk();
-    }
-
-    QString Roll = ui->inputRoll->getCurrentValue();
-    float valueroll = Roll.toFloat(&ok);
-
-    if ((valueroll < -30) || (valueroll > 30) || (!ok))
-    {
-        ui->inputRoll->setStatusFailed();
-    }else{
-        ui->inputRoll->setStatusOk();
-    }
-}
-
-
-

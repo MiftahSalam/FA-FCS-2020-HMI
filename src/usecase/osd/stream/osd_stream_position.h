@@ -52,6 +52,10 @@ private:
     OSDCMSInputMode *serviceMode;
     // TODO: add input mode repo
 //    AMQPConfig *cfg;
+
+    BaseError currentErr;
+
+    void handleError(const QString &err) override;
 };
 
 #endif // OSDSTREAMPOSITION_H

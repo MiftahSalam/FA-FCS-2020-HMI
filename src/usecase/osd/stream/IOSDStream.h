@@ -11,6 +11,9 @@ public:
     virtual void onDataReceived(QByteArray data) = 0;
     virtual void signalDataProcessed(Model data) = 0;
     virtual BaseError check() = 0;
+
+private:
+    virtual void handleError(const QString &err) = 0;
 };
 
 

@@ -28,6 +28,8 @@ const QPair<int, QString> ERROR_CODE_MESSAGING_DATA_INVALID_FORMAT(64, "messagin
 const QPair<int, QString> ERROR_CODE_OSD_DATA_INVALID_FORMAT(71, "osd data invalid format");
 const QPair<int, QString> ERROR_CODE_OSD_DATA_CONVERSION(72, "osd data cannot convert data");
 const QPair<int, QString> ERROR_CODE_OSD_DATA_OUT_OF_RANGE(73, "osd data out of range");
+const QPair<int, QString> ERROR_CODE_OSD_DATA_PARTIALLY_INVALID(74, "osd data some data are invalid");
+const QPair<int, QString> ERROR_CODE_OSD_DATA_INVALID(75, "osd data invalid");
 
 class BaseError: public QException
 {

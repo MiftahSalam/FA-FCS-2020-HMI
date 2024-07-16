@@ -63,8 +63,6 @@ private:
     void invalidDataUiSetup() override;
 
     bool validateInput() override;
-    bool validateInputStreamLat();
-    bool validateInputStreamLon();
 };
 
 #endif // FRAME_OSD_POSITION_H

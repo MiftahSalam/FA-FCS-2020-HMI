@@ -21,4 +21,16 @@ public:
     ErrOSDDataOutOfRange();
 };
 
+class ErrOSDDataPartiallyInvalid: public BaseError
+{
+public:
+    ErrOSDDataPartiallyInvalid();
+};
+
+class ErrOSDDataInvalid: public BaseError
+{
+public:
+    ErrOSDDataInvalid();
+};
+
 #endif // ERROSDDATAPOSITION_H
