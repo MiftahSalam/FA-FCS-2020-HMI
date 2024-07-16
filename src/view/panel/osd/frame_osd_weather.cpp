@@ -187,14 +187,32 @@ void FrameOSDWeather::onStreamReceive(WeatherModel model)
     }
 
     //validity pitch roll stream check
-    ui->inputTemp->setValue(QString::number(model.getTemp()));
-    ui->inputTemp->setStatusOk();
+    double valuetemp = model.getTemp();
+    ui->inputTemp->setValue(QString::number(valuetemp));
+    if ((valuetemp < -273) || (valuetemp > 273))
+    {
+        ui->inputTemp->setStatusFailed();
+    }else{
+        ui->inputTemp->setStatusOk();
+    }
 
-    ui->inputPress->setValue(QString::number(model.getPress()));
-    ui->inputPress->setStatusOk();
+    double valuepress = model.getPress();
+    ui->inputPress->setValue(QString::number(valuepress));
+    if ((valuepress < -100) || (valuepress > 1000))
+    {
+        ui->inputPress->setStatusFailed();
+    }else{
+        ui->inputPress->setStatusOk();
+    }
 
-    ui->inputHum->setValue(QString::number(model.getHum()));
-    ui->inputHum->setStatusOk();
+    double valueHum = model.getHum();
+    ui->inputHum->setValue(QString::number(valueHum));
+    if ((valueHum < 0) || (valueHum > 100))
+    {
+        ui->inputHum->setStatusFailed();
+    }else{
+        ui->inputHum->setStatusOk();
+    }
 }
 
 void FrameOSDWeather::on_pushButton_clicked()
