@@ -7,7 +7,7 @@ class InputModeModel
 {
 public:
     InputModeModel(bool position, bool speed, bool inersia, bool waterspeed,
-                   bool wind);
+                   bool wind, bool weather);
     InputModeModel(){};
 
     static InputModeModel fromJsonObject(QJsonObject obj);
@@ -17,6 +17,7 @@ public:
     bool getInersia() const;
     bool getWaterSpeed() const;
     bool getWind() const;
+    bool getWeather() const;
 
 private:
     bool position;
@@ -24,6 +25,7 @@ private:
     bool inersia;
     bool waterspeed;
     bool wind;
+    bool weather;
 
 };
 
