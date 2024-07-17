@@ -12,6 +12,7 @@
 #include "src/usecase/osd/cms/osd_cms_waterspeed_data.h"
 #include "src/usecase/osd/cms/osd_cms_speed_data.h"
 #include "src/usecase/osd/cms/osd_cms_wind_data.h"
+#include "src/usecase/osd/cms/osd_cms_weather_data.h"
 
 class OSDCMS : public QObject
 {
@@ -29,6 +30,7 @@ public:
     OSDCMSWaterSpeedData *getServiceOSDCMSWaterSpeed() const;
     OSDCMSSpeedData *getServiceOSDCMSSpeed() const;
     OSDCMSWindData *getServiceOSDCMSWind() const;
+    OSDCMSWeatherData *getServiceOSDCMSWeather() const;
 
 private:
     OSDCmsConfig *cfgCms;
@@ -38,6 +40,7 @@ private:
     OSDCMSWaterSpeedData *serviceOSDCMSWaterSpeed;
     OSDCMSSpeedData *serviceOSDCMSSpeed;
     OSDCMSWindData *serviceOSDCMSWind;
+    OSDCMSWeatherData *serviceOSDCMSWeather;
 };
 
 #endif // OSDCMS_H

@@ -85,7 +85,7 @@ void MessagingTcpConfig::setup(const QString path)
 
 TcpMessagingOpts *MessagingTcpConfig::generateOpts(QString data)
 {
-    QStringList dataList = data.split(":",QString::SkipEmptyParts);
+    QStringList dataList = data.split(":",Qt::SkipEmptyParts);
     qDebug()<<Q_FUNC_INFO<<"dataList:"<<dataList;
     if (dataList.size() != 3) {
         throw ErrMessagingTcpConfig();

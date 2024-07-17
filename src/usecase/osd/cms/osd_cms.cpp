@@ -42,6 +42,10 @@ OSDCMS::OSDCMS(QObject *parent, OSDCmsConfig *cmsConfig, OSDRepository *repoOSD)
                 new HttpClientWrapper(),
                 cmsConfig,
                 repoOSD->getRepoOSDWind());
+    serviceOSDCMSWeather = OSDCMSWeatherData::getInstance(
+        new HttpClientWrapper(),
+        cmsConfig,
+        repoOSD->getRepoOSDWeather());
 }
 
 OSDCMSInputMode *OSDCMS::getServiceOSDCMSMode() const
@@ -72,4 +76,9 @@ OSDCMSWaterSpeedData *OSDCMS::getServiceOSDCMSWaterSpeed() const
 OSDCMSWindData *OSDCMS::getServiceOSDCMSWind() const
 {
     return serviceOSDCMSWind;
+}
+
+OSDCMSWeatherData *OSDCMS::getServiceOSDCMSWeather() const
+{
+    return serviceOSDCMSWeather;
 }
