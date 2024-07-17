@@ -8,17 +8,17 @@ class OSDWeatherEntity: public OSDBaseEntity
 public:
     OSDWeatherEntity(float temp, float hum, float press, const std::string &source, const std::string &status, const OSD_MODE &mode);
 
-    float temp() const;
-    void setTemp(float newTemp);
-    float hum() const;
-    void setHum(float newHum);
-    float press() const;
-    void setPress(float newPress);
+    float temperature() const;
+    void setTemperature(float newTemp);
+    float humidity() const;
+    void setHumidity(float newHum);
+    float pressure() const;
+    void setPressure(float newPress);
 
 private:
-    float _temp;
-    float _hum;
-    float _press;
+    float _temperature;
+    float _humidity;
+    float _pressure;
 };
 
 

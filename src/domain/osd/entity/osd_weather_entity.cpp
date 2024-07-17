@@ -1,38 +1,38 @@
 #include "osd_weather_entity.h"
 
 OSDWeatherEntity::OSDWeatherEntity(float temp, float hum, float press, const std::string &source, const std::string &status, const OSD_MODE &mode) : OSDBaseEntity(source, status, mode),
-    _temp(temp),
-    _hum(hum),
-    _press(press)
+    _temperature(temp),
+    _humidity(hum),
+    _pressure(press)
 {}
 
-float OSDWeatherEntity::temp() const
+float OSDWeatherEntity::temperature() const
 {
-    return _temp;
+    return _temperature;
 }
 
-void OSDWeatherEntity::setTemp(float newTemp)
+void OSDWeatherEntity::setTemperature(float newTemp)
 {
-    _temp = newTemp;
+    _temperature = newTemp;
 }
 
-float OSDWeatherEntity::hum() const
+float OSDWeatherEntity::humidity() const
 {
-    return _hum;
+    return _humidity;
 }
 
-void OSDWeatherEntity::setHum(float newHum)
+void OSDWeatherEntity::setHumidity(float newHum)
 {
-    _hum = newHum;
+    _humidity = newHum;
 }
 
-float OSDWeatherEntity::press() const
+float OSDWeatherEntity::pressure() const
 {
-    return _press;
+    return _pressure;
 }
 
-void OSDWeatherEntity::setPress(float newPress)
+void OSDWeatherEntity::setPressure(float newPress)
 {
-    _press = newPress;
+    _pressure = newPress;
 }
 

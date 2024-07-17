@@ -1,7 +1,7 @@
 #include "weather_model.h"
 
 WeatherModel::WeatherModel(double temp, double hum, double press):
-    Temp(temp), Hum(hum), Press(press)
+    Temperature(temp), Humidity(hum), Pressure(press)
 {
 
 }
@@ -17,17 +17,17 @@ WeatherModel WeatherModel::FromJsonObject(QJsonObject obj)
     return model;
 }
 
-double WeatherModel::getTemp() const
+double WeatherModel::getTemperature() const
 {
-    return Temp;
+    return Temperature;
 }
 
-double WeatherModel::getHum() const
+double WeatherModel::getHumidity() const
 {
-    return Hum;
+    return Humidity;
 }
 
-double WeatherModel::getPress() const
+double WeatherModel::getPressure() const
 {
-    return Press;
+    return Pressure;
 }

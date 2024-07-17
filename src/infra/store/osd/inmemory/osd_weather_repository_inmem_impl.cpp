@@ -33,9 +33,9 @@ void OSDWeatherRepositoryInMemImpl::SetMode(const OSD_MODE &mode)
 
 void OSDWeatherRepositoryInMemImpl::SetWeather(const OSDWeatherEntity &weather)
 {
-    _entity->setTemp(weather.temp());
-    _entity->setHum(weather.hum());
-    _entity->setPress(weather.press());
+    _entity->setTemperature(weather.temperature());
+    _entity->setHumidity(weather.humidity());
+    _entity->setPressure(weather.pressure());
 }
 
 const OSDWeatherEntity *OSDWeatherRepositoryInMemImpl::GetWeather() const

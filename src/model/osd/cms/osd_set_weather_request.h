@@ -10,16 +10,16 @@ public:
 
     OSDSetWeatherRequest(double _temp, double _hum, double _press);
 
-    double getTemp() const;
-    double getHum() const;
-    double getPress() const;
+    double getTemperature() const;
+    double getHumidity() const;
+    double getPressure() const;
 
-    void setTemp(const double _temp);
-    void setHum(const double _hum);
-    void setPress(const double _press);
+    void setTemperature(const double _temp);
+    void setHumidity(const double _hum);
+    void setPressure(const double _press);
 
 private:
-    double temp, hum, press;
+    double temperature, humidity, pressure;
 
 public:
     QByteArray toJSON() override;

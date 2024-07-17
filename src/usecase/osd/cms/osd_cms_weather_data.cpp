@@ -68,9 +68,9 @@ void OSDCMSWeatherData::onReplyFinished()
 
     //TODO: update repo
     repoWeather->SetWeather(OSDWeatherEntity(
-        resp.getData().getTemp(),
-        resp.getData().getHum(),
-        resp.getData().getPress(),
+        resp.getData().getTemperature(),
+        resp.getData().getHumidity(),
+        resp.getData().getPressure(),
         "manual",
         "",
         OSD_MODE::MANUAL //temp
@@ -90,7 +90,7 @@ BaseResponse<WeatherModel> OSDCMSWeatherData::toResponse(QByteArray raw)
         WeatherModel model(respData["temperature"].toDouble(),respData["humidity"].toDouble(),respData["pressure"].toDouble());
         BaseResponse<WeatherModel> resp(respCode, respMsg, model);
 
-        qDebug()<<Q_FUNC_INFO<<"resp"<<resp.getHttpCode()<<resp.getMessage()<<resp.getData().getTemp()<<resp.getData().getHum()<<resp.getData().getPress();
+        qDebug()<<Q_FUNC_INFO<<"resp"<<resp.getHttpCode()<<resp.getMessage()<<resp.getData().getTemperature()<<resp.getData().getHumidity()<<resp.getData().getPressure();
 
         return resp;
     } catch (ErrJsonParse &e) {

@@ -3,47 +3,47 @@
 #include "qjsonobject.h"
 
 OSDSetWeatherRequest::OSDSetWeatherRequest(double _temp, double _hum, double _press):
-    temp(_temp), hum(_hum), press(_press)
+    temperature(_temp), humidity(_hum), pressure(_press)
 {
 
 }
 
-double OSDSetWeatherRequest::getTemp() const
+double OSDSetWeatherRequest::getTemperature() const
 {
-    return temp;
+    return temperature;
 }
 
-double OSDSetWeatherRequest::getHum() const
+double OSDSetWeatherRequest::getHumidity() const
 {
-    return hum;
+    return humidity;
 }
 
-double OSDSetWeatherRequest::getPress() const
+double OSDSetWeatherRequest::getPressure() const
 {
-    return press;
+    return pressure;
 }
 
-void OSDSetWeatherRequest::setTemp(const double _temp)
+void OSDSetWeatherRequest::setTemperature(const double _temp)
 {
-    temp = _temp;
+    temperature = _temp;
 }
 
-void OSDSetWeatherRequest::setHum(const double _hum)
+void OSDSetWeatherRequest::setHumidity(const double _hum)
 {
-    hum = _hum;
+    humidity = _hum;
 }
 
-void OSDSetWeatherRequest::setPress(const double _press)
+void OSDSetWeatherRequest::setPressure(const double _press)
 {
-    press = _press;
+    pressure = _press;
 }
 
 QByteArray OSDSetWeatherRequest::toJSON()
 {
     QJsonObject obj;
-    obj["temperature"] = temp;
-    obj["humidity"] = hum;
-    obj["pressure"] = press;
+    obj["temperature"] = temperature;
+    obj["humidity"] = humidity;
+    obj["pressure"] = pressure;
 
     return QJsonDocument(obj).toJson();
 

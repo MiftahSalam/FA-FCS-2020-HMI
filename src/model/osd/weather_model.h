@@ -11,12 +11,12 @@ public:
 
     static WeatherModel FromJsonObject(QJsonObject obj);
 
-    double getTemp() const;
-    double getHum() const;
-    double getPress() const;
+    double getTemperature() const;
+    double getHumidity() const;
+    double getPressure() const;
 
 private:
-    double Temp, Hum, Press;
+    double Temperature, Humidity, Pressure;
 };
 
 #endif // WEATHER_MODEL_H

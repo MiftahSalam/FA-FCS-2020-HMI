@@ -170,16 +170,16 @@ void FrameOSDWeather::onDataResponse(BaseResponse<WeatherModel> resp)
     }
 
     qDebug()<<Q_FUNC_INFO
-             <<"resp data getTemperature: "<<resp.getData().getTemp()
-             <<"resp data getPressure: "<<resp.getData().getPress()
-             <<"resp data getHumidity: "<<resp.getData().getHum()
+             <<"resp data getTemperature: "<<resp.getData().getTemperature()
+             <<"resp data getPressure: "<<resp.getData().getPressure()
+             <<"resp data getHumidity: "<<resp.getData().getHumidity()
         ;
 }
 
 void FrameOSDWeather::onStreamReceive(WeatherModel model)
 {
-    qDebug()<<Q_FUNC_INFO<<"Weather: Temperature ->"<<model.getTemp()
-             <<", Pressure ->"<<model.getPress()<<", Humidity ->"<<model.getHum();
+    qDebug()<<Q_FUNC_INFO<<"Weather: Temperature ->"<<model.getTemperature()
+             <<", Pressure ->"<<model.getPressure()<<", Humidity ->"<<model.getHumidity();
 
     auto currentMode = (OSD_MODE)_cmsMode->getDataMode().getWeather();
     if (currentMode == OSD_MODE::MANUAL) {
@@ -187,7 +187,7 @@ void FrameOSDWeather::onStreamReceive(WeatherModel model)
     }
 
     //validity pitch roll stream check
-    double valuetemp = model.getTemp();
+    double valuetemp = model.getTemperature();
     ui->inputTemp->setValue(QString::number(valuetemp));
     if ((valuetemp < -273) || (valuetemp > 273))
     {
@@ -196,7 +196,7 @@ void FrameOSDWeather::onStreamReceive(WeatherModel model)
         ui->inputTemp->setStatusOk();
     }
 
-    double valuepress = model.getPress();
+    double valuepress = model.getPressure();
     ui->inputPress->setValue(QString::number(valuepress));
     if ((valuepress < -100) || (valuepress > 1000))
     {
@@ -205,7 +205,7 @@ void FrameOSDWeather::onStreamReceive(WeatherModel model)
         ui->inputPress->setStatusOk();
     }
 
-    double valueHum = model.getHum();
+    double valueHum = model.getHumidity();
     ui->inputHum->setValue(QString::number(valueHum));
     if ((valueHum < 0) || (valueHum > 100))
     {
