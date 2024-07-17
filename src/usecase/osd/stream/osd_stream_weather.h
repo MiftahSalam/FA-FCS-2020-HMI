@@ -45,6 +45,9 @@ private:
     TcpMessagingOpts *cfg;
     OSDWeatherRepository* _repoWeather;
     OSDCMSInputMode *serviceMode;
+    BaseError currentErr;
+
+    void handleError(const QString &err) override;
 };
 
 #endif // OSD_STREAM_WEATHER_H
