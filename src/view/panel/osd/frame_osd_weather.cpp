@@ -186,32 +186,30 @@ void FrameOSDWeather::onStreamReceive(WeatherModel model)
         return;
     }
 
-    //validity pitch roll stream check
-    double valuetemp = model.getTemperature();
-    ui->inputTemp->setValue(QString::number(valuetemp));
-    if ((valuetemp < -273) || (valuetemp > 273))
+    auto currStreamErr = _streamWeather->check();
+
+    // validity temp hum press stream check
+    ui->inputTemp->setValue(QString::number(model.getTemperature()));
+    ui->inputPress->setValue(QString::number(model.getPressure()));
+    ui->inputHum->setValue(QString::number(model.getHumidity()));
+
+    if (currStreamErr.getCode() == ERROR_NO.first)
+    {
+        ui->inputTemp->setStatusOk();
+        ui->inputPress->setStatusOk();
+        ui->inputHum->setStatusOk();
+    }
+    else if (currStreamErr.getCode() == ERROR_CODE_OSD_DATA_PARTIALLY_INVALID.first)
+    {
+        ui->inputTemp->setStatusOk();
+        ui->inputPress->setStatusFailed();
+        ui->inputHum->setStatusFailed();
+    }
+    else
     {
         ui->inputTemp->setStatusFailed();
-    }else{
-        ui->inputTemp->setStatusOk();
-    }
-
-    double valuepress = model.getPressure();
-    ui->inputPress->setValue(QString::number(valuepress));
-    if ((valuepress < -100) || (valuepress > 1000))
-    {
         ui->inputPress->setStatusFailed();
-    }else{
-        ui->inputPress->setStatusOk();
-    }
-
-    double valueHum = model.getHumidity();
-    ui->inputHum->setValue(QString::number(valueHum));
-    if ((valueHum < 0) || (valueHum > 100))
-    {
         ui->inputHum->setStatusFailed();
-    }else{
-        ui->inputHum->setStatusOk();
     }
 }
 
