@@ -10,6 +10,7 @@
 #include "src/usecase/osd/stream/osd_stream_waterspeed.h"
 #include "src/usecase/osd/stream/osd_stream_speed.h"
 #include "src/usecase/osd/stream/osd_stream_wind.h"
+#include "src/usecase/osd/stream/osd_stream_weather.h"
 
 #include <QObject>
 
@@ -30,6 +31,7 @@ public:
     OSDStreamWaterSpeed *getServiceOSDStreamWaterSpeed() const;
     OSDStreamSpeed *getServiceOSDStreamSpeed() const;
     OSDStreamWind *getServiceOSDStreamWind() const;
+    OSDStreamWeather *getServiceOSDStreamWeather() const;
     
 private:
     MessagingTcpConfig *consumerConfig;
@@ -40,6 +42,7 @@ private:
     OSDStreamWaterSpeed *serviceOSDStreamWaterSpeed;
     OSDStreamSpeed *serviceOSDStreamSpeed;
     OSDStreamWind *serviceOSDStreamWind;
+    OSDStreamWeather *serviceOSDStreamWeather;
 };
 
 #endif // OSDSTREAM_H

@@ -7,13 +7,14 @@ OSDInputModeRequest::OSDInputModeRequest()
 
 }
 
-OSDInputModeRequest::OSDInputModeRequest(bool position, bool speed, bool inersia, bool waterspeed, bool wind)
+OSDInputModeRequest::OSDInputModeRequest(bool position, bool speed, bool inersia, bool waterspeed, bool wind, bool weather)
 {
     this->position = position;
     this->speed = speed;
     this->inersia = inersia;
     this->waterspeed = waterspeed;
     this->wind = wind;
+    this->weather = weather;
 }
 
 bool OSDInputModeRequest::getPosition() const
@@ -63,9 +64,18 @@ bool OSDInputModeRequest::getWind() const
 
 void OSDInputModeRequest::setWind(bool newWind)
 {
-    waterspeed = newWind;
+    wind = newWind;
 }
 
+bool OSDInputModeRequest::getWeather() const
+{
+    return weather;
+}
+
+void OSDInputModeRequest::setWeather(bool newWeather)
+{
+    weather = newWeather;
+}
 
 QByteArray OSDInputModeRequest::toJSON()
 {
@@ -75,6 +85,7 @@ QByteArray OSDInputModeRequest::toJSON()
     obj["inertia"] = inersia;
     obj["water_speed"] = waterspeed;
     obj["wind"] = wind;
+    obj["weather"] = weather;
 
     return QJsonDocument(obj).toJson();
 }

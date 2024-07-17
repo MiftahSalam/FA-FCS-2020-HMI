@@ -5,8 +5,8 @@
 //#include "math.h"
 
 #include <QMessageBox>
-// #include <QRegExpValidator>
 #include <QRegularExpressionValidator>
+
 
 #define NUMBER_RX "[0-9.-]+$"
 
@@ -31,6 +31,7 @@ void FrameOSD::setup()
     ui->widgetWaterSpeed->setup();
     ui->widgetSpeed->setup();
     ui->widgetWind->setup();
+    ui->widgetWeather->setup();
 
 //    connect(ui->widgetPosition, &FrameOSDPosition::signalChangePositionMode, this, &FrameOSD::onChangePositionMode);
 //    connect(ui->widgetPosition, &FrameOSDPosition::signalChangePositionData, this, &FrameOSD::onChangePositionData);
