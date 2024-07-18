@@ -191,11 +191,6 @@ void FrameOSDSpeed::onStreamReceive(SpeedModel model)
         ui->inputSpeed->setStatusOk();
         ui->inputCourse->setStatusOk();
     }
-    else if (currStreamErr.getCode() == ERROR_CODE_OSD_DATA_PARTIALLY_INVALID.first)
-    {
-        ui->inputSpeed->setStatusOk();
-        ui->inputCourse->setStatusFailed();
-    }
     else
     {
         ui->inputSpeed->setStatusFailed();

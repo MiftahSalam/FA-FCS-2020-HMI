@@ -199,12 +199,6 @@ void FrameOSDWeather::onStreamReceive(WeatherModel model)
         ui->inputPress->setStatusOk();
         ui->inputHum->setStatusOk();
     }
-    else if (currStreamErr.getCode() == ERROR_CODE_OSD_DATA_PARTIALLY_INVALID.first)
-    {
-        ui->inputTemp->setStatusOk();
-        ui->inputPress->setStatusFailed();
-        ui->inputHum->setStatusFailed();
-    }
     else
     {
         ui->inputTemp->setStatusFailed();

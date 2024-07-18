@@ -217,11 +217,6 @@ void FrameOSDWaterSpeed::onStreamReceive(WaterSpeedModel model)
         ui->inputWaterSpeed->setStatusOk();
         ui->inputWaterCourse->setStatusOk();
     }
-    else if (currStreamErr.getCode() == ERROR_CODE_OSD_DATA_PARTIALLY_INVALID.first)
-    {
-        ui->inputWaterSpeed->setStatusOk();
-        ui->inputWaterCourse->setStatusFailed();
-    }
     else
     {
         ui->inputWaterSpeed->setStatusFailed();

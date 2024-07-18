@@ -81,6 +81,8 @@ void OSDStreamSpeed::onDataReceived(QByteArray data)
                                   ));
         }
 
+        handleError(respObj["status"].toString());
+
         emit signalDataProcessed(model);
     } catch (ErrJsonParse &e) {
         qDebug()<<Q_FUNC_INFO<<"caught error: "<<e.getMessage();

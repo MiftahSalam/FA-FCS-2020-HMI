@@ -217,11 +217,6 @@ void FrameOSDWind::onStreamReceive(WindModel model)
         ui->inputSpeed->setStatusOk();
         ui->inputDirection->setStatusOk();
     }
-    else if (currStreamErr.getCode() == ERROR_CODE_OSD_DATA_PARTIALLY_INVALID.first)
-    {
-        ui->inputSpeed->setStatusOk();
-        ui->inputDirection->setStatusFailed();
-    }
     else
     {
         ui->inputSpeed->setStatusFailed();
