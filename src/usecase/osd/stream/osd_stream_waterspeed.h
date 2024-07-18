@@ -47,6 +47,10 @@ private:
     OSDWaterSpeedRepository* _repoWP;
     OSDCMSInputMode *serviceMode;
     // TODO: add input mode repo
+
+    BaseError currentErr;
+
+    void handleError(const QString &err) override;
 };
 
 #endif // OSDSTREAMWATERSPEED_H

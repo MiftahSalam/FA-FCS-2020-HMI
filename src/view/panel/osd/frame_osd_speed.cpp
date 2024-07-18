@@ -180,13 +180,22 @@ void FrameOSDSpeed::onStreamReceive(SpeedModel model)
         return;
     }
 
+    auto currStreamErr = _streamSpeed->check();
+
     //validity SOG COG stream check
     ui->inputSpeed->setValue(QString::number(model.getSpeed()));
-    ui->inputSpeed->setStatusOk();
-
     ui->inputCourse->setValue(QString::number(model.getCourse()));
-    ui->inputCourse->setStatusOk();
 
+    if (currStreamErr.getCode() == ERROR_NO.first)
+    {
+        ui->inputSpeed->setStatusOk();
+        ui->inputCourse->setStatusOk();
+    }
+    else
+    {
+        ui->inputSpeed->setStatusFailed();
+        ui->inputCourse->setStatusFailed();
+    }
 }
 
 void FrameOSDSpeed::onUpdateSpeedAutoUi()
@@ -289,4 +298,3 @@ FrameOSDSpeed::~FrameOSDSpeed()
 {
     delete ui;
 }
-

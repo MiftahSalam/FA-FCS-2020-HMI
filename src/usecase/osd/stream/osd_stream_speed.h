@@ -45,6 +45,10 @@ private:
     TcpMessagingOpts *cfg;
     OSDSpeedRepository* _repoSpeed;
     OSDCMSInputMode *serviceMode;
+
+    BaseError currentErr;
+
+    void handleError(const QString &err) override;
 };
 
 #endif // OSDSTREAMSPEED_H

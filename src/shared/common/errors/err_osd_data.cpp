@@ -14,3 +14,13 @@ ErrOSDDataOutOfRange::ErrOSDDataOutOfRange(): BaseError(ERROR_CODE_OSD_DATA_OUT_
 {
 
 }
+
+ErrOSDDataPartiallyInvalid::ErrOSDDataPartiallyInvalid(): BaseError(ERROR_CODE_OSD_DATA_PARTIALLY_INVALID.first, ERROR_CODE_OSD_DATA_PARTIALLY_INVALID.second)
+{
+
+}
+
+ErrOSDDataInvalid::ErrOSDDataInvalid(): BaseError(ERROR_CODE_OSD_DATA_PARTIALLY_INVALID.first, ERROR_CODE_OSD_DATA_PARTIALLY_INVALID.second)
+{
+
+}

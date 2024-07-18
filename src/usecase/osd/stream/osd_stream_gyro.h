@@ -45,6 +45,10 @@ private:
     TcpMessagingOpts *cfg;
     OSDInertiaRepository* _repoInertia;
     OSDCMSInputMode *serviceMode;
+
+    BaseError currentErr;
+
+    void handleError(const QString &err) override;
 };
 
 #endif // OSD_STREAM_GYRO_H

@@ -47,6 +47,10 @@ private:
     OSDWindRepository* _repoWind;
     OSDCMSInputMode *serviceMode;
     // TODO: add input mode repo
+
+    BaseError currentErr;
+
+    void handleError(const QString &err) override;
 };
 
 #endif // OSDSTREAMWIND_H

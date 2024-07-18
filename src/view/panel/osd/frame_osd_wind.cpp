@@ -206,14 +206,23 @@ void FrameOSDWind::onStreamReceive(WindModel model)
         return;
     }
 
+    auto currStreamErr = _streamWind->check();
 
-
+    //validity speed direction stream check
     ui->inputSpeed->setValue(QString::number(model.getSpeed()));
-//    ui->inputSpeed->setStatusOk();
-
     ui->inputDirection->setValue(QString::number(model.getDirection()));
-//    ui->inputDirection->setStatusOk();
-    validateInputStream();
+
+    if (currStreamErr.getCode() == ERROR_NO.first)
+    {
+        ui->inputSpeed->setStatusOk();
+        ui->inputDirection->setStatusOk();
+    }
+    else
+    {
+        ui->inputSpeed->setStatusFailed();
+        ui->inputDirection->setStatusFailed();
+    }
+
 }
 
 void FrameOSDWind::onUpdateWindAutoUi()
@@ -273,7 +282,7 @@ bool FrameOSDWind::validateInput()
 
     if ((value_speed < -150) || (value_speed > 150) || (!ok))
     {
-        QMessageBox::critical(this, "Fatal Error Water Speed", "Invalid input : out of range.\nValid input : -150 to 150");
+        QMessageBox::critical(this, "Fatal Error Wind Speed", "Invalid input : out of range.\nValid input : -150 to 150");
         return false;
     }
 
@@ -282,35 +291,11 @@ bool FrameOSDWind::validateInput()
 
     if ((value_direction < 0) || (value_direction > 360) || (!ok))
     {
-        QMessageBox::critical(this, "Fatal Error Water Course", "Invalid input : out of range.\nValid input : 0 to 360");
+        QMessageBox::critical(this, "Fatal Error Wind Direction", "Invalid input : out of range.\nValid input : 0 to 360");
         return false;
     }
 
     return true;
-}
-
-void FrameOSDWind::validateInputStream()
-{
-    bool ok;
-    QString _speed = ui->inputSpeed->getCurrentValue();
-    float value_speed = _speed.toFloat(&ok);
-
-    if ((value_speed < -150) || (value_speed > 150) || (!ok))
-    {
-        ui->inputSpeed->setStatusFailed();
-    }else{
-        ui->inputSpeed->setStatusOk();
-    }
-
-    QString _direction = ui->inputDirection->getCurrentValue();
-    float value_direction = _direction.toFloat(&ok);
-
-    if ((value_direction < 0) || (value_direction > 360) || (!ok))
-    {
-        ui->inputDirection->setStatusFailed();
-    }else{
-        ui->inputDirection->setStatusOk();
-    }
 }
 
 FrameOSDWind::~FrameOSDWind()
