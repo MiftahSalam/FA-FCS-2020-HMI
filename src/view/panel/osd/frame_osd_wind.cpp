@@ -287,7 +287,7 @@ bool FrameOSDWind::validateInput()
 
     if ((value_speed < -150) || (value_speed > 150) || (!ok))
     {
-        QMessageBox::critical(this, "Fatal Error Water Speed", "Invalid input : out of range.\nValid input : -150 to 150");
+        QMessageBox::critical(this, "Fatal Error Wind Speed", "Invalid input : out of range.\nValid input : -150 to 150");
         return false;
     }
 
@@ -296,7 +296,7 @@ bool FrameOSDWind::validateInput()
 
     if ((value_direction < 0) || (value_direction > 360) || (!ok))
     {
-        QMessageBox::critical(this, "Fatal Error Water Course", "Invalid input : out of range.\nValid input : 0 to 360");
+        QMessageBox::critical(this, "Fatal Error Wind Direction", "Invalid input : out of range.\nValid input : 0 to 360");
         return false;
     }
 
