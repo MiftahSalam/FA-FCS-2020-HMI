@@ -16,8 +16,8 @@ struct OSDWeatherProp
 {
     QString title;
     TextInputProp Temp;
-    TextInputProp Hum;
     TextInputProp Press;
+    TextInputProp Hum;
 };
 
 class FrameOSDWeather : public QWidget, public FrameOSDBase<WeatherModel, WeatherModel>

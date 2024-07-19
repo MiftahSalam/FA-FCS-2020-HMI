@@ -23,11 +23,11 @@ FrameOSDWeather::FrameOSDWeather(QWidget *parent) :
     ui->inputTemp->setInputEnable(false);
     ui->inputTemp->setStatusFailed();
 
-    ui->inputHum->setInputEnable(false);
-    ui->inputHum->setStatusFailed();
-
     ui->inputPress->setInputEnable(false);
     ui->inputPress->setStatusFailed();
+
+    ui->inputHum->setInputEnable(false);
+    ui->inputHum->setStatusFailed();
 
     connect(ui->mode, &FrameOSDMode::signal_currentModeChange, this, &FrameOSDWeather::onModeChange);
 
@@ -89,8 +89,8 @@ void FrameOSDWeather::onTimeout()
             manualUiSetup();
             _cmsWeather->set(OSDSetWeatherRequest(
                 ui->inputTemp->getCurrentValue().toFloat(),
-                ui->inputHum->getCurrentValue().toFloat(),
-                ui->inputPress->getCurrentValue().toFloat()
+                ui->inputPress->getCurrentValue().toFloat(),
+                ui->inputHum->getCurrentValue().toFloat()
                 ));
         } else {
             ui->mode->setCurrentModeIndex(0);
@@ -296,14 +296,14 @@ bool FrameOSDWeather::validateInput()
 
     if ((valuetemp < -273) || (valuetemp > 273) || (!ok))
     {
-        QMessageBox::critical(this, "Fatal Error Temperature", "Invalid input : out of range.\nValid input : -273 to - 273");
+        QMessageBox::critical(this, "Fatal Error Temperature", "Invalid input : out of range.\nValid input : -273 to 273");
         return false;
     }
 
     QString Press = ui->inputPress->getCurrentValue();
     float valuepress = Press.toFloat(&ok);
 
-    if ((valuepress < 100) || (valuepress > 1000) || (!ok))
+    if ((valuepress < 0) || (valuepress > 100) || (!ok))
     {
         QMessageBox::critical(this, "Fatal Error Pressure", "Invalid input : out of range.\nValid input : 100 to 1000");
         return false;
@@ -312,11 +312,12 @@ bool FrameOSDWeather::validateInput()
     QString Hum = ui->inputHum->getCurrentValue();
     float valuehum = Hum.toFloat(&ok);
 
-    if ((valuehum < 0) || (valuehum > 100) || (!ok))
+    if ((valuehum < 100) || (valuehum > 1000) || (!ok))
     {
         QMessageBox::critical(this, "Fatal Error Humidity", "Invalid input : out of range.\nValid input : 0 to 100");
         return false;
     }
+
     return true;
 }
 

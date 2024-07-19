@@ -32,10 +32,10 @@
          <widget class="FrameTextInput" name="inputTemp" native="true"/>
         </item>
         <item>
-         <widget class="FrameTextInput" name="inputHum" native="true"/>
+         <widget class="FrameTextInput" name="inputPress" native="true"/>
         </item>
         <item>
-         <widget class="FrameTextInput" name="inputPress" native="true"/>
+         <widget class="FrameTextInput" name="inputHum" native="true"/>
         </item>
         <item>
          <widget class="FrameOSDMode" name="mode" native="true"/>

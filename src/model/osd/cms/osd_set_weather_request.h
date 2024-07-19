@@ -8,7 +8,7 @@ class OSDSetWeatherRequest: public BaseModel<OSDSetWeatherRequest>
 public:
     OSDSetWeatherRequest();
 
-    OSDSetWeatherRequest(double _temp, double _hum, double _press);
+    OSDSetWeatherRequest(double _temp, double _press, double _hum);
 
     double getTemperature() const;
     double getHumidity() const;
