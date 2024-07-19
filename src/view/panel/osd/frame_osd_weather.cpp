@@ -288,7 +288,7 @@ bool FrameOSDWeather::validateInput()
 
     if ((valuetemp < -273) || (valuetemp > 273) || (!ok))
     {
-        QMessageBox::critical(this, "Fatal Error Temperature", "Invalid input : out of range.\nValid input : -273 to - 273");
+        QMessageBox::critical(this, "Fatal Error Temperature", "Invalid input : out of range.\nValid input : -273 to 273");
         return false;
     }
 
