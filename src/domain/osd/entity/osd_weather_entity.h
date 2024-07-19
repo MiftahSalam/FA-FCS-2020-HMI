@@ -6,7 +6,7 @@
 class OSDWeatherEntity: public OSDBaseEntity
 {
 public:
-    OSDWeatherEntity(float temp, float hum, float press, const std::string &source, const std::string &status, const OSD_MODE &mode);
+    OSDWeatherEntity(float temp, float press, float hum, const std::string &source, const std::string &status, const OSD_MODE &mode);
 
     float temperature() const;
     void setTemperature(float newTemp);

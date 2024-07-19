@@ -1,9 +1,9 @@
 #include "osd_weather_entity.h"
 
-OSDWeatherEntity::OSDWeatherEntity(float temp, float hum, float press, const std::string &source, const std::string &status, const OSD_MODE &mode) : OSDBaseEntity(source, status, mode),
+OSDWeatherEntity::OSDWeatherEntity(float temp, float press, float hum, const std::string &source, const std::string &status, const OSD_MODE &mode) : OSDBaseEntity(source, status, mode),
     _temperature(temp),
-    _humidity(hum),
-    _pressure(press)
+    _pressure(press),
+    _humidity(hum)
 {}
 
 float OSDWeatherEntity::temperature() const

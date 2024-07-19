@@ -56,7 +56,7 @@ void OSDStreamWeather::onDataReceived(QByteArray data)
 {
     try {
         QJsonObject respObj = Utils::byteArrayToJsonObject(data);
-        WeatherModel model(respObj["temperature"].toDouble(),respObj["humidity"].toDouble(),respObj["pressure"].toDouble());
+        WeatherModel model(respObj["temperature"].toDouble(),respObj["pressure"].toDouble(),respObj["humidity"].toDouble());
 
         qDebug()<<Q_FUNC_INFO<<"data weather: temperature ->"<<model.getTemperature()<<"humidity ->"<<model.getHumidity()<<"pressure ->"<<model.getPressure();
 
@@ -72,8 +72,8 @@ void OSDStreamWeather::onDataReceived(QByteArray data)
             //TODO: update repo
             _repoWeather->SetWeather(OSDWeatherEntity(
                 model.getTemperature(),
-                model.getHumidity(),
                 model.getPressure(),
+                model.getHumidity(),
                 respObj["source"].toString().toStdString(),
                 respObj["status"].toString().toStdString(),
                 OSD_MODE::AUTO
