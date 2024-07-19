@@ -13,8 +13,11 @@ void TDAHeadingMarkerObject::Draw(QPainter *painter, const int &side, const int 
     {
         painter->translate(center_point);
 
-        const double heading = 60;
+        const double heading = 300;
+
         double drawHeading = heading + 180;
+        if (drawHeading > 180)
+            drawHeading = drawHeading - 360;
         // int sideMax = qMax (width(),height());
         // painter->rotate(-static_cast<qreal>(heading));
         // painter->translate(center_point);
