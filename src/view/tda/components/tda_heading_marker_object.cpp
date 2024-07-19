@@ -7,15 +7,20 @@ void TDAHeadingMarkerObject::Draw(QPainter *painter, const int &side, const int 
     QPoint center_point = QPoint(width/2,height/2);
 
     const bool show_headingMarker = true;
+    // const double heading = 90;
+
     if (show_headingMarker)
     {
         painter->translate(center_point);
 
-        const double heading = 0;
-
+        const double heading = 60;
+        double drawHeading = heading + 180;
         // int sideMax = qMax (width(),height());
+        // painter->rotate(-static_cast<qreal>(heading));
+        // painter->translate(center_point);
+        painter->rotate(drawHeading);
         painter->setPen(QColor(255,255,0,255));
-        painter->drawLine(0,0,0, 250);
+        painter->drawLine(0,0,0, 1000);
 
     }
 }
