@@ -6,7 +6,7 @@
 class WeatherModel
 {
 public:
-    WeatherModel(double temp, double hum, double press);
+    WeatherModel(double temp, double press, double hum);
     WeatherModel(){};
 
     static WeatherModel FromJsonObject(QJsonObject obj);

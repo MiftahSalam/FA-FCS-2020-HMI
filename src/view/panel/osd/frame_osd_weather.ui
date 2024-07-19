@@ -22,20 +22,14 @@
      <layout class="QVBoxLayout" name="verticalLayout_2">
       <item>
        <layout class="QVBoxLayout" name="verticalLayout">
-        <property name="spacing">
-         <number>0</number>
-        </property>
-        <property name="sizeConstraint">
-         <enum>QLayout::SetMinimumSize</enum>
-        </property>
         <item>
          <widget class="FrameTextInput" name="inputTemp" native="true"/>
         </item>
         <item>
-         <widget class="FrameTextInput" name="inputHum" native="true"/>
+         <widget class="FrameTextInput" name="inputPress" native="true"/>
         </item>
         <item>
-         <widget class="FrameTextInput" name="inputPress" native="true"/>
+         <widget class="FrameTextInput" name="inputHum" native="true"/>
         </item>
         <item>
          <widget class="FrameOSDMode" name="mode" native="true"/>

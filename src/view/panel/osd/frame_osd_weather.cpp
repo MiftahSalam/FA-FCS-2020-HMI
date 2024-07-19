@@ -89,8 +89,8 @@ void FrameOSDWeather::onTimeout()
             manualUiSetup();
             _cmsWeather->set(OSDSetWeatherRequest(
                 ui->inputTemp->getCurrentValue().toFloat(),
-                ui->inputHum->getCurrentValue().toFloat(),
-                ui->inputPress->getCurrentValue().toFloat()
+                ui->inputPress->getCurrentValue().toFloat(),
+                ui->inputHum->getCurrentValue().toFloat()
                 ));
         } else {
             ui->mode->setCurrentModeIndex(0);

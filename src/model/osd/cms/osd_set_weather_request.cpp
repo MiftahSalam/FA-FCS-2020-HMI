@@ -2,8 +2,8 @@
 #include "qjsondocument.h"
 #include "qjsonobject.h"
 
-OSDSetWeatherRequest::OSDSetWeatherRequest(double _temp, double _hum, double _press):
-    temperature(_temp), humidity(_hum), pressure(_press)
+OSDSetWeatherRequest::OSDSetWeatherRequest(double _temp, double _press, double _hum):
+    temperature(_temp), pressure(_press), humidity(_hum)
 {
 
 }
@@ -42,8 +42,8 @@ QByteArray OSDSetWeatherRequest::toJSON()
 {
     QJsonObject obj;
     obj["temperature"] = temperature;
-    obj["humidity"] = humidity;
     obj["pressure"] = pressure;
+    obj["humidity"] = humidity;
 
     return QJsonDocument(obj).toJson();
 
