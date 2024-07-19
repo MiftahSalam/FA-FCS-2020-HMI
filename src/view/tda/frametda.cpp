@@ -1,6 +1,7 @@
 #include "frametda.h"
 #include "src/di/di.h"
 #include "src/view/tda/components/tda_compass_object.h"
+#include "src/view/tda/components/tda_heading_marker_object.h"
 #include "src/view/tda/components/track/tda_tracks_object.h"
 #include "ui_frametda.h"
 
@@ -27,8 +28,9 @@ FrameTDA::FrameTDA(QWidget *parent) :
     //TODO: setup popup menu
 
     TdaCompassObject *compass = new TdaCompassObject(this);
+    TDAHeadingMarkerObject *headingMarker = new TDAHeadingMarkerObject (this);
     TDATracksObject *tracksObject = new TDATracksObject(this);
-    objectItems << compass << tracksObject;
+    objectItems << compass << tracksObject << headingMarker;
 
     osdRepo = DI::getInstance()->getRepoOSD(); //temp
 
