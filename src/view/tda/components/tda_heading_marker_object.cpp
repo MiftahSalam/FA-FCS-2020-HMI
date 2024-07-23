@@ -5,9 +5,10 @@
 #include <QTextStream>
 #include <cmath>
 
-TDAHeadingMarkerObject::TDAHeadingMarkerObject(QObject *parent): TDAObjectBase (parent)
+TDAHeadingMarkerObject::TDAHeadingMarkerObject(QObject *parent, OSDInertiaRepository *repoInertia): TDAObjectBase (parent), inertiaRepo(repoInertia)
 {
-    osdRepo = DI::getInstance()->getRepoOSD();
+    // osdRepo = DI::getInstance()->getRepoOSD();
+    inertiaRepo->SetInertia(OSDInertiaEntity(45,0,0,"","",OSD_MODE::AUTO));
 }
 
 void TDAHeadingMarkerObject::Draw(QPainter *painter, const int &side, const int &width, const int &height, const QPoint &off_center)
@@ -21,15 +22,14 @@ void TDAHeadingMarkerObject::Draw(QPainter *painter, const int &side, const int 
     {
         painter->translate(center_point);
 
-        auto inertia = osdRepo->getRepoOSDInertia()->GetInertia();
-        const double heading = inertia->heading();
-        // const double heading = 30;
+        const float heading = inertiaRepo->GetInertia()->heading();
         double drawHeading = heading + 180;
 
         if (drawHeading > 180)
             drawHeading = drawHeading - 360;
         painter->rotate(drawHeading);
         QPen linePen(QColor(255,255,0,255));
+
         linePen.setWidth(0);
         painter->setPen(linePen);
         painter->drawLine(0,0,0, sideMax);

@@ -27,12 +27,13 @@ FrameTDA::FrameTDA(QWidget *parent) :
 
     //TODO: setup popup menu
 
+    osdRepo = DI::getInstance()->getRepoOSD(); //temp
+
     TdaCompassObject *compass = new TdaCompassObject(this);
-    TDAHeadingMarkerObject *headingMarker = new TDAHeadingMarkerObject (this);
+    TDAHeadingMarkerObject *headingMarker = new TDAHeadingMarkerObject (this, osdRepo->getRepoOSDInertia());
     TDATracksObject *tracksObject = new TDATracksObject(this);
     objectItems << compass << tracksObject << headingMarker;
 
-    osdRepo = DI::getInstance()->getRepoOSD(); //temp
 
     timer->start(1000);
 }
