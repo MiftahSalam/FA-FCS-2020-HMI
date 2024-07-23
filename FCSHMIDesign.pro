@@ -324,3 +324,6 @@ contains(DEFINES, USE_AMQP) {
 
 RESOURCES += \
     src/view/assets/hmi_fa_fcs.qrc
+
+QMAKE_LFLAGS += -Wl,-rpath,"'\$$ORIGIN'"
+QMAKE_LFLAGS += -no-pie
