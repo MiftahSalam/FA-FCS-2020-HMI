@@ -7,7 +7,6 @@
 
 TDAHeadingMarkerObject::TDAHeadingMarkerObject(QObject *parent, OSDInertiaRepository *repoInertia): TDAObjectBase (parent), inertiaRepo(repoInertia)
 {
-    // osdRepo = DI::getInstance()->getRepoOSD();
     inertiaRepo->SetInertia(OSDInertiaEntity(45,0,0,"","",OSD_MODE::AUTO));
 }
 
