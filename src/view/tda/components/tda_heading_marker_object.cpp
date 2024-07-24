@@ -1,7 +1,5 @@
 #include "tda_heading_marker_object.h"
-#include "src/di/di.h"
 
-#include "qmath.h"
 #include <QTextStream>
 #include <cmath>
 
