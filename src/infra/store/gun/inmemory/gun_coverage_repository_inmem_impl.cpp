@@ -18,9 +18,9 @@ GunCoverageRepository *GunCoverageRepositoryInMemImpl::GetInstance()
 
 void GunCoverageRepositoryInMemImpl::SetGunCoverage(const GunCoverageEntity &gunCov)
 {
-    _entity->setMaxRange(gunCov.max_range());
-    _entity->setBlindArc(gunCov.blind_arc());
-    _entity->setGunOrientation(gunCov.gun_orientation());
+    _entity->setMaxRange(gunCov.getMax_range());
+    _entity->setBlindArc(gunCov.getBlindArc());
+    _entity->setGunOrientation(gunCov.getGunOrientation());
 
 }
 

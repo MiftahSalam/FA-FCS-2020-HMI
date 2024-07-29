@@ -7,7 +7,7 @@ GunCoverageEntity::GunCoverageEntity(float max_range, float blind_arc, float gun
     _gunOrientation = gun_orientation;
 }
 
-float GunCoverageEntity::max_range() const
+float GunCoverageEntity::getMax_range() const
 {
     return _maxRange;
 }
@@ -17,7 +17,7 @@ void GunCoverageEntity::setMaxRange(float newMaxRange)
     _maxRange = newMaxRange;
 }
 
-float GunCoverageEntity::blind_arc() const
+float GunCoverageEntity::getBlindArc() const
 {
     return _blindArc;
 }
@@ -27,7 +27,7 @@ void GunCoverageEntity::setBlindArc(float newBlindArc)
     _blindArc = newBlindArc;
 }
 
-float GunCoverageEntity::gun_orientation() const
+float GunCoverageEntity::getGunOrientation() const
 {
     return _gunOrientation;
 }

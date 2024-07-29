@@ -20,9 +20,9 @@ void TDAGunCoverageObject::Draw(QPainter *painter, const int &side, const int &w
 
     if(show_gunCoverage)
     {
-        float gun_orientation = repoGunCov->GetGunCoverage()->gun_orientation();
-        float blind_arc = repoGunCov->GetGunCoverage()->blind_arc();
-        float max_range = repoGunCov->GetGunCoverage()->max_range();
+        float gun_orientation = repoGunCov->GetGunCoverage()->getGunOrientation();
+        float blind_arc = repoGunCov->GetGunCoverage()->getBlindArc();
+        float max_range = repoGunCov->GetGunCoverage()->getMax_range();
         float currHeading = repoInertia->GetInertia()->heading();
 
         int span = 360-blind_arc;
