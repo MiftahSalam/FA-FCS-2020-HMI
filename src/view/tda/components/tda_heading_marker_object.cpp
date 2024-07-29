@@ -31,6 +31,7 @@ void TDAHeadingMarkerObject::Draw(QPainter *painter, const int &side, const int 
         painter->setPen(linePen);
         painter->drawLine(0,0,0, sideMax);
         painter->rotate(-drawHeading);
+        painter->translate(-center_point);
     }
 }
 
