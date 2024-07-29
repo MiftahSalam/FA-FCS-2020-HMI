@@ -27,13 +27,14 @@ FrameTDA::FrameTDA(QWidget *parent) :
     //TODO: setup event filter
 
     //TODO: setup popup menu
+    osdRepo = DI::getInstance()->getRepoOSD(); //temp
+    gunRepo = DI::getInstance()->getRepoGun();
 
     TdaCompassObject *compass = new TdaCompassObject(this);
-    TDAGunCoverageObject *gunCoverage = new TDAGunCoverageObject(this);
+    TDAGunCoverageObject *gunCoverage = new TDAGunCoverageObject(this, osdRepo->getRepoOSDInertia(), gunRepo->getRepoGunCoverage());
     TDATracksObject *tracksObject = new TDATracksObject(this);
     objectItems << compass << tracksObject << gunCoverage;
 
-    osdRepo = DI::getInstance()->getRepoOSD(); //temp
 
     timer->start(1000);
 }

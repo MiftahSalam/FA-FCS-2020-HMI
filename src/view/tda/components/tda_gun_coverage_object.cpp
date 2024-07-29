@@ -4,9 +4,13 @@
 #include <QTextStream>
 #include <cmath>
 
-TDAGunCoverageObject::TDAGunCoverageObject(QObject *parent): TDAObjectBase(parent)
-{
+int tdaScale = 8.0;
 
+TDAGunCoverageObject::TDAGunCoverageObject(QObject *parent, OSDInertiaRepository *repoInertia,
+                                           GunCoverageRepository *repoGunCov): TDAObjectBase(parent), repoInertia(repoInertia), repoGunCov(repoGunCov)
+{
+    repoInertia->SetInertia(OSDInertiaEntity(0,0,0,"","",OSD_MODE::AUTO));
+    repoGunCov->SetGunCoverage(GunCoverageEntity(4,90,0));
 }
 
 void TDAGunCoverageObject::Draw(QPainter *painter, const int &side, const int &width, const int &height, const QPoint &off_center)
@@ -16,18 +20,14 @@ void TDAGunCoverageObject::Draw(QPainter *painter, const int &side, const int &w
 
     if(show_gunCoverage)
     {
-        // const qreal gun_orientation = QString(orientation).toDouble();
-        // const qreal blind_arc = QString(blind_arc1).toDouble();
-        // const qreal max_range = QString(max_range1).toDouble(); //NM
-
-        double gun_orientation = 0; //posisi gun haluan
-        double blind_arc = 90;
-        // double max_range = 2;
-        double currHeading = 45;
+        float gun_orientation = repoGunCov->GetGunCoverage()->gun_orientation();
+        float blind_arc = repoGunCov->GetGunCoverage()->blind_arc();
+        float max_range = repoGunCov->GetGunCoverage()->max_range();
+        float currHeading = repoInertia->GetInertia()->heading();
 
         int span = 360-blind_arc;
-        int gun_coveragePixel = 600;
-
+        int range2pixel = (int)(max_range*(width/(2*tdaScale)));
+        int gun_coveragePixel = 2*range2pixel;
 
         painter->translate(center_point);
         painter->setPen(QColor(255,0,0,255));
@@ -48,3 +48,4 @@ void TDAGunCoverageObject::Draw(QPainter *painter, const int &side, const int &w
         painter->translate(-center_point);
     }
 }
+
