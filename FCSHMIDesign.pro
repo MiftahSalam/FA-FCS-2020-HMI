@@ -21,6 +21,7 @@ SOURCES += \
     src/domain/engagement/entity/engagement_data_entity.cpp \
     src/domain/engagement/entity/weapon_track_assign_entity.cpp \
     src/domain/gun/entity/gun_barrel_entity.cpp \
+    src/domain/gun/entity/gun_coverage_entity.cpp \
     src/domain/gun/entity/gun_status_command_entity.cpp \
     src/domain/gun/entity/gun_status_feedback_entity.cpp \
     src/domain/osd/entity/osd_base_entity.cpp \
@@ -147,6 +148,7 @@ HEADERS += \
     src/domain/engagement/repository/engagement_data_repository.h \
     src/domain/engagement/repository/weapon_track_assign_repository.h \
     src/domain/gun/entity/gun_barrel_entity.h \
+    src/domain/gun/entity/gun_coverage_entity.h \
     src/domain/gun/entity/gun_status_command_entity.h \
     src/domain/gun/entity/gun_status_feedback_entity.h \
     src/domain/gun/repository/gun_base_repository.h \
