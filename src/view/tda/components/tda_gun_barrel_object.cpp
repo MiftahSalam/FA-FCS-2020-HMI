@@ -27,5 +27,6 @@ void TDAGunBarrelObject::Draw(QPainter *painter, const int &side, const int &wid
     painter->setPen(QPen(Qt::green,5));
     painter->drawLine(0,0,0,(sideMax/20));
     painter->rotate(-drawHeading-bearing);
+    painter->translate(-center_point);
 
 }
