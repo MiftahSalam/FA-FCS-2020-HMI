@@ -126,6 +126,7 @@ SOURCES += \
     src/view/shared/frame_text_input.cpp \
     src/view/tda/components/tda_compass_object.cpp \
     src/view/tda/components/tda_gun_coverage_object.cpp \
+    src/view/tda/components/tda_heading_marker_object.cpp \
     src/view/tda/components/tda_object_base.cpp \
     src/view/tda/components/track/tda_track_id.cpp \
     src/view/tda/components/track/tda_track_symbol.cpp \
@@ -281,6 +282,7 @@ HEADERS += \
     src/view/shared/frame_text_input.h \
     src/view/tda/components/tda_compass_object.h \
     src/view/tda/components/tda_gun_coverage_object.h \
+    src/view/tda/components/tda_heading_marker_object.h \
     src/view/tda/components/tda_object_base.h \
     src/view/tda/components/track/tda_track_id.h \
     src/view/tda/components/track/tda_track_symbol.h \
@@ -329,3 +331,5 @@ contains(DEFINES, USE_AMQP) {
 
 RESOURCES += \
     src/view/assets/hmi_fa_fcs.qrc
+
+QMAKE_LFLAGS += -no-pie
