@@ -7,7 +7,7 @@
 #include "src/domain/osd/repository/osd_inertia_repository.h"
 #include "src/domain/gun/repository/gun_coverage_repository.h"
 
-class TDAGunCoverageObject: public TDAObjectBase
+class TDAGunCoverageObject: public TDAZoomableObjectBase
 {
     Q_OBJECT
 public:
@@ -21,6 +21,10 @@ private:
     OSDInertiaRepository *repoInertia;
     GunCoverageRepository *repoGunCov;
 
+
+    // TDAZoomableObjectBase interface
+public slots:
+    void OnZoom(float range) override;
 };
 
 #endif // TDA_GUN_COVERAGE_OBJECT_H

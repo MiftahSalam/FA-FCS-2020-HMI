@@ -7,7 +7,7 @@
 int tdaScale = 8.0;
 
 TDAGunCoverageObject::TDAGunCoverageObject(QObject *parent, OSDInertiaRepository *repoInertia,
-                                           GunCoverageRepository *repoGunCov): TDAObjectBase(parent), repoInertia(repoInertia), repoGunCov(repoGunCov)
+                                           GunCoverageRepository *repoGunCov): TDAZoomableObjectBase(parent), repoInertia(repoInertia), repoGunCov(repoGunCov)
 {
     repoInertia->SetInertia(OSDInertiaEntity(0,0,0,"","",OSD_MODE::AUTO));
     repoGunCov->SetGunCoverage(GunCoverageEntity(4,90,0));
@@ -49,3 +49,8 @@ void TDAGunCoverageObject::Draw(QPainter *painter, const int &side, const int &w
     }
 }
 
+
+
+void TDAGunCoverageObject::OnZoom(float range)
+{
+}
