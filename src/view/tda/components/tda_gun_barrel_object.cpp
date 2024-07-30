@@ -3,9 +3,11 @@
 #include <QTextStream>
 #include <cmath>
 
-TDAGunBarrelObject::TDAGunBarrelObject(QObject *parent, OSDInertiaRepository *repoInertia): TDAObjectBase (parent), inertiaRepo(repoInertia)
+TDAGunBarrelObject::TDAGunBarrelObject(QObject *parent, OSDInertiaRepository *repoInertia, GunFeedbackRepository *repoGunFeedback): TDAObjectBase (parent), inertiaRepo(repoInertia),
+    gunFeedbackRepo(repoGunFeedback)
 {
     // inertiaRepo->SetInertia(OSDInertiaEntity(30,0,0,"","",OSD_MODE::AUTO));
+    gunFeedbackRepo->SetBarrel(15,0);
 }
 
 void TDAGunBarrelObject::Draw(QPainter *painter, const int &side, const int &width, const int &height, const QPoint &off_center)
@@ -14,7 +16,8 @@ void TDAGunBarrelObject::Draw(QPainter *painter, const int &side, const int &wid
     painter->translate(center_point);
 
     int sideMax = qMax(width,height);
-    const double bearing = 15;
+    // const double bearing = 15;
+    const float bearing = gunFeedbackRepo->GetBarrel()->azimuth();
 
     const float heading = inertiaRepo->GetInertia()->heading();
     // double heading = 0;

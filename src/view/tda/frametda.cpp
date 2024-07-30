@@ -29,10 +29,11 @@ FrameTDA::FrameTDA(QWidget *parent) :
     //TODO: setup popup menu
 
     osdRepo = DI::getInstance()->getRepoOSD(); //temp
+    gunRepo = DI::getInstance()->getRepoGun();
 
     TdaCompassObject *compass = new TdaCompassObject(this);
     TDAHeadingMarkerObject *headingMarker = new TDAHeadingMarkerObject (this, osdRepo->getRepoOSDInertia());
-    TDAGunBarrelObject *gunBarrel = new TDAGunBarrelObject (this, osdRepo->getRepoOSDInertia());
+    TDAGunBarrelObject *gunBarrel = new TDAGunBarrelObject (this, osdRepo->getRepoOSDInertia(), gunRepo->getRepoGunFeedback());
     TDATracksObject *tracksObject = new TDATracksObject(this);
     objectItems << compass << tracksObject << headingMarker << gunBarrel;
 

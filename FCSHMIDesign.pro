@@ -38,6 +38,7 @@ SOURCES += \
     src/infra/store/engagement/inmemory/engagement_data_repository_inmem_impl.cpp \
     src/infra/store/gun/gun_repository.cpp \
     src/infra/store/gun/inmemory/gun_command_repository_inmem_impl.cpp \
+    src/infra/store/gun/inmemory/gun_feedback_repository_inmem_imp.cpp \
     src/infra/store/osd/inmemory/osd_inertia_repository_inmem_impl.cpp \
     src/infra/store/osd/inmemory/osd_position_repository_inmem_impl.cpp \
     src/infra/store/osd/inmemory/osd_waterspeed_repository_inmem_impl.cpp \
@@ -180,6 +181,7 @@ HEADERS += \
     src/infra/store/engagement/inmemory/engagement_data_repository_inmem_impl.h \
     src/infra/store/gun/gun_repository.h \
     src/infra/store/gun/inmemory/gun_command_repository_inmem_impl.h \
+    src/infra/store/gun/inmemory/gun_feedback_repository_inmem_imp.h \
     src/infra/store/osd/inmemory/osd_inertia_repository_inmem_impl.h \
     src/infra/store/osd/inmemory/osd_position_repository_inmem_impl.h \
     src/infra/store/osd/inmemory/osd_waterspeed_repository_inmem_impl.h \
