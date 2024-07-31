@@ -41,6 +41,17 @@ FrameTDA::FrameTDA(QWidget *parent) :
     objectItems << compass << tracksObject << headingMarker << gunBarrel << gunCoverage;
 
     timer->start(1000);
+
+    connect(this, SIGNAL(signalOnCostumContextMenuRequest(QPoint &pos)), this, SLOT(on_FrameTDA_customContextMenuRequested(QPoint &pos)));
+
+    ZoomSubMenu = new QMenu("Zoom",this);
+    // ZoomSubMenu->setStyleSheet("QMenu{color: rgb(255,255,255);background-color: rgb(0,0,0);selection-color: yellow;}");
+
+    CommpasMenu = new QMenu("Show Compass", this);
+    HeadingMarkerMenu = new QMenu("Show Heading Marker", this);
+    GunCovMenu = new QMenu("Show Gun Coverage", this);
+    GunBarrelMenu = new QMenu("Show Gun Barrel",this);
+
 }
 
 FrameTDA::~FrameTDA()
@@ -65,6 +76,15 @@ void FrameTDA::paintEvent(QPaintEvent *event)
     }
 }
 
+void FrameTDA::mousePressEvent(QMouseEvent *event)
+{
+    if (event->button() == Qt::RightButton)
+    {
+        this->setContextMenuPolicy(Qt::CustomContextMenu);
+        emit signalOnCostumContextMenuRequest(event->pos());
+    }
+}
+
 void FrameTDA::timeOut()
 {
     update();
@@ -73,3 +93,16 @@ void FrameTDA::timeOut()
     auto inertia = osdRepo->getRepoOSDInertia()->GetInertia(); //temp test
     qDebug()<<Q_FUNC_INFO<<pos->latitude()<<inertia->heading();
 }
+
+void FrameTDA::on_FrameTDA_customContextMenuRequested(const QPoint &pos)
+{
+    QMenu *menu = new QMenu(this);
+
+    menu->addMenu(ZoomSubMenu);
+    menu->addMenu(CommpasMenu);
+    menu->addMenu(HeadingMarkerMenu);
+    menu->addMenu(GunCovMenu);
+    menu->addMenu(GunBarrelMenu);
+    menu->exec(pos);
+}
+

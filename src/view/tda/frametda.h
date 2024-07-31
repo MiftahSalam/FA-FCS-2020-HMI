@@ -30,9 +30,15 @@ public:
     // QWidget interface
  protected:
     void paintEvent(QPaintEvent *event) override;
+    void mousePressEvent(QMouseEvent *event) override;
 
 private slots:
     void timeOut();
+    void on_FrameTDA_customContextMenuRequested(const QPoint &pos);
+
+signals:
+    void signalOnCostumContextMenuRequest(const QPoint &pos);
+
 
 private:
    Ui::FrameTDA *ui;
@@ -42,8 +48,11 @@ private:
    GunRepository *gunRepo;
 
    QTimer *timer;
-
-   float currentRange;
+   QMenu *ZoomSubMenu;
+   QMenu *CommpasMenu;
+   QMenu *HeadingMarkerMenu;
+   QMenu *GunCovMenu;
+   QMenu *GunBarrelMenu;
 };
 
 #endif // FRAMETDA_H
