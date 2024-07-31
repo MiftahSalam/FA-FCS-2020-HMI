@@ -76,9 +76,11 @@ const GunStatusFeedbackEntity *GunFeedbackRepositoryInMemImp::GetStatus() const
 
 void GunFeedbackRepositoryInMemImp::SetBarrel(const float &azimuth, const float &elevation)
 {
-
+    _barrelEntity->setAzimuth(azimuth);
+    _barrelEntity->setElevation(elevation);
 }
 
 const GunBarrelEntity *GunFeedbackRepositoryInMemImp::GetBarrel() const
 {
+    return _barrelEntity;
 }
