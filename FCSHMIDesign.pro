@@ -21,6 +21,7 @@ SOURCES += \
     src/domain/engagement/entity/engagement_data_entity.cpp \
     src/domain/engagement/entity/weapon_track_assign_entity.cpp \
     src/domain/gun/entity/gun_barrel_entity.cpp \
+    src/domain/gun/entity/gun_coverage_entity.cpp \
     src/domain/gun/entity/gun_status_command_entity.cpp \
     src/domain/gun/entity/gun_status_feedback_entity.cpp \
     src/domain/osd/entity/osd_base_entity.cpp \
@@ -39,6 +40,7 @@ SOURCES += \
     src/infra/store/gun/gun_repository.cpp \
     src/infra/store/gun/inmemory/gun_command_repository_inmem_impl.cpp \
     src/infra/store/gun/inmemory/gun_feedback_repository_inmem_imp.cpp \
+    src/infra/store/gun/inmemory/gun_coverage_repository_inmem_impl.cpp \
     src/infra/store/osd/inmemory/osd_inertia_repository_inmem_impl.cpp \
     src/infra/store/osd/inmemory/osd_position_repository_inmem_impl.cpp \
     src/infra/store/osd/inmemory/osd_waterspeed_repository_inmem_impl.cpp \
@@ -125,6 +127,7 @@ SOURCES += \
     src/view/shared/frame_text_input.cpp \
     src/view/tda/components/tda_compass_object.cpp \
     src/view/tda/components/tda_gun_barrel_object.cpp \
+    src/view/tda/components/tda_gun_coverage_object.cpp \
     src/view/tda/components/tda_heading_marker_object.cpp \
     src/view/tda/components/tda_object_base.cpp \
     src/view/tda/components/track/tda_track_id.cpp \
@@ -149,10 +152,12 @@ HEADERS += \
     src/domain/engagement/repository/engagement_data_repository.h \
     src/domain/engagement/repository/weapon_track_assign_repository.h \
     src/domain/gun/entity/gun_barrel_entity.h \
+    src/domain/gun/entity/gun_coverage_entity.h \
     src/domain/gun/entity/gun_status_command_entity.h \
     src/domain/gun/entity/gun_status_feedback_entity.h \
     src/domain/gun/repository/gun_base_repository.h \
     src/domain/gun/repository/gun_command_repository.h \
+    src/domain/gun/repository/gun_coverage_repository.h \
     src/domain/gun/repository/gun_feedback_repository.h \
     src/domain/osd/entity/osd_base_entity.h \
     src/domain/osd/entity/osd_inertia_entity.h \
@@ -182,6 +187,7 @@ HEADERS += \
     src/infra/store/gun/gun_repository.h \
     src/infra/store/gun/inmemory/gun_command_repository_inmem_impl.h \
     src/infra/store/gun/inmemory/gun_feedback_repository_inmem_imp.h \
+    src/infra/store/gun/inmemory/gun_coverage_repository_inmem_impl.h \
     src/infra/store/osd/inmemory/osd_inertia_repository_inmem_impl.h \
     src/infra/store/osd/inmemory/osd_position_repository_inmem_impl.h \
     src/infra/store/osd/inmemory/osd_waterspeed_repository_inmem_impl.h \
@@ -279,6 +285,7 @@ HEADERS += \
     src/view/shared/frame_text_input.h \
     src/view/tda/components/tda_compass_object.h \
     src/view/tda/components/tda_gun_barrel_object.h \
+    src/view/tda/components/tda_gun_coverage_object.h \
     src/view/tda/components/tda_heading_marker_object.h \
     src/view/tda/components/tda_object_base.h \
     src/view/tda/components/track/tda_track_id.h \

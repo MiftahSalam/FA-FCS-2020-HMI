@@ -15,7 +15,6 @@
 #include "src/view/tda/components/tda_object_base.h"
 #include "src/infra/store/gun/gun_repository.h"
 
-
 // ==== TDA ==== //
 namespace Ui {
 class FrameTDA;
@@ -41,6 +40,7 @@ private:
    QList<TDAObjectBase*> objectItems;
    OSDRepository *osdRepo;
    GunRepository *gunRepo;
+
    QTimer *timer;
 
    float currentRange;
