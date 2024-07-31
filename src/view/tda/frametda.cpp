@@ -1,8 +1,10 @@
 #include "frametda.h"
 #include "src/di/di.h"
 #include "src/view/tda/components/tda_compass_object.h"
+#include "src/view/tda/components/tda_gun_coverage_object.h"
 #include "src/view/tda/components/tda_heading_marker_object.h"
 #include "src/view/tda/components/track/tda_tracks_object.h"
+
 #include "ui_frametda.h"
 
 #include <math.h>
@@ -26,14 +28,14 @@ FrameTDA::FrameTDA(QWidget *parent) :
     //TODO: setup event filter
 
     //TODO: setup popup menu
-
     osdRepo = DI::getInstance()->getRepoOSD(); //temp
+    gunRepo = DI::getInstance()->getRepoGun();
 
     TdaCompassObject *compass = new TdaCompassObject(this);
+    TDAGunCoverageObject *gunCoverage = new TDAGunCoverageObject(this, osdRepo->getRepoOSDInertia(), gunRepo->getRepoGunCoverage());
     TDAHeadingMarkerObject *headingMarker = new TDAHeadingMarkerObject (this, osdRepo->getRepoOSDInertia());
     TDATracksObject *tracksObject = new TDATracksObject(this);
-    objectItems << compass << tracksObject << headingMarker;
-
+    objectItems << compass << tracksObject << headingMarker << gunCoverage;
 
     timer->start(1000);
 }
