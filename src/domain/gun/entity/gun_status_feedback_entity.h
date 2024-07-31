@@ -5,7 +5,8 @@
 class GunStatusFeedbackEntity
 {
 public:
-    GunStatusFeedbackEntity();
+    GunStatusFeedbackEntity(bool opMode, bool remote, bool mount, bool barrelTemperature, bool gunReadyToStart,
+bool gunReadyToFire, bool fireMode, bool blindArc, bool missAlignment, bool magazine);
 
     bool opMode() const;
     void setOpMode(bool newOpMode);

@@ -4,7 +4,7 @@
 #include "src/domain/gun/entity/gun_status_feedback_entity.h"
 #include "src/domain/gun/repository/gun_base_repository.h"
 
-class GunCommandRepository: GunBaseRepository
+class GunFeedbackRepository: public GunBaseRepository
 {
 public:
     virtual void SetStatus(const GunStatusFeedbackEntity &status) = 0;

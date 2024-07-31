@@ -3,6 +3,7 @@
 #include "src/view/tda/components/tda_compass_object.h"
 #include "src/view/tda/components/tda_gun_coverage_object.h"
 #include "src/view/tda/components/tda_heading_marker_object.h"
+#include "src/view/tda/components/tda_gun_barrel_object.h"
 #include "src/view/tda/components/track/tda_tracks_object.h"
 
 #include "ui_frametda.h"
@@ -34,8 +35,10 @@ FrameTDA::FrameTDA(QWidget *parent) :
     TdaCompassObject *compass = new TdaCompassObject(this);
     TDAGunCoverageObject *gunCoverage = new TDAGunCoverageObject(this, osdRepo->getRepoOSDInertia(), gunRepo->getRepoGunCoverage());
     TDAHeadingMarkerObject *headingMarker = new TDAHeadingMarkerObject (this, osdRepo->getRepoOSDInertia());
+    TDAGunBarrelObject *gunBarrel = new TDAGunBarrelObject (this, osdRepo->getRepoOSDInertia(), gunRepo->getRepoGunFeedback());
     TDATracksObject *tracksObject = new TDATracksObject(this);
-    objectItems << compass << tracksObject << headingMarker << gunCoverage;
+
+    objectItems << compass << tracksObject << headingMarker << gunBarrel << gunCoverage;
 
     timer->start(1000);
 }
