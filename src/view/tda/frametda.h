@@ -10,6 +10,7 @@
 #include <QPoint>
 #include <QSettings>
 #include <QMenu>
+#include <QAction>
 
 #include "src/infra/store/osd/osd_repository.h"
 #include "src/view/tda/components/tda_object_base.h"
@@ -36,6 +37,11 @@ private slots:
     void timeOut();
     void on_FrameTDA_customContextMenuRequested(const QPoint &pos);
 
+    void onCompassActionTriggered();
+    void onHeadingMarkerActionTriggrered();
+    void onGunCovActionTriggered();
+    void onGunBarrelActionTriggered();
+
 signals:
     void signalOnCostumContextMenuRequest(const QPoint &pos);
 
@@ -49,10 +55,10 @@ private:
 
    QTimer *timer;
    QMenu *ZoomSubMenu;
-   QMenu *CommpasMenu;
-   QMenu *HeadingMarkerMenu;
-   QMenu *GunCovMenu;
-   QMenu *GunBarrelMenu;
+   QAction *CompassAction;
+   QAction *HeadingMarkerAction;
+   QAction *GunCovAction;
+   QAction *GunBarrelAction;
 };
 
 #endif // FRAMETDA_H

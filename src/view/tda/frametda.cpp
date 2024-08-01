@@ -42,16 +42,17 @@ FrameTDA::FrameTDA(QWidget *parent) :
 
     timer->start(1000);
 
-    connect(this, SIGNAL(signalOnCostumContextMenuRequest(QPoint &pos)), this, SLOT(on_FrameTDA_customContextMenuRequested(QPoint &pos)));
-
     ZoomSubMenu = new QMenu("Zoom",this);
-    // ZoomSubMenu->setStyleSheet("QMenu{color: rgb(255,255,255);background-color: rgb(0,0,0);selection-color: yellow;}");
+    CompassAction = new QAction("Show Compass", this);
+    HeadingMarkerAction = new QAction("Show Heading Marker", this);
+    GunCovAction = new QAction("Show Gun Coverage", this);
+    GunBarrelAction = new QAction("Show Gun Barrel",this);
 
-    CommpasMenu = new QMenu("Show Compass", this);
-    HeadingMarkerMenu = new QMenu("Show Heading Marker", this);
-    GunCovMenu = new QMenu("Show Gun Coverage", this);
-    GunBarrelMenu = new QMenu("Show Gun Barrel",this);
-
+    connect(this, SIGNAL(signalOnCostumContextMenuRequest(QPoint &pos)), this, SLOT(on_FrameTDA_customContextMenuRequested(QPoint &pos)));
+    connect(CompassAction, &QAction::triggered, this, &FrameTDA::onCompassActionTriggered);
+    connect(HeadingMarkerAction, &QAction::triggered, this, &FrameTDA::onHeadingMarkerActionTriggrered);
+    connect(GunCovAction, &QAction::triggered, this, &FrameTDA::onGunCovActionTriggered);
+    connect(GunBarrelAction, &QAction::triggered, this, &FrameTDA::onGunBarrelActionTriggered);
 }
 
 FrameTDA::~FrameTDA()
@@ -99,10 +100,30 @@ void FrameTDA::on_FrameTDA_customContextMenuRequested(const QPoint &pos)
     QMenu *menu = new QMenu(this);
 
     menu->addMenu(ZoomSubMenu);
-    menu->addMenu(CommpasMenu);
-    menu->addMenu(HeadingMarkerMenu);
-    menu->addMenu(GunCovMenu);
-    menu->addMenu(GunBarrelMenu);
+    menu->addAction(CompassAction);
+    menu->addAction(HeadingMarkerAction);
+    menu->addAction(GunCovAction);
+    menu->addAction(GunBarrelAction);
     menu->exec(pos);
+}
+
+void FrameTDA::onCompassActionTriggered()
+{
+    QMessageBox::information(this, "Compass Action", "Compass triggered"); //temp
+}
+
+void FrameTDA::onHeadingMarkerActionTriggrered()
+{
+    QMessageBox::information(this, "HM Action", "HM triggered"); //temp
+}
+
+void FrameTDA::onGunCovActionTriggered()
+{
+    QMessageBox::information(this, "Gun Coverage Action", "GunCoverage triggered"); //temp
+}
+
+void FrameTDA::onGunBarrelActionTriggered()
+{
+    QMessageBox::information(this, "Gun Barrel Action", "Gun Barrel triggered"); //temp
 }
 
