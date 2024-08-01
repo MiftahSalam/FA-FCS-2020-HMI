@@ -42,12 +42,29 @@ private slots:
     void onGunCovActionTriggered();
     void onGunBarrelActionTriggered();
 
+    void onZoomChange();
+
 signals:
     void signalOnCostumContextMenuRequest(const QPoint &pos);
 
 
 private:
    Ui::FrameTDA *ui;
+
+    enum zoomScale{
+        Z_025 =0,
+        Z_050,
+        Z_010,
+        Z_020,
+        Z_040,
+        Z_080,
+        Z_160,
+        Z_320,
+        Z_640,
+        Z_TOTAL
+    };
+
+   double tdaScale = 8.0;
 
    QList<TDAObjectBase*> objectItems;
    OSDRepository *osdRepo;
@@ -59,6 +76,14 @@ private:
    QAction *HeadingMarkerAction;
    QAction *GunCovAction;
    QAction *GunBarrelAction;
+   QAction *ZoomAction[Z_TOTAL];
+
+   QString zoomScale2String(zoomScale scale);
+   zoomScale zoomStrig2Scale(QString scale);
+   int zoomScale2Int(zoomScale scale);
+   zoomScale zoomInt2Scale(int scale);
+   int cur_checked_zoom_scale;
+
 };
 
 #endif // FRAMETDA_H

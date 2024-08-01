@@ -43,21 +43,32 @@ FrameTDA::FrameTDA(QWidget *parent) :
     timer->start(1000);
 
     ZoomSubMenu = new QMenu("Zoom",this);
+    for (int i=0;i<Z_TOTAL;i++)
+    {
+        ZoomAction[i] = new QAction(zoomScale2String(zoomInt2Scale(i)),this);
+        ZoomSubMenu->addAction(ZoomAction[i]);
+        ZoomAction[i]->setCheckable(true);
+        // connect(ZoomAction[i], SIGNAL(triggered()), this, SLOT(onZoomChange()));
+        connect(ZoomAction[i], &QAction::triggered, this, &FrameTDA::onZoomChange);
+    }
+    cur_checked_zoom_scale = zoomScale2Int(Z_080);
+    ZoomAction[cur_checked_zoom_scale]->setChecked(true);
 
     CompassAction = new QAction("Show Compass", this);
     HeadingMarkerAction = new QAction("Show Heading Marker", this);
     GunCovAction = new QAction("Show Gun Coverage", this);
     GunBarrelAction = new QAction("Show Gun Barrel",this);
 
+    CompassAction->setCheckable(true);
+    HeadingMarkerAction->setCheckable(true);
+    GunCovAction->setCheckable(true);
+    GunBarrelAction->setCheckable(true);
+
     connect(this, SIGNAL(signalOnCostumContextMenuRequest(QPoint&pos)), this, SLOT(on_FrameTDA_customContextMenuRequested(QPoint&pos)));
     connect(CompassAction, &QAction::triggered, this, &FrameTDA::onCompassActionTriggered);
     connect(HeadingMarkerAction, &QAction::triggered, this, &FrameTDA::onHeadingMarkerActionTriggrered);
     connect(GunCovAction, &QAction::triggered, this, &FrameTDA::onGunCovActionTriggered);
     connect(GunBarrelAction, &QAction::triggered, this, &FrameTDA::onGunBarrelActionTriggered);
-    CompassAction->setCheckable(true);
-    HeadingMarkerAction->setCheckable(true);
-    GunCovAction->setCheckable(true);
-    GunBarrelAction->setCheckable(true);
 }
 
 FrameTDA::~FrameTDA()
@@ -143,5 +154,114 @@ void FrameTDA::onGunBarrelActionTriggered()
     {
         QMessageBox::information(this, "Gun Barrel Action", "Gun Barrel triggered"); //temp
     }
+}
+
+void FrameTDA::onZoomChange()
+{
+    for(int i=0;i<Z_TOTAL;i++)
+    {
+        if(ZoomAction[i] && i != cur_checked_zoom_scale)
+        {
+            ZoomAction[cur_checked_zoom_scale]->setChecked(false);
+            cur_checked_zoom_scale = i;
+            QMessageBox::information(this, "Zoom", QString::number(i));
+        }
+    }
+
+    tdaScale = ZoomAction[cur_checked_zoom_scale]->text().remove(" NM").toDouble();
+}
+
+QString FrameTDA::zoomScale2String(zoomScale scale)
+{
+    if(scale==Z_025)
+        return "0.25 NM";
+    else if(scale==Z_050)
+        return "0.5 NM";
+    else if(scale==Z_010)
+        return "1 NM";
+    else if(scale==Z_020)
+        return "2 NM";
+    else if(scale==Z_040)
+        return "4 NM";
+    else if(scale==Z_080)
+        return "8 NM";
+    else if(scale==Z_160)
+        return "16 NM";
+    else if(scale==Z_320)
+        return "32 NM";
+    else if(scale==Z_640)
+        return "64 NM";
+    else
+        return "0";
+}
+
+FrameTDA::zoomScale FrameTDA::zoomStrig2Scale(QString scale)
+{
+    if(scale=="0.25 NM")
+        return Z_025;
+    else if(scale=="0.5 NM")
+        return Z_050;
+    else if(scale=="1 NM")
+        return Z_010;
+    else if(scale=="2 NM")
+        return Z_020;
+    else if(scale=="4 NM")
+        return Z_040;
+    else if(scale=="8 NM")
+        return Z_080;
+    else if(scale=="16 NM")
+        return Z_160;
+    else if(scale=="32 NM")
+        return Z_320;
+    else if(scale=="64 NM")
+        return Z_640;
+    else
+        return Z_TOTAL;
+}
+
+int FrameTDA::zoomScale2Int(zoomScale scale)
+{
+    if(scale==Z_025)
+        return 0;
+    else if(scale==Z_050)
+        return 1;
+    else if(scale==Z_010)
+        return 2;
+    else if(scale==Z_020)
+        return 3;
+    else if(scale==Z_040)
+        return 4;
+    else if(scale==Z_080)
+        return 5;
+    else if(scale==Z_160)
+        return 6;
+    else if(scale==Z_320)
+        return 7;
+    else if(scale==Z_640)
+        return 8;
+}
+
+FrameTDA::zoomScale FrameTDA::zoomInt2Scale(int scale)
+{
+    if(scale==0)
+        return Z_025;
+    else if(scale==1)
+        return Z_050;
+    else if(scale==2)
+        return Z_010;
+    else if(scale==3)
+        return Z_020;
+    else if(scale==4)
+        return Z_040;
+    else if(scale==5)
+        return Z_080;
+    else if(scale==6)
+        return Z_160;
+    else if(scale==7)
+        return Z_320;
+    else if(scale==8)
+        return Z_640;
+    else
+        return Z_TOTAL;
 }
 
