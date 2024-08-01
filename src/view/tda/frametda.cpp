@@ -43,16 +43,21 @@ FrameTDA::FrameTDA(QWidget *parent) :
     timer->start(1000);
 
     ZoomSubMenu = new QMenu("Zoom",this);
+
     CompassAction = new QAction("Show Compass", this);
     HeadingMarkerAction = new QAction("Show Heading Marker", this);
     GunCovAction = new QAction("Show Gun Coverage", this);
     GunBarrelAction = new QAction("Show Gun Barrel",this);
 
-    connect(this, SIGNAL(signalOnCostumContextMenuRequest(QPoint &pos)), this, SLOT(on_FrameTDA_customContextMenuRequested(QPoint &pos)));
+    connect(this, SIGNAL(signalOnCostumContextMenuRequest(QPoint&pos)), this, SLOT(on_FrameTDA_customContextMenuRequested(QPoint&pos)));
     connect(CompassAction, &QAction::triggered, this, &FrameTDA::onCompassActionTriggered);
     connect(HeadingMarkerAction, &QAction::triggered, this, &FrameTDA::onHeadingMarkerActionTriggrered);
     connect(GunCovAction, &QAction::triggered, this, &FrameTDA::onGunCovActionTriggered);
     connect(GunBarrelAction, &QAction::triggered, this, &FrameTDA::onGunBarrelActionTriggered);
+    CompassAction->setCheckable(true);
+    HeadingMarkerAction->setCheckable(true);
+    GunCovAction->setCheckable(true);
+    GunBarrelAction->setCheckable(true);
 }
 
 FrameTDA::~FrameTDA()
@@ -109,21 +114,34 @@ void FrameTDA::on_FrameTDA_customContextMenuRequested(const QPoint &pos)
 
 void FrameTDA::onCompassActionTriggered()
 {
-    QMessageBox::information(this, "Compass Action", "Compass triggered"); //temp
+    if (CompassAction->isChecked() == true)
+    {
+        QMessageBox::information(this, "Compass Action", "Compass triggered"); //temp
+        // Update Config
+    }
 }
 
 void FrameTDA::onHeadingMarkerActionTriggrered()
 {
-    QMessageBox::information(this, "HM Action", "HM triggered"); //temp
+    if (HeadingMarkerAction->isChecked() == true)
+    {
+        QMessageBox::information(this, "HM Action", "HM triggered"); //temp
+    }
 }
 
 void FrameTDA::onGunCovActionTriggered()
 {
+    if (GunCovAction->isChecked() == true)
+    {
     QMessageBox::information(this, "Gun Coverage Action", "GunCoverage triggered"); //temp
+    }
 }
 
 void FrameTDA::onGunBarrelActionTriggered()
 {
-    QMessageBox::information(this, "Gun Barrel Action", "Gun Barrel triggered"); //temp
+    if (GunBarrelAction->isChecked() == true)
+    {
+        QMessageBox::information(this, "Gun Barrel Action", "Gun Barrel triggered"); //temp
+    }
 }
 
