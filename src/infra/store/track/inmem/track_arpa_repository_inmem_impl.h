@@ -3,11 +3,15 @@
 
 #include <QMap>
 #include "src/domain/track/repository/track_base_repository.h"
+#include "src/infra/store/track/track_repository_listener.h"
 
 class TrackArpaRepositoryInMemImpl: public TrackBaseRepository
 {
 public:
     static TrackBaseRepository *GetInstance();
+
+    void addListener(TrackRepositoryListener *listener);
+    void removeListener(TrackRepositoryListener *listener);
 
     // TrackBaseRepository interface
 public:
@@ -24,6 +28,8 @@ private:
     static TrackArpaRepositoryInMemImpl *instance;
 
     QMap<int, TrackBaseEntity*> _tracks;
+
+    QList<TrackRepositoryListener *>listeners;
 };
 
 #endif // TRACKARPAREPOSITORYINMEMIMPL_H

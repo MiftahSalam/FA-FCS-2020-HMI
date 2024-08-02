@@ -84,6 +84,7 @@ HEADERS += \
     src/infra/messaging/tcp/tcp_messaging_wrapper.h \
     src/infra/store/track/inmem/track_arpa_repository_inmem_impl.h \
     src/infra/store/track/track_repository.h \
+    src/infra/store/track/track_repository_listener.h \
     src/model/base_request.h \
     src/model/base_response.h \
     src/model/osd/cms/osd_input_mode_request.h \
