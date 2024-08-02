@@ -43,6 +43,8 @@ FrameTDA::FrameTDA(QWidget *parent) :
     timer->start(1000);
 
     ZoomSubMenu = new QMenu("Zoom",this);
+    cur_checked_zoom_scale = zoomScale2Int(Z_080);
+
     for (int i=0;i<Z_TOTAL;i++)
     {
         ZoomAction[i] = new QAction(zoomScale2String(zoomInt2Scale(i)),this);
@@ -51,7 +53,6 @@ FrameTDA::FrameTDA(QWidget *parent) :
         // connect(ZoomAction[i], SIGNAL(triggered()), this, SLOT(onZoomChange()));
         connect(ZoomAction[i], &QAction::triggered, this, &FrameTDA::onZoomChange);
     }
-    cur_checked_zoom_scale = zoomScale2Int(Z_080);
     ZoomAction[cur_checked_zoom_scale]->setChecked(true);
 
     CompassAction = new QAction("Show Compass", this);
@@ -158,16 +159,17 @@ void FrameTDA::onGunBarrelActionTriggered()
 
 void FrameTDA::onZoomChange()
 {
+
     for(int i=0;i<Z_TOTAL;i++)
     {
-        if(ZoomAction[i] && i != cur_checked_zoom_scale)
+        if(ZoomAction[i]->isChecked() && i != cur_checked_zoom_scale)
         {
             ZoomAction[cur_checked_zoom_scale]->setChecked(false);
             cur_checked_zoom_scale = i;
-            QMessageBox::information(this, "Zoom", QString::number(i));
         }
     }
-
+    QMessageBox::information(this, "Zoom", QString::number(cur_checked_zoom_scale)); // temp
+    ZoomAction[cur_checked_zoom_scale]->setChecked(true);
     tdaScale = ZoomAction[cur_checked_zoom_scale]->text().remove(" NM").toDouble();
 }
 
