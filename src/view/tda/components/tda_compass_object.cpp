@@ -3,19 +3,32 @@
 #include "qmath.h"
 #include <QTextStream>
 #include <cmath>
+#include <QMessageBox>
 
-TdaCompassObject::TdaCompassObject(QObject *parent): TDAObjectBase(parent)
+TdaCompassObject::TdaCompassObject(QObject *parent, TDAConfig *config): TDAObjectBase(parent), tdaConfig(config)
 {
 
 }
 
+void TdaCompassObject::OnShowCompass(bool status)
+{
+    // show_compass = status;
+}
 
 void TdaCompassObject::Draw(QPainter *painter, const int &side, const int &width, const int &height, const QPoint &off_center)
 {
     QPoint center_point = QPoint(width/2,height/2);
 
     //TODO: get from config
-    const bool show_compass = true;
+    // const bool show_compass = true;
+    bool show_compass;
+    if (tdaConfig->getInstance("")->getCompassStatus() == "true")
+    {
+        show_compass = true;
+    }else{
+        return;
+    }
+
     if(show_compass)
     {
         painter->translate(center_point);

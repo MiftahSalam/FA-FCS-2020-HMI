@@ -5,6 +5,7 @@
 #include "src/shared/config/amqp_config.h"
 #include "src/shared/config/messaging_tcp_config.h"
 #include "src/shared/config/osd_cms_config.h"
+#include "src/shared/config/tda_config.h"
 
 class Configuration
 {
@@ -16,6 +17,8 @@ public:
     AMQPConfig *getAmqpConfig() const;
 
     MessagingTcpConfig *getTcpMessageConfig() const;
+
+    TDAConfig *getTDAConfig() const;
 
 private:
     OSDCmsConfig *osdCmsConfig;
@@ -34,6 +37,9 @@ private:
     // TODO: track assigned messaging config
 
     // TODO: track engagement messaging config
+
+    TDAConfig *tdaConfig;
+
 };
 
 #endif // CONFIGURATION_H

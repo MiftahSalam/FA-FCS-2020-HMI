@@ -32,7 +32,7 @@ FrameTDA::FrameTDA(QWidget *parent) :
     osdRepo = DI::getInstance()->getRepoOSD(); //temp
     gunRepo = DI::getInstance()->getRepoGun();
 
-    TdaCompassObject *compass = new TdaCompassObject(this);
+    TdaCompassObject *compass = new TdaCompassObject(this, config->getTDAConfig());
     TDAGunCoverageObject *gunCoverage = new TDAGunCoverageObject(this, osdRepo->getRepoOSDInertia(), gunRepo->getRepoGunCoverage());
     TDAHeadingMarkerObject *headingMarker = new TDAHeadingMarkerObject (this, osdRepo->getRepoOSDInertia());
     TDAGunBarrelObject *gunBarrel = new TDAGunBarrelObject (this, osdRepo->getRepoOSDInertia(), gunRepo->getRepoGunFeedback());
@@ -50,7 +50,6 @@ FrameTDA::FrameTDA(QWidget *parent) :
         ZoomAction[i] = new QAction(zoomScale2String(zoomInt2Scale(i)),this);
         ZoomSubMenu->addAction(ZoomAction[i]);
         ZoomAction[i]->setCheckable(true);
-        // connect(ZoomAction[i], SIGNAL(triggered()), this, SLOT(onZoomChange()));
         connect(ZoomAction[i], &QAction::triggered, this, &FrameTDA::onZoomChange);
     }
     ZoomAction[cur_checked_zoom_scale]->setChecked(true);
@@ -70,6 +69,8 @@ FrameTDA::FrameTDA(QWidget *parent) :
     connect(HeadingMarkerAction, &QAction::triggered, this, &FrameTDA::onHeadingMarkerActionTriggrered);
     connect(GunCovAction, &QAction::triggered, this, &FrameTDA::onGunCovActionTriggered);
     connect(GunBarrelAction, &QAction::triggered, this, &FrameTDA::onGunBarrelActionTriggered);
+
+    connect(this, SIGNAL(signalOnShowCompassObject(bool)), compass, SLOT(OnShowCompass(bool)));
 }
 
 FrameTDA::~FrameTDA()
@@ -128,8 +129,11 @@ void FrameTDA::onCompassActionTriggered()
 {
     if (CompassAction->isChecked() == true)
     {
-        QMessageBox::information(this, "Compass Action", "Compass triggered"); //temp
-        // Update Config
+        bool status = true;
+        emit signalOnShowCompassObject(status);
+    }else{
+        bool status = false;
+        emit signalOnShowCompassObject(status);
     }
 }
 
@@ -159,7 +163,6 @@ void FrameTDA::onGunBarrelActionTriggered()
 
 void FrameTDA::onZoomChange()
 {
-
     for(int i=0;i<Z_TOTAL;i++)
     {
         if(ZoomAction[i]->isChecked() && i != cur_checked_zoom_scale)

@@ -1,0 +1,35 @@
+#ifndef TDA_CONFIG_H
+#define TDA_CONFIG_H
+
+#include "base_config.h"
+#include <QString>
+
+class TDAConfig: public BaseConfig
+{
+public:
+    TDAConfig(TDAConfig &other) = delete;
+    void operator = (const TDAConfig&) = delete;
+    ~TDAConfig();
+
+    static TDAConfig *getInstance(const QString path);
+
+    QString getCompassStatus() const;
+    QString getHeadingMarkerStatus() const;
+    QString getGunCoverageStatus() const;
+    QString getGunBarrelStatus() const;
+    // BaseConfig interface
+public:
+    void setup(const QString path) override;
+
+protected:
+    TDAConfig();
+
+private:
+    static TDAConfig *config;
+    QString compassStatus;
+    QString headingMarkerStatus;
+    QString gunCoverageStatus;
+    QString gunBarrelStatus;
+};
+
+#endif // TDA_CONFIG_H
