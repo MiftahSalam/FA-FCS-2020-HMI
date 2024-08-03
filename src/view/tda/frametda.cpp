@@ -35,7 +35,7 @@ FrameTDA::FrameTDA(QWidget *parent) :
     TdaCompassObject *compass = new TdaCompassObject(this, config->getTDAConfig());
     TDAGunCoverageObject *gunCoverage = new TDAGunCoverageObject(this, osdRepo->getRepoOSDInertia(), gunRepo->getRepoGunCoverage(), config->getTDAConfig());
     TDAHeadingMarkerObject *headingMarker = new TDAHeadingMarkerObject (this, osdRepo->getRepoOSDInertia(), config->getTDAConfig());
-    TDAGunBarrelObject *gunBarrel = new TDAGunBarrelObject (this, osdRepo->getRepoOSDInertia(), gunRepo->getRepoGunFeedback());
+    TDAGunBarrelObject *gunBarrel = new TDAGunBarrelObject (this, osdRepo->getRepoOSDInertia(), gunRepo->getRepoGunFeedback(), config->getTDAConfig());
     TDATracksObject *tracksObject = new TDATracksObject(this);
 
     objectItems << compass << tracksObject << headingMarker << gunBarrel << gunCoverage;
@@ -170,8 +170,9 @@ void FrameTDA::onGunBarrelActionTriggered()
 {
     if (GunBarrelAction->isChecked() == true)
     {
-        QMessageBox::information(this, "Gun Barrel Action", "Gun Barrel triggered"); //temp
-    }
+        config->getTDAConfig()->getInstance("")->setGunBarrelStatus("true");
+    }else{
+        config->getTDAConfig()->getInstance("")->setGunBarrelStatus("false");    }
 }
 
 void FrameTDA::onZoomChange()
