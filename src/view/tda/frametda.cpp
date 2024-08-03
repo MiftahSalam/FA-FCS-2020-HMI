@@ -129,11 +129,13 @@ void FrameTDA::onCompassActionTriggered()
 {
     if (CompassAction->isChecked() == true)
     {
-        bool status = true;
-        emit signalOnShowCompassObject(status);
+        // bool status = true;
+        // emit signalOnShowCompassObject(status);
+        config->getTDAConfig()->getInstance("")->setCompassStatus("true");
     }else{
-        bool status = false;
-        emit signalOnShowCompassObject(status);
+        // bool status = false;
+        // emit signalOnShowCompassObject(status);
+        config->getTDAConfig()->getInstance("")->setCompassStatus("false");
     }
 }
 
