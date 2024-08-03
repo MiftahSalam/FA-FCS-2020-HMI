@@ -24,7 +24,7 @@ public:
     // BaseConfig interface
 public:
     void setup(const QString path) override;
-    void saveTDAConfig(const QString path);
+    void saveTDAConfig();
 
 protected:
     TDAConfig();

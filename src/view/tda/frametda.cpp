@@ -87,6 +87,8 @@ FrameTDA::FrameTDA(QWidget *parent) :
 
 FrameTDA::~FrameTDA()
 {
+    config->getTDAConfig()->getInstance("")->saveTDAConfig();
+    qDebug()<<"Save TDA Config";
     delete ui;
 }
 
@@ -145,6 +147,7 @@ void FrameTDA::onCompassActionTriggered()
     }else{
         config->getTDAConfig()->getInstance("")->setCompassStatus("false");
     }
+    // config->getTDAConfig()->getInstance("")->saveTDAConfig();
 }
 
 void FrameTDA::onHeadingMarkerActionTriggrered()

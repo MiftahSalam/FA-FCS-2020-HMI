@@ -5,6 +5,7 @@
 #include <QDebug>
 #include <QFile>
 #include <QSettings>
+#include <QDir>
 
 const QString CONFIG_COMPASS_STATUS = "tda/show_compass";
 const QString CONFIG_HEADING_MARKER_STATUS = "tda/show_heading_marker";
@@ -89,9 +90,10 @@ void TDAConfig::setup(const QString path)
     gunBarrelStatus = configFile.value(CONFIG_GUN_BARREL_STATUS, "").toString();
 }
 
-void TDAConfig::saveTDAConfig(const QString path)
+void TDAConfig::saveTDAConfig()
 {
-    QSettings configFile(path,QSettings::IniFormat);
+    QString COMMON_CONFIG_PATH = QDir::homePath()+QDir::separator()+".fa-hmi.conf";
+    QSettings configFile(COMMON_CONFIG_PATH,QSettings::IniFormat);
 
     configFile.beginGroup("tda");
     configFile.setValue("show_compass", compassStatus);
@@ -100,5 +102,5 @@ void TDAConfig::saveTDAConfig(const QString path)
     configFile.setValue("show_gun_barrel", gunBarrelStatus);
     configFile.endGroup();
 
-    qDebug()<<"Save TDA Config";
+    // qDebug()<<"Save TDA Config";
 }

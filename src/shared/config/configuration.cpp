@@ -29,7 +29,7 @@ TDAConfig *Configuration::getTDAConfig() const
 
 void Configuration::saveConfig()
 {
-    tdaConfig->saveTDAConfig(COMMON_CONFIG_PATH);
+    // tdaConfig->saveTDAConfig(COMMON_CONFIG_PATH);
 }
 //AMQPConfig *Configuration::getAmqpConfig() const
 //{
