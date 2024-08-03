@@ -33,7 +33,7 @@ FrameTDA::FrameTDA(QWidget *parent) :
     gunRepo = DI::getInstance()->getRepoGun();
 
     TdaCompassObject *compass = new TdaCompassObject(this, config->getTDAConfig());
-    TDAGunCoverageObject *gunCoverage = new TDAGunCoverageObject(this, osdRepo->getRepoOSDInertia(), gunRepo->getRepoGunCoverage());
+    TDAGunCoverageObject *gunCoverage = new TDAGunCoverageObject(this, osdRepo->getRepoOSDInertia(), gunRepo->getRepoGunCoverage(), config->getTDAConfig());
     TDAHeadingMarkerObject *headingMarker = new TDAHeadingMarkerObject (this, osdRepo->getRepoOSDInertia());
     TDAGunBarrelObject *gunBarrel = new TDAGunBarrelObject (this, osdRepo->getRepoOSDInertia(), gunRepo->getRepoGunFeedback());
     TDATracksObject *tracksObject = new TDATracksObject(this);
@@ -63,6 +63,18 @@ FrameTDA::FrameTDA(QWidget *parent) :
     HeadingMarkerAction->setCheckable(true);
     GunCovAction->setCheckable(true);
     GunBarrelAction->setCheckable(true);
+
+    if (config->getTDAConfig()->getInstance("")->getCompassStatus() == "true")
+        CompassAction->setChecked(true);
+
+    if (config->getTDAConfig()->getInstance("")->getGunCoverageStatus() == "true")
+        GunCovAction->setChecked(true);
+
+    if (config->getTDAConfig()->getInstance("")->getHeadingMarkerStatus() == "true")
+        HeadingMarkerAction->setChecked(true);
+
+    if (config->getTDAConfig()->getInstance("")->getGunBarrelStatus() == "true")
+        GunBarrelAction->setChecked(true);
 
     connect(this, SIGNAL(signalOnCostumContextMenuRequest(QPoint&pos)), this, SLOT(on_FrameTDA_customContextMenuRequested(QPoint&pos)));
     connect(CompassAction, &QAction::triggered, this, &FrameTDA::onCompassActionTriggered);
@@ -129,12 +141,8 @@ void FrameTDA::onCompassActionTriggered()
 {
     if (CompassAction->isChecked() == true)
     {
-        // bool status = true;
-        // emit signalOnShowCompassObject(status);
         config->getTDAConfig()->getInstance("")->setCompassStatus("true");
     }else{
-        // bool status = false;
-        // emit signalOnShowCompassObject(status);
         config->getTDAConfig()->getInstance("")->setCompassStatus("false");
     }
 }
@@ -151,7 +159,9 @@ void FrameTDA::onGunCovActionTriggered()
 {
     if (GunCovAction->isChecked() == true)
     {
-    QMessageBox::information(this, "Gun Coverage Action", "GunCoverage triggered"); //temp
+        config->getTDAConfig()->getInstance("")->setGunCoverageStatus("true");
+    }else{
+        config->getTDAConfig()->getInstance("")->setGunCoverageStatus("false");
     }
 }
 

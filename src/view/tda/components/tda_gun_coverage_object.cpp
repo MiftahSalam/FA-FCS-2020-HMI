@@ -7,7 +7,11 @@
 int tdaScale = 8.0;
 
 TDAGunCoverageObject::TDAGunCoverageObject(QObject *parent, OSDInertiaRepository *repoInertia,
-                                           GunCoverageRepository *repoGunCov): TDAZoomableObjectBase(parent), repoInertia(repoInertia), repoGunCov(repoGunCov)
+                                           GunCoverageRepository *repoGunCov, TDAConfig *configTDA):
+    TDAZoomableObjectBase(parent),
+    repoInertia(repoInertia),
+    repoGunCov(repoGunCov),
+    tdaConfig(configTDA)
 {
     repoInertia->SetInertia(OSDInertiaEntity(0,0,0,"","",OSD_MODE::AUTO));
     repoGunCov->SetGunCoverage(GunCoverageEntity(4,90,0));
@@ -16,9 +20,8 @@ TDAGunCoverageObject::TDAGunCoverageObject(QObject *parent, OSDInertiaRepository
 void TDAGunCoverageObject::Draw(QPainter *painter, const int &side, const int &width, const int &height, const QPoint &off_center)
 {
     QPoint center_point = QPoint(width/2,height/2);
-    const bool show_gunCoverage = true;
 
-    if(show_gunCoverage)
+    if(tdaConfig->getInstance("")->getGunCoverageStatus() == "true")
     {
         float gun_orientation = repoGunCov->GetGunCoverage()->getGunOrientation();
         float blind_arc = repoGunCov->GetGunCoverage()->getBlindArc();
