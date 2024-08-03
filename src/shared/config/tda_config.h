@@ -14,9 +14,13 @@ public:
     static TDAConfig *getInstance(const QString path);
 
     QString getCompassStatus() const;
+    void setCompassStatus(QString newCompasStatus);
     QString getHeadingMarkerStatus() const;
+    void setHeadingMarkerStatus(QString newHeadingMarkerStatus);
     QString getGunCoverageStatus() const;
+    void setGunCoverageStatus(QString newGunCoverageStatus);
     QString getGunBarrelStatus() const;
+    void setGunBarrelStatus(QString newGunBarrelStatus);
     // BaseConfig interface
 public:
     void setup(const QString path) override;

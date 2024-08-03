@@ -44,9 +44,19 @@ QString TDAConfig::getCompassStatus() const
     return compassStatus;
 }
 
+void TDAConfig::setCompassStatus(QString newCompasStatus)
+{
+    compassStatus = newCompasStatus;
+}
+
 QString TDAConfig::getHeadingMarkerStatus() const
 {
     return headingMarkerStatus;
+}
+
+void TDAConfig::setHeadingMarkerStatus(QString newHeadingMarkerStatus)
+{
+    headingMarkerStatus = newHeadingMarkerStatus;
 }
 
 QString TDAConfig::getGunCoverageStatus() const
@@ -54,9 +64,19 @@ QString TDAConfig::getGunCoverageStatus() const
     return gunCoverageStatus;
 }
 
+void TDAConfig::setGunCoverageStatus(QString newGunCoverageStatus)
+{
+    gunCoverageStatus = newGunCoverageStatus;
+}
+
 QString TDAConfig::getGunBarrelStatus() const
 {
     return gunBarrelStatus;
+}
+
+void TDAConfig::setGunBarrelStatus(QString newGunBarrelStatus)
+{
+    gunBarrelStatus = newGunBarrelStatus;
 }
 
 void TDAConfig::setup(const QString path)
