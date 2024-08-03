@@ -88,3 +88,17 @@ void TDAConfig::setup(const QString path)
     gunCoverageStatus = configFile.value(CONFIG_GUN_COVERAGE_STATUS, "").toString();
     gunBarrelStatus = configFile.value(CONFIG_GUN_BARREL_STATUS, "").toString();
 }
+
+void TDAConfig::saveTDAConfig(const QString path)
+{
+    QSettings configFile(path,QSettings::IniFormat);
+
+    configFile.beginGroup("tda");
+    configFile.setValue("show_compass", compassStatus);
+    configFile.setValue("show_heading_marker", headingMarkerStatus);
+    configFile.setValue("show_gun_coverage", gunCoverageStatus);
+    configFile.setValue("show_gun_barrel", gunBarrelStatus);
+    configFile.endGroup();
+
+    qDebug()<<"Save TDA Config";
+}
