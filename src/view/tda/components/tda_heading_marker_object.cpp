@@ -3,7 +3,8 @@
 #include <QTextStream>
 #include <cmath>
 
-TDAHeadingMarkerObject::TDAHeadingMarkerObject(QObject *parent, OSDInertiaRepository *repoInertia): TDAObjectBase (parent), inertiaRepo(repoInertia)
+TDAHeadingMarkerObject::TDAHeadingMarkerObject(QObject *parent, OSDInertiaRepository *repoInertia, TDAConfig *configTDA):
+    TDAObjectBase (parent), inertiaRepo(repoInertia), tdaConfig(configTDA)
 {
     inertiaRepo->SetInertia(OSDInertiaEntity(45,0,0,"","",OSD_MODE::AUTO));
 }
@@ -13,9 +14,9 @@ void TDAHeadingMarkerObject::Draw(QPainter *painter, const int &side, const int 
     QPoint center_point = QPoint(width/2,height/2);
     int sideMax = qMax(width,height);
 
-    const bool show_headingMarker = true;
+    // const bool show_headingMarker = true;
 
-    if (show_headingMarker)
+    if (tdaConfig->getInstance("")->getHeadingMarkerStatus() == "true")
     {
         painter->translate(center_point);
 

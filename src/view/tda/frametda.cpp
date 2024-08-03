@@ -34,7 +34,7 @@ FrameTDA::FrameTDA(QWidget *parent) :
 
     TdaCompassObject *compass = new TdaCompassObject(this, config->getTDAConfig());
     TDAGunCoverageObject *gunCoverage = new TDAGunCoverageObject(this, osdRepo->getRepoOSDInertia(), gunRepo->getRepoGunCoverage(), config->getTDAConfig());
-    TDAHeadingMarkerObject *headingMarker = new TDAHeadingMarkerObject (this, osdRepo->getRepoOSDInertia());
+    TDAHeadingMarkerObject *headingMarker = new TDAHeadingMarkerObject (this, osdRepo->getRepoOSDInertia(), config->getTDAConfig());
     TDAGunBarrelObject *gunBarrel = new TDAGunBarrelObject (this, osdRepo->getRepoOSDInertia(), gunRepo->getRepoGunFeedback());
     TDATracksObject *tracksObject = new TDATracksObject(this);
 
@@ -151,8 +151,9 @@ void FrameTDA::onHeadingMarkerActionTriggrered()
 {
     if (HeadingMarkerAction->isChecked() == true)
     {
-        QMessageBox::information(this, "HM Action", "HM triggered"); //temp
-    }
+        config->getTDAConfig()->getInstance("")->setHeadingMarkerStatus("true");
+    }else{
+        config->getTDAConfig()->getInstance("")->setHeadingMarkerStatus("false");    }
 }
 
 void FrameTDA::onGunCovActionTriggered()
