@@ -4,7 +4,7 @@
 #include <QTextStream>
 #include <cmath>
 
-int tdaScale = 8.0;
+
 
 TDAGunCoverageObject::TDAGunCoverageObject(QObject *parent, OSDInertiaRepository *repoInertia,
                                            GunCoverageRepository *repoGunCov, TDAConfig *configTDA):

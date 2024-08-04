@@ -84,10 +84,14 @@ void TDAConfig::setup(const QString path)
 {
     QSettings configFile(path,QSettings::IniFormat);
 
-    // compassStatus = configFile.value(CONFIG_COMPASS_STATUS, "").toString();
-    // headingMarkerStatus = configFile.value(CONFIG_HEADING_MARKER_STATUS, "").toString();
-    // gunCoverageStatus = configFile.value(CONFIG_GUN_COVERAGE_STATUS, "").toString();
-    // gunBarrelStatus = configFile.value(CONFIG_GUN_BARREL_STATUS, "").toString();
+    QString _compassStatus = configFile.value(CONFIG_COMPASS_STATUS, "").toString();
+    compassStatus = QVariant(_compassStatus).toBool();
+    QString _headingMarkerStatus = configFile.value(CONFIG_HEADING_MARKER_STATUS, "").toString();
+    headingMarkerStatus = QVariant(_headingMarkerStatus).toBool();
+    QString _gunCoverageStatus = configFile.value(CONFIG_GUN_COVERAGE_STATUS, "").toString();
+    gunCoverageStatus = QVariant(_gunCoverageStatus).toBool();
+    QString _gunBarrelStatus = configFile.value(CONFIG_GUN_BARREL_STATUS, "").toString();
+    gunBarrelStatus = QVariant(_gunBarrelStatus).toBool();
 }
 
 void TDAConfig::saveTDAConfig()
