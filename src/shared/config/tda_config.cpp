@@ -80,6 +80,16 @@ void TDAConfig::setGunBarrelStatus(bool newGunBarrelStatus)
     gunBarrelStatus = newGunBarrelStatus;
 }
 
+double TDAConfig::getZoomScale() const
+{
+    return zoomScale;
+}
+
+void TDAConfig::setZoomScale(double newZoomScale)
+{
+    zoomScale = newZoomScale;
+}
+
 void TDAConfig::setup(const QString path)
 {
     QSettings configFile(path,QSettings::IniFormat);

@@ -21,6 +21,8 @@ public:
     void setGunCoverageStatus(bool newGunCoverageStatus);
     bool getGunBarrelStatus() const;
     void setGunBarrelStatus(bool newGunBarrelStatus);
+    double getZoomScale() const;
+    void setZoomScale(double newZoomScale);
     // BaseConfig interface
 public:
     void setup(const QString path) override;
@@ -35,6 +37,7 @@ private:
     bool headingMarkerStatus;
     bool gunCoverageStatus;
     bool gunBarrelStatus;
+    double zoomScale;
 };
 
 #endif // TDA_CONFIG_H
