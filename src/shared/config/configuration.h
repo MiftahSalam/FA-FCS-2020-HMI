@@ -40,8 +40,6 @@ private:
 
     TDAConfig *tdaConfig;
 
-public:
-    void saveConfig();
 };
 
 #endif // CONFIGURATION_H
