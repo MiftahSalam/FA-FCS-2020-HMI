@@ -49,8 +49,6 @@ private slots:
 
 signals:
     void signalOnCostumContextMenuRequest(const QPoint &pos);
-    void signalOnShowCompassObject(bool status);
-
 
 private:
    Ui::FrameTDA *ui;
@@ -89,6 +87,8 @@ private:
    int zoomScale2Int(zoomScale scale);
    zoomScale zoomInt2Scale(int scale);
    int cur_checked_zoom_scale;
+
+   void updateTDAConfig();
 
 };
 

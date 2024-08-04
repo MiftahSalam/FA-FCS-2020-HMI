@@ -43,6 +43,7 @@ FrameTDA::FrameTDA(QWidget *parent) :
     timer->start(1000);
 
     ZoomSubMenu = new QMenu("Zoom",this);
+    ZoomSubMenu->setStyleSheet("background-color: black;");
     cur_checked_zoom_scale = zoomScale2Int(Z_080);
 
     for (int i=0;i<Z_TOTAL;i++)
@@ -64,16 +65,16 @@ FrameTDA::FrameTDA(QWidget *parent) :
     GunCovAction->setCheckable(true);
     GunBarrelAction->setCheckable(true);
 
-    if (config->getTDAConfig()->getInstance("")->getCompassStatus() == "true")
+    if (config->getTDAConfig()->getInstance("")->getCompassStatus() == true)
         CompassAction->setChecked(true);
 
-    if (config->getTDAConfig()->getInstance("")->getGunCoverageStatus() == "true")
+    if (config->getTDAConfig()->getInstance("")->getGunCoverageStatus() == true)
         GunCovAction->setChecked(true);
 
-    if (config->getTDAConfig()->getInstance("")->getHeadingMarkerStatus() == "true")
+    if (config->getTDAConfig()->getInstance("")->getHeadingMarkerStatus() == true)
         HeadingMarkerAction->setChecked(true);
 
-    if (config->getTDAConfig()->getInstance("")->getGunBarrelStatus() == "true")
+    if (config->getTDAConfig()->getInstance("")->getGunBarrelStatus() == true)
         GunBarrelAction->setChecked(true);
 
     connect(this, SIGNAL(signalOnCostumContextMenuRequest(QPoint&pos)), this, SLOT(on_FrameTDA_customContextMenuRequested(QPoint&pos)));
@@ -81,13 +82,11 @@ FrameTDA::FrameTDA(QWidget *parent) :
     connect(HeadingMarkerAction, &QAction::triggered, this, &FrameTDA::onHeadingMarkerActionTriggrered);
     connect(GunCovAction, &QAction::triggered, this, &FrameTDA::onGunCovActionTriggered);
     connect(GunBarrelAction, &QAction::triggered, this, &FrameTDA::onGunBarrelActionTriggered);
-
-    connect(this, SIGNAL(signalOnShowCompassObject(bool)), compass, SLOT(OnShowCompass(bool)));
 }
 
 FrameTDA::~FrameTDA()
 {
-    config->getTDAConfig()->getInstance("")->saveTDAConfig();
+    updateTDAConfig();
     qDebug()<<"Save TDA Config";
     delete ui;
 }
@@ -130,6 +129,7 @@ void FrameTDA::timeOut()
 void FrameTDA::on_FrameTDA_customContextMenuRequested(const QPoint &pos)
 {
     QMenu *menu = new QMenu(this);
+    menu->setStyleSheet("background-color: black;");
 
     menu->addMenu(ZoomSubMenu);
     menu->addAction(CompassAction);
@@ -143,39 +143,44 @@ void FrameTDA::onCompassActionTriggered()
 {
     if (CompassAction->isChecked() == true)
     {
-        config->getTDAConfig()->getInstance("")->setCompassStatus("true");
+        config->getTDAConfig()->getInstance("")->setCompassStatus(true);
     }else{
-        config->getTDAConfig()->getInstance("")->setCompassStatus("false");
+        config->getTDAConfig()->getInstance("")->setCompassStatus(false);
     }
-    // config->getTDAConfig()->getInstance("")->saveTDAConfig();
+    updateTDAConfig();
 }
 
 void FrameTDA::onHeadingMarkerActionTriggrered()
 {
     if (HeadingMarkerAction->isChecked() == true)
     {
-        config->getTDAConfig()->getInstance("")->setHeadingMarkerStatus("true");
+        config->getTDAConfig()->getInstance("")->setHeadingMarkerStatus(true);
     }else{
-        config->getTDAConfig()->getInstance("")->setHeadingMarkerStatus("false");    }
+        config->getTDAConfig()->getInstance("")->setHeadingMarkerStatus(false);
+    }
+    updateTDAConfig();
 }
 
 void FrameTDA::onGunCovActionTriggered()
 {
     if (GunCovAction->isChecked() == true)
     {
-        config->getTDAConfig()->getInstance("")->setGunCoverageStatus("true");
+        config->getTDAConfig()->getInstance("")->setGunCoverageStatus(true);
     }else{
-        config->getTDAConfig()->getInstance("")->setGunCoverageStatus("false");
+        config->getTDAConfig()->getInstance("")->setGunCoverageStatus(false);
     }
+    updateTDAConfig();
 }
 
 void FrameTDA::onGunBarrelActionTriggered()
 {
     if (GunBarrelAction->isChecked() == true)
     {
-        config->getTDAConfig()->getInstance("")->setGunBarrelStatus("true");
+        config->getTDAConfig()->getInstance("")->setGunBarrelStatus(true);
     }else{
-        config->getTDAConfig()->getInstance("")->setGunBarrelStatus("false");    }
+        config->getTDAConfig()->getInstance("")->setGunBarrelStatus(false);
+    }
+    updateTDAConfig();
 }
 
 void FrameTDA::onZoomChange()
@@ -188,7 +193,6 @@ void FrameTDA::onZoomChange()
             cur_checked_zoom_scale = i;
         }
     }
-    QMessageBox::information(this, "Zoom", QString::number(cur_checked_zoom_scale)); // temp
     ZoomAction[cur_checked_zoom_scale]->setChecked(true);
     tdaScale = ZoomAction[cur_checked_zoom_scale]->text().remove(" NM").toDouble();
 }
@@ -285,5 +289,10 @@ FrameTDA::zoomScale FrameTDA::zoomInt2Scale(int scale)
         return Z_640;
     else
         return Z_TOTAL;
+}
+
+void FrameTDA::updateTDAConfig()
+{
+    config->getTDAConfig()->getInstance("")->saveTDAConfig();
 }
 

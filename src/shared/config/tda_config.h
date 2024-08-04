@@ -13,14 +13,14 @@ public:
 
     static TDAConfig *getInstance(const QString path);
 
-    QString getCompassStatus() const;
-    void setCompassStatus(QString newCompasStatus);
-    QString getHeadingMarkerStatus() const;
-    void setHeadingMarkerStatus(QString newHeadingMarkerStatus);
-    QString getGunCoverageStatus() const;
-    void setGunCoverageStatus(QString newGunCoverageStatus);
-    QString getGunBarrelStatus() const;
-    void setGunBarrelStatus(QString newGunBarrelStatus);
+    bool getCompassStatus() const;
+    void setCompassStatus(bool newCompasStatus);
+    bool getHeadingMarkerStatus() const;
+    void setHeadingMarkerStatus(bool newHeadingMarkerStatus);
+    bool getGunCoverageStatus() const;
+    void setGunCoverageStatus(bool newGunCoverageStatus);
+    bool getGunBarrelStatus() const;
+    void setGunBarrelStatus(bool newGunBarrelStatus);
     // BaseConfig interface
 public:
     void setup(const QString path) override;
@@ -31,10 +31,10 @@ protected:
 
 private:
     static TDAConfig *config;
-    QString compassStatus;
-    QString headingMarkerStatus;
-    QString gunCoverageStatus;
-    QString gunBarrelStatus;
+    bool compassStatus;
+    bool headingMarkerStatus;
+    bool gunCoverageStatus;
+    bool gunBarrelStatus;
 };
 
 #endif // TDA_CONFIG_H

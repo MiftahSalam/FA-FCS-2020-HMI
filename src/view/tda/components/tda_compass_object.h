@@ -14,9 +14,6 @@ public:
     // bool show_compass; // testCompass
     // TDAConfig *config = nullptr;
 
-public slots:
-    void OnShowCompass(bool status); //testCompass
-
 private:
     TDAConfig *tdaConfig;
 
