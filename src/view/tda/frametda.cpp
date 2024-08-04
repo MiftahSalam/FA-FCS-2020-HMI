@@ -42,42 +42,7 @@ FrameTDA::FrameTDA(QWidget *parent) :
 
     timer->start(1000);
 
-    ZoomSubMenu = new QMenu("Zoom",this);
-    ZoomSubMenu->setStyleSheet("background-color: black;");
-    QString _zoomScale = QString::number(config->getTDAConfig()->getInstance("")->getZoomScale());
-    // cur_checked_zoom_scale = zoomScale2Int(Z_080);
-    cur_checked_zoom_scale = zoomString2Scale(_zoomScale);
-
-    for (int i=0;i<Z_TOTAL;i++)
-    {
-        ZoomAction[i] = new QAction(zoomScale2String(zoomInt2Scale(i)),this);
-        ZoomSubMenu->addAction(ZoomAction[i]);
-        ZoomAction[i]->setCheckable(true);
-        connect(ZoomAction[i], &QAction::triggered, this, &FrameTDA::onZoomChange);
-    }
-    ZoomAction[cur_checked_zoom_scale]->setChecked(true);
-
-    CompassAction = new QAction("Show Compass", this);
-    HeadingMarkerAction = new QAction("Show Heading Marker", this);
-    GunCovAction = new QAction("Show Gun Coverage", this);
-    GunBarrelAction = new QAction("Show Gun Barrel",this);
-
-    CompassAction->setCheckable(true);
-    HeadingMarkerAction->setCheckable(true);
-    GunCovAction->setCheckable(true);
-    GunBarrelAction->setCheckable(true);
-
-    if (config->getTDAConfig()->getInstance("")->getCompassStatus() == true)
-        CompassAction->setChecked(true);
-
-    if (config->getTDAConfig()->getInstance("")->getGunCoverageStatus() == true)
-        GunCovAction->setChecked(true);
-
-    if (config->getTDAConfig()->getInstance("")->getHeadingMarkerStatus() == true)
-        HeadingMarkerAction->setChecked(true);
-
-    if (config->getTDAConfig()->getInstance("")->getGunBarrelStatus() == true)
-        GunBarrelAction->setChecked(true);
+    setupContextMenu();
 
     connect(this, SIGNAL(signalOnCostumContextMenuRequest(QPoint&pos)), this, SLOT(on_FrameTDA_customContextMenuRequested(QPoint&pos)));
     connect(CompassAction, &QAction::triggered, this, &FrameTDA::onCompassActionTriggered);
@@ -288,4 +253,45 @@ FrameTDA::zoomScale FrameTDA::zoomInt2Scale(int scale)
         return Z_640;
     else
         return Z_TOTAL;
+}
+
+void FrameTDA::setupContextMenu()
+{
+    ZoomSubMenu = new QMenu("Zoom",this);
+    ZoomSubMenu->setStyleSheet("background-color: black;");
+    QString _zoomScale = QString::number(config->getTDAConfig()->getInstance("")->getZoomScale());
+    // cur_checked_zoom_scale = zoomScale2Int(Z_080);
+    cur_checked_zoom_scale = zoomString2Scale(_zoomScale);
+
+    for (int i=0;i<Z_TOTAL;i++)
+    {
+        ZoomAction[i] = new QAction(zoomScale2String(zoomInt2Scale(i)),this);
+        ZoomSubMenu->addAction(ZoomAction[i]);
+        ZoomAction[i]->setCheckable(true);
+        connect(ZoomAction[i], &QAction::triggered, this, &FrameTDA::onZoomChange);
+    }
+    ZoomAction[cur_checked_zoom_scale]->setChecked(true);
+
+    CompassAction = new QAction("Show Compass", this);
+    HeadingMarkerAction = new QAction("Show Heading Marker", this);
+    GunCovAction = new QAction("Show Gun Coverage", this);
+    GunBarrelAction = new QAction("Show Gun Barrel",this);
+
+    CompassAction->setCheckable(true);
+    HeadingMarkerAction->setCheckable(true);
+    GunCovAction->setCheckable(true);
+    GunBarrelAction->setCheckable(true);
+
+    if (config->getTDAConfig()->getInstance("")->getCompassStatus() == true)
+        CompassAction->setChecked(true);
+
+    if (config->getTDAConfig()->getInstance("")->getGunCoverageStatus() == true)
+        GunCovAction->setChecked(true);
+
+    if (config->getTDAConfig()->getInstance("")->getHeadingMarkerStatus() == true)
+        HeadingMarkerAction->setChecked(true);
+
+    if (config->getTDAConfig()->getInstance("")->getGunBarrelStatus() == true)
+        GunBarrelAction->setChecked(true);
+
 }

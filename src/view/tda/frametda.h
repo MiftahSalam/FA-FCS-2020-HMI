@@ -88,6 +88,7 @@ private:
    zoomScale zoomInt2Scale(int scale);
    int cur_checked_zoom_scale;
 
+   void setupContextMenu();
 
 
 };
