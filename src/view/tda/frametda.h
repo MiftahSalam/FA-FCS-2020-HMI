@@ -83,7 +83,7 @@ private:
    QAction *ZoomAction[Z_TOTAL];
 
    QString zoomScale2String(zoomScale scale);
-   zoomScale zoomStrig2Scale(QString scale);
+   zoomScale zoomString2Scale(QString scale);
    int zoomScale2Int(zoomScale scale);
    zoomScale zoomInt2Scale(int scale);
    int cur_checked_zoom_scale;

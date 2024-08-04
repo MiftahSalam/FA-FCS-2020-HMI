@@ -23,6 +23,7 @@ void TDAGunCoverageObject::Draw(QPainter *painter, const int &side, const int &w
 
     if(tdaConfig->getInstance("")->getGunCoverageStatus() == true)
     {
+        tdaScale = tdaConfig->getInstance("")->getZoomScale();
         float gun_orientation = repoGunCov->GetGunCoverage()->getGunOrientation();
         float blind_arc = repoGunCov->GetGunCoverage()->getBlindArc();
         float max_range = repoGunCov->GetGunCoverage()->getMax_range();

@@ -11,6 +11,7 @@ const QString CONFIG_COMPASS_STATUS = "tda/show_compass";
 const QString CONFIG_HEADING_MARKER_STATUS = "tda/show_heading_marker";
 const QString CONFIG_GUN_COVERAGE_STATUS = "tda/show_gun_coverage";
 const QString CONFIG_GUN_BARREL_STATUS = "tda/show_gun_barrel";
+const QString CONFIG_ZOOM_SCALE = "tda/zoom_scale";
 
 TDAConfig *TDAConfig::config = nullptr;
 
@@ -102,6 +103,8 @@ void TDAConfig::setup(const QString path)
     gunCoverageStatus = QVariant(_gunCoverageStatus).toBool();
     QString _gunBarrelStatus = configFile.value(CONFIG_GUN_BARREL_STATUS, "").toString();
     gunBarrelStatus = QVariant(_gunBarrelStatus).toBool();
+    QString _zoomScale = configFile.value(CONFIG_ZOOM_SCALE, "").toString();
+    zoomScale = _zoomScale.toDouble();
 }
 
 void TDAConfig::saveTDAConfig()
@@ -114,6 +117,7 @@ void TDAConfig::saveTDAConfig()
     configFile.setValue("show_heading_marker", QVariant(headingMarkerStatus).toString());
     configFile.setValue("show_gun_coverage", QVariant(gunCoverageStatus).toString());
     configFile.setValue("show_gun_barrel", QVariant(gunBarrelStatus).toString());
+    configFile.setValue("zoom_scale", QString::number(zoomScale));
     configFile.endGroup();
 
     // qDebug()<<"Save TDA Config";

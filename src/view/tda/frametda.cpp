@@ -44,7 +44,9 @@ FrameTDA::FrameTDA(QWidget *parent) :
 
     ZoomSubMenu = new QMenu("Zoom",this);
     ZoomSubMenu->setStyleSheet("background-color: black;");
-    cur_checked_zoom_scale = zoomScale2Int(Z_080);
+    QString _zoomScale = QString::number(config->getTDAConfig()->getInstance("")->getZoomScale());
+    // cur_checked_zoom_scale = zoomScale2Int(Z_080);
+    cur_checked_zoom_scale = zoomString2Scale(_zoomScale);
 
     for (int i=0;i<Z_TOTAL;i++)
     {
@@ -195,6 +197,8 @@ void FrameTDA::onZoomChange()
     }
     ZoomAction[cur_checked_zoom_scale]->setChecked(true);
     tdaScale = ZoomAction[cur_checked_zoom_scale]->text().remove(" NM").toDouble();
+    config->getTDAConfig()->getInstance("")->setZoomScale(tdaScale);
+    updateTDAConfig();
 }
 
 QString FrameTDA::zoomScale2String(zoomScale scale)
@@ -221,25 +225,25 @@ QString FrameTDA::zoomScale2String(zoomScale scale)
         return "0";
 }
 
-FrameTDA::zoomScale FrameTDA::zoomStrig2Scale(QString scale)
+FrameTDA::zoomScale FrameTDA::zoomString2Scale(QString scale)
 {
-    if(scale=="0.25 NM")
+    if(scale=="0.25")
         return Z_025;
-    else if(scale=="0.5 NM")
+    else if(scale=="0.5")
         return Z_050;
-    else if(scale=="1 NM")
+    else if(scale=="1")
         return Z_010;
-    else if(scale=="2 NM")
+    else if(scale=="2")
         return Z_020;
-    else if(scale=="4 NM")
+    else if(scale=="4")
         return Z_040;
-    else if(scale=="8 NM")
+    else if(scale=="8")
         return Z_080;
-    else if(scale=="16 NM")
+    else if(scale=="16")
         return Z_160;
-    else if(scale=="32 NM")
+    else if(scale=="32")
         return Z_320;
-    else if(scale=="64 NM")
+    else if(scale=="64")
         return Z_640;
     else
         return Z_TOTAL;

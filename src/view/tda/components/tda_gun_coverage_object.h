@@ -22,7 +22,7 @@ private:
     OSDInertiaRepository *repoInertia;
     GunCoverageRepository *repoGunCov;
     TDAConfig *tdaConfig;
-    int tdaScale = 8.0;
+    double tdaScale;
 
     // TDAZoomableObjectBase interface
 public slots:
