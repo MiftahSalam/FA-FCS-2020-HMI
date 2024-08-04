@@ -88,7 +88,7 @@ FrameTDA::FrameTDA(QWidget *parent) :
 
 FrameTDA::~FrameTDA()
 {
-    updateTDAConfig();
+    config->getTDAConfig()->getInstance("")->saveTDAConfig();
     qDebug()<<"Save TDA Config";
     delete ui;
 }
@@ -149,7 +149,6 @@ void FrameTDA::onCompassActionTriggered()
     }else{
         config->getTDAConfig()->getInstance("")->setCompassStatus(false);
     }
-    updateTDAConfig();
 }
 
 void FrameTDA::onHeadingMarkerActionTriggrered()
@@ -160,7 +159,6 @@ void FrameTDA::onHeadingMarkerActionTriggrered()
     }else{
         config->getTDAConfig()->getInstance("")->setHeadingMarkerStatus(false);
     }
-    updateTDAConfig();
 }
 
 void FrameTDA::onGunCovActionTriggered()
@@ -171,7 +169,6 @@ void FrameTDA::onGunCovActionTriggered()
     }else{
         config->getTDAConfig()->getInstance("")->setGunCoverageStatus(false);
     }
-    updateTDAConfig();
 }
 
 void FrameTDA::onGunBarrelActionTriggered()
@@ -182,7 +179,6 @@ void FrameTDA::onGunBarrelActionTriggered()
     }else{
         config->getTDAConfig()->getInstance("")->setGunBarrelStatus(false);
     }
-    updateTDAConfig();
 }
 
 void FrameTDA::onZoomChange()
@@ -198,7 +194,6 @@ void FrameTDA::onZoomChange()
     ZoomAction[cur_checked_zoom_scale]->setChecked(true);
     tdaScale = ZoomAction[cur_checked_zoom_scale]->text().remove(" NM").toDouble();
     config->getTDAConfig()->getInstance("")->setZoomScale(tdaScale);
-    updateTDAConfig();
 }
 
 QString FrameTDA::zoomScale2String(zoomScale scale)
@@ -294,9 +289,3 @@ FrameTDA::zoomScale FrameTDA::zoomInt2Scale(int scale)
     else
         return Z_TOTAL;
 }
-
-void FrameTDA::updateTDAConfig()
-{
-    config->getTDAConfig()->getInstance("")->saveTDAConfig();
-}
-

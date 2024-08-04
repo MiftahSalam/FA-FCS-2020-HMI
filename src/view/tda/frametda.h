@@ -66,7 +66,7 @@ private:
         Z_TOTAL
     };
 
-   double tdaScale = 8.0;
+   double tdaScale;
 
    QList<TDAObjectBase*> objectItems;
    OSDRepository *osdRepo;
@@ -88,7 +88,7 @@ private:
    zoomScale zoomInt2Scale(int scale);
    int cur_checked_zoom_scale;
 
-   void updateTDAConfig();
+
 
 };
 

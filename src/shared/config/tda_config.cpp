@@ -1,5 +1,4 @@
 #include "tda_config.h"
-#include "src/shared/common/errors/err_messaging.h"
 #include "src/shared/common/errors/err_open_file.h"
 
 #include <QDebug>
@@ -95,16 +94,16 @@ void TDAConfig::setup(const QString path)
 {
     QSettings configFile(path,QSettings::IniFormat);
 
-    QString _compassStatus = configFile.value(CONFIG_COMPASS_STATUS, "").toString();
-    compassStatus = QVariant(_compassStatus).toBool();
-    QString _headingMarkerStatus = configFile.value(CONFIG_HEADING_MARKER_STATUS, "").toString();
-    headingMarkerStatus = QVariant(_headingMarkerStatus).toBool();
-    QString _gunCoverageStatus = configFile.value(CONFIG_GUN_COVERAGE_STATUS, "").toString();
-    gunCoverageStatus = QVariant(_gunCoverageStatus).toBool();
-    QString _gunBarrelStatus = configFile.value(CONFIG_GUN_BARREL_STATUS, "").toString();
-    gunBarrelStatus = QVariant(_gunBarrelStatus).toBool();
-    QString _zoomScale = configFile.value(CONFIG_ZOOM_SCALE, "").toString();
-    zoomScale = _zoomScale.toDouble();
+    compassStatus = configFile.value(CONFIG_COMPASS_STATUS, "").toBool();
+    // compassStatus = QVariant(_compassStatus).toBool();
+    headingMarkerStatus = configFile.value(CONFIG_HEADING_MARKER_STATUS, "").toBool();
+    // headingMarkerStatus = QVariant(_headingMarkerStatus).toBool();
+    gunCoverageStatus = configFile.value(CONFIG_GUN_COVERAGE_STATUS, "").toBool();
+    // gunCoverageStatus = QVariant(_gunCoverageStatus).toBool();
+    gunBarrelStatus = configFile.value(CONFIG_GUN_BARREL_STATUS, "").toBool();
+    // gunBarrelStatus = QVariant(_gunBarrelStatus).toBool();
+    zoomScale = configFile.value(CONFIG_ZOOM_SCALE, "").toDouble();
+    // zoomScale = _zoomScale.toDouble();
 }
 
 void TDAConfig::saveTDAConfig()
@@ -113,11 +112,11 @@ void TDAConfig::saveTDAConfig()
     QSettings configFile(COMMON_CONFIG_PATH,QSettings::IniFormat);
 
     configFile.beginGroup("tda");
-    configFile.setValue("show_compass", QVariant(compassStatus).toString());
-    configFile.setValue("show_heading_marker", QVariant(headingMarkerStatus).toString());
-    configFile.setValue("show_gun_coverage", QVariant(gunCoverageStatus).toString());
-    configFile.setValue("show_gun_barrel", QVariant(gunBarrelStatus).toString());
-    configFile.setValue("zoom_scale", QString::number(zoomScale));
+    configFile.setValue("show_compass",(compassStatus));
+    configFile.setValue("show_heading_marker",(headingMarkerStatus));
+    configFile.setValue("show_gun_coverage",(gunCoverageStatus));
+    configFile.setValue("show_gun_barrel", (gunBarrelStatus));
+    configFile.setValue("zoom_scale", (zoomScale));
     configFile.endGroup();
 
     // qDebug()<<"Save TDA Config";

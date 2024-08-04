@@ -3,7 +3,6 @@
 #include "qmath.h"
 #include <QTextStream>
 #include <cmath>
-#include <QMessageBox>
 
 TdaCompassObject::TdaCompassObject(QObject *parent, TDAConfig *config): TDAObjectBase(parent), tdaConfig(config)
 {
