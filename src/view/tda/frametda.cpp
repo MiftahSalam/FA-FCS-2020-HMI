@@ -39,11 +39,20 @@ FrameTDA::FrameTDA(QWidget *parent) :
     TDAGunBarrelObject *gunBarrel = new TDAGunBarrelObject (this, osdRepo->getRepoOSDInertia(), gunRepo->getRepoGunFeedback(), config->getTDAConfig());
     TDATracksObject *tracksObject = new TDATracksObject(this);
 
+    statusBarMouse = new QStatusBar(this);
+    statusBarMouse->setObjectName(QString::fromUtf8("statusBarMouse"));
+    statusBarSelectedTrack = new QStatusBar(this);
+    statusBarSelectedTrack->setObjectName(QString::fromUtf8("statusBarSelectedTrack"));
+    statusBarSelectedTrack->hide();
+
     objectItems << compass << tracksObject << headingMarker << gunBarrel << gunCoverage;
 
     timer->start(1000);
 
     setupContextMenu();
+
+    setMouseTracking(true);
+
 }
 
 FrameTDA::~FrameTDA()
@@ -78,6 +87,7 @@ void FrameTDA::mousePressEvent(QMouseEvent *event)
         emit signalOnCostumContextMenuRequest(event->pos());
     }
 }
+
 
 void FrameTDA::timeOut()
 {
@@ -159,6 +169,23 @@ void FrameTDA::onZoomChange()
     tdaScale = ZoomAction[cur_checked_zoom_scale]->text().remove(" NM").toDouble();
     config->getTDAConfig()->getInstance("")->setZoomScale(tdaScale);
     update();
+}
+
+void FrameTDA::mouseMoveEvent(QMouseEvent *event)
+{
+    QPoint os_pos((width())/2,(height()/2));
+    double range_pixel_x = os_pos.x()-event->pos().x();
+    double range_pixel_y = os_pos.y()-event->pos().y();
+    double bearing = atan2(range_pixel_y,range_pixel_x);
+    bearing = (bearing*180/M_PI)-90;
+    if(bearing<0)
+        bearing+=360;
+
+    double range = sqrt(pow(range_pixel_y,2)+pow(range_pixel_x,2)); //pixel
+    range = pixel2Range(range); //NM
+
+    statusBarMouse->showMessage(QString("Range : %1, Bearing : %2").arg(QString::number(range,'f',1)).arg(QString::number(bearing,'f',1)),2000);
+    statusBarMouse->setGeometry(10,height()-40,200,20);
 }
 
 QString FrameTDA::zoomScale2String(zoomScale scale)
@@ -259,7 +286,8 @@ void FrameTDA::setupContextMenu()
 {
     ZoomSubMenu = new QMenu("Zoom",this);
     ZoomSubMenu->setStyleSheet("background-color: black;");
-    QString _zoomScale = QString::number(config->getTDAConfig()->getInstance("")->getZoomScale());
+    tdaScale = config->getTDAConfig()->getInstance("")->getZoomScale();
+    QString _zoomScale = QString::number(tdaScale);
     // cur_checked_zoom_scale = zoomScale2Int(Z_080);
     cur_checked_zoom_scale = zoomString2Scale(_zoomScale);
 
@@ -300,4 +328,15 @@ void FrameTDA::setupContextMenu()
     connect(GunCovAction, &QAction::triggered, this, &FrameTDA::onGunCovActionTriggered);
     connect(GunBarrelAction, &QAction::triggered, this, &FrameTDA::onGunBarrelActionTriggered);
 
+}
+
+int FrameTDA::range2Pixel(double range)
+{
+    return static_cast<int>(range*(width()/(2*tdaScale)));
+}
+
+double FrameTDA::pixel2Range(int pixel)
+{
+    qDebug()<<pixel<<tdaScale<<width();
+    return 2*tdaScale*pixel/width();
 }

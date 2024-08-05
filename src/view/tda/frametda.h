@@ -17,6 +17,7 @@
 #include "src/infra/store/gun/gun_repository.h"
 // #include "src/shared/config/tda_config.h"
 #include "src/shared/config/configuration.h"
+// #include "rceventhandler.h"
 
 
 // ==== TDA ==== //
@@ -35,6 +36,7 @@ public:
  protected:
     void paintEvent(QPaintEvent *event) override;
     void mousePressEvent(QMouseEvent *event) override;
+    void mouseMoveEvent(QMouseEvent *event) override;
 
 private slots:
     void timeOut();
@@ -89,6 +91,13 @@ private:
    int cur_checked_zoom_scale;
 
    void setupContextMenu();
+
+   QStatusBar *statusBarMouse;
+   QStatusBar *statusBarSelectedTrack;
+
+   int range2Pixel(double range);
+   double pixel2Range(int pixel);
+
 
 
 };
