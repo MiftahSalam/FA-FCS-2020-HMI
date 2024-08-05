@@ -31,6 +31,7 @@ FrameTDA::FrameTDA(QWidget *parent) :
     //TODO: setup popup menu
     osdRepo = DI::getInstance()->getRepoOSD(); //temp
     gunRepo = DI::getInstance()->getRepoGun();
+    config = DI::getInstance()->getConfig();
 
     TdaCompassObject *compass = new TdaCompassObject(this, config->getTDAConfig());
     TDAGunCoverageObject *gunCoverage = new TDAGunCoverageObject(this, osdRepo->getRepoOSDInertia(), gunRepo->getRepoGunCoverage(), config->getTDAConfig());
@@ -43,12 +44,6 @@ FrameTDA::FrameTDA(QWidget *parent) :
     timer->start(1000);
 
     setupContextMenu();
-
-    connect(this, SIGNAL(signalOnCostumContextMenuRequest(QPoint&pos)), this, SLOT(on_FrameTDA_customContextMenuRequested(QPoint&pos)));
-    connect(CompassAction, &QAction::triggered, this, &FrameTDA::onCompassActionTriggered);
-    connect(HeadingMarkerAction, &QAction::triggered, this, &FrameTDA::onHeadingMarkerActionTriggrered);
-    connect(GunCovAction, &QAction::triggered, this, &FrameTDA::onGunCovActionTriggered);
-    connect(GunBarrelAction, &QAction::triggered, this, &FrameTDA::onGunBarrelActionTriggered);
 }
 
 FrameTDA::~FrameTDA()
@@ -293,5 +288,11 @@ void FrameTDA::setupContextMenu()
 
     if (config->getTDAConfig()->getInstance("")->getGunBarrelStatus() == true)
         GunBarrelAction->setChecked(true);
+
+    connect(this, SIGNAL(signalOnCostumContextMenuRequest(QPoint&pos)), this, SLOT(on_FrameTDA_customContextMenuRequested(QPoint&pos)));
+    connect(CompassAction, &QAction::triggered, this, &FrameTDA::onCompassActionTriggered);
+    connect(HeadingMarkerAction, &QAction::triggered, this, &FrameTDA::onHeadingMarkerActionTriggrered);
+    connect(GunCovAction, &QAction::triggered, this, &FrameTDA::onGunCovActionTriggered);
+    connect(GunBarrelAction, &QAction::triggered, this, &FrameTDA::onGunBarrelActionTriggered);
 
 }
