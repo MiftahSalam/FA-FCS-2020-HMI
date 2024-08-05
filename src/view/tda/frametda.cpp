@@ -109,6 +109,7 @@ void FrameTDA::onCompassActionTriggered()
     }else{
         config->getTDAConfig()->getInstance("")->setCompassStatus(false);
     }
+    update();
 }
 
 void FrameTDA::onHeadingMarkerActionTriggrered()
@@ -119,6 +120,7 @@ void FrameTDA::onHeadingMarkerActionTriggrered()
     }else{
         config->getTDAConfig()->getInstance("")->setHeadingMarkerStatus(false);
     }
+    update();
 }
 
 void FrameTDA::onGunCovActionTriggered()
@@ -129,6 +131,7 @@ void FrameTDA::onGunCovActionTriggered()
     }else{
         config->getTDAConfig()->getInstance("")->setGunCoverageStatus(false);
     }
+    update();
 }
 
 void FrameTDA::onGunBarrelActionTriggered()
@@ -139,6 +142,7 @@ void FrameTDA::onGunBarrelActionTriggered()
     }else{
         config->getTDAConfig()->getInstance("")->setGunBarrelStatus(false);
     }
+    update();
 }
 
 void FrameTDA::onZoomChange()
@@ -154,6 +158,7 @@ void FrameTDA::onZoomChange()
     ZoomAction[cur_checked_zoom_scale]->setChecked(true);
     tdaScale = ZoomAction[cur_checked_zoom_scale]->text().remove(" NM").toDouble();
     config->getTDAConfig()->getInstance("")->setZoomScale(tdaScale);
+    update();
 }
 
 QString FrameTDA::zoomScale2String(zoomScale scale)
