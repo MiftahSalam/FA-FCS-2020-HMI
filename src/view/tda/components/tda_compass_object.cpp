@@ -4,19 +4,19 @@
 #include <QTextStream>
 #include <cmath>
 
-TdaCompassObject::TdaCompassObject(QObject *parent): TDAObjectBase(parent)
+TdaCompassObject::TdaCompassObject(QObject *parent, TDAConfig *config): TDAObjectBase(parent), tdaConfig(config)
 {
 
 }
-
 
 void TdaCompassObject::Draw(QPainter *painter, const int &side, const int &width, const int &height, const QPoint &off_center)
 {
     QPoint center_point = QPoint(width/2,height/2);
 
     //TODO: get from config
-    const bool show_compass = true;
-    if(show_compass)
+    // const bool show_compass = true;
+    // bool show_compass;
+    if (tdaConfig->getInstance("")->getCompassStatus() == true)
     {
         painter->translate(center_point);
 

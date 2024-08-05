@@ -4,12 +4,18 @@
 #include <QObject>
 
 #include "tda_object_base.h"
+#include "src/shared/config/tda_config.h"
 
 class TdaCompassObject: public TDAObjectBase
 {
     Q_OBJECT
 public:
-    TdaCompassObject(QObject* parent = nullptr);
+    TdaCompassObject(QObject* parent = nullptr, TDAConfig *config = nullptr);
+    // bool show_compass; // testCompass
+    // TDAConfig *config = nullptr;
+
+private:
+    TDAConfig *tdaConfig;
 
     // TDAObjectBase interface
 public:

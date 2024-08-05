@@ -9,6 +9,7 @@ Configuration::Configuration()
     osdCmsConfig = OSDCmsConfig::getInstance(COMMON_CONFIG_PATH);
 //    amqpConfig = AMQPConfig::getInstance(COMMON_CONFIG_PATH);
     tcpMessageConfig = MessagingTcpConfig::getInstance(COMMON_CONFIG_PATH);
+    tdaConfig = TDAConfig::getInstance(COMMON_CONFIG_PATH);
 }
 
 OSDCmsConfig *Configuration::getOsdCmsConfig() const
@@ -21,6 +22,10 @@ MessagingTcpConfig *Configuration::getTcpMessageConfig() const
     return tcpMessageConfig;
 }
 
+TDAConfig *Configuration::getTDAConfig() const
+{
+    return tdaConfig;
+}
 //AMQPConfig *Configuration::getAmqpConfig() const
 //{
 //    return amqpConfig;

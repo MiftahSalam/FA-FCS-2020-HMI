@@ -84,6 +84,7 @@ SOURCES += \
     src/shared/config/configuration.cpp \
     src/shared/config/messaging_tcp_config.cpp \
     src/shared/config/osd_cms_config.cpp \
+    src/shared/config/tda_config.cpp \
     src/shared/utils/track/track_utils.cpp \
     src/shared/utils/utils.cpp \
     src/usecase/engagement/cms/engagement_data_correction_40mm_service.cpp \
@@ -237,6 +238,7 @@ HEADERS += \
     src/shared/config/configuration.h \
     src/shared/config/messaging_tcp_config.h \
     src/shared/config/osd_cms_config.h \
+    src/shared/config/tda_config.h \
     src/shared/utils/track/track_utils.h \
     src/shared/utils/utils.h \
     src/usecase/engagement/cms/engagement_data_correction_40mm_service.h \
