@@ -30,7 +30,7 @@ void TDAGunCoverageObject::Draw(QPainter *painter, const int &side, const int &w
         float currHeading = repoInertia->GetInertia()->heading();
 
         int span = 360-blind_arc;
-        int range2pixel = (int)(max_range*(width/(2*tdaScale)));
+        int range2pixel = (int)(max_range*(side/(tdaScale)));
         int gun_coveragePixel = 2*range2pixel;
 
         painter->translate(center_point);

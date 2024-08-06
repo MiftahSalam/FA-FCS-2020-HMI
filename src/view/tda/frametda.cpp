@@ -332,11 +332,13 @@ void FrameTDA::setupContextMenu()
 
 int FrameTDA::range2Pixel(double range)
 {
-    return static_cast<int>(range*(width()/(2*tdaScale)));
+    int side = qMin(this->width(), this->height()) / 2;
+    return static_cast<int>(range*(side/(tdaScale)));
 }
 
 double FrameTDA::pixel2Range(int pixel)
 {
+    int side = qMin(this->width(), this->height()) / 2;
     qDebug()<<pixel<<tdaScale<<width();
-    return 2*tdaScale*pixel/width();
+    return tdaScale*pixel/side;
 }
