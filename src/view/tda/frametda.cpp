@@ -192,8 +192,8 @@ void FrameTDA::mouseMoveEvent(QMouseEvent *event)
     statusBarMousePolar->showMessage(QString("Range : %1, Bearing : %2").arg(QString::number(range,'f',1)).arg(QString::number(bearing,'f',1)),2000);
     statusBarMousePolar->setGeometry(10,height()-40,200,20);
 
-    statusBarMouseLatLon->showMessage(QString("Latitude : %1, Longitude : %2").arg(Utils::latDecToStringDegree(gps.y())).arg(Utils::latDecToStringDegree(gps.x())),2000);
-    statusBarMouseLatLon->setGeometry(10,height()-25,250,20);
+    statusBarMouseLatLon->showMessage(QString("Latitude : %1, Longitude : %2").arg(Utils::latDecToStringDegree(gps.y())).arg(Utils::lonDecToStringDegree(gps.x())),2000);
+    statusBarMouseLatLon->setGeometry(10,height()-25,280,20);
 }
 
 QString FrameTDA::zoomScale2String(zoomScale scale)
@@ -354,11 +354,14 @@ double FrameTDA::pixel2Range(int pixel)
 QPointF FrameTDA::pixToGPS(const int pos_x, const int pos_y, const int vp_width, const int vp_height, const double vp_range, const double own_lat, const double own_lon)
 {
     QPoint screen_middle(vp_width/2,vp_height/2);
-    QPointF event_pos_scaled(pos_x,pos_y);
-    QLineF line(screen_middle, event_pos_scaled);
-    double r_mouse_pix, lat, lon;
-    double angle = line.angle()+90.;
+    double range_pixel_x = screen_middle.x()-pos_x;
+    double range_pixel_y = screen_middle.y()-pos_y;
+    double angle = atan2(range_pixel_y,range_pixel_x);
+    double lat, lon;
     const int MAX_PIX = qMin(vp_width/2,vp_height/2);
+    double r_mouse_pix = sqrt(pow(range_pixel_y,2)+pow(range_pixel_x,2)); //pixel
+
+    angle = (angle*180/M_PI)-90;
 
     while (angle >=360. || angle < 0. ) {
         if(angle >= 360.)
@@ -367,7 +370,7 @@ QPointF FrameTDA::pixToGPS(const int pos_x, const int pos_y, const int vp_width,
             angle += 360.;
     }
 
-    r_mouse_pix = static_cast<int>(line.length());
+//    r_mouse_pix = static_cast<int>(line.length());
     lat = own_lat +
             static_cast<double>(r_mouse_pix) / static_cast<double>(MAX_PIX) * vp_range * cos(M_PI*angle/180.) / 60. / 1852.;
     lon = own_lon +
