@@ -1,5 +1,6 @@
 #include "frametda.h"
 #include "src/di/di.h"
+#include "src/shared/utils/utils.h"
 #include "src/view/tda/components/tda_compass_object.h"
 #include "src/view/tda/components/tda_gun_coverage_object.h"
 #include "src/view/tda/components/tda_heading_marker_object.h"
@@ -24,11 +25,6 @@ FrameTDA::FrameTDA(QWidget *parent) :
     timer = new QTimer(this);
     connect(timer, &QTimer::timeout, this, &FrameTDA::timeOut);
 
-    //TODO: setup status bar (mouse & track selected)
-
-    //TODO: setup event filter
-
-    //TODO: setup popup menu
     osdRepo = DI::getInstance()->getRepoOSD(); //temp
     gunRepo = DI::getInstance()->getRepoGun();
     config = DI::getInstance()->getConfig();
@@ -39,20 +35,26 @@ FrameTDA::FrameTDA(QWidget *parent) :
     TDAGunBarrelObject *gunBarrel = new TDAGunBarrelObject (this, osdRepo->getRepoOSDInertia(), gunRepo->getRepoGunFeedback(), config->getTDAConfig());
     TDATracksObject *tracksObject = new TDATracksObject(this);
 
-    statusBarMouse = new QStatusBar(this);
-    statusBarMouse->setObjectName(QString::fromUtf8("statusBarMouse"));
+    //setup status bar (mouse & track selected)
+    statusBarMousePolar = new QStatusBar(this);
+    statusBarMousePolar->setObjectName(QString::fromUtf8("statusBarMousePolar"));
+    statusBarMouseLatLon = new QStatusBar(this);
+    statusBarMouseLatLon->setObjectName(QString::fromUtf8("statusBarMouseLatLon"));
     statusBarSelectedTrack = new QStatusBar(this);
     statusBarSelectedTrack->setObjectName(QString::fromUtf8("statusBarSelectedTrack"));
     statusBarSelectedTrack->hide();
 
     objectItems << compass << tracksObject << headingMarker << gunBarrel << gunCoverage;
 
-    timer->start(1000);
+    //temporary
+    osdRepo->getRepoOSDPosition()->SetPosition(OSDPositionEntity(0,0, "", "", OSD_MODE::AUTO));
 
+    //setup popup menu
     setupContextMenu();
 
     setMouseTracking(true);
 
+    timer->start(1000);
 }
 
 FrameTDA::~FrameTDA()
@@ -184,8 +186,14 @@ void FrameTDA::mouseMoveEvent(QMouseEvent *event)
     double range = sqrt(pow(range_pixel_y,2)+pow(range_pixel_x,2)); //pixel
     range = pixel2Range(range); //NM
 
-    statusBarMouse->showMessage(QString("Range : %1, Bearing : %2").arg(QString::number(range,'f',1)).arg(QString::number(bearing,'f',1)),2000);
-    statusBarMouse->setGeometry(10,height()-40,200,20);
+    const OSDPositionEntity* ownPos = osdRepo->getRepoOSDPosition()->GetPosition();
+    QPointF gps = pixToGPS(event->pos().x(), event->pos().y(), width(), height(), tdaScale*1853., ownPos->latitude(), ownPos->longitude());
+
+    statusBarMousePolar->showMessage(QString("Range : %1, Bearing : %2").arg(QString::number(range,'f',1)).arg(QString::number(bearing,'f',1)),2000);
+    statusBarMousePolar->setGeometry(10,height()-40,200,20);
+
+    statusBarMouseLatLon->showMessage(QString("Latitude : %1, Longitude : %2").arg(Utils::latDecToStringDegree(gps.y())).arg(Utils::latDecToStringDegree(gps.x())),2000);
+    statusBarMouseLatLon->setGeometry(10,height()-25,250,20);
 }
 
 QString FrameTDA::zoomScale2String(zoomScale scale)
@@ -341,4 +349,34 @@ double FrameTDA::pixel2Range(int pixel)
     int side = qMin(this->width(), this->height()) / 2;
     qDebug()<<pixel<<tdaScale<<width();
     return tdaScale*pixel/side;
+}
+
+QPointF FrameTDA::pixToGPS(const int pos_x, const int pos_y, const int vp_width, const int vp_height, const double vp_range, const double own_lat, const double own_lon)
+{
+    QPoint screen_middle(vp_width/2,vp_height/2);
+    QPointF event_pos_scaled(pos_x,pos_y);
+    QLineF line(screen_middle, event_pos_scaled);
+    double r_mouse_pix, lat, lon;
+    double angle = line.angle()+90.;
+    const int MAX_PIX = qMin(vp_width/2,vp_height/2);
+
+    while (angle >=360. || angle < 0. ) {
+        if(angle >= 360.)
+            angle -= 360.;
+        if(angle < 0.)
+            angle += 360.;
+    }
+
+    r_mouse_pix = static_cast<int>(line.length());
+    lat = own_lat +
+            static_cast<double>(r_mouse_pix) / static_cast<double>(MAX_PIX) * vp_range * cos(M_PI*angle/180.) / 60. / 1852.;
+    lon = own_lon +
+            static_cast<double>(r_mouse_pix) / static_cast<double>(MAX_PIX) * vp_range * sin(M_PI*angle/180.) /
+            cos(M_PI*own_lat/180.) / 60. / 1852.;
+
+    QPointF pos_to_convert;
+    pos_to_convert.setX(lon);
+    pos_to_convert.setY(lat);
+
+    return pos_to_convert;
 }
