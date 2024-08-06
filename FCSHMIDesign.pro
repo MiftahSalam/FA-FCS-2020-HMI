@@ -69,7 +69,6 @@ SOURCES += \
     src/view/tda/components/track/track.cpp \
     src/view/tda/events/tda_event_filter.cpp \
     src/view/tda/frametda.cpp \
-    src/view/tda/tda_global.cpp \
     test/shared/config/test_osd_cms_config.cpp \
     test/shared/errors/test_base_error.cpp \
     test/shared/utils/test_utils.cpp \
@@ -139,7 +138,6 @@ HEADERS += \
     src/view/tda/components/track/track.h \
     src/view/tda/events/tda_event_filter.h \
     src/view/tda/frametda.h \
-    src/view/tda/tda_global.h \
     test/shared/config/test_osd_cms_config.h \
     test/shared/errors/test_base_error.h \
     test/shared/utils/test_utils.h \

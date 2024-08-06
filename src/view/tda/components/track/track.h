@@ -7,8 +7,8 @@
 #include <QMenu>
 
 #include "src/view/tda/events/tda_event_filter.h"
-#include "src/view/tda/tda_global.h"
-
+#include "src/shared/utils/track/track_utils.h"
+#include "tda_track_id.h"
 
 class track : public QWidget
 {
@@ -25,8 +25,8 @@ public:
     void setSelected(bool select);
 
 signals:
-    void identity_change_signal(int tn,Identity identity);
-    void env_change_signal(int tn,Environment identity);
+    void identity_change_signal(int tn,TrackUtils::Identity identity);
+    void env_change_signal(int tn,TrackUtils::Environment identity);
 //    void desig_request_signal(int tn,bool desig,QString desig_mode);
 
 private slots:
@@ -46,16 +46,16 @@ private:
     TdaEventFilter *rc_radarevent;
     trackParam trackDat;
 
-    QString identity2String(Identity identity);
-    QString env2String(Environment env);
+    QString identity2String(TrackUtils::Identity identity);
+    QString env2String(TrackUtils::Environment env);
 //    QString desig2String(Desig desig);
 //    QString desigDirect2String(DesigDirect desig_direct);
-    QString fileImageLocation(Identity identity, Environment env);
+    QString fileImageLocation(TrackUtils::Identity identity, TrackUtils::Environment env);
 
-    QAction *identityAction[IDENTITY_COUNT];
-    QAction *envAction[ENVIRONMENT_COUNT];
-    QAction *desigAction[DESIG_COUNT];
-    QAction *desigDirectAction[DESIG_DIRECT_COUNT];
+    QAction *identityAction[TrackUtils::IDENTITY_COUNT];
+    QAction *envAction[TrackUtils::ENVIRONMENT_COUNT];
+    QAction *desigAction[TrackUtils::DESIG_COUNT];
+    QAction *desigDirectAction[TrackUtils::DESIG_DIRECT_COUNT];
     QMenu *identitySubMenu;
     QMenu *envSubMenu;
 //    QMenu *desigSubMenu;
