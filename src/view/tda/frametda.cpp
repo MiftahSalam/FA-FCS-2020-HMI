@@ -46,7 +46,7 @@ FrameTDA::FrameTDA(QWidget *parent) :
 
 FrameTDA::~FrameTDA()
 {
-    config->getTDAConfig()->getInstance("")->saveTDAConfig();
+    tdaConfig->saveTDAConfig();
     qDebug()<<Q_FUNC_INFO<<"Save TDA Config";
     delete ui;
 }
@@ -103,9 +103,9 @@ void FrameTDA::onCompassActionTriggered()
 {
     if (CompassAction->isChecked() == true)
     {
-        config->getTDAConfig()->getInstance("")->setCompassStatus(true);
+        tdaConfig->setCompassStatus(true);
     }else{
-        config->getTDAConfig()->getInstance("")->setCompassStatus(false);
+        tdaConfig->setCompassStatus(false);
     }
     update();
 }
@@ -114,9 +114,9 @@ void FrameTDA::onHeadingMarkerActionTriggrered()
 {
     if (HeadingMarkerAction->isChecked() == true)
     {
-        config->getTDAConfig()->getInstance("")->setHeadingMarkerStatus(true);
+        tdaConfig->setHeadingMarkerStatus(true);
     }else{
-        config->getTDAConfig()->getInstance("")->setHeadingMarkerStatus(false);
+        tdaConfig->setHeadingMarkerStatus(false);
     }
     update();
 }
@@ -125,9 +125,9 @@ void FrameTDA::onGunCovActionTriggered()
 {
     if (GunCovAction->isChecked() == true)
     {
-        config->getTDAConfig()->getInstance("")->setGunCoverageStatus(true);
+        tdaConfig->setGunCoverageStatus(true);
     }else{
-        config->getTDAConfig()->getInstance("")->setGunCoverageStatus(false);
+        tdaConfig->setGunCoverageStatus(false);
     }
     update();
 }
@@ -136,9 +136,9 @@ void FrameTDA::onGunBarrelActionTriggered()
 {
     if (GunBarrelAction->isChecked() == true)
     {
-        config->getTDAConfig()->getInstance("")->setGunBarrelStatus(true);
+        tdaConfig->setGunBarrelStatus(true);
     }else{
-        config->getTDAConfig()->getInstance("")->setGunBarrelStatus(false);
+        tdaConfig->setGunBarrelStatus(false);
     }
     update();
 }
@@ -155,7 +155,7 @@ void FrameTDA::onZoomChange()
     }
     ZoomAction[cur_checked_zoom_scale]->setChecked(true);
     tdaScale = ZoomAction[cur_checked_zoom_scale]->text().remove(" NM").toDouble();
-    config->getTDAConfig()->getInstance("")->setZoomScale(tdaScale);
+    tdaConfig->setZoomScale(tdaScale);
     update();
 }
 
@@ -261,7 +261,7 @@ FrameTDA::zoomScale FrameTDA::zoomInt2Scale(int scale)
 
 void FrameTDA::setupContextMenu()
 {
-    tdaScale = config->getTDAConfig()->getInstance("")->getZoomScale();
+    tdaScale = tdaConfig->getZoomScale();
     QString _zoomScale = QString::number(tdaScale);
     cur_checked_zoom_scale = zoomString2Scale(_zoomScale);
 
@@ -287,16 +287,16 @@ void FrameTDA::setupContextMenu()
     GunCovAction->setCheckable(true);
     GunBarrelAction->setCheckable(true);
 
-    if (config->getTDAConfig()->getInstance("")->getCompassStatus() == true)
+    if (tdaConfig->getCompassStatus() == true)
         CompassAction->setChecked(true);
 
-    if (config->getTDAConfig()->getInstance("")->getGunCoverageStatus() == true)
+    if (tdaConfig->getGunCoverageStatus() == true)
         GunCovAction->setChecked(true);
 
-    if (config->getTDAConfig()->getInstance("")->getHeadingMarkerStatus() == true)
+    if (tdaConfig->getHeadingMarkerStatus() == true)
         HeadingMarkerAction->setChecked(true);
 
-    if (config->getTDAConfig()->getInstance("")->getGunBarrelStatus() == true)
+    if (tdaConfig->getGunBarrelStatus() == true)
         GunBarrelAction->setChecked(true);
 
     connect(this, SIGNAL(signalOnCostumContextMenuRequest(QPoint&pos)), this, SLOT(on_FrameTDA_customContextMenuRequested(QPoint&pos)));
@@ -319,10 +319,10 @@ void FrameTDA::setupStatusBar()
 
 void FrameTDA::setupTdaObjects()
 {
-    TdaCompassObject *compass = new TdaCompassObject(this, config->getTDAConfig());
-    TDAGunCoverageObject *gunCoverage = new TDAGunCoverageObject(this, osdRepo->getRepoOSDInertia(), gunRepo->getRepoGunCoverage(), config->getTDAConfig());
-    TDAHeadingMarkerObject *headingMarker = new TDAHeadingMarkerObject (this, osdRepo->getRepoOSDInertia(), config->getTDAConfig());
-    TDAGunBarrelObject *gunBarrel = new TDAGunBarrelObject (this, osdRepo->getRepoOSDInertia(), gunRepo->getRepoGunFeedback(), config->getTDAConfig());
+    TdaCompassObject *compass = new TdaCompassObject(this, tdaConfig);
+    TDAGunCoverageObject *gunCoverage = new TDAGunCoverageObject(this, osdRepo->getRepoOSDInertia(), gunRepo->getRepoGunCoverage(), tdaConfig);
+    TDAHeadingMarkerObject *headingMarker = new TDAHeadingMarkerObject (this, osdRepo->getRepoOSDInertia(), tdaConfig);
+    TDAGunBarrelObject *gunBarrel = new TDAGunBarrelObject (this, osdRepo->getRepoOSDInertia(), gunRepo->getRepoGunFeedback(), tdaConfig);
     TDATracksObject *tracksObject = new TDATracksObject(this);
 
     objectItems << compass << tracksObject << headingMarker << gunBarrel << gunCoverage;
@@ -330,9 +330,9 @@ void FrameTDA::setupTdaObjects()
 
 void FrameTDA::setupDI()
 {
-    osdRepo = DI::getInstance()->getRepoOSD(); //temp
+    osdRepo = DI::getInstance()->getRepoOSD();
     gunRepo = DI::getInstance()->getRepoGun();
-    config = DI::getInstance()->getConfig();
+    tdaConfig = DI::getInstance()->getConfig()->getTDAConfig();
 }
 
 void FrameTDA::handleMouseTrackingPolar(QMouseEvent *event)

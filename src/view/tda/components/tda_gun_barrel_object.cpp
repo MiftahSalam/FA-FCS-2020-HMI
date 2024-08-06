@@ -14,7 +14,7 @@ void TDAGunBarrelObject::Draw(QPainter *painter, const int &side, const int &wid
 {
     QPoint center_point = QPoint(width/2,height/2);
 
-    if(tdaConfig->getInstance("")->getGunBarrelStatus() == true)
+    if(tdaConfig->getGunBarrelStatus() == true)
     {
         painter->translate(center_point);
 

@@ -21,9 +21,9 @@ void TDAGunCoverageObject::Draw(QPainter *painter, const int &side, const int &w
 {
     QPoint center_point = QPoint(width/2,height/2);
 
-    if(tdaConfig->getInstance("")->getGunCoverageStatus() == true)
+    if(tdaConfig->getGunCoverageStatus() == true)
     {
-        tdaScale = tdaConfig->getInstance("")->getZoomScale();
+        tdaScale = tdaConfig->getZoomScale();
         float gun_orientation = repoGunCov->GetGunCoverage()->getGunOrientation();
         float blind_arc = repoGunCov->GetGunCoverage()->getBlindArc();
         float max_range = repoGunCov->GetGunCoverage()->getMax_range();
