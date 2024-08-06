@@ -15,9 +15,7 @@
 #include "src/infra/store/osd/osd_repository.h"
 #include "src/view/tda/components/tda_object_base.h"
 #include "src/infra/store/gun/gun_repository.h"
-// #include "src/shared/config/tda_config.h"
 #include "src/shared/config/configuration.h"
-// #include "rceventhandler.h"
 
 
 // ==== TDA ==== //
@@ -91,6 +89,12 @@ private:
    int cur_checked_zoom_scale;
 
    void setupContextMenu();
+   void setupStatusBar();
+   void setupTdaObjects();
+   void setupDI();
+
+   void handleMouseTrackingPolar(QMouseEvent *event);
+   void handleMouseTrackinglatLon(QMouseEvent *event);
 
    QStatusBar *statusBarMousePolar;
    QStatusBar *statusBarMouseLatLon;
@@ -99,8 +103,6 @@ private:
    int range2Pixel(double range);
    double pixel2Range(int pixel);
    QPointF pixToGPS(const int pos_x, const int pos_y, const int vp_width, const int vp_height, const double vp_range, const double own_lat, const double own_lon);
-
-
 };
 
 #endif // FRAMETDA_H
