@@ -13,11 +13,9 @@
 #include <QAction>
 
 #include "src/infra/store/osd/osd_repository.h"
+#include "src/shared/config/tda_config.h"
 #include "src/view/tda/components/tda_object_base.h"
 #include "src/infra/store/gun/gun_repository.h"
-// #include "src/shared/config/tda_config.h"
-#include "src/shared/config/configuration.h"
-
 
 // ==== TDA ==== //
 namespace Ui {
@@ -35,6 +33,7 @@ public:
  protected:
     void paintEvent(QPaintEvent *event) override;
     void mousePressEvent(QMouseEvent *event) override;
+    void mouseMoveEvent(QMouseEvent *event) override;
 
 private slots:
     void timeOut();
@@ -71,8 +70,8 @@ private:
    QList<TDAObjectBase*> objectItems;
    OSDRepository *osdRepo;
    GunRepository *gunRepo;
-   // TDAConfig *tdaConfig;
-   Configuration *config;
+   TDAConfig *tdaConfig;
+//   Configuration *config;
 
    QTimer *timer;
    QMenu *ZoomSubMenu;
@@ -89,8 +88,20 @@ private:
    int cur_checked_zoom_scale;
 
    void setupContextMenu();
+   void setupStatusBar();
+   void setupTdaObjects();
+   void setupDI();
 
+   void handleMouseTrackingPolar(QMouseEvent *event);
+   void handleMouseTrackinglatLon(QMouseEvent *event);
 
+   QStatusBar *statusBarMousePolar;
+   QStatusBar *statusBarMouseLatLon;
+   QStatusBar *statusBarSelectedTrack;
+
+   int range2Pixel(double range);
+   double pixel2Range(int pixel);
+   QPointF pixToGPS(const int pos_x, const int pos_y, const int vp_width, const int vp_height, const double vp_range, const double own_lat, const double own_lon);
 };
 
 #endif // FRAMETDA_H

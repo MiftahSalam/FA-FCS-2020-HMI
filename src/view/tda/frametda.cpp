@@ -1,5 +1,6 @@
 #include "frametda.h"
 #include "src/di/di.h"
+#include "src/shared/utils/utils.h"
 #include "src/view/tda/components/tda_compass_object.h"
 #include "src/view/tda/components/tda_gun_coverage_object.h"
 #include "src/view/tda/components/tda_heading_marker_object.h"
@@ -21,35 +22,32 @@ FrameTDA::FrameTDA(QWidget *parent) :
 {
     ui->setupUi(this);
 
+    //setup DI
+    setupDI();
+
+    //setup TDA Objects
+    setupTdaObjects();
+
+    //setup status bar (mouse & track selected)
+    setupStatusBar();
+
+    //temporary
+    osdRepo->getRepoOSDPosition()->SetPosition(OSDPositionEntity(0,0, "", "", OSD_MODE::AUTO));
+
+    //setup popup menu
+    setupContextMenu();
+
+    setMouseTracking(true);
+
     timer = new QTimer(this);
     connect(timer, &QTimer::timeout, this, &FrameTDA::timeOut);
-
-    //TODO: setup status bar (mouse & track selected)
-
-    //TODO: setup event filter
-
-    //TODO: setup popup menu
-    osdRepo = DI::getInstance()->getRepoOSD(); //temp
-    gunRepo = DI::getInstance()->getRepoGun();
-    config = DI::getInstance()->getConfig();
-
-    TdaCompassObject *compass = new TdaCompassObject(this, config->getTDAConfig());
-    TDAGunCoverageObject *gunCoverage = new TDAGunCoverageObject(this, osdRepo->getRepoOSDInertia(), gunRepo->getRepoGunCoverage(), config->getTDAConfig());
-    TDAHeadingMarkerObject *headingMarker = new TDAHeadingMarkerObject (this, osdRepo->getRepoOSDInertia(), config->getTDAConfig());
-    TDAGunBarrelObject *gunBarrel = new TDAGunBarrelObject (this, osdRepo->getRepoOSDInertia(), gunRepo->getRepoGunFeedback(), config->getTDAConfig());
-    TDATracksObject *tracksObject = new TDATracksObject(this);
-
-    objectItems << compass << tracksObject << headingMarker << gunBarrel << gunCoverage;
-
     timer->start(1000);
-
-    setupContextMenu();
 }
 
 FrameTDA::~FrameTDA()
 {
-    config->getTDAConfig()->getInstance("")->saveTDAConfig();
-    qDebug()<<"Save TDA Config";
+    tdaConfig->saveTDAConfig();
+    qDebug()<<Q_FUNC_INFO<<"Save TDA Config";
     delete ui;
 }
 
@@ -105,9 +103,9 @@ void FrameTDA::onCompassActionTriggered()
 {
     if (CompassAction->isChecked() == true)
     {
-        config->getTDAConfig()->getInstance("")->setCompassStatus(true);
+        tdaConfig->setCompassStatus(true);
     }else{
-        config->getTDAConfig()->getInstance("")->setCompassStatus(false);
+        tdaConfig->setCompassStatus(false);
     }
     update();
 }
@@ -116,9 +114,9 @@ void FrameTDA::onHeadingMarkerActionTriggrered()
 {
     if (HeadingMarkerAction->isChecked() == true)
     {
-        config->getTDAConfig()->getInstance("")->setHeadingMarkerStatus(true);
+        tdaConfig->setHeadingMarkerStatus(true);
     }else{
-        config->getTDAConfig()->getInstance("")->setHeadingMarkerStatus(false);
+        tdaConfig->setHeadingMarkerStatus(false);
     }
     update();
 }
@@ -127,9 +125,9 @@ void FrameTDA::onGunCovActionTriggered()
 {
     if (GunCovAction->isChecked() == true)
     {
-        config->getTDAConfig()->getInstance("")->setGunCoverageStatus(true);
+        tdaConfig->setGunCoverageStatus(true);
     }else{
-        config->getTDAConfig()->getInstance("")->setGunCoverageStatus(false);
+        tdaConfig->setGunCoverageStatus(false);
     }
     update();
 }
@@ -138,9 +136,9 @@ void FrameTDA::onGunBarrelActionTriggered()
 {
     if (GunBarrelAction->isChecked() == true)
     {
-        config->getTDAConfig()->getInstance("")->setGunBarrelStatus(true);
+        tdaConfig->setGunBarrelStatus(true);
     }else{
-        config->getTDAConfig()->getInstance("")->setGunBarrelStatus(false);
+        tdaConfig->setGunBarrelStatus(false);
     }
     update();
 }
@@ -157,8 +155,14 @@ void FrameTDA::onZoomChange()
     }
     ZoomAction[cur_checked_zoom_scale]->setChecked(true);
     tdaScale = ZoomAction[cur_checked_zoom_scale]->text().remove(" NM").toDouble();
-    config->getTDAConfig()->getInstance("")->setZoomScale(tdaScale);
+    tdaConfig->setZoomScale(tdaScale);
     update();
+}
+
+void FrameTDA::mouseMoveEvent(QMouseEvent *event)
+{
+    handleMouseTrackingPolar(event);
+    handleMouseTrackinglatLon(event);
 }
 
 QString FrameTDA::zoomScale2String(zoomScale scale)
@@ -257,11 +261,12 @@ FrameTDA::zoomScale FrameTDA::zoomInt2Scale(int scale)
 
 void FrameTDA::setupContextMenu()
 {
+    tdaScale = tdaConfig->getZoomScale();
+    QString _zoomScale = QString::number(tdaScale);
+    cur_checked_zoom_scale = zoomString2Scale(_zoomScale);
+
     ZoomSubMenu = new QMenu("Zoom",this);
     ZoomSubMenu->setStyleSheet("background-color: black;");
-    QString _zoomScale = QString::number(config->getTDAConfig()->getInstance("")->getZoomScale());
-    // cur_checked_zoom_scale = zoomScale2Int(Z_080);
-    cur_checked_zoom_scale = zoomString2Scale(_zoomScale);
 
     for (int i=0;i<Z_TOTAL;i++)
     {
@@ -282,16 +287,16 @@ void FrameTDA::setupContextMenu()
     GunCovAction->setCheckable(true);
     GunBarrelAction->setCheckable(true);
 
-    if (config->getTDAConfig()->getInstance("")->getCompassStatus() == true)
+    if (tdaConfig->getCompassStatus() == true)
         CompassAction->setChecked(true);
 
-    if (config->getTDAConfig()->getInstance("")->getGunCoverageStatus() == true)
+    if (tdaConfig->getGunCoverageStatus() == true)
         GunCovAction->setChecked(true);
 
-    if (config->getTDAConfig()->getInstance("")->getHeadingMarkerStatus() == true)
+    if (tdaConfig->getHeadingMarkerStatus() == true)
         HeadingMarkerAction->setChecked(true);
 
-    if (config->getTDAConfig()->getInstance("")->getGunBarrelStatus() == true)
+    if (tdaConfig->getGunBarrelStatus() == true)
         GunBarrelAction->setChecked(true);
 
     connect(this, SIGNAL(signalOnCostumContextMenuRequest(QPoint&pos)), this, SLOT(on_FrameTDA_customContextMenuRequested(QPoint&pos)));
@@ -299,5 +304,105 @@ void FrameTDA::setupContextMenu()
     connect(HeadingMarkerAction, &QAction::triggered, this, &FrameTDA::onHeadingMarkerActionTriggrered);
     connect(GunCovAction, &QAction::triggered, this, &FrameTDA::onGunCovActionTriggered);
     connect(GunBarrelAction, &QAction::triggered, this, &FrameTDA::onGunBarrelActionTriggered);
+}
 
+void FrameTDA::setupStatusBar()
+{
+    statusBarMousePolar = new QStatusBar(this);
+    statusBarMousePolar->setObjectName(QString::fromUtf8("statusBarMousePolar"));
+    statusBarMouseLatLon = new QStatusBar(this);
+    statusBarMouseLatLon->setObjectName(QString::fromUtf8("statusBarMouseLatLon"));
+    statusBarSelectedTrack = new QStatusBar(this);
+    statusBarSelectedTrack->setObjectName(QString::fromUtf8("statusBarSelectedTrack"));
+    statusBarSelectedTrack->hide();
+}
+
+void FrameTDA::setupTdaObjects()
+{
+    TdaCompassObject *compass = new TdaCompassObject(this, tdaConfig);
+    TDAGunCoverageObject *gunCoverage = new TDAGunCoverageObject(this, osdRepo->getRepoOSDInertia(), gunRepo->getRepoGunCoverage(), tdaConfig);
+    TDAHeadingMarkerObject *headingMarker = new TDAHeadingMarkerObject (this, osdRepo->getRepoOSDInertia(), tdaConfig);
+    TDAGunBarrelObject *gunBarrel = new TDAGunBarrelObject (this, osdRepo->getRepoOSDInertia(), gunRepo->getRepoGunFeedback(), tdaConfig);
+    TDATracksObject *tracksObject = new TDATracksObject(this);
+
+    objectItems << compass << tracksObject << headingMarker << gunBarrel << gunCoverage;
+}
+
+void FrameTDA::setupDI()
+{
+    osdRepo = DI::getInstance()->getRepoOSD();
+    gunRepo = DI::getInstance()->getRepoGun();
+    tdaConfig = DI::getInstance()->getConfig()->getTDAConfig();
+}
+
+void FrameTDA::handleMouseTrackingPolar(QMouseEvent *event)
+{
+    QPoint os_pos((width())/2,(height()/2));
+    double range_pixel_x = os_pos.x()-event->pos().x();
+    double range_pixel_y = os_pos.y()-event->pos().y();
+    double bearing = atan2(range_pixel_y,range_pixel_x);
+    bearing = (bearing*180/M_PI)-90;
+    if(bearing<0)
+        bearing+=360;
+
+    double range = sqrt(pow(range_pixel_y,2)+pow(range_pixel_x,2)); //pixel
+    range = pixel2Range(range); //NM
+
+    statusBarMousePolar->showMessage(QString("Range : %1, Bearing : %2").arg(QString::number(range,'f',1)).arg(QString::number(bearing,'f',1)),2000);
+    statusBarMousePolar->setGeometry(10,height()-45,200,20);
+}
+
+void FrameTDA::handleMouseTrackinglatLon(QMouseEvent *event)
+{
+    QPoint os_pos((width())/2,(height()/2));
+    const OSDPositionEntity* ownPos = osdRepo->getRepoOSDPosition()->GetPosition();
+    QPointF gps = pixToGPS(event->pos().x(), event->pos().y(), width(), height(), tdaScale*1853., ownPos->latitude(), ownPos->longitude());
+
+    statusBarMouseLatLon->showMessage(QString("Latitude : %1, Longitude : %2").arg(Utils::latDecToStringDegree(gps.y())).arg(Utils::lonDecToStringDegree(gps.x())),2000);
+    statusBarMouseLatLon->setGeometry(10,height()-25,280,20);
+
+}
+
+int FrameTDA::range2Pixel(double range)
+{
+    int side = qMin(this->width(), this->height()) / 2;
+    return static_cast<int>(range*(side/(tdaScale)));
+}
+
+double FrameTDA::pixel2Range(int pixel)
+{
+    int side = qMin(this->width(), this->height()) / 2;
+    qDebug()<<pixel<<tdaScale<<width();
+    return tdaScale*pixel/side;
+}
+
+QPointF FrameTDA::pixToGPS(const int pos_x, const int pos_y, const int vp_width, const int vp_height, const double vp_range, const double own_lat, const double own_lon)
+{
+    QPoint screen_middle(vp_width/2,vp_height/2);
+    double range_pixel_x = screen_middle.x()-pos_x;
+    double range_pixel_y = screen_middle.y()-pos_y;
+    double angle = atan2(range_pixel_y,range_pixel_x);
+    double lat, lon;
+    const int MAX_PIX = qMin(vp_width/2,vp_height/2);
+    double r_mouse_pix = sqrt(pow(range_pixel_y,2)+pow(range_pixel_x,2)); //pixel
+
+    angle = (angle*180/M_PI)-90;
+    while (angle >=360. || angle < 0. ) {
+        if(angle >= 360.)
+            angle -= 360.;
+        if(angle < 0.)
+            angle += 360.;
+    }
+
+    lat = own_lat +
+            static_cast<double>(r_mouse_pix) / static_cast<double>(MAX_PIX) * vp_range * cos(M_PI*angle/180.) / 60. / 1852.;
+    lon = own_lon +
+            static_cast<double>(r_mouse_pix) / static_cast<double>(MAX_PIX) * vp_range * sin(M_PI*angle/180.) /
+            cos(M_PI*own_lat/180.) / 60. / 1852.;
+
+    QPointF pos_to_convert;
+    pos_to_convert.setX(lon);
+    pos_to_convert.setY(lat);
+
+    return pos_to_convert;
 }

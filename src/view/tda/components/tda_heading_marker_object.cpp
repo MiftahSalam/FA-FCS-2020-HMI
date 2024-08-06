@@ -16,7 +16,7 @@ void TDAHeadingMarkerObject::Draw(QPainter *painter, const int &side, const int 
 
     // const bool show_headingMarker = true;
 
-    if (tdaConfig->getInstance("")->getHeadingMarkerStatus() == true)
+    if (tdaConfig->getHeadingMarkerStatus() == true)
     {
         painter->translate(center_point);
 
