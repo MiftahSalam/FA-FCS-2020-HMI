@@ -1,7 +1,7 @@
 #ifndef TDATRACKSYMBOL_H
 #define TDATRACKSYMBOL_H
 
-#include "tda_track_id.h"
+#include "src/view/tda/tda_global.h"
 
 #include <QLabel>
 

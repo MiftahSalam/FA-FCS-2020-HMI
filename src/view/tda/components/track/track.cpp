@@ -19,30 +19,30 @@ void track::buildUI(trackParam param)
     /*contex menu identity*/
     identitySubMenu = new QMenu("Identity",this);
     identitySubMenu->setStyleSheet("QMenu{color: rgb(255,255,255);background-color: rgb(0,0,0);selection-color: yellow; item:disabled: black;}");
-    for(int i=0;i<TrackUtils::IDENTITY_COUNT;i++)
+    for(int i=0;i<IDENTITY_COUNT;i++)
     {
-        identityAction[i] = new QAction(identity2String(TrackUtils::int2Identity(i)),this);
+        identityAction[i] = new QAction(identity2String(int2Identity(i)),this);
         connect(identityAction[i],SIGNAL(triggered()),this,SLOT(identity_change()));
         identityAction[i]->setCheckable(true);
 
         identitySubMenu->addAction(identityAction[i]);
     }
-    cur_checked_identity = TrackUtils::identity2Int(param.cur_identity);
+    cur_checked_identity = identity2Int(param.cur_identity);
     identityAction[cur_checked_identity]->setChecked(true);
 
     /*contex menu environment*/
     envSubMenu = new QMenu("Environment",this);
     envSubMenu->setStyleSheet("QMenu{color: rgb(255,255,255);background-color: rgb(0,0,0);selection-color: yellow; item:disabled: black;}");
-    for(int i=0;i<TrackUtils::ENVIRONMENT_COUNT;i++)
+    for(int i=0;i<ENVIRONMENT_COUNT;i++)
     {
-        envAction[i] = new QAction(env2String(TrackUtils::int2Environment(i)),this);
+        envAction[i] = new QAction(env2String(int2Environment(i)),this);
         connect(envAction[i],SIGNAL(triggered()),this,SLOT(environment_change()));
         envAction[i]->setCheckable(true);
         envAction[i]->setDisabled(true);
 
         envSubMenu->addAction(envAction[i]);
     }
-    cur_checked_env = TrackUtils::environment2Int(param.cur_env);
+    cur_checked_env = environment2Int(param.cur_env);
     envAction[cur_checked_env]->setChecked(true);
 
     /*create QLabel for holding track image and information display*/
@@ -88,9 +88,9 @@ void track::buildUI(trackParam param)
     no_track->installEventFilter(rc_radarevent);
 
     QString source;
-    if(trackDat.cur_source==TrackUtils::T_NAVRAD)
+    if(trackDat.cur_source==T_NAVRAD)
         source = "N ";
-    else if(trackDat.cur_source==TrackUtils::T_LIOD)
+    else if(trackDat.cur_source==T_LIOD)
         source = "L ";
     no_track->setText(source+QString::number(trackDat.tn));
 }
@@ -117,9 +117,9 @@ void track::updateData(trackParam param)
     if(param.cur_source!=trackDat.cur_source)
     {
         QString source;
-        if(param.cur_source==TrackUtils::T_NAVRAD)
+        if(param.cur_source==T_NAVRAD)
             source = "N ";
-        else if(param.cur_source==TrackUtils::T_LIOD)
+        else if(param.cur_source==T_LIOD)
             source = "L ";
         no_track->setText(source+QString::number(trackDat.tn));
     }
@@ -164,7 +164,7 @@ void track::RC_track(QPoint pos)
 
 void track::identity_change()
 {
-    for(int i=0;i<TrackUtils::IDENTITY_COUNT;i++)
+    for(int i=0;i<IDENTITY_COUNT;i++)
     {
         if(identityAction[i]->isChecked() && i!=cur_checked_identity)
         {
@@ -172,12 +172,12 @@ void track::identity_change()
             cur_checked_identity = i;
         }
     }
-    identity_change_signal(trackDat.tn,TrackUtils::int2Identity(cur_checked_identity));
+    identity_change_signal(trackDat.tn,int2Identity(cur_checked_identity));
 }
 
 void track::environment_change()
 {
-    for(int i=0;i<TrackUtils::ENVIRONMENT_COUNT;i++)
+    for(int i=0;i<ENVIRONMENT_COUNT;i++)
     {
         if(envAction[i]->isChecked() || i!=cur_checked_env)
         {
@@ -185,57 +185,57 @@ void track::environment_change()
             cur_checked_env = i;
         }
     }
-    env_change_signal(trackDat.tn,TrackUtils::int2Environment(cur_checked_env));
+    env_change_signal(trackDat.tn,int2Environment(cur_checked_env));
 }
 
-QString track::identity2String(TrackUtils::Identity identity)
+QString track::identity2String(Identity identity)
 {
-    if(identity==TrackUtils::UNKNOWN)
+    if(identity==UNKNOWN)
         return "Unknown";
-    else if(identity==TrackUtils::FRIENDLY)
+    else if(identity==FRIENDLY)
         return "Friend";
-    else if(identity==TrackUtils::NEUTRAL)
+    else if(identity==NEUTRAL)
         return "Neutral";
-    else if(identity==TrackUtils::HOSTILE)
+    else if(identity==HOSTILE)
         return "Hostile";
     else
         return "Unidentify";
 }
 
-QString track::env2String(TrackUtils::Environment env)
+QString track::env2String(Environment env)
 {
-    if(env==TrackUtils::AIR)
+    if(env==AIR)
         return "Air";
-    else if(env==TrackUtils::SURFACE)
+    else if(env==SURFACE)
         return "Surface";
     else
         return "Unknown Environment";
 }
 
-QString track::fileImageLocation(TrackUtils::Identity identity,TrackUtils::Environment env)
+QString track::fileImageLocation(Identity identity,Environment env)
 {
-    if(env==TrackUtils::AIR)
+    if(env==AIR)
     {
-        if(identity==TrackUtils::UNKNOWN)
+        if(identity==UNKNOWN)
             return ":/tda_track_symbol/surface-unknown.png";
-        else if(identity==TrackUtils::FRIENDLY)
+        else if(identity==FRIENDLY)
             return ":/tda_track_symbol/surface-friend.png";
-        else if(identity==TrackUtils::NEUTRAL)
+        else if(identity==NEUTRAL)
             return ":/tda_track_symbol/surface-netral.png";
-        else if(identity==TrackUtils::HOSTILE)
+        else if(identity==HOSTILE)
             return ":/tda_track_symbol/surface-hostile.png";
         else
             return ":/tda_track_symbol/surface-unknown.png";
     }
-    else if (env==TrackUtils::SURFACE)
+    else if (env==SURFACE)
     {
-        if(identity==TrackUtils::UNKNOWN)
+        if(identity==UNKNOWN)
             return ":/tda_track_symbol/surface-unknown.png";
-        else if(identity==TrackUtils::FRIENDLY)
+        else if(identity==FRIENDLY)
             return ":/tda_track_symbol/surface-friend.png";
-        else if(identity==TrackUtils::NEUTRAL)
+        else if(identity==NEUTRAL)
             return ":/tda_track_symbol/surface-netral.png";
-        else if(identity==TrackUtils::HOSTILE)
+        else if(identity==HOSTILE)
             return ":/tda_track_symbol/surface-hostile.png";
         else
             return ":/tda_track_symbol/surface-unknown.png";
