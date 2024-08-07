@@ -109,6 +109,7 @@ SOURCES += \
     src/usecase/osd/stream/osd_stream_weather.cpp \
     src/usecase/osd/stream/osd_stream_wind.cpp \
     src/usecase/track/stream/arpa/track_arpa_stream.cpp \
+    src/usecase/track/stream/track_stream.cpp \
     src/usecase/weapon_assign/weapon_assign_service.cpp \
     src/view/mainwindow.cpp \
     src/view/panel/gun/framegun.cpp \
@@ -265,6 +266,7 @@ HEADERS += \
     src/usecase/osd/stream/osd_stream_weather.h \
     src/usecase/osd/stream/osd_stream_wind.h \
     src/usecase/track/stream/arpa/track_arpa_stream.h \
+    src/usecase/track/stream/track_stream.h \
     src/usecase/track/stream/track_stream_base.h \
     src/usecase/weapon_assign/weapon_assign_service.h \
     src/view/mainwindow.h \

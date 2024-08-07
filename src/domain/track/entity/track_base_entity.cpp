@@ -1,7 +1,13 @@
 #include "track_base_entity.h"
 
-TrackBaseEntity::TrackBaseEntity(const std::string &source, const std::string &status)
-    : _source(source), _status(status)
+TrackBaseEntity::TrackBaseEntity(int id, double range, double bearing, double speed, double course, const std::string &source, const std::string &status):
+    _id(id),
+    _range(range),
+    _bearing(bearing),
+    _speed(speed),
+    _course(course),
+    _source(source),
+    _status(status)
 {}
 
 std::string TrackBaseEntity::source() const
@@ -24,7 +30,7 @@ void TrackBaseEntity::setStatus(const std::string &newStatus)
     _status = newStatus;
 }
 
-int TrackBaseEntity::getId() const
+int TrackBaseEntity::Id() const
 {
     return _id;
 }
@@ -34,7 +40,7 @@ void TrackBaseEntity::setId(int newId)
     _id = newId;
 }
 
-float TrackBaseEntity::getRange() const
+double TrackBaseEntity::range() const
 {
     return _range;
 }
@@ -44,7 +50,7 @@ void TrackBaseEntity::setRange(float newRange)
     _range = newRange;
 }
 
-float TrackBaseEntity::getBearing() const
+double TrackBaseEntity::bearing() const
 {
     return _bearing;
 }
@@ -54,7 +60,7 @@ void TrackBaseEntity::setBearing(float newBearing)
     _bearing = newBearing;
 }
 
-float TrackBaseEntity::getSpeed() const
+double TrackBaseEntity::speed() const
 {
     return _speed;
 }
@@ -64,7 +70,7 @@ void TrackBaseEntity::setSpeed(float newSpeed)
     _speed = newSpeed;
 }
 
-float TrackBaseEntity::getCourse() const
+double TrackBaseEntity::course() const
 {
     return _course;
 }

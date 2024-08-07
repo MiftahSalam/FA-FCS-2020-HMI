@@ -1,7 +1,6 @@
 #include "track_arpa_model.h"
 
-TrackArpaModel::TrackArpaModel(const std::string &source, const std::string &status, int id, float range, float bearing, float speed, float course) : _source(source),
-    _status(status),
+TrackArpaModel::TrackArpaModel(int id, double range, double bearing, double speed, double course):
     _id(id),
     _range(range),
     _bearing(bearing),
@@ -9,37 +8,27 @@ TrackArpaModel::TrackArpaModel(const std::string &source, const std::string &sta
     _course(course)
 {}
 
-std::string TrackArpaModel::source() const
-{
-    return _source;
-}
-
-std::string TrackArpaModel::status() const
-{
-    return _status;
-}
-
-int TrackArpaModel::id() const
+int TrackArpaModel::getId() const
 {
     return _id;
 }
 
-float TrackArpaModel::range() const
+double TrackArpaModel::getRange() const
 {
     return _range;
 }
 
-float TrackArpaModel::bearing() const
+double TrackArpaModel::getBearing() const
 {
     return _bearing;
 }
 
-float TrackArpaModel::speed() const
+double TrackArpaModel::getSpeed() const
 {
     return _speed;
 }
 
-float TrackArpaModel::course() const
+double TrackArpaModel::getCourse() const
 {
     return _course;
 }
