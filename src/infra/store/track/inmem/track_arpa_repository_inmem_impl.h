@@ -22,7 +22,7 @@ public:
     void Remove(const int &trackId) override;
 
 protected:
-    TrackArpaRepositoryInMemImpl();
+    TrackArpaRepositoryInMemImpl(TrackBaseEntity *entity);
 
 private:
     static TrackArpaRepositoryInMemImpl *instance;
@@ -30,6 +30,8 @@ private:
     QMap<int, TrackBaseEntity*> _tracks;
 
     QList<TrackRepositoryListener *>listeners;
+
+    TrackBaseEntity *_entity;
 };
 
 #endif // TRACKARPAREPOSITORYINMEMIMPL_H
