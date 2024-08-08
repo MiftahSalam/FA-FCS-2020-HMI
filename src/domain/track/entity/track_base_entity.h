@@ -13,7 +13,9 @@ public:
         double speed,
         double course,
         const std::string &source,
-        const std::string &status);
+        const std::string &status,
+        long long timeStamp
+        );
 
     std::string source() const;
     void setSource(const std::string &newSource);
@@ -30,6 +32,8 @@ public:
     void setSpeed(float newSpeed);
     double course() const;
     void setCourse(float newCourse);
+    long long timeStamp() const;
+    void setTimeStamp(long long newTimeStamp);
 
 private:
     std::string _source;
@@ -39,5 +43,6 @@ private:
     double _bearing;
     double _speed;
     double _course;
+    long long _timeStamp;
 };
 #endif // TRACKBASEENTITY_H

@@ -1,13 +1,14 @@
 #include "track_base_entity.h"
 
-TrackBaseEntity::TrackBaseEntity(int id, double range, double bearing, double speed, double course, const std::string &source, const std::string &status):
+TrackBaseEntity::TrackBaseEntity(int id, double range, double bearing, double speed, double course, const std::string &source, const std::string &status, long long timeStamp):
     _id(id),
     _range(range),
     _bearing(bearing),
     _speed(speed),
     _course(course),
     _source(source),
-    _status(status)
+    _status(status),
+    _timeStamp(timeStamp)
 {}
 
 std::string TrackBaseEntity::source() const
@@ -78,4 +79,14 @@ double TrackBaseEntity::course() const
 void TrackBaseEntity::setCourse(float newCourse)
 {
     _course = newCourse;
+}
+
+long long TrackBaseEntity::timeStamp() const
+{
+    return _timeStamp;
+}
+
+void TrackBaseEntity::setTimeStamp(long long newTimeStamp)
+{
+    _timeStamp = newTimeStamp;
 }
