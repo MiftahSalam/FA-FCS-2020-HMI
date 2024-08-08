@@ -2,7 +2,7 @@
 
 TrackArpaRepositoryInMemImpl* TrackArpaRepositoryInMemImpl::instance{nullptr};
 
-TrackArpaRepositoryInMemImpl::TrackArpaRepositoryInMemImpl(TrackBaseEntity *entity)
+TrackArpaRepositoryInMemImpl::TrackArpaRepositoryInMemImpl()
 {
     _tracks.clear();
 }
@@ -10,8 +10,8 @@ TrackArpaRepositoryInMemImpl::TrackArpaRepositoryInMemImpl(TrackBaseEntity *enti
 TrackBaseRepository *TrackArpaRepositoryInMemImpl::GetInstance()
 {
     if (instance == nullptr) {
-        TrackBaseEntity *entity = new TrackBaseEntity(0,0,0,0,0,"","");
-           instance = new TrackArpaRepositoryInMemImpl(entity);
+        // TrackBaseEntity *entity = new TrackBaseEntity(0,0,0,0,0,"","",0);
+           instance = new TrackArpaRepositoryInMemImpl();
        }
 
     return instance;
@@ -29,18 +29,13 @@ void TrackArpaRepositoryInMemImpl::removeListener(TrackRepositoryListener *liste
 
 void TrackArpaRepositoryInMemImpl::Insert(const TrackBaseEntity &track)
 {
-    //check track exist
-    auto it =_tracks.find(track.Id());
-    if (it != _tracks.end()) {
-        Update(track);// track found
-    }else{
         // TODO: insert to repo
         TrackBaseEntity *newTrack = _tracks.value(track.Id(), nullptr);
         newTrack->setRange(track.range());
         newTrack->setBearing(track.bearing());
         newTrack->setSpeed(track.speed());
         newTrack->setCourse(track.course());
-
+        newTrack->setTimeStamp(track.timeStamp());
         // TODO: update TracksAdded
         QList<TrackBaseEntity> tnList;
         tnList << track;
@@ -49,7 +44,7 @@ void TrackArpaRepositoryInMemImpl::Insert(const TrackBaseEntity &track)
         foreach (TrackRepositoryListener *listener, listeners) {
             // listener->OnTracksAdded(tnList);
         }
-    }
+    // }
 
 }
 
@@ -63,15 +58,21 @@ std::list<TrackBaseEntity *> TrackArpaRepositoryInMemImpl::FindAll() const
 
 void TrackArpaRepositoryInMemImpl::Update(const TrackBaseEntity &track)
 {
-    // TODO: insert to repo
-    TrackBaseEntity *existingTrack = _tracks.value(track.Id(), nullptr);
-    existingTrack->setRange(track.range());
-    existingTrack->setBearing(track.bearing());
-    existingTrack->setSpeed(track.speed());
-    existingTrack->setCourse(track.course());
-    // TODO: update listeners TrackPropertyChanged
-    foreach (TrackRepositoryListener *listener, listeners) {
-        listener->OnTrackPropertyChanged(track.Id(),existingTrack);
+    // check track exist
+    auto it =_tracks.find(track.Id());
+    if (it != _tracks.end()) {
+        // track found
+        // TODO: insert to repo
+        TrackBaseEntity *existingTrack = _tracks.value(track.Id(), nullptr);
+        existingTrack->setRange(track.range());
+        existingTrack->setBearing(track.bearing());
+        existingTrack->setSpeed(track.speed());
+        existingTrack->setCourse(track.course());
+        existingTrack->setTimeStamp(track.timeStamp());
+        // TODO: update listeners TrackPropertyChanged
+        foreach (TrackRepositoryListener *listener, listeners) {
+            listener->OnTrackPropertyChanged(track.Id(),existingTrack);
+        }
     }
 }
 

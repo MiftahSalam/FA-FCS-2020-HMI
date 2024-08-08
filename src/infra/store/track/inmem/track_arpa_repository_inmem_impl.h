@@ -22,7 +22,7 @@ public:
     void Remove(const int &trackId) override;
 
 protected:
-    TrackArpaRepositoryInMemImpl(TrackBaseEntity *entity);
+    TrackArpaRepositoryInMemImpl();
 
 private:
     static TrackArpaRepositoryInMemImpl *instance;
