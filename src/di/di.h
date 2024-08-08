@@ -6,6 +6,8 @@
 #include "src/shared/config/configuration.h"
 #include "src/usecase/osd/cms/osd_cms.h"
 #include "src/usecase/osd/stream/osd_stream.h"
+#include "src/usecase/track/stream/track_stream.h"
+#include "src/infra/store/track/track_repository.h"
 
 class DI
 {
@@ -18,8 +20,9 @@ public:
     OSDCMS *getOSDCMSService() const;
     OSDStream *getServiceOSDStream() const;
     OSDRepository *getRepoOSD() const;
-
     GunRepository *getRepoGun() const;
+    TrackStream *getServiceTrackStream() const;
+    TrackRepository *getRepoTrack() const;
 
 protected:
     DI();
@@ -32,7 +35,7 @@ private:
     OSDRepository *repoOSD;
     GunRepository *repoGun;
     // TODO: add track repository
-
+    TrackRepository *repoTrack;
     // TODO: add weapon assignment repository
 
     // TODO: add weapon track engagement repository
@@ -45,7 +48,7 @@ private:
     // TODO: add weapon assignment service
 
     // TODO: add weapon track engagement service
-
+    TrackStream *serviceTrackStream;
     // TODO: add engagement correction service
 
     OSDStream *serviceOSDStream;
