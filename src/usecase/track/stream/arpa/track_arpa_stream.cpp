@@ -53,14 +53,15 @@ void TrackArpaStream::onDataReceived(QByteArray data)
 {
     try {
        QJsonObject respObj = Utils::byteArrayToJsonObject(data);
-       TrackArpaModel model(respObj["id"].toInt(),
+       TrackArpaModel model(respObj["source"].toString().toStdString(),
+                            respObj["status"].toString().toStdString(),
+                            respObj["id"].toInt(),
                             respObj["range"].toDouble(),
                             respObj["bearing"].toDouble(),
                             respObj["speed"].toDouble(),
                             respObj["course"].toDouble()
                             );
-
-//        qDebug()<<Q_FUNC_INFO<<"data position: lat ->"<<model.getLatitude()<<"lon ->"<<model.getLongitude();
+       //check source manual
        if(respObj.contains("source"))
        {
            if(respObj["source"].toString().contains("manual"))
@@ -69,14 +70,18 @@ void TrackArpaStream::onDataReceived(QByteArray data)
            }
        }
 
-       _repoArpa->Insert(TrackBaseEntity(
+       _repoArpa->Update(TrackBaseEntity(
            model.getId(),
            model.getRange(),
            model.getBearing(),
            model.getSpeed(),
            model.getCourse(),
            respObj["source"].toString().toStdString(),
-           respObj["status"].toString().toStdString()));
+           respObj["status"].toString().toStdString(),
+           respObj["time_stamp"].toInt()
+           ));
+
+       handleError(respObj["status"].toString());
 
        emit signalDataProcessed(model);
     } catch (ErrJsonParse &e) {

@@ -73,6 +73,8 @@ void TrackArpaRepositoryInMemImpl::Update(const TrackBaseEntity &track)
         foreach (TrackRepositoryListener *listener, listeners) {
             listener->OnTrackPropertyChanged(track.Id(),existingTrack);
         }
+    } else {
+        Insert(track);
     }
 }
 
