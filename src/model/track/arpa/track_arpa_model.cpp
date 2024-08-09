@@ -10,6 +10,21 @@ TrackArpaModel::TrackArpaModel(const std::string &source, const std::string &sta
     _course(course)
 {}
 
+TrackArpaModel TrackArpaModel::fromJsonObject(QJsonObject obj)
+{
+    TrackArpaModel model(
+                obj.value("source").toString().toStdString(),
+                obj.value("status").toString().toStdString(),
+                obj.value("id").toInt(),
+                obj.value("range").toDouble(),
+                obj.value("bearing").toDouble(),
+                obj.value("speed").toDouble(),
+                obj.value("course").toDouble()
+                );
+
+    return model;
+}
+
 std::string TrackArpaModel::source() const
 {
     return _source;

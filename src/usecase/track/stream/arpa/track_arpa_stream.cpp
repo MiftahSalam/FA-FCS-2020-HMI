@@ -14,6 +14,11 @@ TrackArpaStream::TrackArpaStream(
 {
     consumer = new TcpMessagingWrapper(this, config);
     connect(consumer, &TcpMessagingWrapper::signalForwardMessage, this, &TrackArpaStream::onDataReceived);
+
+    timer = new QTimer(this);
+    connect(timer, &QTimer::timeout, this, &TrackArpaStream::periodUpdate);
+
+    timer->start(1000);
 }
 
 TrackArpaStream *TrackArpaStream::getInstance(
@@ -45,7 +50,6 @@ BaseError TrackArpaStream::check()
     }
 
     return currentErr;
-    // return consumer->checkConnection();
 }
 
 // TODO: implementation
@@ -53,14 +57,8 @@ void TrackArpaStream::onDataReceived(QByteArray data)
 {
     try {
        QJsonObject respObj = Utils::byteArrayToJsonObject(data);
-       TrackArpaModel model(respObj["source"].toString().toStdString(),
-                            respObj["status"].toString().toStdString(),
-                            respObj["id"].toInt(),
-                            respObj["range"].toDouble(),
-                            respObj["bearing"].toDouble(),
-                            respObj["speed"].toDouble(),
-                            respObj["course"].toDouble()
-                            );
+       TrackArpaModel model = TrackArpaModel::fromJsonObject(respObj);
+
        //check source manual
        if(respObj.contains("source"))
        {
@@ -76,14 +74,12 @@ void TrackArpaStream::onDataReceived(QByteArray data)
            model.getBearing(),
            model.getSpeed(),
            model.getCourse(),
-           respObj["source"].toString().toStdString(),
-           respObj["status"].toString().toStdString(),
-           respObj["time_stamp"].toInt()
+           model.source(),
+           model.status(),
+           QDateTime::currentMSecsSinceEpoch()
            ));
 
        handleError(respObj["status"].toString());
-
-       emit signalDataProcessed(model);
     } catch (ErrJsonParse &e) {
         qDebug()<<Q_FUNC_INFO<<"caught error: "<<e.getMessage();
     }  catch (...) {
@@ -94,7 +90,18 @@ void TrackArpaStream::onDataReceived(QByteArray data)
 // TODO: implementation
 void TrackArpaStream::periodUpdate()
 {
+    check();
 
+    qDebug()<<Q_FUNC_INFO<<"track count"<<_repoArpa->FindAll().size();
+
+    long long now = QDateTime::currentMSecsSinceEpoch();
+    std::list<TrackBaseEntity*> allTracks = _repoArpa->FindAll();
+    foreach (TrackBaseEntity* track, allTracks) {
+        if (now - track->timeStamp() > 10000) {
+            qDebug()<<Q_FUNC_INFO<<"stale track track "<<track->Id();
+            _repoArpa->Remove(track->Id());
+        }
+    }
 }
 
 void TrackArpaStream::handleError(const QString &err)

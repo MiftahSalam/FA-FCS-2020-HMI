@@ -8,10 +8,11 @@ DI::DI()
 
     repoOSD = new OSDRepository(nullptr);
     repoGun = new GunRepository(nullptr);
+    repoTrack = new TrackRepository(nullptr);
+
     // TODO: add weapon assignment repository
 
     // TODO: add weapon track engagement repository
-    repoTrack = new TrackRepository(nullptr);
     // TODO: add engagement correction repository
 
     serviceOSDCMS = new OSDCMS(nullptr, config->getOsdCmsConfig(), repoOSD);
