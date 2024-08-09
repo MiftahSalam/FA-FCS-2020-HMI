@@ -32,7 +32,7 @@ private:
 
     QList<TrackRepositoryListener *>listeners;
 
-    TrackBaseEntity *_entity;
+//    TrackBaseEntity *_entity;
 };
 
 #endif // TRACKARPAREPOSITORYINMEMIMPL_H
