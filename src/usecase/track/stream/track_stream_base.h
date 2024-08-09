@@ -15,6 +15,9 @@ public:
 
 protected:
     QTimer *timer;
+
+private:
+    virtual void handleError(const QString &err) = 0;
 };
 
 #endif // TRACK_STREAM_BASE_H

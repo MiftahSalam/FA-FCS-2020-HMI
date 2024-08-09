@@ -6,30 +6,43 @@
 class TrackBaseEntity
 {
 public:
-    TrackBaseEntity(const std::string &source, const std::string &status);
+    TrackBaseEntity(
+        int id,
+        double range,
+        double bearing,
+        double speed,
+        double course,
+        const std::string &source,
+        const std::string &status,
+        long long timeStamp
+        );
 
     std::string source() const;
     void setSource(const std::string &newSource);
     std::string status() const;
     void setStatus(const std::string &newStatus);
-    int getId() const;
+
+    int Id() const;
     void setId(int newId);
-    float getRange() const;
+    double range() const;
     void setRange(float newRange);
-    float getBearing() const;
+    double bearing() const;
     void setBearing(float newBearing);
-    float getSpeed() const;
+    double speed() const;
     void setSpeed(float newSpeed);
-    float getCourse() const;
+    double course() const;
     void setCourse(float newCourse);
+    long long timeStamp() const;
+    void setTimeStamp(long long newTimeStamp);
 
 private:
     std::string _source;
     std::string _status;
     int _id;
-    float _range;
-    float _bearing;
-    float _speed;
-    float _course;
+    double _range;
+    double _bearing;
+    double _speed;
+    double _course;
+    long long _timeStamp;
 };
 #endif // TRACKBASEENTITY_H

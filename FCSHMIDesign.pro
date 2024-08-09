@@ -81,6 +81,7 @@ SOURCES += \
     src/shared/common/errors/err_osd_data.cpp \
     src/shared/common/errors/helper_err.cpp \
     src/shared/config/amqp_config.cpp \
+    src/shared/config/arpa_config.cpp \
     src/shared/config/configuration.cpp \
     src/shared/config/messaging_tcp_config.cpp \
     src/shared/config/osd_cms_config.cpp \
@@ -109,6 +110,7 @@ SOURCES += \
     src/usecase/osd/stream/osd_stream_weather.cpp \
     src/usecase/osd/stream/osd_stream_wind.cpp \
     src/usecase/track/stream/arpa/track_arpa_stream.cpp \
+    src/usecase/track/stream/track_stream.cpp \
     src/usecase/weapon_assign/weapon_assign_service.cpp \
     src/view/mainwindow.cpp \
     src/view/panel/gun/framegun.cpp \
@@ -198,6 +200,7 @@ HEADERS += \
     src/infra/store/track/inmem/track_arpa_repository_inmem_impl.h \
     src/infra/store/track/track_repository.h \
     src/infra/store/track/track_repository_listener.h \
+    src/infra/store/track/track_repository_publisher.h \
     src/infra/store/weapon_assign/inmemory/weapon_assignment_repository_inmem_impl.h \
     src/infra/store/weapon_track_assign/weapon_track_assignment_repository_inmem_impl.h \
     src/model/base_request.h \
@@ -233,6 +236,7 @@ HEADERS += \
     src/shared/common/errors/err_osd_data.h \
     src/shared/common/errors/helper_err.h \
     src/shared/config/amqp_config.h \
+    src/shared/config/arpa_config.h \
     src/shared/config/base_config.h \
     src/shared/config/configuration.h \
     src/shared/config/messaging_tcp_config.h \
@@ -265,6 +269,7 @@ HEADERS += \
     src/usecase/osd/stream/osd_stream_weather.h \
     src/usecase/osd/stream/osd_stream_wind.h \
     src/usecase/track/stream/arpa/track_arpa_stream.h \
+    src/usecase/track/stream/track_stream.h \
     src/usecase/track/stream/track_stream_base.h \
     src/usecase/weapon_assign/weapon_assign_service.h \
     src/view/mainwindow.h \

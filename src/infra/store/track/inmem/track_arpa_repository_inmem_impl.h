@@ -4,17 +4,18 @@
 #include <QMap>
 #include "src/domain/track/repository/track_base_repository.h"
 #include "src/infra/store/track/track_repository_listener.h"
+#include "src/infra/store/track/track_repository_publisher.h"
 
-class TrackArpaRepositoryInMemImpl: public TrackBaseRepository
+class TrackArpaRepositoryInMemImpl: public TrackBaseRepository, public TrackRepositoryPublisher
 {
 public:
     static TrackBaseRepository *GetInstance();
 
-    void addListener(TrackRepositoryListener *listener);
-    void removeListener(TrackRepositoryListener *listener);
+    // TrackRepositoryPublisher interface
+    void AddListener(TrackRepositoryListener *listener) override;
+    void RemoveListener(TrackRepositoryListener *listener) override;
 
     // TrackBaseRepository interface
-public:
     void Insert(const TrackBaseEntity &track) override;
     const TrackBaseEntity *FindOne(const int &trackId) const override;
     std::list<TrackBaseEntity *> FindAll() const override;
@@ -30,6 +31,8 @@ private:
     QMap<int, TrackBaseEntity*> _tracks;
 
     QList<TrackRepositoryListener *>listeners;
+
+//    TrackBaseEntity *_entity;
 };
 
 #endif // TRACKARPAREPOSITORYINMEMIMPL_H

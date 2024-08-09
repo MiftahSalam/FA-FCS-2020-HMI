@@ -1,6 +1,7 @@
 #include "track_arpa_model.h"
 
-TrackArpaModel::TrackArpaModel(const std::string &source, const std::string &status, int id, float range, float bearing, float speed, float course) : _source(source),
+TrackArpaModel::TrackArpaModel(const std::string &source, const std::string &status, int id, double range, double bearing, double speed, double course):
+    _source(source),
     _status(status),
     _id(id),
     _range(range),
@@ -8,6 +9,21 @@ TrackArpaModel::TrackArpaModel(const std::string &source, const std::string &sta
     _speed(speed),
     _course(course)
 {}
+
+TrackArpaModel TrackArpaModel::fromJsonObject(QJsonObject obj)
+{
+    TrackArpaModel model(
+                obj.value("source").toString().toStdString(),
+                obj.value("status").toString().toStdString(),
+                obj.value("id").toInt(),
+                obj.value("range").toDouble(),
+                obj.value("bearing").toDouble(),
+                obj.value("speed").toDouble(),
+                obj.value("course").toDouble()
+                );
+
+    return model;
+}
 
 std::string TrackArpaModel::source() const
 {
@@ -19,27 +35,27 @@ std::string TrackArpaModel::status() const
     return _status;
 }
 
-int TrackArpaModel::id() const
+int TrackArpaModel::getId() const
 {
     return _id;
 }
 
-float TrackArpaModel::range() const
+double TrackArpaModel::getRange() const
 {
     return _range;
 }
 
-float TrackArpaModel::bearing() const
+double TrackArpaModel::getBearing() const
 {
     return _bearing;
 }
 
-float TrackArpaModel::speed() const
+double TrackArpaModel::getSpeed() const
 {
     return _speed;
 }
 
-float TrackArpaModel::course() const
+double TrackArpaModel::getCourse() const
 {
     return _course;
 }

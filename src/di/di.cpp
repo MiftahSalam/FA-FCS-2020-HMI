@@ -8,10 +8,11 @@ DI::DI()
 
     repoOSD = new OSDRepository(nullptr);
     repoGun = new GunRepository(nullptr);
+    repoTrack = new TrackRepository(nullptr);
+
     // TODO: add weapon assignment repository
 
     // TODO: add weapon track engagement repository
-
     // TODO: add engagement correction repository
 
     serviceOSDCMS = new OSDCMS(nullptr, config->getOsdCmsConfig(), repoOSD);
@@ -20,7 +21,7 @@ DI::DI()
     // TODO: add weapon assignment service
 
     // TODO: add weapon track engagement service
-
+    serviceTrackStream = new TrackStream(nullptr, config->getTcpMessageConfig(), config->getArpaConfig(), repoTrack);
     // TODO: add engagement correction service
 
     serviceOSDStream = new OSDStream(nullptr, config->getTcpMessageConfig(), repoOSD, serviceOSDCMS);
@@ -35,6 +36,16 @@ DI::DI()
 GunRepository *DI::getRepoGun() const
 {
     return repoGun;
+}
+
+TrackStream *DI::getServiceTrackStream() const
+{
+    return serviceTrackStream;
+}
+
+TrackRepository *DI::getRepoTrack() const
+{
+    return repoTrack;
 }
 
 OSDRepository *DI::getRepoOSD() const
