@@ -7,10 +7,10 @@
 TrackArpaStream* TrackArpaStream::arpaStream = nullptr;
 
 TrackArpaStream::TrackArpaStream(
-    TcpMessagingOpts *config,
-    TrackBaseRepository *repoArpa)
-    : cfg(config), _repoArpa(repoArpa), currentErr(NoError())
-
+        TcpMessagingOpts *config,
+        ArpaConfig *confiArpa,
+        TrackBaseRepository *repoArpa
+        ): cfg(config), arpaConfig(confiArpa), _repoArpa(repoArpa), currentErr(NoError())
 {
     consumer = new TcpMessagingWrapper(this, config);
     connect(consumer, &TcpMessagingWrapper::signalForwardMessage, this, &TrackArpaStream::onDataReceived);
@@ -22,11 +22,16 @@ TrackArpaStream::TrackArpaStream(
 }
 
 TrackArpaStream *TrackArpaStream::getInstance(
-    TcpMessagingOpts *config = nullptr,
-    TrackBaseRepository* repoArpa = nullptr)
+        TcpMessagingOpts *config = nullptr,
+        ArpaConfig *confiArpa = nullptr,
+        TrackBaseRepository* repoArpa = nullptr)
 {
     if (arpaStream == nullptr) {
         if(config == nullptr) {
+            throw ErrObjectCreation();
+        }
+
+        if(confiArpa == nullptr) {
             throw ErrObjectCreation();
         }
 
@@ -34,7 +39,7 @@ TrackArpaStream *TrackArpaStream::getInstance(
             throw ErrObjectCreation();
         }
 
-        arpaStream = new TrackArpaStream(config, repoArpa);
+        arpaStream = new TrackArpaStream(config, confiArpa, repoArpa);
     }
 
     return arpaStream;
@@ -56,30 +61,30 @@ BaseError TrackArpaStream::check()
 void TrackArpaStream::onDataReceived(QByteArray data)
 {
     try {
-       QJsonObject respObj = Utils::byteArrayToJsonObject(data);
-       TrackArpaModel model = TrackArpaModel::fromJsonObject(respObj);
+        QJsonObject respObj = Utils::byteArrayToJsonObject(data);
+        TrackArpaModel model = TrackArpaModel::fromJsonObject(respObj);
 
-       //check source manual
-       if(respObj.contains("source"))
-       {
-           if(respObj["source"].toString().contains("manual"))
-           {
-               return;
-           }
-       }
+        //check source manual
+        if(respObj.contains("source"))
+        {
+            if(respObj["source"].toString().contains("manual"))
+            {
+                return;
+            }
+        }
 
-       _repoArpa->Update(TrackBaseEntity(
-           model.getId(),
-           model.getRange(),
-           model.getBearing(),
-           model.getSpeed(),
-           model.getCourse(),
-           model.source(),
-           model.status(),
-           QDateTime::currentMSecsSinceEpoch()
-           ));
+        _repoArpa->Update(TrackBaseEntity(
+                              model.getId(),
+                              model.getRange(),
+                              model.getBearing(),
+                              model.getSpeed(),
+                              model.getCourse(),
+                              model.source(),
+                              model.status(),
+                              QDateTime::currentMSecsSinceEpoch()
+                              ));
 
-       handleError(respObj["status"].toString());
+        handleError(respObj["status"].toString());
     } catch (ErrJsonParse &e) {
         qDebug()<<Q_FUNC_INFO<<"caught error: "<<e.getMessage();
     }  catch (...) {
@@ -97,7 +102,7 @@ void TrackArpaStream::periodUpdate()
     long long now = QDateTime::currentMSecsSinceEpoch();
     std::list<TrackBaseEntity*> allTracks = _repoArpa->FindAll();
     foreach (TrackBaseEntity* track, allTracks) {
-        if (now - track->timeStamp() > 10000) {
+        if (now - track->timeStamp() > arpaConfig->getStaleTimeout()) {
             qDebug()<<Q_FUNC_INFO<<"stale track track "<<track->Id();
             _repoArpa->Remove(track->Id());
         }

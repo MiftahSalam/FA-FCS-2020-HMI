@@ -21,7 +21,7 @@ DI::DI()
     // TODO: add weapon assignment service
 
     // TODO: add weapon track engagement service
-    serviceTrackStream = new TrackStream(nullptr, config->getTcpMessageConfig(), repoTrack);
+    serviceTrackStream = new TrackStream(nullptr, config->getTcpMessageConfig(), config->getArpaConfig(), repoTrack);
     // TODO: add engagement correction service
 
     serviceOSDStream = new OSDStream(nullptr, config->getTcpMessageConfig(), repoOSD, serviceOSDCMS);

@@ -7,6 +7,7 @@ const QString COMMON_CONFIG_PATH = QDir::homePath()+QDir::separator()+".fa-hmi.c
 Configuration::Configuration()
 {
     osdCmsConfig = OSDCmsConfig::getInstance(COMMON_CONFIG_PATH);
+    arpaConfig = ArpaConfig::getInstance(COMMON_CONFIG_PATH);
 //    amqpConfig = AMQPConfig::getInstance(COMMON_CONFIG_PATH);
     tcpMessageConfig = MessagingTcpConfig::getInstance(COMMON_CONFIG_PATH);
     tdaConfig = TDAConfig::getInstance(COMMON_CONFIG_PATH);
@@ -15,6 +16,11 @@ Configuration::Configuration()
 OSDCmsConfig *Configuration::getOsdCmsConfig() const
 {
     return osdCmsConfig;
+}
+
+ArpaConfig *Configuration::getArpaConfig() const
+{
+    return arpaConfig;
 }
 
 MessagingTcpConfig *Configuration::getTcpMessageConfig() const
