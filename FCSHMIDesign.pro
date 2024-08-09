@@ -199,6 +199,7 @@ HEADERS += \
     src/infra/store/track/inmem/track_arpa_repository_inmem_impl.h \
     src/infra/store/track/track_repository.h \
     src/infra/store/track/track_repository_listener.h \
+    src/infra/store/track/track_repository_publisher.h \
     src/infra/store/weapon_assign/inmemory/weapon_assignment_repository_inmem_impl.h \
     src/infra/store/weapon_track_assign/weapon_track_assignment_repository_inmem_impl.h \
     src/model/base_request.h \

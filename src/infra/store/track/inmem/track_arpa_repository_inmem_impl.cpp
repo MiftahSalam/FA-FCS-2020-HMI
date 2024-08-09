@@ -11,20 +11,10 @@ TrackBaseRepository *TrackArpaRepositoryInMemImpl::GetInstance()
 {
     if (instance == nullptr) {
         // TrackBaseEntity *entity = new TrackBaseEntity(0,0,0,0,0,"","",0);
-           instance = new TrackArpaRepositoryInMemImpl();
-       }
+        instance = new TrackArpaRepositoryInMemImpl();
+    }
 
     return instance;
-}
-
-void TrackArpaRepositoryInMemImpl::addListener(TrackRepositoryListener *listener)
-{
-
-}
-
-void TrackArpaRepositoryInMemImpl::removeListener(TrackRepositoryListener *listener)
-{
-
 }
 
 void TrackArpaRepositoryInMemImpl::Insert(const TrackBaseEntity &track)
@@ -83,4 +73,13 @@ void TrackArpaRepositoryInMemImpl::Remove(const int &trackId)
     // TODO: insert to repo
 
     // TODO: update listeners TracksRemoved
+}
+
+
+void TrackArpaRepositoryInMemImpl::AddListener(TrackRepositoryListener *listener)
+{
+}
+
+void TrackArpaRepositoryInMemImpl::RemoveListener(TrackRepositoryListener *listener)
+{
 }
