@@ -17,8 +17,7 @@ public:
     explicit Track(QWidget *parent = nullptr, QSize size = QSize(10,10));
 
     const TrackParam *getTrackData() const;
-
-    void updateData(TrackParam param);
+    void updateTrackData(TrackParam param);
     void setTrackNumber(int number);
     void buildUI(TrackParam *param);
 //    void setDesigLIODEnable (bool enabled);
@@ -26,14 +25,14 @@ public:
     void setSelected(bool select);
 
 signals:
-    void identity_change_signal(int tn,TrackUtils::Identity identity);
-    void env_change_signal(int tn,TrackUtils::Environment identity);
+    void identityChange_Signal(int tn,TrackUtils::Identity identity);
+    void envChangeSignal(int tn,TrackUtils::Environment identity);
 //    void desig_request_signal(int tn,bool desig,QString desig_mode);
 
 private slots:
     void RC_track(QPoint pos);
-    void identity_change();
-    void environment_change();
+    void identityChange();
+    void environmentChange();
 //    void desig_change();
 //    void desig_direct_change();
 //    void desig_request(QString desig_mode);
@@ -43,18 +42,11 @@ protected:
     void mousePressEvent(QMouseEvent *event) override;
 
 private:    
-    QLabel *symbol;
-    QLabel *no_track;
-    QString current_symbol_image_path;
+    QLabel *trackIconLabel;
+    QLabel *trackIdLabel;
+    QString currentIconImagePath;
     TdaEventFilter *rc_radarevent;
-    TrackParam *trackDat;
-
-    QString identity2String(TrackUtils::Identity identity);
-    QString env2String(TrackUtils::Environment env);
-//    QString desig2String(Desig desig);
-//    QString desigDirect2String(DesigDirect desig_direct);
-    QString fileImageLocation(TrackUtils::Identity identity, TrackUtils::Environment env);
-
+    TrackParam *trackData;
     QAction *identityAction[TrackUtils::IDENTITY_COUNT];
     QAction *envAction[TrackUtils::ENVIRONMENT_COUNT];
     QAction *desigAction[TrackUtils::DESIG_COUNT];
@@ -63,10 +55,16 @@ private:
     QMenu *envSubMenu;
 //    QMenu *desigSubMenu;
 //    QMenu *desigDirectSubMenu;
-    int cur_checked_identity;
-    int cur_checked_env;
-    int cur_checked_desig;
+    int curCheckedIdentity;
+    int curCheckedEnv;
+    int curCheckedDesig;
 //    int cur_checked_desig_direct;
+
+    QString identity2String(TrackUtils::Identity identity);
+    QString env2String(TrackUtils::Environment env);
+//    QString desig2String(Desig desig);
+//    QString desigDirect2String(DesigDirect desig_direct);
+    QString fileImageLocation(TrackUtils::Identity identity, TrackUtils::Environment env);
 
 };
 

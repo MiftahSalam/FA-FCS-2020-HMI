@@ -4,23 +4,18 @@
 #include <QDebug>
 
 Track::Track(QWidget *parent, QSize size) :
-    QWidget(parent), trackDat(nullptr)
+    QWidget(parent), trackData(nullptr)
 {
     resize(size);
 }
 
-const TrackParam *Track::getTrackData() const
-{
-    return trackDat;
-}
-
 void Track::buildUI(TrackParam *param)
 {
-    trackDat = param;
+    trackData = param;
 
-    current_symbol_image_path = fileImageLocation(trackDat->getCur_identity(), trackDat->getCur_env()); //get image from file
-    qDebug()<<current_symbol_image_path;
-    QImage image(current_symbol_image_path);
+    currentIconImagePath = fileImageLocation(trackData->getCur_identity(), trackData->getCur_env()); //get image from file
+    qDebug()<<currentIconImagePath;
+    QImage image(currentIconImagePath);
 
     /*contex menu identity*/
     identitySubMenu = new QMenu("Identity",this);
@@ -33,8 +28,8 @@ void Track::buildUI(TrackParam *param)
 
         identitySubMenu->addAction(identityAction[i]);
     }
-    cur_checked_identity = TrackUtils::identity2Int(param->getCur_identity());
-    identityAction[cur_checked_identity]->setChecked(true);
+    curCheckedIdentity = TrackUtils::identity2Int(param->getCur_identity());
+    identityAction[curCheckedIdentity]->setChecked(true);
 
     /*contex menu environment*/
     envSubMenu = new QMenu("Environment",this);
@@ -48,18 +43,18 @@ void Track::buildUI(TrackParam *param)
 
         envSubMenu->addAction(envAction[i]);
     }
-    cur_checked_env = TrackUtils::environment2Int(param->getCur_env());
-    envAction[cur_checked_env]->setChecked(true);
+    curCheckedEnv = TrackUtils::environment2Int(param->getCur_env());
+    envAction[curCheckedEnv]->setChecked(true);
 
     /*create QLabel for holding track image and information display*/
-    symbol = new QLabel(this);
-    symbol->setObjectName(QString::fromUtf8("symbol"));
-    symbol->setFrameShape(QFrame::NoFrame);
-    symbol->setGeometry(QRect(0,0,width()/3,height()));
-    symbol->setPixmap(QPixmap::fromImage(image));
-    symbol->setStyleSheet(QString::fromUtf8("color: rgba(255, 255, 255);background-color: rgb(0,0,0,0);"));
-    symbol->setScaledContents(true);
-    symbol->setToolTip(QString("Track Information\n\n"
+    trackIconLabel = new QLabel(this);
+    trackIconLabel->setObjectName(QString::fromUtf8("trackIconLabel"));
+    trackIconLabel->setFrameShape(QFrame::NoFrame);
+    trackIconLabel->setGeometry(QRect(0,0,width()/3,height()));
+    trackIconLabel->setPixmap(QPixmap::fromImage(image));
+    trackIconLabel->setStyleSheet(QString::fromUtf8("color: rgba(255, 255, 255);background-color: rgb(0,0,0,0);"));
+    trackIconLabel->setScaledContents(true);
+    trackIconLabel->setToolTip(QString("Track Information\n\n"
                                "TN : %1\n"
                                "Range : %2 NM\n"
                                "Bearing : %3 deg\n"
@@ -68,74 +63,74 @@ void Track::buildUI(TrackParam *param)
                                "Height : %6 feet\n"
                                "Identity : %7\n"
                                )
-                       .arg(QString::number(trackDat->getTn()))
-                       .arg(QString::number(trackDat->getRange(),'f',2))
-                       .arg(QString::number(trackDat->getBearing(),'f',2))
-                       .arg(QString::number(trackDat->getSpeed(),'f',2))
-                       .arg(QString::number(trackDat->getCourse(),'f',2))
+                       .arg(QString::number(trackData->getTn()))
+                       .arg(QString::number(trackData->getRange(),'f',2))
+                       .arg(QString::number(trackData->getBearing(),'f',2))
+                       .arg(QString::number(trackData->getSpeed(),'f',2))
+                       .arg(QString::number(trackData->getCourse(),'f',2))
                        .arg(QString::number(0,'f',2))
-                       .arg(identity2String(trackDat->getCur_identity()))
+                       .arg(identity2String(trackData->getCur_identity()))
                        );
     /*
       track event handler
     rc_radarevent=new TdaEventFilter();
     connect(rc_radarevent,SIGNAL(send_rightButtonClicked(QPoint)),this,SLOT(RC_track(QPoint))); //tombol2 klik kanan track
-    symbol->installEventFilter(rc_radarevent);
+    trackIconLabel->installEventFilter(rc_radarevent);
     */
 \
-//    qDebug() <<Q_FUNC_INFO <<"filter" <<symbol;
+//    qDebug() <<Q_FUNC_INFO <<"filter" <<trackIconLabel;
 
     /*create QLabel for holding track number and source display*/
-    no_track = new QLabel(this);
-    no_track->setObjectName(QString::fromUtf8("no_track"));
-    no_track->setFrameShape(QFrame::NoFrame);
-    no_track->setStyleSheet(QString::fromUtf8("color: rgba(255, 255, 255);background-color: rgb(0,0,0,0);"));
-    no_track->setGeometry(QRect(symbol->width()+5,0,width()*2/3,height()));
-    no_track->setScaledContents(true);
-//    no_track->installEventFilter(rc_radarevent);
+    trackIdLabel = new QLabel(this);
+    trackIdLabel->setObjectName(QString::fromUtf8("trackIdLabel"));
+    trackIdLabel->setFrameShape(QFrame::NoFrame);
+    trackIdLabel->setStyleSheet(QString::fromUtf8("color: rgba(255, 255, 255);background-color: rgb(0,0,0,0);"));
+    trackIdLabel->setGeometry(QRect(trackIconLabel->width()+5,0,width()*2/3,height()));
+    trackIdLabel->setScaledContents(true);
+//    trackIdLabel->installEventFilter(rc_radarevent);
 
     QString source;
-    if(trackDat->getCur_source()==TrackUtils::T_NAVRAD)
+    if(trackData->getCur_source()==TrackUtils::T_NAVRAD)
         source = "N ";
-    else if(trackDat->getCur_source()==TrackUtils::T_LIOD)
+    else if(trackData->getCur_source()==TrackUtils::T_LIOD)
         source = "L ";
-    no_track->setText(source+QString::number(trackDat->getTn()));
+    trackIdLabel->setText(source+QString::number(trackData->getTn()));
 }
 
 void Track::setSelected(bool select)
 {
     if(select)
-        symbol->setFrameShape(QFrame::Box);
+        trackIconLabel->setFrameShape(QFrame::Box);
     else
-        symbol->setFrameShape(QFrame::NoFrame);
+        trackIconLabel->setFrameShape(QFrame::NoFrame);
 }
 
-void Track::updateData(TrackParam param)
+void Track::updateTrackData(TrackParam param)
 {
     /*identity or environment change*/
-    if((param.getCur_identity()!=trackDat->getCur_identity()) || (param.getCur_env()!=trackDat->getCur_env()))
+    if((param.getCur_identity()!=trackData->getCur_identity()) || (param.getCur_env()!=trackData->getCur_env()))
     {
-        current_symbol_image_path = fileImageLocation(param.getCur_identity(),param.getCur_env());
-        QImage image(current_symbol_image_path);
-        symbol->setPixmap(QPixmap::fromImage(image));
+        currentIconImagePath = fileImageLocation(param.getCur_identity(),param.getCur_env());
+        QImage image(currentIconImagePath);
+        trackIconLabel->setPixmap(QPixmap::fromImage(image));
     }
 
     /*source change*/
-    if(param.getCur_source()!=trackDat->getCur_source())
+    if(param.getCur_source()!=trackData->getCur_source())
     {
         QString source;
         if(param.getCur_source()==TrackUtils::T_NAVRAD)
             source = "N ";
         else if(param.getCur_source()==TrackUtils::T_LIOD)
             source = "L ";
-        no_track->setText(source+QString::number(trackDat->getTn()));
+        trackIdLabel->setText(source+QString::number(trackData->getTn()));
     }
 
 
-    *trackDat = param;
+    *trackData = param;
 
     /*update track information*/
-    symbol->setToolTip(QString("Track Information\n\n"
+    trackIconLabel->setToolTip(QString("Track Information\n\n"
                                "TN : %1\n"
                                "Range : %2 NM\n"
                                "Bearing : %3 deg\n"
@@ -145,14 +140,14 @@ void Track::updateData(TrackParam param)
                                "Identity : %7\n"
                                "Weapon Assign : %8\n"
                                )
-                       .arg(QString::number(trackDat->getTn()))
-                       .arg(QString::number(trackDat->getRange(),'f',2))
-                       .arg(QString::number(trackDat->getBearing(),'f',2))
-                       .arg(QString::number(trackDat->getSpeed(),'f',2))
-                       .arg(QString::number(trackDat->getCourse(),'f',2))
+                       .arg(QString::number(trackData->getTn()))
+                       .arg(QString::number(trackData->getRange(),'f',2))
+                       .arg(QString::number(trackData->getBearing(),'f',2))
+                       .arg(QString::number(trackData->getSpeed(),'f',2))
+                       .arg(QString::number(trackData->getCourse(),'f',2))
                        .arg(QString::number(0,'f',2))
-                       .arg(identity2String(trackDat->getCur_identity()))
-                       .arg(trackDat->getWeapon_assign())
+                       .arg(identity2String(trackData->getCur_identity()))
+                       .arg(trackData->getWeapon_assign())
                        );
 
 }
@@ -181,30 +176,35 @@ void Track::mousePressEvent(QMouseEvent *event)
     menu->exec(event->globalPos());
 }
 
-void Track::identity_change()
+void Track::identityChange()
 {
     for(int i=0;i<TrackUtils::IDENTITY_COUNT;i++)
     {
-        if(identityAction[i]->isChecked() && i!=cur_checked_identity)
+        if(identityAction[i]->isChecked() && i!=curCheckedIdentity)
         {
-            identityAction[cur_checked_identity]->setChecked(false);
-            cur_checked_identity = i;
+            identityAction[curCheckedIdentity]->setChecked(false);
+            curCheckedIdentity = i;
         }
     }
-    identity_change_signal(trackDat->getTn(),TrackUtils::int2Identity(cur_checked_identity));
+    identityChange_Signal(trackData->getTn(),TrackUtils::int2Identity(curCheckedIdentity));
 }
 
-void Track::environment_change()
+void Track::environmentChange()
 {
     for(int i=0;i<TrackUtils::ENVIRONMENT_COUNT;i++)
     {
-        if(envAction[i]->isChecked() || i!=cur_checked_env)
+        if(envAction[i]->isChecked() || i!=curCheckedEnv)
         {
-            envAction[cur_checked_env]->setChecked(true);
-            cur_checked_env = i;
+            envAction[curCheckedEnv]->setChecked(true);
+            curCheckedEnv = i;
         }
     }
-    env_change_signal(trackDat->getTn(),TrackUtils::int2Environment(cur_checked_env));
+    envChangeSignal(trackData->getTn(),TrackUtils::int2Environment(curCheckedEnv));
+}
+
+const TrackParam *Track::getTrackData() const
+{
+    return trackData;
 }
 
 QString Track::identity2String(TrackUtils::Identity identity)
@@ -236,28 +236,28 @@ QString Track::fileImageLocation(TrackUtils::Identity identity,TrackUtils::Envir
     if(env==TrackUtils::AIR)
     {
         if(identity==TrackUtils::UNKNOWN)
-            return ":/images/tda_track_symbol/surface-unknown.png";
+            return ":/images/tda_track_trackIconLabel/surface-unknown.png";
         else if(identity==TrackUtils::FRIENDLY)
-            return ":/images/tda_track_symbol/surface-friend.png";
+            return ":/images/tda_track_trackIconLabel/surface-friend.png";
         else if(identity==TrackUtils::NEUTRAL)
-            return ":/images/tda_track_symbol/surface-netral.png";
+            return ":/images/tda_track_trackIconLabel/surface-netral.png";
         else if(identity==TrackUtils::HOSTILE)
-            return ":/images/tda_track_symbol/surface-hostile.png";
+            return ":/images/tda_track_trackIconLabel/surface-hostile.png";
         else
-            return ":/images/tda_track_symbol/surface-unknown.png";
+            return ":/images/tda_track_trackIconLabel/surface-unknown.png";
     }
     else if (env==TrackUtils::SURFACE)
     {
         if(identity==TrackUtils::UNKNOWN)
-            return ":/images/tda_track_symbol/surface-unknown.png";
+            return ":/images/tda_track_trackIconLabel/surface-unknown.png";
         else if(identity==TrackUtils::FRIENDLY)
-            return ":/images/tda_track_symbol/surface-friend.png";
+            return ":/images/tda_track_trackIconLabel/surface-friend.png";
         else if(identity==TrackUtils::NEUTRAL)
-            return ":/images/tda_track_symbol/surface-netral.png";
+            return ":/images/tda_track_trackIconLabel/surface-netral.png";
         else if(identity==TrackUtils::HOSTILE)
-            return ":/images/tda_track_symbol/surface-hostile.png";
+            return ":/images/tda_track_trackIconLabel/surface-hostile.png";
         else
-            return ":/images/tda_track_symbol/surface-unknown.png";
+            return ":/images/tda_track_trackIconLabel/surface-unknown.png";
     }
 }
 
