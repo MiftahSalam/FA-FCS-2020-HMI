@@ -156,6 +156,14 @@ void FrameTDA::onZoomChange()
     ZoomAction[cur_checked_zoom_scale]->setChecked(true);
     tdaScale = ZoomAction[cur_checked_zoom_scale]->text().remove(" NM").toDouble();
     tdaConfig->setZoomScale(tdaScale);
+
+    foreach (auto obj, objectItems) {
+        TDAZoomableObjectBase *objZoom = dynamic_cast<TDAZoomableObjectBase*>(obj);
+        if (objZoom) {
+            objZoom->OnZoom(tdaScale);
+        }
+    }
+
     update();
 }
 
@@ -261,7 +269,6 @@ FrameTDA::zoomScale FrameTDA::zoomInt2Scale(int scale)
 
 void FrameTDA::setupContextMenu()
 {
-    tdaScale = tdaConfig->getZoomScale();
     QString _zoomScale = QString::number(tdaScale);
     cur_checked_zoom_scale = zoomString2Scale(_zoomScale);
 
@@ -323,7 +330,7 @@ void FrameTDA::setupTdaObjects()
     TDAGunCoverageObject *gunCoverage = new TDAGunCoverageObject(this, osdRepo->getRepoOSDInertia(), gunRepo->getRepoGunCoverage(), tdaConfig);
     TDAHeadingMarkerObject *headingMarker = new TDAHeadingMarkerObject (this, osdRepo->getRepoOSDInertia(), tdaConfig);
     TDAGunBarrelObject *gunBarrel = new TDAGunBarrelObject (this, osdRepo->getRepoOSDInertia(), gunRepo->getRepoGunFeedback(), tdaConfig);
-    TDATracksObject *tracksObject = new TDATracksObject(this, trackRepo->getRepoTrackArpa());;
+    TDATracksObject *tracksObject = new TDATracksObject(this, trackRepo->getRepoTrackArpa(), tdaScale);
 
     objectItems << compass << tracksObject << headingMarker << gunBarrel << gunCoverage;
 }
@@ -334,6 +341,8 @@ void FrameTDA::setupDI()
     gunRepo = DI::getInstance()->getRepoGun();
     tdaConfig = DI::getInstance()->getConfig()->getTDAConfig();
     trackRepo = DI::getInstance()->getRepoTrack();
+
+    tdaScale = tdaConfig->getZoomScale();
 }
 
 void FrameTDA::handleMouseTrackingPolar(QMouseEvent *event)
