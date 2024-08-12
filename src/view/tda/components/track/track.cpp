@@ -1,20 +1,21 @@
 #include "track.h"
+#include "qevent.h"
 #include <QDir>
 #include <QDebug>
 
-track::track(QWidget *parent, QSize size) :
+Track::Track(QWidget *parent, QSize size) :
     QWidget(parent)
 {
     resize(size);
 }
 
-void track::buildUI(trackParam param)
+void Track::buildUI(TrackParam param)
 {
     trackDat = param;
 
-    current_symbol_image = fileImageLocation(trackDat.cur_identity,trackDat.cur_env); //get image from file
-//    qDebug()<<current_symbol_image;
-    QImage image(current_symbol_image);
+    current_symbol_image_path = fileImageLocation(trackDat.cur_identity,trackDat.cur_env); //get image from file
+    qDebug()<<current_symbol_image_path;
+    QImage image(current_symbol_image_path);
 
     /*contex menu identity*/
     identitySubMenu = new QMenu("Identity",this);
@@ -72,10 +73,11 @@ void track::buildUI(trackParam param)
                        );
     /*
       track event handler
-    */
-    rc_radarevent=new TdaEventFilter(this);
+    rc_radarevent=new TdaEventFilter();
     connect(rc_radarevent,SIGNAL(send_rightButtonClicked(QPoint)),this,SLOT(RC_track(QPoint))); //tombol2 klik kanan track
     symbol->installEventFilter(rc_radarevent);
+    */
+\
 //    qDebug() <<Q_FUNC_INFO <<"filter" <<symbol;
 
     /*create QLabel for holding track number and source display*/
@@ -85,7 +87,7 @@ void track::buildUI(trackParam param)
     no_track->setStyleSheet(QString::fromUtf8("color: rgba(255, 255, 255);background-color: rgb(0,0,0,0);"));
     no_track->setGeometry(QRect(symbol->width()+5,0,width()*2/3,height()));
     no_track->setScaledContents(true);
-    no_track->installEventFilter(rc_radarevent);
+//    no_track->installEventFilter(rc_radarevent);
 
     QString source;
     if(trackDat.cur_source==TrackUtils::T_NAVRAD)
@@ -95,7 +97,7 @@ void track::buildUI(trackParam param)
     no_track->setText(source+QString::number(trackDat.tn));
 }
 
-void track::setSelected(bool select)
+void Track::setSelected(bool select)
 {
     if(select)
         symbol->setFrameShape(QFrame::Box);
@@ -103,13 +105,13 @@ void track::setSelected(bool select)
         symbol->setFrameShape(QFrame::NoFrame);
 }
 
-void track::updateData(trackParam param)
+void Track::updateData(TrackParam param)
 {
     /*identity or environment change*/
     if((param.cur_identity!=trackDat.cur_identity) || (param.cur_env!=trackDat.cur_env))
     {
-        current_symbol_image = fileImageLocation(param.cur_identity,param.cur_env);
-        QImage image(current_symbol_image);
+        current_symbol_image_path = fileImageLocation(param.cur_identity,param.cur_env);
+        QImage image(current_symbol_image_path);
         symbol->setPixmap(QPixmap::fromImage(image));
     }
 
@@ -150,7 +152,7 @@ void track::updateData(trackParam param)
 
 }
 /*right click menu*/
-void track::RC_track(QPoint pos)
+void Track::RC_track(QPoint pos)
 {
     qDebug()<<Q_FUNC_INFO<<" point "<<pos;
 
@@ -162,7 +164,19 @@ void track::RC_track(QPoint pos)
     menu->exec(pos);
 }
 
-void track::identity_change()
+void Track::mousePressEvent(QMouseEvent *event)
+{
+    qDebug()<<Q_FUNC_INFO<<" point "<<event->globalPos();
+
+    QMenu *menu = new QMenu(this);
+    menu->setStyleSheet("QMenu{color: rgb(255,255,255);background-color: rgb(0,0,0);selection-color: yellow; item:disabled: black;}");
+    menu->addMenu(identitySubMenu);
+    menu->addMenu(envSubMenu);
+   // menu->addMenu(desigSubMenu);
+    menu->exec(event->globalPos());
+}
+
+void Track::identity_change()
 {
     for(int i=0;i<TrackUtils::IDENTITY_COUNT;i++)
     {
@@ -175,7 +189,7 @@ void track::identity_change()
     identity_change_signal(trackDat.tn,TrackUtils::int2Identity(cur_checked_identity));
 }
 
-void track::environment_change()
+void Track::environment_change()
 {
     for(int i=0;i<TrackUtils::ENVIRONMENT_COUNT;i++)
     {
@@ -188,7 +202,7 @@ void track::environment_change()
     env_change_signal(trackDat.tn,TrackUtils::int2Environment(cur_checked_env));
 }
 
-QString track::identity2String(TrackUtils::Identity identity)
+QString Track::identity2String(TrackUtils::Identity identity)
 {
     if(identity==TrackUtils::UNKNOWN)
         return "Unknown";
@@ -202,7 +216,7 @@ QString track::identity2String(TrackUtils::Identity identity)
         return "Unidentify";
 }
 
-QString track::env2String(TrackUtils::Environment env)
+QString Track::env2String(TrackUtils::Environment env)
 {
     if(env==TrackUtils::AIR)
         return "Air";
@@ -212,33 +226,33 @@ QString track::env2String(TrackUtils::Environment env)
         return "Unknown Environment";
 }
 
-QString track::fileImageLocation(TrackUtils::Identity identity,TrackUtils::Environment env)
+QString Track::fileImageLocation(TrackUtils::Identity identity,TrackUtils::Environment env)
 {
     if(env==TrackUtils::AIR)
     {
         if(identity==TrackUtils::UNKNOWN)
-            return ":/tda_track_symbol/surface-unknown.png";
+            return ":/images/tda_track_symbol/surface-unknown.png";
         else if(identity==TrackUtils::FRIENDLY)
-            return ":/tda_track_symbol/surface-friend.png";
+            return ":/images/tda_track_symbol/surface-friend.png";
         else if(identity==TrackUtils::NEUTRAL)
-            return ":/tda_track_symbol/surface-netral.png";
+            return ":/images/tda_track_symbol/surface-netral.png";
         else if(identity==TrackUtils::HOSTILE)
-            return ":/tda_track_symbol/surface-hostile.png";
+            return ":/images/tda_track_symbol/surface-hostile.png";
         else
-            return ":/tda_track_symbol/surface-unknown.png";
+            return ":/images/tda_track_symbol/surface-unknown.png";
     }
     else if (env==TrackUtils::SURFACE)
     {
         if(identity==TrackUtils::UNKNOWN)
-            return ":/tda_track_symbol/surface-unknown.png";
+            return ":/images/tda_track_symbol/surface-unknown.png";
         else if(identity==TrackUtils::FRIENDLY)
-            return ":/tda_track_symbol/surface-friend.png";
+            return ":/images/tda_track_symbol/surface-friend.png";
         else if(identity==TrackUtils::NEUTRAL)
-            return ":/tda_track_symbol/surface-netral.png";
+            return ":/images/tda_track_symbol/surface-netral.png";
         else if(identity==TrackUtils::HOSTILE)
-            return ":/tda_track_symbol/surface-hostile.png";
+            return ":/images/tda_track_symbol/surface-hostile.png";
         else
-            return ":/tda_track_symbol/surface-unknown.png";
+            return ":/images/tda_track_symbol/surface-unknown.png";
     }
 }
 

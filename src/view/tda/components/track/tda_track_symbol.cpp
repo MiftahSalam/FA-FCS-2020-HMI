@@ -1,6 +1,6 @@
 #include "tda_track_symbol.h"
 
-TdaTrackSymbol::TdaTrackSymbol(QWidget *parent, trackParam param)
+TdaTrackSymbol::TdaTrackSymbol(QWidget *parent, TrackParam param)
     : QLabel(parent), currentParam(param)
 {
     // TODO: real image load

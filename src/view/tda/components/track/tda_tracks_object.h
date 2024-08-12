@@ -4,6 +4,7 @@
 #include "src/domain/track/repository/track_base_repository.h"
 #include "src/view/tda/components/tda_object_base.h"
 #include "src/infra/store/track/track_repository_listener.h"
+#include "src/view/tda/components/track/track.h"
 
 // TODO: TrackRepo listener inherit
 class TDATracksObject : public TDAZoomableObjectBase, public TrackRepositoryListener
@@ -12,12 +13,13 @@ class TDATracksObject : public TDAZoomableObjectBase, public TrackRepositoryList
 public:
     explicit TDATracksObject(QObject *parent = nullptr, TrackBaseRepository *repoTrack = nullptr);
 
+    ~TDATracksObject();
+
     // TDAObjectBase interface
     void Draw(QPainter *painter, const int &side, const int &width, const int &height, const QPoint &off_center) override;
 
     // TODO: implement track changed handler
     //  TrackRepositoryListener interface
-public:
     void OnTracksAdded(std::list<TrackBaseEntity *> tnList) override;
     void OnTracksRemoved(std::list<int> tnIdList) override;
     void OnTrackPropertyChanged(int tn, TrackBaseEntity *track) override;
@@ -27,10 +29,11 @@ public slots:
     void OnZoom(float range) override;
 
 private:
-    // TODO: add trackRepo member
+    // add trackRepo member
     TrackBaseRepository *arpaRepo;
 
     // TODO: add tracksList member
+    QMap<int, Track*> trackObjListMap;
 
     // TODO: add track ui generator method
 };

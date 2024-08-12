@@ -6,20 +6,19 @@
 #include <QAction>
 #include <QMenu>
 
+#include "src/view/tda/components/track/track_param.h"
 #include "src/view/tda/events/tda_event_filter.h"
 #include "src/shared/utils/track/track_utils.h"
-#include "tda_track_id.h"
 
-class track : public QWidget
+class Track : public QWidget
 {
     Q_OBJECT
 public:
+    explicit Track(QWidget *parent = nullptr, QSize size = QSize(10,10));
 
-    explicit track(QWidget *parent = 0, QSize size = QSize(10,10));
-
-    void updateData(trackParam param);
+    void updateData(TrackParam param);
     void setTrackNumber(int number);
-    void buildUI(trackParam param);
+    void buildUI(TrackParam param);
 //    void setDesigLIODEnable (bool enabled);
 //    void setDesigWeaponEnable (QString weapon, bool enabled);
     void setSelected(bool select);
@@ -30,7 +29,6 @@ signals:
 //    void desig_request_signal(int tn,bool desig,QString desig_mode);
 
 private slots:
-
     void RC_track(QPoint pos);
     void identity_change();
     void environment_change();
@@ -39,12 +37,15 @@ private slots:
 //    void desig_request(QString desig_mode);
 //    void desig_feedback(int tn,bool approve,QString desig_mode);
 
-private:
+protected:
+    void mousePressEvent(QMouseEvent *event) override;
+
+private:    
     QLabel *symbol;
     QLabel *no_track;
-    QString current_symbol_image;
+    QString current_symbol_image_path;
     TdaEventFilter *rc_radarevent;
-    trackParam trackDat;
+    TrackParam trackDat;
 
     QString identity2String(TrackUtils::Identity identity);
     QString env2String(TrackUtils::Environment env);

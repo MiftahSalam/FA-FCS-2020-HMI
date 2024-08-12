@@ -299,6 +299,7 @@ HEADERS += \
     src/view/tda/components/track/tda_track_symbol.h \
     src/view/tda/components/track/tda_tracks_object.h \
     src/view/tda/components/track/track.h \
+    src/view/tda/components/track/track_param.h \
     src/view/tda/events/tda_event_filter.h \
     src/view/tda/frametda.h \
     test/shared/config/test_osd_cms_config.h \
