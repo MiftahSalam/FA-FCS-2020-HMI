@@ -106,6 +106,9 @@ void TDATracksObject::OnTracksAdded(std::list<TrackBaseEntity *> tnList)
 void TDATracksObject::OnTracksRemoved(std::list<int> tnIdList)
 {
     qDebug()<<Q_FUNC_INFO<<"tnIdList size"<<tnIdList.size();
+    foreach (auto trackId, tnIdList) {
+        delete trackObjListMap.take(trackId);
+    }
 }
 
 void TDATracksObject::OnTrackPropertyChanged(int tn, TrackBaseEntity *track)
