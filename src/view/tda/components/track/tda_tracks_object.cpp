@@ -119,4 +119,9 @@ void TDATracksObject::OnTracksRemoved(std::list<int> tnIdList)
 
 void TDATracksObject::OnTrackPropertyChanged(int tn, TrackBaseEntity *track)
 {
+    Track* findTrack = trackObjListMap.value(tn, nullptr);
+    if (findTrack) {
+        findTrack->updateTrackData(*entityToTrackParam(track));
+        findTrack->move(polar2Cartesia(findTrack->getTrackData()->getRange(), findTrack->getTrackData()->getBearing()));
+    }
 }
