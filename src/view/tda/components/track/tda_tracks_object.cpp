@@ -33,6 +33,9 @@ void TDATracksObject::Draw(QPainter *painter, const int &side, const int &width,
 void TDATracksObject::OnZoom(float range)
 {
     tdaScale = range;
+    foreach (auto tr, trackObjListMap) {
+        tr->move(polar2Cartesia(tr->getTrackData()->getRange(), tr->getTrackData()->getBearing()));
+    }
 }
 
 void TDATracksObject::generateTrackUI(TrackBaseEntity *newTrack)
