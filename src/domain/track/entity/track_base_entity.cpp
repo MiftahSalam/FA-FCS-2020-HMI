@@ -4,11 +4,11 @@ TrackBaseEntity::TrackBaseEntity(int id, double range, double bearing, double sp
     _source(source),
     _status(status),
     _id(id),
+    _timeStamp(timeStamp),
     _range(range),
     _bearing(bearing),
     _speed(speed),
-    _course(course),
-    _timeStamp(timeStamp)
+    _course(course)
 {}
 
 std::string TrackBaseEntity::source() const
@@ -89,4 +89,44 @@ long long TrackBaseEntity::getTimeStamp() const
 void TrackBaseEntity::setTimeStamp(long long newTimeStamp)
 {
     _timeStamp = newTimeStamp;
+}
+
+TrackUtils::Identity TrackBaseEntity::getCurridentity() const
+{
+    return cur_identity;
+}
+
+void TrackBaseEntity::setCurrIdentity(TrackUtils::Identity newCur_identity)
+{
+    cur_identity = newCur_identity;
+}
+
+TrackUtils::trackSource TrackBaseEntity::getCur_source() const
+{
+    return cur_source;
+}
+
+void TrackBaseEntity::setCurrSource(TrackUtils::trackSource newCur_source)
+{
+    cur_source = newCur_source;
+}
+
+TrackUtils::Environment TrackBaseEntity::getCurrEnv() const
+{
+    return cur_env;
+}
+
+void TrackBaseEntity::setCurrEnv(TrackUtils::Environment newCur_env)
+{
+    cur_env = newCur_env;
+}
+
+std::string TrackBaseEntity::getWeaponAssign() const
+{
+    return weapon_assign;
+}
+
+void TrackBaseEntity::setWeaponAssign(const std::string &newWeapon_assign)
+{
+    weapon_assign = newWeapon_assign;
 }
