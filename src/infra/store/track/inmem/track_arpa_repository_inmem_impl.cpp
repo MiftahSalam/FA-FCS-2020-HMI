@@ -69,6 +69,8 @@ void TrackArpaRepositoryInMemImpl::Update(const TrackBaseEntity &track)
         existingTrack->setSource(track.source());
         existingTrack->setStatus(track.status());
 
+        _tracks.insert(track.getId(), existingTrack);
+
         //update listeners TrackPropertyChanged
         foreach (TrackRepositoryListener *listener, listeners) {
             listener->OnTrackPropertyChanged(existingTrack->getId(), existingTrack);
