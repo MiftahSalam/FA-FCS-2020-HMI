@@ -323,7 +323,7 @@ void FrameTDA::setupTdaObjects()
     TDAGunCoverageObject *gunCoverage = new TDAGunCoverageObject(this, osdRepo->getRepoOSDInertia(), gunRepo->getRepoGunCoverage(), tdaConfig);
     TDAHeadingMarkerObject *headingMarker = new TDAHeadingMarkerObject (this, osdRepo->getRepoOSDInertia(), tdaConfig);
     TDAGunBarrelObject *gunBarrel = new TDAGunBarrelObject (this, osdRepo->getRepoOSDInertia(), gunRepo->getRepoGunFeedback(), tdaConfig);
-    TDATracksObject *tracksObject = new TDATracksObject(this);
+    TDATracksObject *tracksObject = new TDATracksObject(this, trackRepo->getRepoTrackArpa());;
 
     objectItems << compass << tracksObject << headingMarker << gunBarrel << gunCoverage;
 }
@@ -333,6 +333,7 @@ void FrameTDA::setupDI()
     osdRepo = DI::getInstance()->getRepoOSD();
     gunRepo = DI::getInstance()->getRepoGun();
     tdaConfig = DI::getInstance()->getConfig()->getTDAConfig();
+    trackRepo = DI::getInstance()->getRepoTrack();
 }
 
 void FrameTDA::handleMouseTrackingPolar(QMouseEvent *event)

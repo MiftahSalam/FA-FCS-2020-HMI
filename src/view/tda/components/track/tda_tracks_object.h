@@ -1,6 +1,7 @@
 #ifndef TDATRACKSOBJECT_H
 #define TDATRACKSOBJECT_H
 
+#include "src/domain/track/repository/track_base_repository.h"
 #include "src/view/tda/components/tda_object_base.h"
 #include "src/infra/store/track/track_repository_listener.h"
 
@@ -9,7 +10,7 @@ class TDATracksObject : public TDAZoomableObjectBase, public TrackRepositoryList
 {
     Q_OBJECT
 public:
-    explicit TDATracksObject(QObject *parent = nullptr);
+    explicit TDATracksObject(QObject *parent = nullptr, TrackBaseRepository *repoTrack = nullptr);
 
     // TDAObjectBase interface
     void Draw(QPainter *painter, const int &side, const int &width, const int &height, const QPoint &off_center) override;
@@ -18,7 +19,7 @@ public:
     //  TrackRepositoryListener interface
 public:
     void OnTracksAdded(std::list<TrackBaseEntity *> tnList) override;
-    void OnTracksRemoved(std::list<TrackBaseEntity *> tnList) override;
+    void OnTracksRemoved(std::list<int> tnIdList) override;
     void OnTrackPropertyChanged(int tn, TrackBaseEntity *track) override;
 
     // TDAZoomableObjectBase interface
@@ -27,6 +28,7 @@ public slots:
 
 private:
     // TODO: add trackRepo member
+    TrackBaseRepository *arpaRepo;
 
     // TODO: add tracksList member
 
