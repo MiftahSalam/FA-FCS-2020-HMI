@@ -4,16 +4,21 @@
 #include <QDebug>
 
 Track::Track(QWidget *parent, QSize size) :
-    QWidget(parent)
+    QWidget(parent), trackDat(nullptr)
 {
     resize(size);
 }
 
-void Track::buildUI(TrackParam param)
+const TrackParam *Track::getTrackData() const
+{
+    return trackDat;
+}
+
+void Track::buildUI(TrackParam *param)
 {
     trackDat = param;
 
-    current_symbol_image_path = fileImageLocation(trackDat.cur_identity,trackDat.cur_env); //get image from file
+    current_symbol_image_path = fileImageLocation(trackDat->getCur_identity(), trackDat->getCur_env()); //get image from file
     qDebug()<<current_symbol_image_path;
     QImage image(current_symbol_image_path);
 
@@ -28,7 +33,7 @@ void Track::buildUI(TrackParam param)
 
         identitySubMenu->addAction(identityAction[i]);
     }
-    cur_checked_identity = TrackUtils::identity2Int(param.cur_identity);
+    cur_checked_identity = TrackUtils::identity2Int(param->getCur_identity());
     identityAction[cur_checked_identity]->setChecked(true);
 
     /*contex menu environment*/
@@ -43,7 +48,7 @@ void Track::buildUI(TrackParam param)
 
         envSubMenu->addAction(envAction[i]);
     }
-    cur_checked_env = TrackUtils::environment2Int(param.cur_env);
+    cur_checked_env = TrackUtils::environment2Int(param->getCur_env());
     envAction[cur_checked_env]->setChecked(true);
 
     /*create QLabel for holding track image and information display*/
@@ -63,13 +68,13 @@ void Track::buildUI(TrackParam param)
                                "Height : %6 feet\n"
                                "Identity : %7\n"
                                )
-                       .arg(QString::number(trackDat.tn))
-                       .arg(QString::number(trackDat.range,'f',2))
-                       .arg(QString::number(trackDat.bearing,'f',2))
-                       .arg(QString::number(trackDat.speed,'f',2))
-                       .arg(QString::number(trackDat.course,'f',2))
+                       .arg(QString::number(trackDat->getTn()))
+                       .arg(QString::number(trackDat->getRange(),'f',2))
+                       .arg(QString::number(trackDat->getBearing(),'f',2))
+                       .arg(QString::number(trackDat->getSpeed(),'f',2))
+                       .arg(QString::number(trackDat->getCourse(),'f',2))
                        .arg(QString::number(0,'f',2))
-                       .arg(identity2String(trackDat.cur_identity))
+                       .arg(identity2String(trackDat->getCur_identity()))
                        );
     /*
       track event handler
@@ -90,11 +95,11 @@ void Track::buildUI(TrackParam param)
 //    no_track->installEventFilter(rc_radarevent);
 
     QString source;
-    if(trackDat.cur_source==TrackUtils::T_NAVRAD)
+    if(trackDat->getCur_source()==TrackUtils::T_NAVRAD)
         source = "N ";
-    else if(trackDat.cur_source==TrackUtils::T_LIOD)
+    else if(trackDat->getCur_source()==TrackUtils::T_LIOD)
         source = "L ";
-    no_track->setText(source+QString::number(trackDat.tn));
+    no_track->setText(source+QString::number(trackDat->getTn()));
 }
 
 void Track::setSelected(bool select)
@@ -108,26 +113,26 @@ void Track::setSelected(bool select)
 void Track::updateData(TrackParam param)
 {
     /*identity or environment change*/
-    if((param.cur_identity!=trackDat.cur_identity) || (param.cur_env!=trackDat.cur_env))
+    if((param.getCur_identity()!=trackDat->getCur_identity()) || (param.getCur_env()!=trackDat->getCur_env()))
     {
-        current_symbol_image_path = fileImageLocation(param.cur_identity,param.cur_env);
+        current_symbol_image_path = fileImageLocation(param.getCur_identity(),param.getCur_env());
         QImage image(current_symbol_image_path);
         symbol->setPixmap(QPixmap::fromImage(image));
     }
 
     /*source change*/
-    if(param.cur_source!=trackDat.cur_source)
+    if(param.getCur_source()!=trackDat->getCur_source())
     {
         QString source;
-        if(param.cur_source==TrackUtils::T_NAVRAD)
+        if(param.getCur_source()==TrackUtils::T_NAVRAD)
             source = "N ";
-        else if(param.cur_source==TrackUtils::T_LIOD)
+        else if(param.getCur_source()==TrackUtils::T_LIOD)
             source = "L ";
-        no_track->setText(source+QString::number(trackDat.tn));
+        no_track->setText(source+QString::number(trackDat->getTn()));
     }
 
 
-    trackDat = param;
+    *trackDat = param;
 
     /*update track information*/
     symbol->setToolTip(QString("Track Information\n\n"
@@ -140,14 +145,14 @@ void Track::updateData(TrackParam param)
                                "Identity : %7\n"
                                "Weapon Assign : %8\n"
                                )
-                       .arg(QString::number(trackDat.tn))
-                       .arg(QString::number(trackDat.range,'f',2))
-                       .arg(QString::number(trackDat.bearing,'f',2))
-                       .arg(QString::number(trackDat.speed,'f',2))
-                       .arg(QString::number(trackDat.course,'f',2))
+                       .arg(QString::number(trackDat->getTn()))
+                       .arg(QString::number(trackDat->getRange(),'f',2))
+                       .arg(QString::number(trackDat->getBearing(),'f',2))
+                       .arg(QString::number(trackDat->getSpeed(),'f',2))
+                       .arg(QString::number(trackDat->getCourse(),'f',2))
                        .arg(QString::number(0,'f',2))
-                       .arg(identity2String(trackDat.cur_identity))
-                       .arg(trackDat.weapon_assign)
+                       .arg(identity2String(trackDat->getCur_identity()))
+                       .arg(trackDat->getWeapon_assign())
                        );
 
 }
@@ -186,7 +191,7 @@ void Track::identity_change()
             cur_checked_identity = i;
         }
     }
-    identity_change_signal(trackDat.tn,TrackUtils::int2Identity(cur_checked_identity));
+    identity_change_signal(trackDat->getTn(),TrackUtils::int2Identity(cur_checked_identity));
 }
 
 void Track::environment_change()
@@ -199,7 +204,7 @@ void Track::environment_change()
             cur_checked_env = i;
         }
     }
-    env_change_signal(trackDat.tn,TrackUtils::int2Environment(cur_checked_env));
+    env_change_signal(trackDat->getTn(),TrackUtils::int2Environment(cur_checked_env));
 }
 
 QString Track::identity2String(TrackUtils::Identity identity)

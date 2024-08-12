@@ -1,6 +1,6 @@
 #include "tda_track_id.h"
 
-TdaTrackId::TdaTrackId(QWidget *parent, TrackParam currentParam)
+TdaTrackId::TdaTrackId(QWidget *parent, int tn)
     : QLabel{parent}
 {
     setObjectName(QString::fromUtf8("no_track"));
@@ -8,5 +8,5 @@ TdaTrackId::TdaTrackId(QWidget *parent, TrackParam currentParam)
     setStyleSheet(QString::fromUtf8("color: rgba(255, 255, 255);background-color: rgb(0,0,0,0);"));
     setScaledContents(true);
 
-    setText("source" + QString::number(currentParam.tn));
+    setText("source" + QString::number(tn));
 }

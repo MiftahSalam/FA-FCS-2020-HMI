@@ -137,6 +137,7 @@ SOURCES += \
     src/view/tda/components/track/tda_track_symbol.cpp \
     src/view/tda/components/track/tda_tracks_object.cpp \
     src/view/tda/components/track/track.cpp \
+    src/view/tda/components/track/track_param.cpp \
     src/view/tda/events/tda_event_filter.cpp \
     src/view/tda/frametda.cpp \
     test/shared/config/test_osd_cms_config.cpp \

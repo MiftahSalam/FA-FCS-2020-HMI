@@ -16,9 +16,11 @@ class Track : public QWidget
 public:
     explicit Track(QWidget *parent = nullptr, QSize size = QSize(10,10));
 
+    const TrackParam *getTrackData() const;
+
     void updateData(TrackParam param);
     void setTrackNumber(int number);
-    void buildUI(TrackParam param);
+    void buildUI(TrackParam *param);
 //    void setDesigLIODEnable (bool enabled);
 //    void setDesigWeaponEnable (QString weapon, bool enabled);
     void setSelected(bool select);
@@ -45,7 +47,7 @@ private:
     QLabel *no_track;
     QString current_symbol_image_path;
     TdaEventFilter *rc_radarevent;
-    TrackParam trackDat;
+    TrackParam *trackDat;
 
     QString identity2String(TrackUtils::Identity identity);
     QString env2String(TrackUtils::Environment env);

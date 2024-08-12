@@ -47,18 +47,21 @@ void TDATracksObject::generateTrackUI(TrackBaseEntity *newTrack)
     trackObjListMap.insert(newTrack->getId(), tr);
 }
 
-TrackParam TDATracksObject::entityToTrackParam(TrackBaseEntity *track)
+TrackParam* TDATracksObject::entityToTrackParam(TrackBaseEntity *track)
 {
-    TrackParam param;
+    TrackParam* param = new TrackParam(
+                track->getId(),
+                track->getRange(),
+                track->getBearing(),
+                0,
+                track->getSpeed(),
+                track->getCourse(),
+                track->getCurridentity(),
+                track->getCur_source(),
+                track->getCurrEnv(),
+                QString::fromStdString(track->getWeaponAssign())
+                );
 
-    param.bearing = track->getBearing();
-    param.course = track->getCourse();
-    param.cur_env = track->getCurrEnv();
-    param.cur_identity = track->getCurridentity();
-    param.range = track->getRange();
-    param.speed = track->getSpeed();
-    param.tn = track->getId();
-    param.weapon_assign = QString::fromStdString(track->getWeaponAssign());
 
     return param;
 }
