@@ -1,13 +1,13 @@
 #include "track_base_entity.h"
 
 TrackBaseEntity::TrackBaseEntity(int id, double range, double bearing, double speed, double course, const std::string &source, const std::string &status, long long timeStamp):
+    _source(source),
+    _status(status),
     _id(id),
     _range(range),
     _bearing(bearing),
     _speed(speed),
     _course(course),
-    _source(source),
-    _status(status),
     _timeStamp(timeStamp)
 {}
 
@@ -31,7 +31,7 @@ void TrackBaseEntity::setStatus(const std::string &newStatus)
     _status = newStatus;
 }
 
-int TrackBaseEntity::Id() const
+int TrackBaseEntity::getId() const
 {
     return _id;
 }
@@ -41,7 +41,7 @@ void TrackBaseEntity::setId(int newId)
     _id = newId;
 }
 
-double TrackBaseEntity::range() const
+double TrackBaseEntity::getRange() const
 {
     return _range;
 }
@@ -51,7 +51,7 @@ void TrackBaseEntity::setRange(float newRange)
     _range = newRange;
 }
 
-double TrackBaseEntity::bearing() const
+double TrackBaseEntity::getBearing() const
 {
     return _bearing;
 }
@@ -61,7 +61,7 @@ void TrackBaseEntity::setBearing(float newBearing)
     _bearing = newBearing;
 }
 
-double TrackBaseEntity::speed() const
+double TrackBaseEntity::getSpeed() const
 {
     return _speed;
 }
@@ -71,7 +71,7 @@ void TrackBaseEntity::setSpeed(float newSpeed)
     _speed = newSpeed;
 }
 
-double TrackBaseEntity::course() const
+double TrackBaseEntity::getCourse() const
 {
     return _course;
 }
@@ -81,7 +81,7 @@ void TrackBaseEntity::setCourse(float newCourse)
     _course = newCourse;
 }
 
-long long TrackBaseEntity::timeStamp() const
+long long TrackBaseEntity::getTimeStamp() const
 {
     return _timeStamp;
 }

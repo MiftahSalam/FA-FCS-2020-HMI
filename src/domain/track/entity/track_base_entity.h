@@ -22,17 +22,17 @@ public:
     std::string status() const;
     void setStatus(const std::string &newStatus);
 
-    int Id() const;
+    int getId() const;
     void setId(int newId);
-    double range() const;
+    double getRange() const;
     void setRange(float newRange);
-    double bearing() const;
+    double getBearing() const;
     void setBearing(float newBearing);
-    double speed() const;
+    double getSpeed() const;
     void setSpeed(float newSpeed);
-    double course() const;
+    double getCourse() const;
     void setCourse(float newCourse);
-    long long timeStamp() const;
+    long long getTimeStamp() const;
     void setTimeStamp(long long newTimeStamp);
 
 private:

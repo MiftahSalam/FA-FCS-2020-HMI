@@ -21,17 +21,17 @@ void TrackArpaRepositoryInMemImpl::Insert(const TrackBaseEntity &track)
 {
     // insert to repo
     TrackBaseEntity *newTrack = new TrackBaseEntity(
-                track.Id(),
-                track.range(),
-                track.bearing(),
-                track.speed(),
-                track.course(),
+                track.getId(),
+                track.getRange(),
+                track.getBearing(),
+                track.getSpeed(),
+                track.getCourse(),
                 track.source(),
                 track.status(),
-                track.timeStamp()
+                track.getTimeStamp()
                 );
 
-    _tracks.insert(track.Id(), newTrack);
+    _tracks.insert(track.getId(), newTrack);
 
     // update TracksAdded
     QList<TrackBaseEntity*> tnList;
@@ -57,21 +57,21 @@ std::list<TrackBaseEntity *> TrackArpaRepositoryInMemImpl::FindAll() const
 void TrackArpaRepositoryInMemImpl::Update(const TrackBaseEntity &track)
 {
     // check track exist
-    TrackBaseEntity* existingTrack = _tracks.value(track.Id(), nullptr);
+    TrackBaseEntity* existingTrack = _tracks.value(track.getId(), nullptr);
     if (existingTrack) {
         // track found
         // update repo
-        existingTrack->setRange(track.range());
-        existingTrack->setBearing(track.bearing());
-        existingTrack->setSpeed(track.speed());
-        existingTrack->setCourse(track.course());
-        existingTrack->setTimeStamp(track.timeStamp());
+        existingTrack->setRange(track.getRange());
+        existingTrack->setBearing(track.getBearing());
+        existingTrack->setSpeed(track.getSpeed());
+        existingTrack->setCourse(track.getCourse());
+        existingTrack->setTimeStamp(track.getTimeStamp());
         existingTrack->setSource(track.source());
         existingTrack->setStatus(track.status());
 
         //update listeners TrackPropertyChanged
         foreach (TrackRepositoryListener *listener, listeners) {
-            listener->OnTrackPropertyChanged(existingTrack->Id(), existingTrack);
+            listener->OnTrackPropertyChanged(existingTrack->getId(), existingTrack);
         }
     } else {
         Insert(track);

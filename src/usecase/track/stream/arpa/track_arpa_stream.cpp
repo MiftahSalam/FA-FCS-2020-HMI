@@ -102,9 +102,9 @@ void TrackArpaStream::periodUpdate()
     long long now = QDateTime::currentMSecsSinceEpoch();
     std::list<TrackBaseEntity*> allTracks = _repoArpa->FindAll();
     foreach (TrackBaseEntity* track, allTracks) {
-        if (now - track->timeStamp() > arpaConfig->getStaleTimeout()) {
-            qDebug()<<Q_FUNC_INFO<<"stale track track "<<track->Id();
-            _repoArpa->Remove(track->Id());
+        if (now - track->getTimeStamp() > arpaConfig->getStaleTimeout()) {
+            qDebug()<<Q_FUNC_INFO<<"stale track track "<<track->getId();
+            _repoArpa->Remove(track->getId());
         }
     }
 }
