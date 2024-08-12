@@ -15,10 +15,10 @@ TrackParam::TrackParam(int tn, double range, double bearing, double height, doub
 TrackParam::TrackParam(const TrackParam &track)
 {
     range = track.getRange();
-    bearing = track.getRange();
-    height = track.getRange();
-    speed = track.getRange();
-    course = track.getRange();
+    bearing = track.getBearing();
+    height = track.getHeight();
+    speed = track.getSpeed();
+    course = track.getCourse();
     cur_identity = track.getCur_identity();
     cur_source = track.getCur_source();
     cur_env = track.getCur_env();
@@ -28,10 +28,10 @@ TrackParam::TrackParam(const TrackParam &track)
 void TrackParam::operator=(const TrackParam &track)
 {
     range = track.getRange();
-    bearing = track.getRange();
-    height = track.getRange();
-    speed = track.getRange();
-    course = track.getRange();
+    bearing = track.getBearing();
+    height = track.getHeight();
+    speed = track.getSpeed();
+    course = track.getCourse();
     cur_identity = track.getCur_identity();
     cur_source = track.getCur_source();
     cur_env = track.getCur_env();
