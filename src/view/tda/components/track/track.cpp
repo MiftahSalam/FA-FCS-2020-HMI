@@ -14,7 +14,7 @@ void Track::buildUI(TrackParam *param)
     trackData = param;
 
     currentIconImagePath = fileImageLocation(trackData->getCur_identity(), trackData->getCur_env()); //get image from file
-    qDebug()<<currentIconImagePath;
+    qDebug()<<Q_FUNC_INFO<<currentIconImagePath;
     QImage image(currentIconImagePath);
 
     /*contex menu identity*/
@@ -236,28 +236,28 @@ QString Track::fileImageLocation(TrackUtils::Identity identity,TrackUtils::Envir
     if(env==TrackUtils::AIR)
     {
         if(identity==TrackUtils::UNKNOWN)
-            return ":/images/tda_track_trackIconLabel/surface-unknown.png";
+            return ":/images/tda_track_symbol/surface-unknown.png";
         else if(identity==TrackUtils::FRIENDLY)
-            return ":/images/tda_track_trackIconLabel/surface-friend.png";
+            return ":/images/tda_track_symbol/surface-friend.png";
         else if(identity==TrackUtils::NEUTRAL)
-            return ":/images/tda_track_trackIconLabel/surface-netral.png";
+            return ":/images/tda_track_symbol/surface-netral.png";
         else if(identity==TrackUtils::HOSTILE)
-            return ":/images/tda_track_trackIconLabel/surface-hostile.png";
+            return ":/images/tda_track_symbol/surface-hostile.png";
         else
-            return ":/images/tda_track_trackIconLabel/surface-unknown.png";
+            return ":/images/tda_track_symbol/surface-unknown.png";
     }
     else if (env==TrackUtils::SURFACE)
     {
         if(identity==TrackUtils::UNKNOWN)
-            return ":/images/tda_track_trackIconLabel/surface-unknown.png";
+            return ":/images/tda_track_symbol/surface-unknown.png";
         else if(identity==TrackUtils::FRIENDLY)
-            return ":/images/tda_track_trackIconLabel/surface-friend.png";
+            return ":/images/tda_track_symbol/surface-friend.png";
         else if(identity==TrackUtils::NEUTRAL)
-            return ":/images/tda_track_trackIconLabel/surface-netral.png";
+            return ":/images/tda_track_symbol/surface-netral.png";
         else if(identity==TrackUtils::HOSTILE)
-            return ":/images/tda_track_trackIconLabel/surface-hostile.png";
+            return ":/images/tda_track_symbol/surface-hostile.png";
         else
-            return ":/images/tda_track_trackIconLabel/surface-unknown.png";
+            return ":/images/tda_track_symbol/surface-unknown.png";
     }
 }
 
