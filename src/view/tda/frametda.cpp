@@ -72,7 +72,7 @@ void FrameTDA::mousePressEvent(QMouseEvent *event)
 {
     if (event->button() == Qt::RightButton)
     {
-        this->setContextMenuPolicy(Qt::CustomContextMenu);
+//        this->setContextMenuPolicy(Qt::CustomContextMenu);
         emit signalOnCostumContextMenuRequest(event->pos());
     }
 }
