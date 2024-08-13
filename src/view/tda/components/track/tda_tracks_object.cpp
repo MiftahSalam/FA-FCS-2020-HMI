@@ -29,13 +29,18 @@ TDATracksObject::~TDATracksObject()
 
 void TDATracksObject::Draw(QPainter *painter, const int &side, const int &width, const int &height, const QPoint &off_center)
 {
+    Q_UNUSED(painter);
+    Q_UNUSED(side);
+    Q_UNUSED(width);
+    Q_UNUSED(height);
+    Q_UNUSED(off_center);
 }
 
 void TDATracksObject::OnZoom(float range)
 {
     tdaScale = range;
     foreach (auto tr, trackObjListMap) {
-        tr->move(polar2Cartesia(tr->getTrackData()->getRange(), tr->getTrackData()->getBearing()));
+        tr->move(polar2Cartesian(tr->getTrackData()->getRange(), tr->getTrackData()->getBearing()));
     }
 }
 
@@ -61,13 +66,37 @@ void TDATracksObject::OnIdentityChange(int tn, TrackUtils::Identity newIdentity)
    }
 }
 
+void TDATracksObject::OnTracksAdded(std::list<TrackBaseEntity *> tnList)
+{
+    qDebug()<<Q_FUNC_INFO<<"tnList size"<<tnList.size();
+    foreach (auto track, tnList) {
+        generateTrackUI(track);
+    }
+}
+
+void TDATracksObject::OnTracksRemoved(std::list<int> tnIdList)
+{
+    qDebug()<<Q_FUNC_INFO<<"tnIdList size"<<tnIdList.size();
+    foreach (auto trackId, tnIdList) {
+        delete trackObjListMap.take(trackId);
+    }
+}
+
+void TDATracksObject::OnTrackPropertyChanged(int tn, TrackBaseEntity *track)
+{
+    TdaTrack* findTrack = trackObjListMap.value(tn, nullptr);
+    if (findTrack) {
+        findTrack->updateTrackData(*entityToTrackParam(track));
+        findTrack->move(polar2Cartesian(findTrack->getTrackData()->getRange(), findTrack->getTrackData()->getBearing()));
+    }
+}
 void TDATracksObject::generateTrackUI(TrackBaseEntity *newTrack)
 {
     TdaTrack* tr = new TdaTrack(parentWidget, QSize(60,20));
     connect(tr, &TdaTrack::identityChange_Signal, this, &TDATracksObject::OnIdentityChange);
 
     tr->buildUI(entityToTrackParam(newTrack));
-    tr->move(polar2Cartesia(newTrack->getRange(), newTrack->getBearing()));
+    tr->move(polar2Cartesian(newTrack->getRange(), newTrack->getBearing()));
     tr->adjustSize();
     tr->show();
     trackObjListMap.insert(newTrack->getId(), tr);
@@ -92,7 +121,7 @@ TrackParam* TDATracksObject::entityToTrackParam(TrackBaseEntity *track)
     return param;
 }
 
-QPoint TDATracksObject::polar2Cartesia(double range, double bearing)
+QPoint TDATracksObject::polar2Cartesian(double range, double bearing)
 {
     QPoint os_pos(parentWidget->width()/2,parentWidget->height()/2);
     int rangePixel = Utils::range2Pixel(range, tdaScale, parentWidget->width(),parentWidget->height());
@@ -103,29 +132,4 @@ QPoint TDATracksObject::polar2Cartesia(double range, double bearing)
     qDebug()<<Q_FUNC_INFO<<"os_pos"<<os_pos<<"rangePixel"<<rangePixel<<"bearing"<<bearing<<"rad2deg"<<rad2deg<<"range_pixel_x"<<range_pixel_x<<"range_pixel_y"<<range_pixel_y;
 
     return QPoint(range_pixel_x, range_pixel_y);
-}
-
-void TDATracksObject::OnTracksAdded(std::list<TrackBaseEntity *> tnList)
-{
-    qDebug()<<Q_FUNC_INFO<<"tnList size"<<tnList.size();
-    foreach (auto track, tnList) {
-        generateTrackUI(track);
-    }
-}
-
-void TDATracksObject::OnTracksRemoved(std::list<int> tnIdList)
-{
-    qDebug()<<Q_FUNC_INFO<<"tnIdList size"<<tnIdList.size();
-    foreach (auto trackId, tnIdList) {
-        delete trackObjListMap.take(trackId);
-    }
-}
-
-void TDATracksObject::OnTrackPropertyChanged(int tn, TrackBaseEntity *track)
-{
-    TdaTrack* findTrack = trackObjListMap.value(tn, nullptr);
-    if (findTrack) {
-        findTrack->updateTrackData(*entityToTrackParam(track));
-        findTrack->move(polar2Cartesia(findTrack->getTrackData()->getRange(), findTrack->getTrackData()->getBearing()));
-    }
 }

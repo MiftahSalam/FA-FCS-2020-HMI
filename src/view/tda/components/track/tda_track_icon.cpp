@@ -34,8 +34,6 @@ TdaTrackIcon::TdaTrackIcon(QWidget *parent, TrackParam* param)
                        .arg(QString::number(0,'f',2))
                        .arg(TrackUtils::identity2String(param->getCur_identity()))
                        );
-
-    //TODO: event filter
 }
 
 void TdaTrackIcon::updateProps(TrackParam param)

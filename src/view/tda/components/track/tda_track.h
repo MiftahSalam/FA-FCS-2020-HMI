@@ -28,7 +28,7 @@ public:
 
 signals:
     void identityChange_Signal(int tn,TrackUtils::Identity identity);
-    void envChangeSignal(int tn,TrackUtils::Environment identity);
+//    void envChangeSignal(int tn,TrackUtils::Environment identity);
 //    void desig_request_signal(int tn,bool desig,QString desig_mode);
 
 private slots:

@@ -1,6 +1,6 @@
 #include "tda_track.h"
 
-#include <QMouseEvent>>
+#include <QMouseEvent>
 #include <QDir>
 #include <QDebug>
 
