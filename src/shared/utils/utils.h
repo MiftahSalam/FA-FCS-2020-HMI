@@ -12,6 +12,8 @@ public:
     static float latStrToDegree(const QString lat);
     static QString lonDecToStringDegree(const float lon);
     static float lonStrToDegree(const QString lon);
+    static int range2Pixel(double range, double max_range, int vp_width, int vp_height);
+    static double pixel2Range(int pixel, double max_range, int vp_width, int vp_height);
 };
 
 #endif // UTILS_H

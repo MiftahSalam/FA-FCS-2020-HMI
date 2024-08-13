@@ -102,8 +102,6 @@ private:
    QStatusBar *statusBarMouseLatLon;
    QStatusBar *statusBarSelectedTrack;
 
-   int range2Pixel(double range);
-   double pixel2Range(int pixel);
    QPointF pixToGPS(const int pos_x, const int pos_y, const int vp_width, const int vp_height, const double vp_range, const double own_lat, const double own_lon);
 };
 

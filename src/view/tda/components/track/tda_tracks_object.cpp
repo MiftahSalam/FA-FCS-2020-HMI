@@ -2,6 +2,7 @@
 #include "qmath.h"
 #include "src/infra/store/track/track_repository_publisher.h"
 #include "src/shared/common/errors/err_object_creation.h"
+#include "src/shared/utils/utils.h"
 
 #include <QDebug>
 #include <cmath>
@@ -91,16 +92,10 @@ TrackParam* TDATracksObject::entityToTrackParam(TrackBaseEntity *track)
     return param;
 }
 
-int TDATracksObject::range2Pixel(double range)
-{
-    int side = qMin(parentWidget->width(), parentWidget->height()) / 2;
-    return static_cast<int>(range*(side/(tdaScale)));
-}
-
 QPoint TDATracksObject::polar2Cartesia(double range, double bearing)
 {
     QPoint os_pos(parentWidget->width()/2,parentWidget->height()/2);
-    int rangePixel = range2Pixel(range);
+    int rangePixel = Utils::range2Pixel(range, tdaScale, parentWidget->width(),parentWidget->height());
     const double rad2deg = (bearing-90)*M_PI/180.;
     int range_pixel_x = rangePixel*qCos(rad2deg)+os_pos.x();
     int range_pixel_y = rangePixel*qSin(rad2deg)+os_pos.y();

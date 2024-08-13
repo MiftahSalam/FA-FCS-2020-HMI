@@ -46,7 +46,6 @@ private:
 
     void generateTrackUI(TrackBaseEntity *newTrack);
     TrackParam *entityToTrackParam(TrackBaseEntity *track);
-    int range2Pixel(double range);
     QPoint polar2Cartesia(double range, double bearing);
 };
 

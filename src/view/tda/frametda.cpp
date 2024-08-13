@@ -356,7 +356,7 @@ void FrameTDA::handleMouseTrackingPolar(QMouseEvent *event)
         bearing+=360;
 
     double range = sqrt(pow(range_pixel_y,2)+pow(range_pixel_x,2)); //pixel
-    range = pixel2Range(range); //NM
+    range = Utils::pixel2Range(range, tdaScale, width(), height()); //NM
 
     statusBarMousePolar->showMessage(QString("Range : %1, Bearing : %2").arg(QString::number(range,'f',1)).arg(QString::number(bearing,'f',1)),2000);
     statusBarMousePolar->setGeometry(10,height()-45,200,20);
@@ -371,19 +371,6 @@ void FrameTDA::handleMouseTrackinglatLon(QMouseEvent *event)
     statusBarMouseLatLon->showMessage(QString("Latitude : %1, Longitude : %2").arg(Utils::latDecToStringDegree(gps.y())).arg(Utils::lonDecToStringDegree(gps.x())),2000);
     statusBarMouseLatLon->setGeometry(10,height()-25,280,20);
 
-}
-
-int FrameTDA::range2Pixel(double range)
-{
-    int side = qMin(this->width(), this->height()) / 2;
-    return static_cast<int>(range*(side/(tdaScale)));
-}
-
-double FrameTDA::pixel2Range(int pixel)
-{
-    int side = qMin(this->width(), this->height()) / 2;
-//    qDebug()<<pixel<<tdaScale<<width();
-    return tdaScale*pixel/side;
 }
 
 QPointF FrameTDA::pixToGPS(const int pos_x, const int pos_y, const int vp_width, const int vp_height, const double vp_range, const double own_lat, const double own_lon)
