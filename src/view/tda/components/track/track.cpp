@@ -54,20 +54,8 @@ void Track::buildUI(TrackParam *param)
     */
 \
     /*create QLabel for holding track number and source display*/
-    trackIdLabel = new QLabel(this);
-    trackIdLabel->setObjectName(QString::fromUtf8("trackIdLabel"));
-    trackIdLabel->setFrameShape(QFrame::NoFrame);
-    trackIdLabel->setStyleSheet(QString::fromUtf8("color: rgba(255, 255, 255);background-color: rgb(0,0,0,0);"));
+    trackIdLabel = new TdaTrackId(this, param->getTn(), param->getCur_source());
     trackIdLabel->setGeometry(QRect(trackIconLabel->width()+5,0,width()*2/3,height()));
-    trackIdLabel->setScaledContents(true);
-//    trackIdLabel->installEventFilter(rc_radarevent);
-
-    QString source;
-    if(trackData->getCur_source()==TrackUtils::T_NAVRAD)
-        source = "N ";
-    else if(trackData->getCur_source()==TrackUtils::T_LIOD)
-        source = "L ";
-    trackIdLabel->setText(source+QString::number(trackData->getTn()));
 }
 
 void Track::setSelected(bool select)
@@ -80,16 +68,8 @@ void Track::setSelected(bool select)
 
 void Track::updateTrackData(TrackParam param)
 {
-    /*source change*/
-    if(param.getCur_source()!=trackData->getCur_source())
-    {
-        QString source;
-        if(param.getCur_source()==TrackUtils::T_NAVRAD)
-            source = "N ";
-        else if(param.getCur_source()==TrackUtils::T_LIOD)
-            source = "L ";
-        trackIdLabel->setText(source+QString::number(trackData->getTn()));
-    }
+    trackIdLabel->changeSource(param.getCur_source());
+    trackIconLabel->updateProps(param);
 
     *trackData = param;
 }

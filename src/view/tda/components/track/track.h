@@ -7,6 +7,7 @@
 #include <QMenu>
 
 #include "src/view/tda/components/track/tda_track_icon.h"
+#include "src/view/tda/components/track/tda_track_id.h"
 #include "src/view/tda/components/track/track_param.h"
 #include "src/view/tda/events/tda_event_filter.h"
 #include "src/shared/utils/track/track_utils.h"
@@ -44,7 +45,7 @@ protected:
 
 private:    
     TdaTrackIcon *trackIconLabel;
-    QLabel *trackIdLabel;
+    TdaTrackId *trackIdLabel;
     TdaEventFilter *rc_radarevent;
     TrackParam *trackData;
     QAction *identityAction[TrackUtils::IDENTITY_COUNT];
