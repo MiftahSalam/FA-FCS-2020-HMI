@@ -6,6 +6,7 @@
 #include <QAction>
 #include <QMenu>
 
+#include "src/view/tda/components/track/tda_track_icon.h"
 #include "src/view/tda/components/track/track_param.h"
 #include "src/view/tda/events/tda_event_filter.h"
 #include "src/shared/utils/track/track_utils.h"
@@ -42,9 +43,8 @@ protected:
     void mousePressEvent(QMouseEvent *event) override;
 
 private:    
-    QLabel *trackIconLabel;
+    TdaTrackIcon *trackIconLabel;
     QLabel *trackIdLabel;
-    QString currentIconImagePath;
     TdaEventFilter *rc_radarevent;
     TrackParam *trackData;
     QAction *identityAction[TrackUtils::IDENTITY_COUNT];
@@ -52,20 +52,13 @@ private:
     QAction *desigAction[TrackUtils::DESIG_COUNT];
     QAction *desigDirectAction[TrackUtils::DESIG_DIRECT_COUNT];
     QMenu *identitySubMenu;
-    QMenu *envSubMenu;
+//    QMenu *envSubMenu;
 //    QMenu *desigSubMenu;
 //    QMenu *desigDirectSubMenu;
     int curCheckedIdentity;
     int curCheckedEnv;
     int curCheckedDesig;
 //    int cur_checked_desig_direct;
-
-    QString identity2String(TrackUtils::Identity identity);
-    QString env2String(TrackUtils::Environment env);
-//    QString desig2String(Desig desig);
-//    QString desigDirect2String(DesigDirect desig_direct);
-    QString fileImageLocation(TrackUtils::Identity identity, TrackUtils::Environment env);
-
 };
 
 #endif // TRACK_H
