@@ -19,7 +19,7 @@ void Track::buildUI(TrackParam *param)
     for(int i=0;i<TrackUtils::IDENTITY_COUNT;i++)
     {
         identityAction[i] = new QAction(TrackUtils::identity2String(TrackUtils::int2Identity(i)),this);
-        connect(identityAction[i],SIGNAL(triggered()),this,SLOT(identity_change()));
+        connect(identityAction[i], &QAction::triggered, this, &Track::identityChange);
         identityAction[i]->setCheckable(true);
 
         identitySubMenu->addAction(identityAction[i]);
@@ -109,9 +109,9 @@ void Track::identityChange()
             curCheckedIdentity = i;
         }
     }
-    identityChange_Signal(trackData->getTn(),TrackUtils::int2Identity(curCheckedIdentity));
+    emit identityChange_Signal(trackData->getTn(),TrackUtils::int2Identity(curCheckedIdentity));
 }
-
+/*
 void Track::environmentChange()
 {
     for(int i=0;i<TrackUtils::ENVIRONMENT_COUNT;i++)
@@ -124,7 +124,7 @@ void Track::environmentChange()
     }
     envChangeSignal(trackData->getTn(),TrackUtils::int2Environment(curCheckedEnv));
 }
-
+*/
 const TrackParam *Track::getTrackData() const
 {
     return trackData;

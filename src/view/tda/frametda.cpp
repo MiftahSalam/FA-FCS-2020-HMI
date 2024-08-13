@@ -306,7 +306,7 @@ void FrameTDA::setupContextMenu()
     if (tdaConfig->getGunBarrelStatus() == true)
         GunBarrelAction->setChecked(true);
 
-    connect(this, SIGNAL(signalOnCostumContextMenuRequest(QPoint&pos)), this, SLOT(on_FrameTDA_customContextMenuRequested(QPoint&pos)));
+    connect(this, &FrameTDA::signalOnCostumContextMenuRequest, this, &FrameTDA::on_FrameTDA_customContextMenuRequested);
     connect(CompassAction, &QAction::triggered, this, &FrameTDA::onCompassActionTriggered);
     connect(HeadingMarkerAction, &QAction::triggered, this, &FrameTDA::onHeadingMarkerActionTriggrered);
     connect(GunCovAction, &QAction::triggered, this, &FrameTDA::onGunCovActionTriggered);
@@ -382,7 +382,7 @@ int FrameTDA::range2Pixel(double range)
 double FrameTDA::pixel2Range(int pixel)
 {
     int side = qMin(this->width(), this->height()) / 2;
-    qDebug()<<pixel<<tdaScale<<width();
+//    qDebug()<<pixel<<tdaScale<<width();
     return tdaScale*pixel/side;
 }
 

@@ -38,9 +38,33 @@ void TDATracksObject::OnZoom(float range)
     }
 }
 
+void TDATracksObject::OnIdentityChange(int tn, TrackUtils::Identity newIdentity)
+{
+    const TrackBaseEntity* findTrack = arpaRepo->FindOne(tn);
+    if (findTrack) {
+        TrackBaseEntity updateTrack(
+                    findTrack->getId(),
+                    findTrack->getRange(),
+                    findTrack->getBearing(),
+                    findTrack->getSpeed(),
+                    findTrack->getCourse(),
+                    findTrack->source(),
+                    findTrack->status(),
+                    findTrack->getTimeStamp()
+                    );
+        updateTrack.setCurrIdentity(newIdentity);
+        updateTrack.setCurrEnv(findTrack->getCurrEnv());
+        updateTrack.setCurrSource(findTrack->getCurrSource());
+
+        arpaRepo->Update(updateTrack);
+   }
+}
+
 void TDATracksObject::generateTrackUI(TrackBaseEntity *newTrack)
 {
     Track* tr = new Track(parentWidget, QSize(60,20));
+    connect(tr, &Track::identityChange_Signal, this, &TDATracksObject::OnIdentityChange);
+
     tr->buildUI(entityToTrackParam(newTrack));
     tr->move(polar2Cartesia(newTrack->getRange(), newTrack->getBearing()));
     tr->adjustSize();

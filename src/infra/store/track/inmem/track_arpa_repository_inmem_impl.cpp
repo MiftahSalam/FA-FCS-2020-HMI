@@ -67,6 +67,9 @@ void TrackArpaRepositoryInMemImpl::Update(const TrackBaseEntity &track)
         existingTrack->setTimeStamp(track.getTimeStamp());
         existingTrack->setSource(track.source());
         existingTrack->setStatus(track.status());
+        existingTrack->setCurrIdentity(track.getCurrIdentity());
+        existingTrack->setCurrEnv(track.getCurrEnv());
+        existingTrack->setCurrSource(track.getCurrSource());
 
         _tracks.insert(track.getId(), existingTrack);
 

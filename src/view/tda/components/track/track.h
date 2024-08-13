@@ -34,7 +34,7 @@ signals:
 private slots:
     void RC_track(QPoint pos);
     void identityChange();
-    void environmentChange();
+//    void environmentChange();
 //    void desig_change();
 //    void desig_direct_change();
 //    void desig_request(QString desig_mode);

@@ -27,9 +27,11 @@ public:
     void OnTracksRemoved(std::list<int> tnIdList) override;
     void OnTrackPropertyChanged(int tn, TrackBaseEntity *track) override;
 
-    // TDAZoomableObjectBase interface
 public slots:
+    // TDAZoomableObjectBase interface
     void OnZoom(float range) override;
+
+    void OnIdentityChange(int tn, TrackUtils::Identity newIdentity);
 
 private:
     // add trackRepo member
