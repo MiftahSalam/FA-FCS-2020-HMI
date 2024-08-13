@@ -62,8 +62,8 @@ void TDATracksObject::OnIdentityChange(int tn, TrackUtils::Identity newIdentity)
 
 void TDATracksObject::generateTrackUI(TrackBaseEntity *newTrack)
 {
-    Track* tr = new Track(parentWidget, QSize(60,20));
-    connect(tr, &Track::identityChange_Signal, this, &TDATracksObject::OnIdentityChange);
+    TdaTrack* tr = new TdaTrack(parentWidget, QSize(60,20));
+    connect(tr, &TdaTrack::identityChange_Signal, this, &TDATracksObject::OnIdentityChange);
 
     tr->buildUI(entityToTrackParam(newTrack));
     tr->move(polar2Cartesia(newTrack->getRange(), newTrack->getBearing()));
@@ -128,7 +128,7 @@ void TDATracksObject::OnTracksRemoved(std::list<int> tnIdList)
 
 void TDATracksObject::OnTrackPropertyChanged(int tn, TrackBaseEntity *track)
 {
-    Track* findTrack = trackObjListMap.value(tn, nullptr);
+    TdaTrack* findTrack = trackObjListMap.value(tn, nullptr);
     if (findTrack) {
         findTrack->updateTrackData(*entityToTrackParam(track));
         findTrack->move(polar2Cartesia(findTrack->getTrackData()->getRange(), findTrack->getTrackData()->getBearing()));

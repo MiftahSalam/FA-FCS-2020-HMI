@@ -4,7 +4,7 @@
 #include "src/domain/track/repository/track_base_repository.h"
 #include "src/view/tda/components/tda_object_base.h"
 #include "src/infra/store/track/track_repository_listener.h"
-#include "src/view/tda/components/track/track.h"
+#include "src/view/tda/components/track/tda_track.h"
 
 // TODO: TrackRepo listener inherit
 class TDATracksObject : public TDAZoomableObjectBase, public TrackRepositoryListener
@@ -38,7 +38,7 @@ private:
     TrackBaseRepository *arpaRepo;
 
     // TODO: add tracksList member
-    QMap<int, Track*> trackObjListMap;
+    QMap<int, TdaTrack*> trackObjListMap;
 
     QWidget* parentWidget;
 

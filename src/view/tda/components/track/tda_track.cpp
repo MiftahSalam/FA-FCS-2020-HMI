@@ -1,15 +1,16 @@
-#include "track.h"
-#include "qevent.h"
+#include "tda_track.h"
+
+#include <QMouseEvent>>
 #include <QDir>
 #include <QDebug>
 
-Track::Track(QWidget *parent, QSize size) :
+TdaTrack::TdaTrack(QWidget *parent, QSize size) :
     QWidget(parent), trackData(nullptr)
 {
     resize(size);
 }
 
-void Track::buildUI(TrackParam *param)
+void TdaTrack::buildUI(TrackParam *param)
 {
     trackData = param;
 
@@ -19,7 +20,7 @@ void Track::buildUI(TrackParam *param)
     for(int i=0;i<TrackUtils::IDENTITY_COUNT;i++)
     {
         identityAction[i] = new QAction(TrackUtils::identity2String(TrackUtils::int2Identity(i)),this);
-        connect(identityAction[i], &QAction::triggered, this, &Track::identityChange);
+        connect(identityAction[i], &QAction::triggered, this, &TdaTrack::identityChange);
         identityAction[i]->setCheckable(true);
 
         identitySubMenu->addAction(identityAction[i]);
@@ -58,7 +59,7 @@ void Track::buildUI(TrackParam *param)
     trackIdLabel->setGeometry(QRect(trackIconLabel->width()+5,0,width()*2/3,height()));
 }
 
-void Track::setSelected(bool select)
+void TdaTrack::setSelected(bool select)
 {
     if(select)
         trackIconLabel->setFrameShape(QFrame::Box);
@@ -66,7 +67,7 @@ void Track::setSelected(bool select)
         trackIconLabel->setFrameShape(QFrame::NoFrame);
 }
 
-void Track::updateTrackData(TrackParam param)
+void TdaTrack::updateTrackData(TrackParam param)
 {
     trackIdLabel->changeSource(param.getCur_source());
     trackIconLabel->updateProps(param);
@@ -75,7 +76,7 @@ void Track::updateTrackData(TrackParam param)
 }
 
 /*right click menu*/
-void Track::RC_track(QPoint pos)
+void TdaTrack::RC_track(QPoint pos)
 {
     qDebug()<<Q_FUNC_INFO<<" point "<<pos;
 
@@ -87,19 +88,22 @@ void Track::RC_track(QPoint pos)
     menu->exec(pos);
 }
 
-void Track::mousePressEvent(QMouseEvent *event)
+void TdaTrack::mousePressEvent(QMouseEvent *event)
 {
-    qDebug()<<Q_FUNC_INFO<<" point "<<event->globalPos();
+    if (event->button() == Qt::RightButton)
+    {
+        qDebug()<<Q_FUNC_INFO<<" point "<<event->globalPos();
 
-    QMenu *menu = new QMenu(this);
-    menu->setStyleSheet("background-color: black;");
-    menu->addMenu(identitySubMenu);
-//    menu->addMenu(envSubMenu);
-   // menu->addMenu(desigSubMenu);
-    menu->exec(event->globalPos());
+        QMenu *menu = new QMenu(this);
+        menu->setStyleSheet("background-color: black;");
+        menu->addMenu(identitySubMenu);
+    //    menu->addMenu(envSubMenu);
+       // menu->addMenu(desigSubMenu);
+        menu->exec(event->globalPos());
+    }
 }
 
-void Track::identityChange()
+void TdaTrack::identityChange()
 {
     for(int i=0;i<TrackUtils::IDENTITY_COUNT;i++)
     {
@@ -112,7 +116,7 @@ void Track::identityChange()
     emit identityChange_Signal(trackData->getTn(),TrackUtils::int2Identity(curCheckedIdentity));
 }
 /*
-void Track::environmentChange()
+void TdaTrack::environmentChange()
 {
     for(int i=0;i<TrackUtils::ENVIRONMENT_COUNT;i++)
     {
@@ -125,7 +129,7 @@ void Track::environmentChange()
     envChangeSignal(trackData->getTn(),TrackUtils::int2Environment(curCheckedEnv));
 }
 */
-const TrackParam *Track::getTrackData() const
+const TrackParam *TdaTrack::getTrackData() const
 {
     return trackData;
 }

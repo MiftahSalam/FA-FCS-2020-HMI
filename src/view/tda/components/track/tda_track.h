@@ -1,5 +1,5 @@
-#ifndef TRACK_H
-#define TRACK_H
+#ifndef TDA_TRACK_H
+#define TDA_TRACK_H
 
 #include <QWidget>
 #include <QLabel>
@@ -12,11 +12,11 @@
 #include "src/view/tda/events/tda_event_filter.h"
 #include "src/shared/utils/track/track_utils.h"
 
-class Track : public QWidget
+class TdaTrack : public QWidget
 {
     Q_OBJECT
 public:
-    explicit Track(QWidget *parent = nullptr, QSize size = QSize(10,10));
+    explicit TdaTrack(QWidget *parent = nullptr, QSize size = QSize(10,10));
 
     const TrackParam *getTrackData() const;
     void updateTrackData(TrackParam param);
@@ -62,4 +62,4 @@ private:
 //    int cur_checked_desig_direct;
 };
 
-#endif // TRACK_H
+#endif // TDA_TRACK_H
