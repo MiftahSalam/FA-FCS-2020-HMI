@@ -10,7 +10,6 @@ TrackArpaRepositoryInMemImpl::TrackArpaRepositoryInMemImpl()
 TrackBaseRepository *TrackArpaRepositoryInMemImpl::GetInstance()
 {
     if (instance == nullptr) {
-        // TrackBaseEntity *entity = new TrackBaseEntity(0,0,0,0,0,"","",0);
         instance = new TrackArpaRepositoryInMemImpl();
     }
 

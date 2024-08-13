@@ -36,9 +36,9 @@ public:
     long long getTimeStamp() const;
     void setTimeStamp(long long newTimeStamp);
 
-    TrackUtils::Identity getCurridentity() const;
+    TrackUtils::Identity getCurrIdentity() const;
     void setCurrIdentity(TrackUtils::Identity newCur_identity);
-    TrackUtils::trackSource getCur_source() const;
+    TrackUtils::trackSource getCurrSource() const;
     void setCurrSource(TrackUtils::trackSource newCur_source);
     TrackUtils::Environment getCurrEnv() const;
     void setCurrEnv(TrackUtils::Environment newCur_env);
@@ -55,10 +55,10 @@ private:
     double _speed;
     double _course;
 
-    TrackUtils::Identity cur_identity;
-    TrackUtils::trackSource cur_source;
-    TrackUtils::Environment cur_env;
-    std::string weapon_assign;
+    TrackUtils::Identity _curIdentity;
+    TrackUtils::trackSource _curSource;
+    TrackUtils::Environment _curEnv;
+    std::string _weaponAssign;
 
 };
 #endif // TRACKBASEENTITY_H
