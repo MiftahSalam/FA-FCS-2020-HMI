@@ -3,11 +3,12 @@
 
 #include "src/infra/store/gun/gun_repository.h"
 #include "src/infra/store/osd/osd_repository.h"
+#include "src/infra/store/track/track_repository.h"
 #include "src/shared/config/configuration.h"
 #include "src/usecase/osd/cms/osd_cms.h"
 #include "src/usecase/osd/stream/osd_stream.h"
 #include "src/usecase/track/stream/track_stream.h"
-#include "src/infra/store/track/track_repository.h"
+#include "src/usecase/gun/stream/gun_stream.h"
 
 class DI
 {
@@ -23,6 +24,10 @@ public:
     GunRepository *getRepoGun() const;
     TrackStream *getServiceTrackStream() const;
     TrackRepository *getRepoTrack() const;
+    GunStream *getServiceGunStream() const;
+
+    // GunCommandService *getGunCMSService() const;
+    // GunFeedbackStream *getServiceGunStream() const;
 
 protected:
     DI();
@@ -44,7 +49,7 @@ private:
 
     OSDCMS *serviceOSDCMS;
     // TODO: add gun command service
-
+    // GunCommandService *serviceGunCMS;
     // TODO: add weapon assignment service
 
     // TODO: add weapon track engagement service
@@ -53,7 +58,7 @@ private:
 
     OSDStream *serviceOSDStream;
     // TODO: add gun stream service
-
+    GunStream *serviceGunStream;
     // TODO: add weapon track engagement stream service
 
 };

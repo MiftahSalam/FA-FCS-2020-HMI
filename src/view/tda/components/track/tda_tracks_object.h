@@ -18,7 +18,7 @@ public:
     //  TrackRepositoryListener interface
 public:
     void OnTracksAdded(std::list<TrackBaseEntity *> tnList) override;
-    void OnTracksRemoved(std::list<TrackBaseEntity *> tnList) override;
+    // void OnTracksRemoved(std::list<TrackBaseEntity *> tnList) override;
     void OnTrackPropertyChanged(int tn, TrackBaseEntity *track) override;
 
     // TDAZoomableObjectBase interface

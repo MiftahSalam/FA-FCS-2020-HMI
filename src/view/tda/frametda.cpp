@@ -323,9 +323,9 @@ void FrameTDA::setupTdaObjects()
     TDAGunCoverageObject *gunCoverage = new TDAGunCoverageObject(this, osdRepo->getRepoOSDInertia(), gunRepo->getRepoGunCoverage(), tdaConfig);
     TDAHeadingMarkerObject *headingMarker = new TDAHeadingMarkerObject (this, osdRepo->getRepoOSDInertia(), tdaConfig);
     TDAGunBarrelObject *gunBarrel = new TDAGunBarrelObject (this, osdRepo->getRepoOSDInertia(), gunRepo->getRepoGunFeedback(), tdaConfig);
-    TDATracksObject *tracksObject = new TDATracksObject(this);
+    // TDATracksObject *tracksObject = new TDATracksObject(this);
 
-    objectItems << compass << tracksObject << headingMarker << gunBarrel << gunCoverage;
+    objectItems << compass /*<< tracksObject*/ << headingMarker << gunBarrel << gunCoverage;
 }
 
 void FrameTDA::setupDI()

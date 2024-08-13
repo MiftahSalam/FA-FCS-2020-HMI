@@ -26,7 +26,7 @@ DI::DI()
 
     serviceOSDStream = new OSDStream(nullptr, config->getTcpMessageConfig(), repoOSD, serviceOSDCMS);
     // TODO: add gun stream service
-
+    serviceGunStream = new GunStream(nullptr, config->getTcpMessageConfig(), repoGun);
     // TODO: add weapon track engagement stream service
 
     //    serviceOSDStream = new OSDStream(nullptr, config->getAmqpConfig());
@@ -46,6 +46,11 @@ TrackStream *DI::getServiceTrackStream() const
 TrackRepository *DI::getRepoTrack() const
 {
     return repoTrack;
+}
+
+GunStream *DI::getServiceGunStream() const
+{
+    return serviceGunStream;
 }
 
 OSDRepository *DI::getRepoOSD() const
