@@ -126,11 +126,11 @@ SOURCES += \
     src/view/panel/osd/frame_osd_weather.cpp \
     src/view/panel/osd/frame_osd_wind.cpp \
     src/view/panel/osd/frameosd.cpp \
-    src/view/panel/wap/engagement_data/frame_engage_data.cpp \
+    src/view/panel/wap/frame_engage_data.cpp \
     src/view/panel/wap/framewap.cpp \
-    src/view/panel/wap/gun_correction/frame_gun_correction.cpp \
-    src/view/panel/wap/track_engagement/frame_track_engage.cpp \
-    src/view/panel/wap/weapon_assign/frame_weapon_assign.cpp \
+    src/view/panel/wap/frame_gun_correction.cpp \
+    src/view/panel/wap/frame_track_engage.cpp \
+    src/view/panel/wap/frame_weapon_assign.cpp \
     src/view/shared/frame_text_input.cpp \
     src/view/tda/components/tda_compass_object.cpp \
     src/view/tda/components/tda_gun_barrel_object.cpp \
@@ -291,11 +291,11 @@ HEADERS += \
     src/view/panel/osd/frame_osd_weather.h \
     src/view/panel/osd/frame_osd_wind.h \
     src/view/panel/osd/frameosd.h \
-    src/view/panel/wap/engagement_data/frame_engage_data.h \
+    src/view/panel/wap/frame_engage_data.h \
     src/view/panel/wap/framewap.h \
-    src/view/panel/wap/gun_correction/frame_gun_correction.h \
-    src/view/panel/wap/track_engagement/frame_track_engage.h \
-    src/view/panel/wap/weapon_assign/frame_weapon_assign.h \
+    src/view/panel/wap/frame_gun_correction.h \
+    src/view/panel/wap/frame_track_engage.h \
+    src/view/panel/wap/frame_weapon_assign.h \
     src/view/shared/constant_ui.h \
     src/view/shared/frame_text_input.h \
     src/view/tda/components/tda_compass_object.h \
@@ -330,11 +330,11 @@ FORMS += \
     src/view/panel/osd/frame_osd_weather.ui \
     src/view/panel/osd/frame_osd_wind.ui \
     src/view/panel/osd/frameosd.ui \
-    src/view/panel/wap/engagement_data/frame_engage_data.ui \
+    src/view/panel/wap/frame_engage_data.ui \
     src/view/panel/wap/framewap.ui \
-    src/view/panel/wap/gun_correction/frame_gun_correction.ui \
-    src/view/panel/wap/track_engagement/frame_track_engage.ui \
-    src/view/panel/wap/weapon_assign/frame_weapon_assign.ui \
+    src/view/panel/wap/frame_gun_correction.ui \
+    src/view/panel/wap/frame_track_engage.ui \
+    src/view/panel/wap/frame_weapon_assign.ui \
     src/view/shared/frame_text_input.ui \
     src/view/tda/frametda.ui
 
