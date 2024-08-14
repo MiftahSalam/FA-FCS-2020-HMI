@@ -20,9 +20,9 @@ void TDATracksObject::OnTracksAdded(std::list<TrackBaseEntity *> tnList)
 {
 }
 
-void TDATracksObject::OnTracksRemoved(std::list<TrackBaseEntity *> tnList)
-{
-}
+// void TDATracksObject::OnTracksRemoved(std::list<TrackBaseEntity *> tnList)
+// {
+// }
 
 void TDATracksObject::OnTrackPropertyChanged(int tn, TrackBaseEntity *track)
 {
