@@ -59,3 +59,28 @@ TrackUtils::trackSource TrackUtils::int2TrackSource(int source)
 {
 
 }
+
+QString TrackUtils::identity2String(TrackUtils::Identity identity)
+{
+    if(identity==TrackUtils::UNKNOWN)
+        return "Unknown";
+    else if(identity==TrackUtils::FRIENDLY)
+        return "Friend";
+    else if(identity==TrackUtils::NEUTRAL)
+        return "Neutral";
+    else if(identity==TrackUtils::HOSTILE)
+        return "Hostile";
+    else
+        return "Unidentify";
+}
+
+QString TrackUtils::env2String(TrackUtils::Environment env)
+{
+    if(env==TrackUtils::AIR)
+        return "Air";
+    else if(env==TrackUtils::SURFACE)
+        return "Surface";
+    else
+        return "Unknown Environment";
+}
+

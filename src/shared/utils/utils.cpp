@@ -115,7 +115,20 @@ float Utils::lonStrToDegree(const QString lon)
 
     //    qDebug() << Q_FUNC_INFO<<valuedegg << valueminn <<valuesecc <<valueLong;
 
+    
+}
 
+int Utils::range2Pixel(double range, double max_range, int vp_width, int vp_height)
+{
+    int side = qMin(vp_width, vp_height) / 2;
+    return static_cast<int>(range*(side/(max_range)));
+}
+
+double Utils::pixel2Range(int pixel, double max_range, int vp_width, int vp_height)
+{
+    int side = qMin(vp_width, vp_height) / 2;
+//    qDebug()<<pixel<<tdaScale<<width();
+    return max_range*pixel/side;
 }
 
 QString Utils::latDecToStringDegree(const float lat)

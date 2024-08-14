@@ -1,70 +1,65 @@
-#ifndef TRACK_H
-#define TRACK_H
+#ifndef TDA_TRACK_H
+#define TDA_TRACK_H
 
 #include <QWidget>
 #include <QLabel>
 #include <QAction>
 #include <QMenu>
 
+#include "src/view/tda/components/track/tda_track_icon.h"
+#include "src/view/tda/components/track/tda_track_id.h"
+#include "src/view/tda/components/track/track_param.h"
 #include "src/view/tda/events/tda_event_filter.h"
 #include "src/shared/utils/track/track_utils.h"
-#include "tda_track_id.h"
 
-class track : public QWidget
+class TdaTrack : public QWidget
 {
     Q_OBJECT
 public:
+    explicit TdaTrack(QWidget *parent = nullptr, QSize size = QSize(10,10));
 
-    explicit track(QWidget *parent = 0, QSize size = QSize(10,10));
-
-    void updateData(trackParam param);
+    const TrackParam *getTrackData() const;
+    void updateTrackData(TrackParam param);
     void setTrackNumber(int number);
-    void buildUI(trackParam param);
+    void buildUI(TrackParam *param);
 //    void setDesigLIODEnable (bool enabled);
 //    void setDesigWeaponEnable (QString weapon, bool enabled);
     void setSelected(bool select);
 
 signals:
-    void identity_change_signal(int tn,TrackUtils::Identity identity);
-    void env_change_signal(int tn,TrackUtils::Environment identity);
+    void identityChange_Signal(int tn,TrackUtils::Identity identity);
+//    void envChangeSignal(int tn,TrackUtils::Environment identity);
 //    void desig_request_signal(int tn,bool desig,QString desig_mode);
 
 private slots:
-
     void RC_track(QPoint pos);
-    void identity_change();
-    void environment_change();
+    void identityChange();
+//    void environmentChange();
 //    void desig_change();
 //    void desig_direct_change();
 //    void desig_request(QString desig_mode);
 //    void desig_feedback(int tn,bool approve,QString desig_mode);
 
-private:
-    QLabel *symbol;
-    QLabel *no_track;
-    QString current_symbol_image;
+protected:
+    void mousePressEvent(QMouseEvent *event) override;
+
+private:    
+    TdaTrackIcon *trackIconLabel;
+    TdaTrackId *trackIdLabel;
     TdaEventFilter *rc_radarevent;
-    trackParam trackDat;
-
-    QString identity2String(TrackUtils::Identity identity);
-    QString env2String(TrackUtils::Environment env);
-//    QString desig2String(Desig desig);
-//    QString desigDirect2String(DesigDirect desig_direct);
-    QString fileImageLocation(TrackUtils::Identity identity, TrackUtils::Environment env);
-
+    TrackParam *trackData;
     QAction *identityAction[TrackUtils::IDENTITY_COUNT];
     QAction *envAction[TrackUtils::ENVIRONMENT_COUNT];
     QAction *desigAction[TrackUtils::DESIG_COUNT];
     QAction *desigDirectAction[TrackUtils::DESIG_DIRECT_COUNT];
     QMenu *identitySubMenu;
-    QMenu *envSubMenu;
+//    QMenu *envSubMenu;
 //    QMenu *desigSubMenu;
 //    QMenu *desigDirectSubMenu;
-    int cur_checked_identity;
-    int cur_checked_env;
-    int cur_checked_desig;
+    int curCheckedIdentity;
+    int curCheckedEnv;
+    int curCheckedDesig;
 //    int cur_checked_desig_direct;
-
 };
 
-#endif // TRACK_H
+#endif // TDA_TRACK_H

@@ -136,10 +136,11 @@ SOURCES += \
     src/view/tda/components/tda_gun_coverage_object.cpp \
     src/view/tda/components/tda_heading_marker_object.cpp \
     src/view/tda/components/tda_object_base.cpp \
+    src/view/tda/components/track/tda_track.cpp \
+    src/view/tda/components/track/tda_track_icon.cpp \
     src/view/tda/components/track/tda_track_id.cpp \
-    src/view/tda/components/track/tda_track_symbol.cpp \
     src/view/tda/components/track/tda_tracks_object.cpp \
-    src/view/tda/components/track/track.cpp \
+    src/view/tda/components/track/track_param.cpp \
     src/view/tda/events/tda_event_filter.cpp \
     src/view/tda/frametda.cpp \
     test/shared/config/test_osd_cms_config.cpp \
@@ -302,10 +303,11 @@ HEADERS += \
     src/view/tda/components/tda_gun_coverage_object.h \
     src/view/tda/components/tda_heading_marker_object.h \
     src/view/tda/components/tda_object_base.h \
+    src/view/tda/components/track/tda_track.h \
+    src/view/tda/components/track/tda_track_icon.h \
     src/view/tda/components/track/tda_track_id.h \
-    src/view/tda/components/track/tda_track_symbol.h \
     src/view/tda/components/track/tda_tracks_object.h \
-    src/view/tda/components/track/track.h \
+    src/view/tda/components/track/track_param.h \
     src/view/tda/events/tda_event_filter.h \
     src/view/tda/frametda.h \
     test/shared/config/test_osd_cms_config.h \

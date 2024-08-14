@@ -16,25 +16,24 @@
 #include <QMessageBox>
 #include <QDateTime>
 
-FrameTDA::FrameTDA(QWidget *parent) :
-    QFrame(parent),
-    ui(new Ui::FrameTDA)
+FrameTDA::FrameTDA(QWidget *parent) : QFrame(parent),
+                                      ui(new Ui::FrameTDA)
 {
     ui->setupUi(this);
 
-    //setup DI
+    // setup DI
     setupDI();
 
-    //setup TDA Objects
+    // setup TDA Objects
     setupTdaObjects();
 
-    //setup status bar (mouse & track selected)
+    // setup status bar (mouse & track selected)
     setupStatusBar();
 
-    //temporary
-    osdRepo->getRepoOSDPosition()->SetPosition(OSDPositionEntity(0,0, "", "", OSD_MODE::AUTO));
+    // temporary
+    osdRepo->getRepoOSDPosition()->SetPosition(OSDPositionEntity(0, 0, "", "", OSD_MODE::AUTO));
 
-    //setup popup menu
+    // setup popup menu
     setupContextMenu();
 
     setMouseTracking(true);
@@ -47,7 +46,7 @@ FrameTDA::FrameTDA(QWidget *parent) :
 FrameTDA::~FrameTDA()
 {
     tdaConfig->saveTDAConfig();
-    qDebug()<<Q_FUNC_INFO<<"Save TDA Config";
+    qDebug() << Q_FUNC_INFO << "Save TDA Config";
     delete ui;
 }
 
@@ -60,7 +59,7 @@ void FrameTDA::paintEvent(QPaintEvent *event)
     int side = qMin(this->width(), this->height()) / 2;
 
     painter.setRenderHint(QPainter::Antialiasing);
-    painter.drawRect(0,0, width(), height());
+    painter.drawRect(0, 0, width(), height());
 
     foreach (TDAObjectBase *obj, objectItems)
     {
@@ -72,7 +71,7 @@ void FrameTDA::mousePressEvent(QMouseEvent *event)
 {
     if (event->button() == Qt::RightButton)
     {
-        this->setContextMenuPolicy(Qt::CustomContextMenu);
+        //        this->setContextMenuPolicy(Qt::CustomContextMenu);
         emit signalOnCostumContextMenuRequest(event->pos());
     }
 }
@@ -81,9 +80,9 @@ void FrameTDA::timeOut()
 {
     update();
 
-    auto pos = osdRepo->getRepoOSDPosition()->GetPosition(); //temp test
-    auto inertia = osdRepo->getRepoOSDInertia()->GetInertia(); //temp test
-    qDebug()<<Q_FUNC_INFO<<pos->latitude()<<inertia->heading();
+    auto pos = osdRepo->getRepoOSDPosition()->GetPosition();   // temp test
+    auto inertia = osdRepo->getRepoOSDInertia()->GetInertia(); // temp test
+    qDebug() << Q_FUNC_INFO << pos->latitude() << inertia->heading();
 }
 
 void FrameTDA::on_FrameTDA_customContextMenuRequested(const QPoint &pos)
@@ -104,7 +103,9 @@ void FrameTDA::onCompassActionTriggered()
     if (CompassAction->isChecked() == true)
     {
         tdaConfig->setCompassStatus(true);
-    }else{
+    }
+    else
+    {
         tdaConfig->setCompassStatus(false);
     }
     update();
@@ -115,7 +116,9 @@ void FrameTDA::onHeadingMarkerActionTriggrered()
     if (HeadingMarkerAction->isChecked() == true)
     {
         tdaConfig->setHeadingMarkerStatus(true);
-    }else{
+    }
+    else
+    {
         tdaConfig->setHeadingMarkerStatus(false);
     }
     update();
@@ -126,7 +129,9 @@ void FrameTDA::onGunCovActionTriggered()
     if (GunCovAction->isChecked() == true)
     {
         tdaConfig->setGunCoverageStatus(true);
-    }else{
+    }
+    else
+    {
         tdaConfig->setGunCoverageStatus(false);
     }
     update();
@@ -137,7 +142,9 @@ void FrameTDA::onGunBarrelActionTriggered()
     if (GunBarrelAction->isChecked() == true)
     {
         tdaConfig->setGunBarrelStatus(true);
-    }else{
+    }
+    else
+    {
         tdaConfig->setGunBarrelStatus(false);
     }
     update();
@@ -145,9 +152,9 @@ void FrameTDA::onGunBarrelActionTriggered()
 
 void FrameTDA::onZoomChange()
 {
-    for(int i=0;i<Z_TOTAL;i++)
+    for (int i = 0; i < Z_TOTAL; i++)
     {
-        if(ZoomAction[i]->isChecked() && i != cur_checked_zoom_scale)
+        if (ZoomAction[i]->isChecked() && i != cur_checked_zoom_scale)
         {
             ZoomAction[cur_checked_zoom_scale]->setChecked(false);
             cur_checked_zoom_scale = i;
@@ -156,6 +163,16 @@ void FrameTDA::onZoomChange()
     ZoomAction[cur_checked_zoom_scale]->setChecked(true);
     tdaScale = ZoomAction[cur_checked_zoom_scale]->text().remove(" NM").toDouble();
     tdaConfig->setZoomScale(tdaScale);
+
+    foreach (auto obj, objectItems)
+    {
+        TDAZoomableObjectBase *objZoom = dynamic_cast<TDAZoomableObjectBase *>(obj);
+        if (objZoom)
+        {
+            objZoom->OnZoom(tdaScale);
+        }
+    }
+
     update();
 }
 
@@ -167,23 +184,23 @@ void FrameTDA::mouseMoveEvent(QMouseEvent *event)
 
 QString FrameTDA::zoomScale2String(zoomScale scale)
 {
-    if(scale==Z_025)
+    if (scale == Z_025)
         return "0.25 NM";
-    else if(scale==Z_050)
+    else if (scale == Z_050)
         return "0.5 NM";
-    else if(scale==Z_010)
+    else if (scale == Z_010)
         return "1 NM";
-    else if(scale==Z_020)
+    else if (scale == Z_020)
         return "2 NM";
-    else if(scale==Z_040)
+    else if (scale == Z_040)
         return "4 NM";
-    else if(scale==Z_080)
+    else if (scale == Z_080)
         return "8 NM";
-    else if(scale==Z_160)
+    else if (scale == Z_160)
         return "16 NM";
-    else if(scale==Z_320)
+    else if (scale == Z_320)
         return "32 NM";
-    else if(scale==Z_640)
+    else if (scale == Z_640)
         return "64 NM";
     else
         return "0";
@@ -191,23 +208,23 @@ QString FrameTDA::zoomScale2String(zoomScale scale)
 
 FrameTDA::zoomScale FrameTDA::zoomString2Scale(QString scale)
 {
-    if(scale=="0.25")
+    if (scale == "0.25")
         return Z_025;
-    else if(scale=="0.5")
+    else if (scale == "0.5")
         return Z_050;
-    else if(scale=="1")
+    else if (scale == "1")
         return Z_010;
-    else if(scale=="2")
+    else if (scale == "2")
         return Z_020;
-    else if(scale=="4")
+    else if (scale == "4")
         return Z_040;
-    else if(scale=="8")
+    else if (scale == "8")
         return Z_080;
-    else if(scale=="16")
+    else if (scale == "16")
         return Z_160;
-    else if(scale=="32")
+    else if (scale == "32")
         return Z_320;
-    else if(scale=="64")
+    else if (scale == "64")
         return Z_640;
     else
         return Z_TOTAL;
@@ -215,45 +232,45 @@ FrameTDA::zoomScale FrameTDA::zoomString2Scale(QString scale)
 
 int FrameTDA::zoomScale2Int(zoomScale scale)
 {
-    if(scale==Z_025)
+    if (scale == Z_025)
         return 0;
-    else if(scale==Z_050)
+    else if (scale == Z_050)
         return 1;
-    else if(scale==Z_010)
+    else if (scale == Z_010)
         return 2;
-    else if(scale==Z_020)
+    else if (scale == Z_020)
         return 3;
-    else if(scale==Z_040)
+    else if (scale == Z_040)
         return 4;
-    else if(scale==Z_080)
+    else if (scale == Z_080)
         return 5;
-    else if(scale==Z_160)
+    else if (scale == Z_160)
         return 6;
-    else if(scale==Z_320)
+    else if (scale == Z_320)
         return 7;
-    else if(scale==Z_640)
+    else if (scale == Z_640)
         return 8;
 }
 
 FrameTDA::zoomScale FrameTDA::zoomInt2Scale(int scale)
 {
-    if(scale==0)
+    if (scale == 0)
         return Z_025;
-    else if(scale==1)
+    else if (scale == 1)
         return Z_050;
-    else if(scale==2)
+    else if (scale == 2)
         return Z_010;
-    else if(scale==3)
+    else if (scale == 3)
         return Z_020;
-    else if(scale==4)
+    else if (scale == 4)
         return Z_040;
-    else if(scale==5)
+    else if (scale == 5)
         return Z_080;
-    else if(scale==6)
+    else if (scale == 6)
         return Z_160;
-    else if(scale==7)
+    else if (scale == 7)
         return Z_320;
-    else if(scale==8)
+    else if (scale == 8)
         return Z_640;
     else
         return Z_TOTAL;
@@ -261,16 +278,15 @@ FrameTDA::zoomScale FrameTDA::zoomInt2Scale(int scale)
 
 void FrameTDA::setupContextMenu()
 {
-    tdaScale = tdaConfig->getZoomScale();
     QString _zoomScale = QString::number(tdaScale);
     cur_checked_zoom_scale = zoomString2Scale(_zoomScale);
 
-    ZoomSubMenu = new QMenu("Zoom",this);
+    ZoomSubMenu = new QMenu("Zoom", this);
     ZoomSubMenu->setStyleSheet("background-color: black;");
 
-    for (int i=0;i<Z_TOTAL;i++)
+    for (int i = 0; i < Z_TOTAL; i++)
     {
-        ZoomAction[i] = new QAction(zoomScale2String(zoomInt2Scale(i)),this);
+        ZoomAction[i] = new QAction(zoomScale2String(zoomInt2Scale(i)), this);
         ZoomSubMenu->addAction(ZoomAction[i]);
         ZoomAction[i]->setCheckable(true);
         connect(ZoomAction[i], &QAction::triggered, this, &FrameTDA::onZoomChange);
@@ -280,7 +296,7 @@ void FrameTDA::setupContextMenu()
     CompassAction = new QAction("Show Compass", this);
     HeadingMarkerAction = new QAction("Show Heading Marker", this);
     GunCovAction = new QAction("Show Gun Coverage", this);
-    GunBarrelAction = new QAction("Show Gun Barrel",this);
+    GunBarrelAction = new QAction("Show Gun Barrel", this);
 
     CompassAction->setCheckable(true);
     HeadingMarkerAction->setCheckable(true);
@@ -299,7 +315,7 @@ void FrameTDA::setupContextMenu()
     if (tdaConfig->getGunBarrelStatus() == true)
         GunBarrelAction->setChecked(true);
 
-    connect(this, SIGNAL(signalOnCostumContextMenuRequest(QPoint&pos)), this, SLOT(on_FrameTDA_customContextMenuRequested(QPoint&pos)));
+    connect(this, &FrameTDA::signalOnCostumContextMenuRequest, this, &FrameTDA::on_FrameTDA_customContextMenuRequested);
     connect(CompassAction, &QAction::triggered, this, &FrameTDA::onCompassActionTriggered);
     connect(HeadingMarkerAction, &QAction::triggered, this, &FrameTDA::onHeadingMarkerActionTriggrered);
     connect(GunCovAction, &QAction::triggered, this, &FrameTDA::onGunCovActionTriggered);
@@ -321,11 +337,11 @@ void FrameTDA::setupTdaObjects()
 {
     TdaCompassObject *compass = new TdaCompassObject(this, tdaConfig);
     TDAGunCoverageObject *gunCoverage = new TDAGunCoverageObject(this, osdRepo->getRepoOSDInertia(), gunRepo->getRepoGunCoverage(), tdaConfig);
-    TDAHeadingMarkerObject *headingMarker = new TDAHeadingMarkerObject (this, osdRepo->getRepoOSDInertia(), tdaConfig);
-    TDAGunBarrelObject *gunBarrel = new TDAGunBarrelObject (this, osdRepo->getRepoOSDInertia(), gunRepo->getRepoGunFeedback(), tdaConfig);
-    // TDATracksObject *tracksObject = new TDATracksObject(this);
+    TDAHeadingMarkerObject *headingMarker = new TDAHeadingMarkerObject(this, osdRepo->getRepoOSDInertia(), tdaConfig);
+    TDAGunBarrelObject *gunBarrel = new TDAGunBarrelObject(this, osdRepo->getRepoOSDInertia(), gunRepo->getRepoGunFeedback(), tdaConfig);
+    TDATracksObject *tracksObject = new TDATracksObject(this, trackRepo->getRepoTrackArpa(), tdaScale);
 
-    objectItems << compass /*<< tracksObject*/ << headingMarker << gunBarrel << gunCoverage;
+    objectItems << compass << tracksObject << headingMarker << gunBarrel << gunCoverage;
 }
 
 void FrameTDA::setupDI()
@@ -333,72 +349,62 @@ void FrameTDA::setupDI()
     osdRepo = DI::getInstance()->getRepoOSD();
     gunRepo = DI::getInstance()->getRepoGun();
     tdaConfig = DI::getInstance()->getConfig()->getTDAConfig();
+    trackRepo = DI::getInstance()->getRepoTrack();
+
+    tdaScale = tdaConfig->getZoomScale();
 }
 
 void FrameTDA::handleMouseTrackingPolar(QMouseEvent *event)
 {
-    QPoint os_pos((width())/2,(height()/2));
-    double range_pixel_x = os_pos.x()-event->pos().x();
-    double range_pixel_y = os_pos.y()-event->pos().y();
-    double bearing = atan2(range_pixel_y,range_pixel_x);
-    bearing = (bearing*180/M_PI)-90;
-    if(bearing<0)
-        bearing+=360;
+    QPoint os_pos((width()) / 2, (height() / 2));
+    double range_pixel_x = os_pos.x() - event->pos().x();
+    double range_pixel_y = os_pos.y() - event->pos().y();
+    double bearing = atan2(range_pixel_y, range_pixel_x);
+    bearing = (bearing * 180 / M_PI) - 90;
+    if (bearing < 0)
+        bearing += 360;
 
-    double range = sqrt(pow(range_pixel_y,2)+pow(range_pixel_x,2)); //pixel
-    range = pixel2Range(range); //NM
+    double range = sqrt(pow(range_pixel_y, 2) + pow(range_pixel_x, 2)); // pixel
+    range = Utils::pixel2Range(range, tdaScale, width(), height());     // NM
 
-    statusBarMousePolar->showMessage(QString("Range : %1, Bearing : %2").arg(QString::number(range,'f',1)).arg(QString::number(bearing,'f',1)),2000);
-    statusBarMousePolar->setGeometry(10,height()-45,200,20);
+    statusBarMousePolar->showMessage(QString("Range : %1, Bearing : %2").arg(QString::number(range, 'f', 1)).arg(QString::number(bearing, 'f', 1)), 2000);
+    statusBarMousePolar->setGeometry(10, height() - 45, 200, 20);
 }
 
 void FrameTDA::handleMouseTrackinglatLon(QMouseEvent *event)
 {
-    QPoint os_pos((width())/2,(height()/2));
-    const OSDPositionEntity* ownPos = osdRepo->getRepoOSDPosition()->GetPosition();
-    QPointF gps = pixToGPS(event->pos().x(), event->pos().y(), width(), height(), tdaScale*1853., ownPos->latitude(), ownPos->longitude());
+    QPoint os_pos((width()) / 2, (height() / 2));
+    const OSDPositionEntity *ownPos = osdRepo->getRepoOSDPosition()->GetPosition();
+    QPointF gps = pixToGPS(event->pos().x(), event->pos().y(), width(), height(), tdaScale * 1853., ownPos->latitude(), ownPos->longitude());
 
-    statusBarMouseLatLon->showMessage(QString("Latitude : %1, Longitude : %2").arg(Utils::latDecToStringDegree(gps.y())).arg(Utils::lonDecToStringDegree(gps.x())),2000);
-    statusBarMouseLatLon->setGeometry(10,height()-25,280,20);
-
-}
-
-int FrameTDA::range2Pixel(double range)
-{
-    int side = qMin(this->width(), this->height()) / 2;
-    return static_cast<int>(range*(side/(tdaScale)));
-}
-
-double FrameTDA::pixel2Range(int pixel)
-{
-    int side = qMin(this->width(), this->height()) / 2;
-    qDebug()<<pixel<<tdaScale<<width();
-    return tdaScale*pixel/side;
+    statusBarMouseLatLon->showMessage(QString("Latitude : %1, Longitude : %2").arg(Utils::latDecToStringDegree(gps.y())).arg(Utils::lonDecToStringDegree(gps.x())), 2000);
+    statusBarMouseLatLon->setGeometry(10, height() - 25, 280, 20);
 }
 
 QPointF FrameTDA::pixToGPS(const int pos_x, const int pos_y, const int vp_width, const int vp_height, const double vp_range, const double own_lat, const double own_lon)
 {
-    QPoint screen_middle(vp_width/2,vp_height/2);
-    double range_pixel_x = screen_middle.x()-pos_x;
-    double range_pixel_y = screen_middle.y()-pos_y;
-    double angle = atan2(range_pixel_y,range_pixel_x);
+    QPoint screen_middle(vp_width / 2, vp_height / 2);
+    double range_pixel_x = screen_middle.x() - pos_x;
+    double range_pixel_y = screen_middle.y() - pos_y;
+    double angle = atan2(range_pixel_y, range_pixel_x);
     double lat, lon;
-    const int MAX_PIX = qMin(vp_width/2,vp_height/2);
-    double r_mouse_pix = sqrt(pow(range_pixel_y,2)+pow(range_pixel_x,2)); //pixel
+    const int MAX_PIX = qMin(vp_width / 2, vp_height / 2);
+    double r_mouse_pix = sqrt(pow(range_pixel_y, 2) + pow(range_pixel_x, 2)); // pixel
 
-    angle = (angle*180/M_PI)-90;
-    while (angle >=360. || angle < 0. ) {
-        if(angle >= 360.)
+    angle = (angle * 180 / M_PI) - 90;
+    while (angle >= 360. || angle < 0.)
+    {
+        if (angle >= 360.)
             angle -= 360.;
-        if(angle < 0.)
+        if (angle < 0.)
             angle += 360.;
     }
 
     lat = own_lat +
-            static_cast<double>(r_mouse_pix) / static_cast<double>(MAX_PIX) * vp_range * cos(M_PI*angle/180.) / 60. / 1852.;
+          static_cast<double>(r_mouse_pix) / static_cast<double>(MAX_PIX) * vp_range * cos(M_PI * angle / 180.) / 60. / 1852.;
     lon = own_lon +
-            static_cast<double>(r_mouse_pix) / static_cast<double>(MAX_PIX) * vp_range * sin(M_PI*angle/180.) /
-            cos(M_PI*own_lat/180.) / 60. / 1852.;
+          static_cast<double>(r_mouse_pix) / static_cast<double>(MAX_PIX) * vp_range * sin(M_PI * angle / 180.) /
+              cos(M_PI * own_lat / 180.) / 60. / 1852.;
 
     QPointF pos_to_convert;
     pos_to_convert.setX(lon);

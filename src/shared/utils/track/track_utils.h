@@ -1,6 +1,7 @@
 #ifndef TRACKUTILS_H
 #define TRACKUTILS_H
 
+#include <QString>
 
 class TrackUtils
 {
@@ -50,6 +51,10 @@ public:
     static DesigDirect int2DesigDirect(int desig_direct);
     static int desigDirect2Int(DesigDirect desig_direct);
     static trackSource int2TrackSource(int source);
+    static QString identity2String(TrackUtils::Identity identity);
+    static QString env2String(TrackUtils::Environment env);
+//    QString desig2String(Desig desig);
+//    QString desigDirect2String(DesigDirect desig_direct);
 
 };
 
