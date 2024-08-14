@@ -1,31 +1,20 @@
 #ifndef TDATRACKID_H
 #define TDATRACKID_H
 
-#include "src/shared/utils/track/track_utils.h"
 #include <QLabel>
 
-struct trackParam
-{
-    int tn;
-    double range;
-    double bearing;
-    double height;
-    double speed;
-    double course;
-
-    TrackUtils::Identity cur_identity;
-    TrackUtils::trackSource cur_source;
-    TrackUtils::Environment cur_env;
-    QString weapon_assign;
-};
+#include "src/shared/utils/track/track_utils.h"
 
 class TdaTrackId : public QLabel
 {
 public:
-    explicit TdaTrackId(QWidget *parent = nullptr, trackParam currentParam = {});
+    explicit TdaTrackId(QWidget *parent = nullptr, int tn = 0, TrackUtils::trackSource source = TrackUtils::T_NAVRAD);
 
-signals:
+    void changeSource(TrackUtils::trackSource source);
 
+private:
+    int currentTn;
+    TrackUtils::trackSource currentSource;
 };
 
 #endif // TDATRACKID_H

@@ -13,6 +13,7 @@
 #include <QAction>
 
 #include "src/infra/store/osd/osd_repository.h"
+#include "src/infra/store/track/track_repository.h"
 #include "src/shared/config/tda_config.h"
 #include "src/view/tda/components/tda_object_base.h"
 #include "src/infra/store/gun/gun_repository.h"
@@ -70,6 +71,8 @@ private:
    QList<TDAObjectBase*> objectItems;
    OSDRepository *osdRepo;
    GunRepository *gunRepo;
+   TrackRepository *trackRepo;
+
    TDAConfig *tdaConfig;
 //   Configuration *config;
 
@@ -99,8 +102,6 @@ private:
    QStatusBar *statusBarMouseLatLon;
    QStatusBar *statusBarSelectedTrack;
 
-   int range2Pixel(double range);
-   double pixel2Range(int pixel);
    QPointF pixToGPS(const int pos_x, const int pos_y, const int vp_width, const int vp_height, const double vp_range, const double own_lat, const double own_lon);
 };
 
