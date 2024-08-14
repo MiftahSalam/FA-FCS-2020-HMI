@@ -113,6 +113,10 @@ SOURCES += \
     src/usecase/track/stream/track_stream.cpp \
     src/usecase/weapon_assign/weapon_assign_service.cpp \
     src/view/mainwindow.cpp \
+    src/view/panel/gun/frame_gun_control_barrel.cpp \
+    src/view/panel/gun/frame_gun_control_fire.cpp \
+    src/view/panel/gun/frame_gun_control_status.cpp \
+    src/view/panel/gun/frame_gun_data_monitoring.cpp \
     src/view/panel/gun/framegun.cpp \
     src/view/panel/osd/frame_osd_gyro.cpp \
     src/view/panel/osd/frame_osd_mode.cpp \
@@ -273,6 +277,10 @@ HEADERS += \
     src/usecase/track/stream/track_stream_base.h \
     src/usecase/weapon_assign/weapon_assign_service.h \
     src/view/mainwindow.h \
+    src/view/panel/gun/frame_gun_control_barrel.h \
+    src/view/panel/gun/frame_gun_control_fire.h \
+    src/view/panel/gun/frame_gun_control_status.h \
+    src/view/panel/gun/frame_gun_data_monitoring.h \
     src/view/panel/gun/framegun.h \
     src/view/panel/osd/frame_osd_base.h \
     src/view/panel/osd/frame_osd_gyro.h \
@@ -309,6 +317,10 @@ HEADERS += \
 
 FORMS += \
     src/view/mainwindow.ui \
+    src/view/panel/gun/frame_gun_control_barrel.ui \
+    src/view/panel/gun/frame_gun_control_fire.ui \
+    src/view/panel/gun/frame_gun_control_status.ui \
+    src/view/panel/gun/frame_gun_data_monitoring.ui \
     src/view/panel/gun/framegun.ui \
     src/view/panel/osd/frame_osd_gyro.ui \
     src/view/panel/osd/frame_osd_mode.ui \
