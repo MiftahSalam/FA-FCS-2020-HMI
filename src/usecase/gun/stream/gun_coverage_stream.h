@@ -33,6 +33,7 @@ protected:
 
 private slots:
     void onDataReceived(QByteArray data) override;
+    void periodUpdate() override;
 
 private:
     static GunCoverageStream *gunCoverageStream;
@@ -43,7 +44,6 @@ private:
     BaseError currentErr;
 
     void handleError(const QString &err) override;
-
 };
 
 #endif // GUN_COVERAGE_STREAM_H

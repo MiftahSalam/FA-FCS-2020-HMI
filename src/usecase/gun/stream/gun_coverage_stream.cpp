@@ -13,6 +13,10 @@ GunCoverageStream::GunCoverageStream(
 {
     consumer = new TcpMessagingWrapper(this, config);
     connect(consumer, &TcpMessagingWrapper::signalForwardMessage, this, &GunCoverageStream::onDataReceived);
+
+    timer = new QTimer(this);
+    connect(timer, &QTimer::timeout, this, &GunCoverageStream::periodUpdate);
+    timer->start(1000);
 }
 
 void GunCoverageStream::onDataReceived(QByteArray data)
@@ -37,6 +41,12 @@ void GunCoverageStream::onDataReceived(QByteArray data)
     }  catch (...) {
         qDebug()<<Q_FUNC_INFO<<"caught unkbnown error";
     }
+}
+
+void GunCoverageStream::periodUpdate()
+{
+    check();
+    qDebug() << Q_FUNC_INFO;
 }
 
 void GunCoverageStream::handleError(const QString &err)
@@ -67,7 +77,7 @@ GunCoverageStream *GunCoverageStream::getInstance(
 }
 
 BaseError GunCoverageStream::check()
-{
+{    
     auto connError = consumer->checkConnection();
     if (connError.getCode() != 0) {
         currentErr = static_cast<BaseError>(connError);
