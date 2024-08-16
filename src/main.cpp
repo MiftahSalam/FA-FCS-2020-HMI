@@ -59,8 +59,8 @@ int main(int argc, char *argv[])
     DI *di = DI::getInstance();
 
     MainWindow w(nullptr, di);
-//    w.showMaximized();
-    w.showFullScreen();
+    w.showMaximized();
+//    w.showFullScreen();
     //    w.show();
 
     //    QWidget *testWidget = new QWidget();
