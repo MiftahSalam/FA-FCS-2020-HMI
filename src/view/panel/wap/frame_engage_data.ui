@@ -1,51 +1,39 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>FrameGunCorrection</class>
- <widget class="QWidget" name="FrameGunCorrection">
+ <class>FrameEngageData</class>
+ <widget class="QWidget" name="FrameEngageData">
   <property name="geometry">
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>349</width>
-    <height>165</height>
+    <width>683</width>
+    <height>133</height>
    </rect>
   </property>
-  <property name="maximumSize">
-   <size>
-    <width>3500</width>
-    <height>1700</height>
-   </size>
+  <property name="sizePolicy">
+   <sizepolicy hsizetype="Minimum" vsizetype="Minimum">
+    <horstretch>0</horstretch>
+    <verstretch>0</verstretch>
+   </sizepolicy>
   </property>
   <property name="windowTitle">
    <string>Form</string>
   </property>
   <layout class="QGridLayout" name="gridLayout">
    <item row="0" column="0">
-    <widget class="QGroupBox" name="groupBoxCorr">
-     <property name="sizePolicy">
-      <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
-       <horstretch>0</horstretch>
-       <verstretch>0</verstretch>
-      </sizepolicy>
-     </property>
-     <property name="maximumSize">
-      <size>
-       <width>16777215</width>
-       <height>300</height>
-      </size>
-     </property>
+    <widget class="QGroupBox" name="groupBoxEng">
      <property name="styleSheet">
       <string notr="true"/>
      </property>
      <property name="title">
-      <string>Correction</string>
+      <string>Engagement Data</string>
      </property>
-     <layout class="QGridLayout" name="gridLayout_5">
+     <layout class="QGridLayout" name="gridLayout_4">
       <property name="sizeConstraint">
        <enum>QLayout::SetMinimumSize</enum>
       </property>
       <item row="0" column="0">
-       <widget class="QTableWidget" name="tableWidgetCorrection">
+       <widget class="QTableWidget" name="tableWidgetEngData">
         <property name="sizePolicy">
          <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
           <horstretch>0</horstretch>
@@ -64,14 +52,32 @@
         <property name="sizeAdjustPolicy">
          <enum>QAbstractScrollArea::AdjustToContents</enum>
         </property>
+        <property name="editTriggers">
+         <set>QAbstractItemView::NoEditTriggers</set>
+        </property>
+        <property name="selectionBehavior">
+         <enum>QAbstractItemView::SelectRows</enum>
+        </property>
         <property name="showGrid">
          <bool>false</bool>
         </property>
+        <attribute name="horizontalHeaderVisible">
+         <bool>false</bool>
+        </attribute>
+        <attribute name="horizontalHeaderMinimumSectionSize">
+         <number>25</number>
+        </attribute>
         <attribute name="horizontalHeaderDefaultSectionSize">
-         <number>100</number>
+         <number>80</number>
+        </attribute>
+        <attribute name="horizontalHeaderHighlightSections">
+         <bool>true</bool>
         </attribute>
         <attribute name="verticalHeaderVisible">
          <bool>false</bool>
+        </attribute>
+        <attribute name="verticalHeaderHighlightSections">
+         <bool>true</bool>
         </attribute>
         <row>
          <property name="text">
@@ -82,24 +88,25 @@
          <property name="text">
           <string>Weapon</string>
          </property>
-         <property name="foreground">
-          <brush brushstyle="NoBrush">
-           <color alpha="255">
-            <red>0</red>
-            <green>0</green>
-            <blue>0</blue>
-           </color>
-          </brush>
+        </column>
+        <column>
+         <property name="text">
+          <string>Engage</string>
          </property>
         </column>
         <column>
          <property name="text">
-          <string>Az Corr</string>
+          <string>TN</string>
          </property>
         </column>
         <column>
          <property name="text">
-          <string>El Corr</string>
+          <string>Az</string>
+         </property>
+        </column>
+        <column>
+         <property name="text">
+          <string>Elv</string>
          </property>
         </column>
         <item row="0" column="0">
@@ -109,13 +116,10 @@
          <property name="textAlignment">
           <set>AlignCenter</set>
          </property>
-         <property name="flags">
-          <set>ItemIsEnabled</set>
-         </property>
         </item>
         <item row="0" column="1">
          <property name="text">
-          <string>-0.2</string>
+          <string>Not Eng</string>
          </property>
          <property name="textAlignment">
           <set>AlignCenter</set>
@@ -123,19 +127,28 @@
         </item>
         <item row="0" column="2">
          <property name="text">
-          <string>0.4</string>
+          <string>1</string>
          </property>
          <property name="textAlignment">
           <set>AlignCenter</set>
          </property>
         </item>
-       </widget>
-      </item>
-      <item row="1" column="0">
-       <widget class="QPushButton" name="pushButtonCorrectionApply">
-        <property name="text">
-         <string>Apply</string>
-        </property>
+        <item row="0" column="3">
+         <property name="text">
+          <string>-</string>
+         </property>
+         <property name="textAlignment">
+          <set>AlignCenter</set>
+         </property>
+        </item>
+        <item row="0" column="4">
+         <property name="text">
+          <string>-</string>
+         </property>
+         <property name="textAlignment">
+          <set>AlignCenter</set>
+         </property>
+        </item>
        </widget>
       </item>
      </layout>

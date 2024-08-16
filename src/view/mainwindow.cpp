@@ -12,12 +12,18 @@ MainWindow::MainWindow(QWidget *parent, DI* di):
     _di(di)
 {
     ui->setupUi(this);
-
+    /*
     ui->gridLayout->removeWidget(ui->frameTDA);
     ui->gridLayout->removeWidget(ui->frameBottomGun);
     ui->gridLayout->removeWidget(ui->frameBottomOSD);
     ui->gridLayout->removeWidget(ui->frameBottomWAP);
     ui->gridLayout->removeWidget(ui->frameBottomClose);
+    */
+
+    ui->gridLayout->removeWidget(ui->frameTDA);
+    ui->gridLayout->removeWidget(ui->frameBottomGun);
+    ui->gridLayout->removeWidget(ui->frameBottomOSD);
+    ui->gridLayout->removeWidget(ui->frameBottomWAP);
 
     /*
     ui->gridLayout->addWidget(ui->frameTDA,0,0,5,4);
@@ -28,14 +34,20 @@ MainWindow::MainWindow(QWidget *parent, DI* di):
     */
 //    ui->label->setText(dateTimeString);
 
-    /**/
+    /*
     ui->gridLayout->addWidget(ui->frameTDA,0,0,5,3);
     ui->gridLayout->addWidget(ui->frameBottomGun,0,4,5,1);
     ui->gridLayout->addWidget(ui->frameBottomWAP,0,3,5,1);
     ui->gridLayout->addWidget(ui->frameBottomOSD,5,0,1,4);
     ui->gridLayout->addWidget(ui->frameBottomClose,5,4,1,1);
+    */
 
-//    qDebug()<<ui->gridLayout_2->columnCount()<<ui->gridLayout_2->rowCount();
+    ui->gridLayout->addWidget(ui->frameTDA,0,0,5,3);
+    ui->gridLayout->addWidget(ui->frameBottomGun,0,4,6,1);
+    ui->gridLayout->addWidget(ui->frameBottomWAP,0,3,5,1);
+    ui->gridLayout->addWidget(ui->frameBottomOSD,5,0,1,4);
+
+    //    qDebug()<<ui->gridLayout_2->columnCount()<<ui->gridLayout_2->rowCount();
 
 }
 

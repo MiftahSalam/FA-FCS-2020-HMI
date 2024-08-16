@@ -116,6 +116,10 @@ SOURCES += \
     src/usecase/track/stream/track_stream.cpp \
     src/usecase/weapon_assign/weapon_assign_service.cpp \
     src/view/mainwindow.cpp \
+    src/view/panel/gun/frame_gun_control_barrel.cpp \
+    src/view/panel/gun/frame_gun_control_fire.cpp \
+    src/view/panel/gun/frame_gun_control_status.cpp \
+    src/view/panel/gun/frame_gun_data_monitoring.cpp \
     src/view/panel/gun/framegun.cpp \
     src/view/panel/osd/frame_osd_gyro.cpp \
     src/view/panel/osd/frame_osd_mode.cpp \
@@ -125,11 +129,11 @@ SOURCES += \
     src/view/panel/osd/frame_osd_weather.cpp \
     src/view/panel/osd/frame_osd_wind.cpp \
     src/view/panel/osd/frameosd.cpp \
-    src/view/panel/wap/engagement_data/frame_engage_data.cpp \
+    src/view/panel/wap/frame_engage_data.cpp \
     src/view/panel/wap/framewap.cpp \
-    src/view/panel/wap/gun_correction/frame_gun_correction.cpp \
-    src/view/panel/wap/track_engagement/frame_track_engage.cpp \
-    src/view/panel/wap/weapon_assign/frame_weapon_assign.cpp \
+    src/view/panel/wap/frame_gun_correction.cpp \
+    src/view/panel/wap/frame_track_engage.cpp \
+    src/view/panel/wap/frame_weapon_assign.cpp \
     src/view/shared/frame_text_input.cpp \
     src/view/tda/components/tda_compass_object.cpp \
     src/view/tda/components/tda_gun_barrel_object.cpp \
@@ -281,6 +285,10 @@ HEADERS += \
     src/usecase/track/stream/track_stream_base.h \
     src/usecase/weapon_assign/weapon_assign_service.h \
     src/view/mainwindow.h \
+    src/view/panel/gun/frame_gun_control_barrel.h \
+    src/view/panel/gun/frame_gun_control_fire.h \
+    src/view/panel/gun/frame_gun_control_status.h \
+    src/view/panel/gun/frame_gun_data_monitoring.h \
     src/view/panel/gun/framegun.h \
     src/view/panel/osd/frame_osd_base.h \
     src/view/panel/osd/frame_osd_gyro.h \
@@ -291,11 +299,11 @@ HEADERS += \
     src/view/panel/osd/frame_osd_weather.h \
     src/view/panel/osd/frame_osd_wind.h \
     src/view/panel/osd/frameosd.h \
-    src/view/panel/wap/engagement_data/frame_engage_data.h \
+    src/view/panel/wap/frame_engage_data.h \
     src/view/panel/wap/framewap.h \
-    src/view/panel/wap/gun_correction/frame_gun_correction.h \
-    src/view/panel/wap/track_engagement/frame_track_engage.h \
-    src/view/panel/wap/weapon_assign/frame_weapon_assign.h \
+    src/view/panel/wap/frame_gun_correction.h \
+    src/view/panel/wap/frame_track_engage.h \
+    src/view/panel/wap/frame_weapon_assign.h \
     src/view/shared/constant_ui.h \
     src/view/shared/frame_text_input.h \
     src/view/tda/components/tda_compass_object.h \
@@ -318,6 +326,10 @@ HEADERS += \
 
 FORMS += \
     src/view/mainwindow.ui \
+    src/view/panel/gun/frame_gun_control_barrel.ui \
+    src/view/panel/gun/frame_gun_control_fire.ui \
+    src/view/panel/gun/frame_gun_control_status.ui \
+    src/view/panel/gun/frame_gun_data_monitoring.ui \
     src/view/panel/gun/framegun.ui \
     src/view/panel/osd/frame_osd_gyro.ui \
     src/view/panel/osd/frame_osd_mode.ui \
@@ -327,11 +339,11 @@ FORMS += \
     src/view/panel/osd/frame_osd_weather.ui \
     src/view/panel/osd/frame_osd_wind.ui \
     src/view/panel/osd/frameosd.ui \
-    src/view/panel/wap/engagement_data/frame_engage_data.ui \
+    src/view/panel/wap/frame_engage_data.ui \
     src/view/panel/wap/framewap.ui \
-    src/view/panel/wap/gun_correction/frame_gun_correction.ui \
-    src/view/panel/wap/track_engagement/frame_track_engage.ui \
-    src/view/panel/wap/weapon_assign/frame_weapon_assign.ui \
+    src/view/panel/wap/frame_gun_correction.ui \
+    src/view/panel/wap/frame_track_engage.ui \
+    src/view/panel/wap/frame_weapon_assign.ui \
     src/view/shared/frame_text_input.ui \
     src/view/tda/frametda.ui
 
