@@ -366,9 +366,10 @@ void FrameTDA::handleMouseTrackingPolar(QMouseEvent *event)
 
     double range = sqrt(pow(range_pixel_y, 2) + pow(range_pixel_x, 2)); // pixel
     range = Utils::pixel2Range(range, tdaScale, width(), height());     // NM
-
-    statusBarMousePolar->showMessage(QString("Range : %1, Bearing : %2").arg(QString::number(range, 'f', 1)).arg(QString::number(bearing, 'f', 1)), 2000);
-    statusBarMousePolar->setGeometry(10, height() - 45, 200, 20);
+    QString status_mousePolar = QString("Range: %1 NM, Bearing: %2\u00B0").arg(QString::number(range, 'f', 1)).arg(QString::number(bearing, 'f', 1));
+    statusBarMousePolar->showMessage(status_mousePolar, 2000);
+    int length = status_mousePolar.length();
+    statusBarMousePolar->setGeometry(10, height() - 45, length*7+18, 20);
 }
 
 void FrameTDA::handleMouseTrackinglatLon(QMouseEvent *event)
@@ -376,9 +377,10 @@ void FrameTDA::handleMouseTrackinglatLon(QMouseEvent *event)
     QPoint os_pos((width()) / 2, (height() / 2));
     const OSDPositionEntity *ownPos = osdRepo->getRepoOSDPosition()->GetPosition();
     QPointF gps = pixToGPS(event->pos().x(), event->pos().y(), width(), height(), tdaScale * 1853., ownPos->latitude(), ownPos->longitude());
-
-    statusBarMouseLatLon->showMessage(QString("Latitude : %1, Longitude : %2").arg(Utils::latDecToStringDegree(gps.y())).arg(Utils::lonDecToStringDegree(gps.x())), 2000);
-    statusBarMouseLatLon->setGeometry(10, height() - 25, 280, 20);
+    QString status_latlon = QString("Latitude: %1, Longitude: %2").arg(Utils::latDecToStringDegree(gps.y())).arg(Utils::lonDecToStringDegree(gps.x()));
+    statusBarMouseLatLon->showMessage(status_latlon,2000);
+    int length = status_latlon.length();
+    statusBarMouseLatLon->setGeometry(10, height() - 25, length*7+8, 20);
 }
 
 QPointF FrameTDA::pixToGPS(const int pos_x, const int pos_y, const int vp_width, const int vp_height, const double vp_range, const double own_lat, const double own_lon)
