@@ -23,7 +23,7 @@ void TdaTrackId::changeSource(TrackUtils::trackSource source)
         QString sourceStr;
         if(source == TrackUtils::T_NAVRAD)
             sourceStr = "N ";
-        else if(sourceStr == TrackUtils::T_LIOD)
+        else if(source == TrackUtils::T_LIOD)
             sourceStr = "L ";
         setText(sourceStr+QString::number(currentTn));
 
