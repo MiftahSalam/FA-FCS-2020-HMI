@@ -368,8 +368,10 @@ void FrameTDA::handleMouseTrackingPolar(QMouseEvent *event)
     range = Utils::pixel2Range(range, tdaScale, width(), height());     // NM
     QString status_mousePolar = QString("Range: %1 NM, Bearing: %2\u00B0").arg(QString::number(range, 'f', 1)).arg(QString::number(bearing, 'f', 1));
     statusBarMousePolar->showMessage(status_mousePolar, 2000);
-    int length = status_mousePolar.length();
-    statusBarMousePolar->setGeometry(10, height() - 45, length*7+18, 20);
+    QFont font = statusBarMouseLatLon->font();
+    QFontMetrics fm(font);
+    int width = fm.horizontalAdvance(status_mousePolar);
+    statusBarMousePolar->setGeometry(10, height() - 45, width+20, 20);
 }
 
 void FrameTDA::handleMouseTrackinglatLon(QMouseEvent *event)
@@ -379,8 +381,10 @@ void FrameTDA::handleMouseTrackinglatLon(QMouseEvent *event)
     QPointF gps = pixToGPS(event->pos().x(), event->pos().y(), width(), height(), tdaScale * 1853., ownPos->latitude(), ownPos->longitude());
     QString status_latlon = QString("Latitude: %1, Longitude: %2").arg(Utils::latDecToStringDegree(gps.y())).arg(Utils::lonDecToStringDegree(gps.x()));
     statusBarMouseLatLon->showMessage(status_latlon,2000);
-    int length = status_latlon.length();
-    statusBarMouseLatLon->setGeometry(10, height() - 25, length*7+8, 20);
+    QFont font = statusBarMouseLatLon->font();
+    QFontMetrics fm(font);
+    int width = fm.horizontalAdvance(status_latlon);
+    statusBarMouseLatLon->setGeometry(10, height() - 25, width+20, 20);
 }
 
 QPointF FrameTDA::pixToGPS(const int pos_x, const int pos_y, const int vp_width, const int vp_height, const double vp_range, const double own_lat, const double own_lon)
