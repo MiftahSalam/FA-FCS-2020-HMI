@@ -7,7 +7,7 @@ FireTriangleRepositoryInMemImpl::FireTriangleRepositoryInMemImpl(FireTriangleEnt
     _entity = entity;
 }
 
-FireTriangleRepository *FireTriangleRepositoryInMemImpl::GetInstance()
+FireTriangleBaseRepository *FireTriangleRepositoryInMemImpl::GetInstance()
 {
     if (instance == nullptr) {
         FireTriangleEntity* entity = new FireTriangleEntity(0, 0, 0);

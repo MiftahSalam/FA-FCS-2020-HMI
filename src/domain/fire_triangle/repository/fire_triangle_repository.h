@@ -3,7 +3,7 @@
 
 #include "src/domain/fire_triangle/entity/fire_triangle_entity.h"
 
-class FireTriangleRepository
+class FireTriangleBaseRepository
 {
 public:
     virtual void SetFireTriangle(const FireTriangleEntity &fte) = 0;

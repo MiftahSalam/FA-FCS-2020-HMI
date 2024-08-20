@@ -3,10 +3,10 @@
 
 #include "src/domain/fire_triangle/repository/fire_triangle_repository.h"
 
-class FireTriangleRepositoryInMemImpl: public FireTriangleRepository
+class FireTriangleRepositoryInMemImpl: public FireTriangleBaseRepository
 {
 public:
-    static FireTriangleRepository *GetInstance();
+    static FireTriangleBaseRepository *GetInstance();
 
     // FireTriangleRepository interface
     void SetFireTriangle(const FireTriangleEntity &fte) override;
