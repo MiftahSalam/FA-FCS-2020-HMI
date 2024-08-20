@@ -4,6 +4,7 @@
 #include "src/infra/store/gun/gun_repository.h"
 #include "src/shared/config/messaging_tcp_config.h"
 #include "src/usecase/gun/stream/gun_coverage_stream.h"
+#include "src/usecase/gun/stream/gun_feedback_stream.h"
 
 #include <QObject>
 
@@ -17,10 +18,12 @@ public:
         );
 
     GunCoverageStream *getServiceGunCoverage() const;
+    GunFeedbackStream *getServiceGunFeedback() const;
 
 private:
     MessagingTcpConfig *consumerConfig;
     GunCoverageStream *serviceGunCoverage;
+    GunFeedbackStream *serviceGunFBack;
 
 };
 

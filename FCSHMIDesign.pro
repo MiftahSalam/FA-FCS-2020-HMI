@@ -57,6 +57,7 @@ SOURCES += \
     src/model/engagement/engagement_data_model.cpp \
     src/model/gun/cms/gun_command_request.cpp \
     src/model/gun/gun_coverage_model.cpp \
+    src/model/gun/gun_feedback_model.cpp \
     src/model/osd/cms/osd_input_mode_request.cpp \
     src/model/osd/cms/osd_set_gyro_request.cpp \
     src/model/osd/cms/osd_set_position_request.cpp \
@@ -217,6 +218,7 @@ HEADERS += \
     src/model/engagement/engagement_data_model.h \
     src/model/gun/cms/gun_command_request.h \
     src/model/gun/gun_coverage_model.h \
+    src/model/gun/gun_feedback_model.h \
     src/model/osd/cms/osd_input_mode_request.h \
     src/model/osd/cms/osd_set_gyro_request.h \
     src/model/osd/cms/osd_set_position_request.h \
