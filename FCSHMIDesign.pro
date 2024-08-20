@@ -38,6 +38,7 @@ SOURCES += \
     src/infra/messaging/tcp/tcp_messaging_wrapper.cpp \
     src/infra/store/engagement/inmemory/engagement_data_correction_repository_inmem_impl.cpp \
     src/infra/store/engagement/inmemory/engagement_data_repository_inmem_impl.cpp \
+    src/infra/store/fire_triangle/inmemory/fire_triangle_repository_inmem_impl.cpp \
     src/infra/store/gun/gun_repository.cpp \
     src/infra/store/gun/inmemory/gun_command_repository_inmem_impl.cpp \
     src/infra/store/gun/inmemory/gun_feedback_repository_inmem_imp.cpp \
@@ -163,6 +164,7 @@ HEADERS += \
     src/domain/engagement/repository/engagement_data_repository.h \
     src/domain/engagement/repository/weapon_track_assign_repository.h \
     src/domain/fire_triangle/entity/fire_triangle_entity.h \
+    src/domain/fire_triangle/repository/fire_triangle_repository.h \
     src/domain/gun/entity/gun_barrel_entity.h \
     src/domain/gun/entity/gun_coverage_entity.h \
     src/domain/gun/entity/gun_status_command_entity.h \
@@ -196,6 +198,7 @@ HEADERS += \
     src/infra/messaging/tcp/tcp_messaging_wrapper.h \
     src/infra/store/engagement/inmemory/engagement_data_correction_repository_inmem_impl.h \
     src/infra/store/engagement/inmemory/engagement_data_repository_inmem_impl.h \
+    src/infra/store/fire_triangle/inmemory/fire_triangle_repository_inmem_impl.h \
     src/infra/store/gun/gun_repository.h \
     src/infra/store/gun/inmemory/gun_command_repository_inmem_impl.h \
     src/infra/store/gun/inmemory/gun_feedback_repository_inmem_imp.h \
