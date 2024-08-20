@@ -2,7 +2,6 @@
 #define GUN_COVERAGE_REPOSITORY_H
 
 #include "src/domain/gun/entity/gun_coverage_entity.h"
-#include "src/domain/gun/repository/gun_base_repository.h"
 
 class GunCoverageRepository
 {
