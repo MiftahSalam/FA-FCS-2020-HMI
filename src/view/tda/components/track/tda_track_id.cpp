@@ -5,7 +5,7 @@ TdaTrackId::TdaTrackId(QWidget *parent, int tn, TrackUtils::trackSource source)
 {
     setObjectName(QString::fromUtf8("trackId"));
     setFrameShape(QFrame::NoFrame);
-    setStyleSheet(QString::fromUtf8("color: rgba(255, 255, 255);background-color: rgb(0,0,0,0);"));
+    setStyleSheet(QString::fromUtf8("color: rgb(255, 255, 255);background-color: rgba(0,0,0,0);"));
     setScaledContents(true);
 
     QString sourceStr;
