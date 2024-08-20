@@ -29,6 +29,12 @@ GunStream::GunStream(
         gunFbackStreamVal,
         repoGun->getRepoGunFeedback()
         );
+
+    TcpMessagingOpts *gunBarrelStreamVal = config->getInstance("")->getContent().value("gun_barrel");
+    serviceGunBarrel = GunBarrelStream::getInstance(
+        gunBarrelStreamVal,
+        repoGun->getRepoGunFeedback()
+        );
 }
 
 GunCoverageStream *GunStream::getServiceGunCoverage() const
@@ -39,4 +45,9 @@ GunCoverageStream *GunStream::getServiceGunCoverage() const
 GunFeedbackStream *GunStream::getServiceGunFeedback() const
 {
     return serviceGunFBack;
+}
+
+GunBarrelStream *GunStream::getServiceGunBarrel() const
+{
+    return serviceGunBarrel;
 }

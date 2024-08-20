@@ -56,6 +56,7 @@ SOURCES += \
     src/model/engagement/cms/engagement_correction_set_request.cpp \
     src/model/engagement/engagement_data_model.cpp \
     src/model/gun/cms/gun_command_request.cpp \
+    src/model/gun/gun_barrel_model.cpp \
     src/model/gun/gun_coverage_model.cpp \
     src/model/gun/gun_feedback_model.cpp \
     src/model/osd/cms/osd_input_mode_request.cpp \
@@ -94,6 +95,7 @@ SOURCES += \
     src/usecase/engagement/stream/engagement_data_40mm_stream.cpp \
     src/usecase/engagement/weapon_track_assign_service.cpp \
     src/usecase/gun/cms/gun_command_service.cpp \
+    src/usecase/gun/stream/gun_barrel_stream.cpp \
     src/usecase/gun/stream/gun_coverage_stream.cpp \
     src/usecase/gun/stream/gun_feedback_stream.cpp \
     src/usecase/gun/stream/gun_stream.cpp \
@@ -217,6 +219,7 @@ HEADERS += \
     src/model/engagement/cms/engagement_correction_set_request.h \
     src/model/engagement/engagement_data_model.h \
     src/model/gun/cms/gun_command_request.h \
+    src/model/gun/gun_barrel_model.h \
     src/model/gun/gun_coverage_model.h \
     src/model/gun/gun_feedback_model.h \
     src/model/osd/cms/osd_input_mode_request.h \
@@ -260,6 +263,7 @@ HEADERS += \
     src/usecase/engagement/stream/engagement_data_base_stream.h \
     src/usecase/engagement/weapon_track_assign_service.h \
     src/usecase/gun/cms/gun_command_service.h \
+    src/usecase/gun/stream/gun_barrel_stream.h \
     src/usecase/gun/stream/gun_coverage_stream.h \
     src/usecase/gun/stream/gun_feedback_stream.h \
     src/usecase/gun/stream/gun_stream.h \
