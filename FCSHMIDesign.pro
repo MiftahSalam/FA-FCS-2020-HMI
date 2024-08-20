@@ -20,6 +20,7 @@ SOURCES += \
     src/domain/engagement/entity/engagement_data_correction_entity.cpp \
     src/domain/engagement/entity/engagement_data_entity.cpp \
     src/domain/engagement/entity/weapon_track_assign_entity.cpp \
+    src/domain/fire_triangle/entity/fire_triangle_entity.cpp \
     src/domain/gun/entity/gun_barrel_entity.cpp \
     src/domain/gun/entity/gun_coverage_entity.cpp \
     src/domain/gun/entity/gun_status_command_entity.cpp \
@@ -161,6 +162,7 @@ HEADERS += \
     src/domain/engagement/repository/engagement_data_correction_repository.h \
     src/domain/engagement/repository/engagement_data_repository.h \
     src/domain/engagement/repository/weapon_track_assign_repository.h \
+    src/domain/fire_triangle/entity/fire_triangle_entity.h \
     src/domain/gun/entity/gun_barrel_entity.h \
     src/domain/gun/entity/gun_coverage_entity.h \
     src/domain/gun/entity/gun_status_command_entity.h \
