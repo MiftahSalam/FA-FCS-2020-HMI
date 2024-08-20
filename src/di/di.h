@@ -1,6 +1,7 @@
 #ifndef DI_H
 #define DI_H
 
+#include "src/infra/store/fire_triangle/fire_triangle_repository.h"
 #include "src/infra/store/gun/gun_repository.h"
 #include "src/infra/store/osd/osd_repository.h"
 #include "src/infra/store/track/track_repository.h"
@@ -24,6 +25,7 @@ public:
     GunRepository *getRepoGun() const;
     TrackStream *getServiceTrackStream() const;
     TrackRepository *getRepoTrack() const;
+    FireTriangleRepository *getRepoFireTriangle() const;
     GunStream *getServiceGunStream() const;
 
     // GunCommandService *getGunCMSService() const;
@@ -39,8 +41,9 @@ private:
 
     OSDRepository *repoOSD;
     GunRepository *repoGun;
-    // TODO: add track repository
     TrackRepository *repoTrack;
+    FireTriangleRepository *repoFireTriangle;
+
     // TODO: add weapon assignment repository
 
     // TODO: add weapon track engagement repository

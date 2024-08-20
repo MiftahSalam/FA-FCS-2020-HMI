@@ -9,6 +9,7 @@ DI::DI()
     repoOSD = new OSDRepository(nullptr);
     repoGun = new GunRepository(nullptr);
     repoTrack = new TrackRepository(nullptr);
+    repoFireTriangle = new FireTriangleRepository(nullptr);
 
     // TODO: add weapon assignment repository
 
@@ -46,6 +47,11 @@ TrackStream *DI::getServiceTrackStream() const
 TrackRepository *DI::getRepoTrack() const
 {
     return repoTrack;
+}
+
+FireTriangleRepository *DI::getRepoFireTriangle() const
+{
+    return repoFireTriangle;
 }
 
 GunStream *DI::getServiceGunStream() const
