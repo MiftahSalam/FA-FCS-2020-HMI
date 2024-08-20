@@ -38,6 +38,7 @@ SOURCES += \
     src/infra/messaging/tcp/tcp_messaging_wrapper.cpp \
     src/infra/store/engagement/inmemory/engagement_data_correction_repository_inmem_impl.cpp \
     src/infra/store/engagement/inmemory/engagement_data_repository_inmem_impl.cpp \
+    src/infra/store/fire_triangle/fire_triangle_repository.cpp \
     src/infra/store/fire_triangle/inmemory/fire_triangle_repository_inmem_impl.cpp \
     src/infra/store/gun/gun_repository.cpp \
     src/infra/store/gun/inmemory/gun_command_repository_inmem_impl.cpp \
@@ -198,6 +199,7 @@ HEADERS += \
     src/infra/messaging/tcp/tcp_messaging_wrapper.h \
     src/infra/store/engagement/inmemory/engagement_data_correction_repository_inmem_impl.h \
     src/infra/store/engagement/inmemory/engagement_data_repository_inmem_impl.h \
+    src/infra/store/fire_triangle/fire_triangle_repository.h \
     src/infra/store/fire_triangle/inmemory/fire_triangle_repository_inmem_impl.h \
     src/infra/store/gun/gun_repository.h \
     src/infra/store/gun/inmemory/gun_command_repository_inmem_impl.h \
