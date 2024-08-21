@@ -23,7 +23,7 @@ TcpMessagingWrapper::TcpMessagingWrapper(QObject *parent, TcpMessagingOpts *cfg)
 
 BaseError TcpMessagingWrapper::checkConnection()
 {
-    qDebug()<<Q_FUNC_INFO<<"state"<<consumer->state();
+//    qDebug()<<Q_FUNC_INFO<<"state"<<consumer->state();
 
     if (consumer->state() != QTcpSocket::ConnectedState && consumer->state() != QTcpSocket::ConnectingState) {
         consumer->connectToHost(config->ip, config->port);

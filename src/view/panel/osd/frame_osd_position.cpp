@@ -191,7 +191,7 @@ void FrameOSDPosition::manualUiSetup()
 void FrameOSDPosition::onTimeout()
 {
     // update ui
-    qDebug() << Q_FUNC_INFO;
+//    qDebug() << Q_FUNC_INFO;
 
     auto currError = _streamPos->check();
     if (currError.getCode() == ERROR_CODE_MESSAGING_NOT_CONNECTED.first)
@@ -235,7 +235,7 @@ void FrameOSDPosition::onTimeout()
 
 void FrameOSDPosition::onStreamReceive(PositionModel model)
 {
-    qDebug() << Q_FUNC_INFO << "position: lat ->" << model.getLatitude() << ", lon ->" << model.getLongitude();
+//    qDebug() << Q_FUNC_INFO << "position: lat ->" << model.getLatitude() << ", lon ->" << model.getLongitude();
     auto currentMode = (OSD_MODE)_cmsMode->getDataMode().getPosition();
     if (currentMode == OSD_MODE::MANUAL)
     {
