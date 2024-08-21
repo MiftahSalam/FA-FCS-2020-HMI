@@ -81,9 +81,9 @@ void FrameTDA::timeOut()
 {
     update();
 
-    auto pos = osdRepo->getRepoOSDPosition()->GetPosition(); //temp test
-    auto inertia = osdRepo->getRepoOSDInertia()->GetInertia(); //temp test
-    qDebug()<<Q_FUNC_INFO<<pos->latitude()<<inertia->heading();
+//    auto pos = osdRepo->getRepoOSDPosition()->GetPosition(); //temp test
+//    auto inertia = osdRepo->getRepoOSDInertia()->GetInertia(); //temp test
+//    qDebug()<<Q_FUNC_INFO<<pos->latitude()<<inertia->heading();
 }
 
 void FrameTDA::on_FrameTDA_customContextMenuRequested(const QPoint &pos)
