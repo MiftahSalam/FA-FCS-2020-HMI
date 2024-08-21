@@ -78,7 +78,7 @@ void TdaTrack::updateTrackData(TrackParam param)
 /*right click menu*/
 void TdaTrack::RC_track(QPoint pos)
 {
-    qDebug()<<Q_FUNC_INFO<<" point "<<pos;
+//    qDebug()<<Q_FUNC_INFO<<" point "<<pos;
 
     QMenu *menu = new QMenu(this);
     menu->setStyleSheet("background-color: black;");

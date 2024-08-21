@@ -68,7 +68,7 @@ void FrameOSDSpeed::onAfterModeReset()
 
 void FrameOSDSpeed::onTimeout()
 {
-    qDebug()<<Q_FUNC_INFO;
+//    qDebug()<<Q_FUNC_INFO;
 
     auto currError = _streamSpeed->check();
     if (currError.getCode() == ERROR_CODE_MESSAGING_NOT_CONNECTED.first) {
@@ -172,8 +172,8 @@ void FrameOSDSpeed::onDataResponse(BaseResponse<SpeedModel> resp)
 
 void FrameOSDSpeed::onStreamReceive(SpeedModel model)
 {
-    qDebug()<<Q_FUNC_INFO<<"Speed: SOG ->"<<model.getSpeed()
-           <<", COG ->"<<model.getCourse();
+//    qDebug()<<Q_FUNC_INFO<<"Speed: SOG ->"<<model.getSpeed()
+//           <<", COG ->"<<model.getCourse();
 
     auto currentMode = (OSD_MODE)_cmsMode->getDataMode().getSpeed();
     if (currentMode == OSD_MODE::MANUAL) {

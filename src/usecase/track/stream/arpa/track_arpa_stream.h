@@ -10,6 +10,7 @@
 
 #include <QObject>
 #include <QWidget>
+#include <QJsonArray>
 
 class TrackArpaStream : public QObject, public TrackStreamBase<TrackArpaModel>
 {
@@ -50,5 +51,6 @@ private:
     BaseError currentErr;
 
     void handleError(const QString &err) override;
+    QJsonArray enhanceJsonParse(const QByteArray data);
 };
 #endif // TRACKARPASTREAM_H

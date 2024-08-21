@@ -57,34 +57,53 @@ BaseError TrackArpaStream::check()
     return currentErr;
 }
 
-// TODO: implementation
 void TrackArpaStream::onDataReceived(QByteArray data)
 {
     try {
-        QJsonObject respObj = Utils::byteArrayToJsonObject(data);
-        TrackArpaModel model = TrackArpaModel::fromJsonObject(respObj);
+        QJsonArray trackJsonArray = enhanceJsonParse(data);
+        if (!trackJsonArray.isEmpty()) {
+            for (int var = 0; var < trackJsonArray.size(); var++) {
+                QJsonObject respObj = trackJsonArray.at(var).toObject();
+                TrackArpaModel model = TrackArpaModel::fromJsonObject(respObj);
 
-        //check source manual
-        if(respObj.contains("source"))
-        {
-            if(respObj["source"].toString().contains("manual"))
-            {
-                return;
+                //check source manual
+                if(respObj.contains("source"))
+                {
+                    if(respObj["source"].toString().contains("manual"))
+                    {
+                        return;
+                    }
+                }
+
+                if (model.getId() <= 0) {
+                    qDebug()<<Q_FUNC_INFO<<"invalid track";
+                    return;
+                }
+
+                TrackBaseEntity updateTrack(
+                            model.getId(),
+                            model.getRange(),
+                            model.getBearing(),
+                            model.getSpeed(),
+                            model.getCourse(),
+                            model.source(),
+                            model.status(),
+                            QDateTime::currentMSecsSinceEpoch()
+                            );
+
+                const TrackBaseEntity* findTrack = _repoArpa->FindOne(model.getId());
+                if (findTrack) {
+                    updateTrack.setCurrIdentity(findTrack->getCurrIdentity());
+                    updateTrack.setCurrEnv(findTrack->getCurrEnv());
+                    updateTrack.setCurrSource(findTrack->getCurrSource());
+                }
+                _repoArpa->Update(updateTrack);
+
+                handleError(respObj["status"].toString());
             }
+        } else {
+            qDebug()<<Q_FUNC_INFO<<"empty track array parser";
         }
-
-        _repoArpa->Update(TrackBaseEntity(
-                              model.getId(),
-                              model.getRange(),
-                              model.getBearing(),
-                              model.getSpeed(),
-                              model.getCourse(),
-                              model.source(),
-                              model.status(),
-                              QDateTime::currentMSecsSinceEpoch()
-                              ));
-
-        handleError(respObj["status"].toString());
     } catch (ErrJsonParse &e) {
         qDebug()<<Q_FUNC_INFO<<"caught error: "<<e.getMessage();
     }  catch (...) {
@@ -120,4 +139,35 @@ void TrackArpaStream::handleError(const QString &err)
     } else {
         currentErr = ErrOSDDataInvalid();
     }
+}
+
+QJsonArray TrackArpaStream::enhanceJsonParse(const QByteArray data)
+{
+    QJsonArray result;
+    QByteArray bufData = data;
+    int idxHeadJson = data.indexOf('{');
+    int idxTailJson = data.indexOf('}');
+    QByteArray bufProcessedData = bufData.mid(idxHeadJson, idxTailJson - idxHeadJson + 1);
+
+    while (bufData.size() > 0 && idxHeadJson >= 0 && idxTailJson > 0)
+    {
+        try {
+            qDebug()<<Q_FUNC_INFO<<"bufProcessedData"<<bufProcessedData;
+            QJsonObject respObj = Utils::byteArrayToJsonObject(bufProcessedData);
+            result.append(respObj);
+        } catch (...) {
+            throw ErrJsonParse();
+        }
+
+        bufData.remove(idxHeadJson, idxTailJson - idxHeadJson + 1);
+
+        qDebug()<<Q_FUNC_INFO<<"bufData"<<bufData;
+
+        idxHeadJson = bufData.indexOf('{');
+        idxTailJson = bufData.indexOf('}');
+        bufProcessedData = bufData.mid(idxHeadJson, idxTailJson - idxHeadJson + 1);
+
+    }
+
+    return result;
 }
