@@ -23,7 +23,7 @@ TdaTrackIcon::TdaTrackIcon(QWidget *parent, TrackParam* param)
     setFrameShape(QFrame::NoFrame);
     setGeometry(QRect(0,0,parent->width()/3,parent->height()));
     setPixmap(QPixmap::fromImage(image));
-    setStyleSheet(QString::fromUtf8("color: rgba(255, 255, 255);background-color: rgb(0,0,0,0);"));
+    setStyleSheet(QString::fromUtf8("color: rgb(255, 255, 255);background-color: rgba(0,0,0,0);"));
     setScaledContents(true);
     setToolTip(QString(TRACK_INFO_TEMPLATE)
                        .arg(QString::number(param->getTn()))
