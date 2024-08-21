@@ -166,7 +166,7 @@ void FrameOSDWaterSpeed::manualUiSetup()
 void FrameOSDWaterSpeed::onTimeout()
 {
     //update ui
-    qDebug()<<Q_FUNC_INFO;
+//    qDebug()<<Q_FUNC_INFO;
 
     auto currError = _streamWS->check();
     if (currError.getCode() == ERROR_CODE_MESSAGING_NOT_CONNECTED.first) {
@@ -200,7 +200,7 @@ void FrameOSDWaterSpeed::onTimeout()
 
 void FrameOSDWaterSpeed::onStreamReceive(WaterSpeedModel model)
 {
-    qDebug()<<Q_FUNC_INFO<<"waterspeed: speed ->"<<model.getSpeed()<<", course ->"<<model.getCourse();
+//    qDebug()<<Q_FUNC_INFO<<"waterspeed: speed ->"<<model.getSpeed()<<", course ->"<<model.getCourse();
     auto currentMode = (OSD_MODE)_cmsMode->getDataMode().getWaterSpeed();
     if (currentMode == OSD_MODE::MANUAL) {
         return;

@@ -71,7 +71,7 @@ void FrameOSDGyro::onAfterModeReset()
 
 void FrameOSDGyro::onTimeout()
 {
-    qDebug() << Q_FUNC_INFO;
+//    qDebug() << Q_FUNC_INFO;
 
     auto currError = _streamGyro->check();
     if (currError.getCode() == ERROR_CODE_MESSAGING_NOT_CONNECTED.first)
@@ -195,8 +195,8 @@ void FrameOSDGyro::onDataResponse(BaseResponse<GyroModel> resp)
 
 void FrameOSDGyro::onStreamReceive(GyroModel model)
 {
-    qDebug() << Q_FUNC_INFO << "Inertia: Heading ->" << model.getHeading()
-             << ", Pitch ->" << model.getPicth() << ", Roll ->" << model.getRoll();
+//    qDebug() << Q_FUNC_INFO << "Inertia: Heading ->" << model.getHeading()
+//             << ", Pitch ->" << model.getPicth() << ", Roll ->" << model.getRoll();
 
     auto currentMode = (OSD_MODE)_cmsMode->getDataMode().getInersia();
     if (currentMode == OSD_MODE::MANUAL)

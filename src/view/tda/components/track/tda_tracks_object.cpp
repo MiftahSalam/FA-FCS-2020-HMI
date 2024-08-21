@@ -131,7 +131,7 @@ QPoint TDATracksObject::polar2Cartesian(double range, double bearing)
     int range_pixel_x = rangePixel * qCos(rad2deg) + os_pos.x();
     int range_pixel_y = rangePixel * qSin(rad2deg) + os_pos.y();
 
-    qDebug() << Q_FUNC_INFO << "os_pos" << os_pos << "rangePixel" << rangePixel << "bearing" << bearing << "rad2deg" << rad2deg << "range_pixel_x" << range_pixel_x << "range_pixel_y" << range_pixel_y;
+    //    qDebug()<<Q_FUNC_INFO<<"os_pos"<<os_pos<<"rangePixel"<<rangePixel<<"bearing"<<bearing<<"rad2deg"<<rad2deg<<"range_pixel_x"<<range_pixel_x<<"range_pixel_y"<<range_pixel_y;
 
     return QPoint(range_pixel_x, range_pixel_y);
 }

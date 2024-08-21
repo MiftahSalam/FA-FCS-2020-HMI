@@ -69,7 +69,7 @@ void FrameOSDWeather::onAfterModeReset()
 
 void FrameOSDWeather::onTimeout()
 {
-    qDebug()<<Q_FUNC_INFO;
+//    qDebug()<<Q_FUNC_INFO;
 
     auto currError = _streamWeather->check();
     if (currError.getCode() == ERROR_CODE_MESSAGING_NOT_CONNECTED.first) {
@@ -178,8 +178,8 @@ void FrameOSDWeather::onDataResponse(BaseResponse<WeatherModel> resp)
 
 void FrameOSDWeather::onStreamReceive(WeatherModel model)
 {
-    qDebug()<<Q_FUNC_INFO<<"Weather: Temperature ->"<<model.getTemperature()
-             <<", Pressure ->"<<model.getPressure()<<", Humidity ->"<<model.getHumidity();
+//    qDebug()<<Q_FUNC_INFO<<"Weather: Temperature ->"<<model.getTemperature()
+//             <<", Pressure ->"<<model.getPressure()<<", Humidity ->"<<model.getHumidity();
 
     auto currentMode = (OSD_MODE)_cmsMode->getDataMode().getWeather();
     if (currentMode == OSD_MODE::MANUAL) {

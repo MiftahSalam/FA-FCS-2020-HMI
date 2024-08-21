@@ -166,7 +166,7 @@ void FrameOSDWind::manualUiSetup()
 void FrameOSDWind::onTimeout()
 {
     //update ui
-    qDebug()<<Q_FUNC_INFO;
+//    qDebug()<<Q_FUNC_INFO;
 
     auto currError = _streamWind->check();
     if (currError.getCode() == ERROR_CODE_MESSAGING_NOT_CONNECTED.first) {
@@ -200,7 +200,7 @@ void FrameOSDWind::onTimeout()
 
 void FrameOSDWind::onStreamReceive(WindModel model)
 {
-    qDebug()<<Q_FUNC_INFO<<"wind: speed ->"<<model.getSpeed()<<", direction ->"<<model.getDirection();
+//    qDebug()<<Q_FUNC_INFO<<"wind: speed ->"<<model.getSpeed()<<", direction ->"<<model.getDirection();
     auto currentMode = (OSD_MODE)_cmsMode->getDataMode().getWind();
     if (currentMode == OSD_MODE::MANUAL) {
         return;
@@ -227,7 +227,6 @@ void FrameOSDWind::onStreamReceive(WindModel model)
 
 void FrameOSDWind::onUpdateWindAutoUi()
 {
-//    qDebug()<<"UPdate UIIII";
     autoUiSetup();
 }
 

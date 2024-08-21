@@ -73,16 +73,29 @@ void TrackArpaStream::onDataReceived(QByteArray data)
             }
         }
 
-        _repoArpa->Update(TrackBaseEntity(
-                              model.getId(),
-                              model.getRange(),
-                              model.getBearing(),
-                              model.getSpeed(),
-                              model.getCourse(),
-                              model.source(),
-                              model.status(),
-                              QDateTime::currentMSecsSinceEpoch()
-                              ));
+        if (model.getId() <= 0) {
+            qDebug()<<Q_FUNC_INFO<<"invalid track";
+            return;
+        }
+
+        TrackBaseEntity updateTrack(
+                    model.getId(),
+                    model.getRange(),
+                    model.getBearing(),
+                    model.getSpeed(),
+                    model.getCourse(),
+                    model.source(),
+                    model.status(),
+                    QDateTime::currentMSecsSinceEpoch()
+                    );
+
+        const TrackBaseEntity* findTrack = _repoArpa->FindOne(model.getId());
+        if (findTrack) {
+            updateTrack.setCurrIdentity(findTrack->getCurrIdentity());
+            updateTrack.setCurrEnv(findTrack->getCurrEnv());
+            updateTrack.setCurrSource(findTrack->getCurrSource());
+        }
+        _repoArpa->Update(updateTrack);
 
         handleError(respObj["status"].toString());
     } catch (ErrJsonParse &e) {
