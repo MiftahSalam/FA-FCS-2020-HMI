@@ -17,7 +17,7 @@ DI::DI()
     // TODO: add engagement correction repository
 
     serviceOSDCMS = new OSDCMS(nullptr, config->getOsdCmsConfig(), repoOSD);
-    // TODO: add gun command service
+    serviceGunManager = GunManagerService::getInstance(nullptr, config->getGunCmsConfig(), repoGun->getRepoGunCmd());
 
     // TODO: add weapon assignment service
 
@@ -32,6 +32,11 @@ DI::DI()
 
     //    serviceOSDStream = new OSDStream(nullptr, config->getAmqpConfig());
 
+}
+
+GunManagerService *DI::getServiceGunManager() const
+{
+    return serviceGunManager;
 }
 
 GunRepository *DI::getRepoGun() const

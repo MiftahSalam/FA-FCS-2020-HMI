@@ -6,6 +6,7 @@
 #include "src/infra/store/osd/osd_repository.h"
 #include "src/infra/store/track/track_repository.h"
 #include "src/shared/config/configuration.h"
+#include "src/usecase/gun/gun_manager_service.h"
 #include "src/usecase/osd/cms/osd_cms.h"
 #include "src/usecase/osd/stream/osd_stream.h"
 #include "src/usecase/track/stream/track_stream.h"
@@ -31,6 +32,8 @@ public:
     // GunCommandService *getGunCMSService() const;
     // GunFeedbackStream *getServiceGunStream() const;
 
+    GunManagerService *getServiceGunManager() const;
+
 protected:
     DI();
 
@@ -51,8 +54,8 @@ private:
     // TODO: add engagement correction repository
 
     OSDCMS *serviceOSDCMS;
-    // TODO: add gun command service
-    // GunCommandService *serviceGunCMS;
+    GunManagerService *serviceGunManager;
+
     // TODO: add weapon assignment service
 
     // TODO: add weapon track engagement service

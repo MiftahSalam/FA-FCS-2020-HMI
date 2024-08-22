@@ -1,6 +1,7 @@
 #ifndef FRAME_GUN_CONTROL_BARREL_H
 #define FRAME_GUN_CONTROL_BARREL_H
 
+#include "src/usecase/gun/gun_manager_service.h"
 #include "src/view/shared/frame_text_input.h"
 #include <QFrame>
 
@@ -42,10 +43,13 @@ private slots:
 private:
     Ui::FrameGunControlBarrel *ui;
 
+    GunManagerService *gunService;
+
     void manualUiSetup();
     void autoUiSetup();
     bool validateInput();
 
+    void setupDI();
 };
 
 #endif // FRAME_GUN_CONTROL_BARREL_H
