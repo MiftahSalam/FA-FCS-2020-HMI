@@ -23,7 +23,7 @@ void GunFeedbackBarrelStream::onDataReceived(QByteArray data)
 {
     try {
         QJsonObject respObj = Utils::byteArrayToJsonObject(data);
-    GunBarrelModel model(respObj["azimuth"].toDouble(),
+    GunFeedbackBarrelModel model(respObj["azimuth"].toDouble(),
                              respObj["elevation"].toDouble()
                              );
 

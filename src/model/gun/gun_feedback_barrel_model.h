@@ -3,13 +3,13 @@
 
 #include <QJsonObject>
 
-class GunBarrelModel
+class GunFeedbackBarrelModel
 {
 public:
-    GunBarrelModel(double azimuth, double elevation);
-    GunBarrelModel(){}
+    GunFeedbackBarrelModel(double azimuth, double elevation);
+    GunFeedbackBarrelModel(){}
 
-    static GunBarrelModel fromJsonObject(QJsonObject obj);
+    static GunFeedbackBarrelModel fromJsonObject(QJsonObject obj);
 
     double getAzimuth() const;
     double getElevation() const;

@@ -9,7 +9,7 @@
 
 #include <QObject>
 
-class GunFeedbackBarrelStream : public QObject, public GunStreamBase<GunBarrelModel>
+class GunFeedbackBarrelStream : public QObject, public GunStreamBase<GunFeedbackBarrelModel>
 {
     Q_OBJECT
 public:
@@ -28,7 +28,7 @@ protected:
 
     // GunStreamBase interface
 signals:
-    void signalDataProcessed(GunBarrelModel data) override;
+    void signalDataProcessed(GunFeedbackBarrelModel data) override;
 
 public:
     BaseError check() override;
