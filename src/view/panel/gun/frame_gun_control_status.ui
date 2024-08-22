@@ -45,7 +45,7 @@
              <enum>Qt::LeftToRight</enum>
             </property>
             <property name="text">
-             <string>Access status:</string>
+             <string>Mount:</string>
             </property>
             <property name="alignment">
              <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
@@ -58,7 +58,7 @@
              <enum>Qt::LeftToRight</enum>
             </property>
             <property name="text">
-             <string>Ready to start:</string>
+             <string>Single Shot:</string>
             </property>
             <property name="alignment">
              <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
@@ -71,7 +71,7 @@
              <enum>Qt::LeftToRight</enum>
             </property>
             <property name="text">
-             <string>Gun ready:</string>
+             <string>Fire Order:</string>
             </property>
             <property name="alignment">
              <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
@@ -84,7 +84,20 @@
              <enum>Qt::LeftToRight</enum>
             </property>
             <property name="text">
-             <string>Gun follow:</string>
+             <string>Prox Fuze:</string>
+            </property>
+            <property name="alignment">
+             <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QLabel" name="label_13">
+            <property name="layoutDirection">
+             <enum>Qt::LeftToRight</enum>
+            </property>
+            <property name="text">
+             <string>Siren:</string>
             </property>
             <property name="alignment">
              <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
@@ -96,9 +109,9 @@
         <item>
          <layout class="QVBoxLayout" name="verticalLayout_4">
           <item>
-           <widget class="QPushButton" name="pushButtonStatConAccess">
+           <widget class="QPushButton" name="pushButtonControlMount">
             <property name="text">
-             <string>Remote/Local</string>
+             <string>On/Off</string>
             </property>
             <property name="checkable">
              <bool>true</bool>
@@ -106,20 +119,7 @@
            </widget>
           </item>
           <item>
-           <widget class="QPushButton" name="pushButtonStatRTS">
-            <property name="text">
-             <string>On</string>
-            </property>
-            <property name="checkable">
-             <bool>true</bool>
-            </property>
-            <property name="checked">
-             <bool>true</bool>
-            </property>
-           </widget>
-          </item>
-          <item>
-           <widget class="QPushButton" name="pushButtonStatConReady">
+           <widget class="QPushButton" name="pushButtonControlSingleshoot">
             <property name="text">
              <string>On</string>
             </property>
@@ -132,7 +132,30 @@
            </widget>
           </item>
           <item>
-           <widget class="QPushButton" name="pushButtonStatConFollow">
+           <widget class="QPushButton" name="pushButtonControlFire">
+            <property name="text">
+             <string>Fire</string>
+            </property>
+            <property name="checkable">
+             <bool>true</bool>
+            </property>
+            <property name="checked">
+             <bool>true</bool>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QPushButton" name="pushButtonControlProxFuze">
+            <property name="text">
+             <string>Off</string>
+            </property>
+            <property name="checkable">
+             <bool>true</bool>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QPushButton" name="pushButtonControlSiren">
             <property name="text">
              <string>Off</string>
             </property>
@@ -144,19 +167,6 @@
          </layout>
         </item>
        </layout>
-      </item>
-      <item row="1" column="1">
-       <widget class="QLabel" name="labelGunStatFollow_2">
-        <property name="layoutDirection">
-         <enum>Qt::LeftToRight</enum>
-        </property>
-        <property name="text">
-         <string/>
-        </property>
-        <property name="alignment">
-         <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
-        </property>
-       </widget>
       </item>
      </layout>
     </widget>
