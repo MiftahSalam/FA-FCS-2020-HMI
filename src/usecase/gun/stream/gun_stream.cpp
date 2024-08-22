@@ -24,13 +24,13 @@ GunStream::GunStream(
         repoGun->getRepoGunCoverage()
         );
 
-    TcpMessagingOpts *gunFbackStreamVal = config->getInstance("")->getContent().value("gun_feedback");
+    TcpMessagingOpts *gunFbackStreamVal = config->getInstance("")->getContent().value("gun_status_feedback");
     serviceGunFBack = GunFeedbackStatusStream::getInstance(
         gunFbackStreamVal,
         repoGun->getRepoGunFeedback()
         );
 
-    TcpMessagingOpts *gunBarrelStreamVal = config->getInstance("")->getContent().value("gun_barrel");
+    TcpMessagingOpts *gunBarrelStreamVal = config->getInstance("")->getContent().value("gun_barrel_feedback");
     serviceGunBarrel = GunFeedbackBarrelStream::getInstance(
         gunBarrelStreamVal,
         repoGun->getRepoGunFeedback()
