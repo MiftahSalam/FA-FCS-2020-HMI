@@ -291,6 +291,7 @@ HEADERS += \
     src/usecase/track/stream/track_stream_base.h \
     src/usecase/weapon_assign/weapon_assign_service.h \
     src/view/mainwindow.h \
+    src/view/panel/gun/frame_gun_base.h \
     src/view/panel/gun/frame_gun_control_barrel.h \
     src/view/panel/gun/frame_gun_control_fire.h \
     src/view/panel/gun/frame_gun_control_status.h \
