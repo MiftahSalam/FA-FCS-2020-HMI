@@ -4,6 +4,7 @@
 
 #include "src/shared/config/amqp_config.h"
 #include "src/shared/config/arpa_config.h"
+#include "src/shared/config/gun_cms_config.h"
 #include "src/shared/config/messaging_tcp_config.h"
 #include "src/shared/config/osd_cms_config.h"
 #include "src/shared/config/tda_config.h"
@@ -23,11 +24,12 @@ public:
 
     TDAConfig *getTDAConfig() const;
 
+    GunCmsConfig *getGunCmsConfig() const;
+
 private:
     OSDCmsConfig *osdCmsConfig;
     ArpaConfig *arpaConfig;
-
-    // TODO: gun cms config
+    GunCmsConfig *gunCmsConfig;
 
     // TODO: track assignment cms config
 

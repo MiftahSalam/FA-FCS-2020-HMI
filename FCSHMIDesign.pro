@@ -87,6 +87,7 @@ SOURCES += \
     src/shared/config/amqp_config.cpp \
     src/shared/config/arpa_config.cpp \
     src/shared/config/configuration.cpp \
+    src/shared/config/gun_cms_config.cpp \
     src/shared/config/messaging_tcp_config.cpp \
     src/shared/config/osd_cms_config.cpp \
     src/shared/config/tda_config.cpp \
@@ -255,6 +256,7 @@ HEADERS += \
     src/shared/config/arpa_config.h \
     src/shared/config/base_config.h \
     src/shared/config/configuration.h \
+    src/shared/config/gun_cms_config.h \
     src/shared/config/messaging_tcp_config.h \
     src/shared/config/osd_cms_config.h \
     src/shared/config/tda_config.h \
