@@ -22,6 +22,7 @@ SOURCES += \
     src/domain/engagement/entity/weapon_track_assign_entity.cpp \
     src/domain/fire_triangle/entity/fire_triangle_entity.cpp \
     src/domain/gun/entity/gun_barrel_entity.cpp \
+    src/domain/gun/entity/gun_barrel_mode_entity.cpp \
     src/domain/gun/entity/gun_coverage_entity.cpp \
     src/domain/gun/entity/gun_status_command_entity.cpp \
     src/domain/gun/entity/gun_status_feedback_entity.cpp \
@@ -60,6 +61,8 @@ SOURCES += \
     src/model/engagement/engagement_data_model.cpp \
     src/model/gun/cms/gun_command_barrel_request.cpp \
     src/model/gun/cms/gun_command_barrel_response.cpp \
+    src/model/gun/cms/gun_mode_barrel_request.cpp \
+    src/model/gun/cms/gun_mode_barrel_response.cpp \
     src/model/gun/gun_coverage_model.cpp \
     src/model/osd/cms/osd_input_mode_request.cpp \
     src/model/osd/cms/osd_set_gyro_request.cpp \
@@ -97,6 +100,7 @@ SOURCES += \
     src/usecase/engagement/cms/engagement_data_correction_40mm_service.cpp \
     src/usecase/engagement/stream/engagement_data_40mm_stream.cpp \
     src/usecase/engagement/weapon_track_assign_service.cpp \
+    src/usecase/gun/cms/gun_command_barrel_mode_service.cpp \
     src/usecase/gun/cms/gun_command_barrel_service.cpp \
     src/usecase/gun/stream/gun_coverage_stream.cpp \
     src/usecase/gun/stream/gun_feedback_stream.cpp \
@@ -169,6 +173,7 @@ HEADERS += \
     src/domain/fire_triangle/entity/fire_triangle_entity.h \
     src/domain/fire_triangle/repository/fire_triangle_repository.h \
     src/domain/gun/entity/gun_barrel_entity.h \
+    src/domain/gun/entity/gun_barrel_mode_entity.h \
     src/domain/gun/entity/gun_coverage_entity.h \
     src/domain/gun/entity/gun_status_command_entity.h \
     src/domain/gun/entity/gun_status_feedback_entity.h \
@@ -226,6 +231,8 @@ HEADERS += \
     src/model/engagement/engagement_data_model.h \
     src/model/gun/cms/gun_command_barrel_request.h \
     src/model/gun/cms/gun_command_barrel_response.h \
+    src/model/gun/cms/gun_mode_barrel_request.h \
+    src/model/gun/cms/gun_mode_barrel_response.h \
     src/model/gun/gun_coverage_model.h \
     src/model/osd/cms/osd_input_mode_request.h \
     src/model/osd/cms/osd_set_gyro_request.h \
@@ -268,6 +275,7 @@ HEADERS += \
     src/usecase/engagement/stream/engagement_data_40mm_stream.h \
     src/usecase/engagement/stream/engagement_data_base_stream.h \
     src/usecase/engagement/weapon_track_assign_service.h \
+    src/usecase/gun/cms/gun_command_barrel_mode_service.h \
     src/usecase/gun/cms/gun_command_barrel_service.h \
     src/usecase/gun/stream/gun_coverage_stream.h \
     src/usecase/gun/stream/gun_feedback_stream.h \
