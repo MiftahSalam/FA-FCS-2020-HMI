@@ -1,6 +1,6 @@
-#include "gun_feedback_model.h"
+#include "gun_feedback_status_model.h"
 
-GunFeedbackModel::GunFeedbackModel(bool opMode, bool remote, bool mount, bool barrelTemperature, bool gunReadyToStart,
+GunFeedbackStatusModel::GunFeedbackStatusModel(bool opMode, bool remote, bool mount, bool barrelTemperature, bool gunReadyToStart,
                                    bool gunReadyToFire, bool fireMode, bool blindArc, bool missAlignment, bool magazine):
     _opMode(opMode), _remote(remote), _mount(mount), _barrelTemp(barrelTemperature), _gunReadyToStart(gunReadyToStart),
     _gunReadyToFire(gunReadyToFire), _fireMode(fireMode), _blindArc(blindArc), _missAlignment(missAlignment), _magazine(magazine)
@@ -8,9 +8,9 @@ GunFeedbackModel::GunFeedbackModel(bool opMode, bool remote, bool mount, bool ba
 
 }
 
-GunFeedbackModel GunFeedbackModel::fromJsonObject(QJsonObject obj)
+GunFeedbackStatusModel GunFeedbackStatusModel::fromJsonObject(QJsonObject obj)
 {
-    GunFeedbackModel model(
+    GunFeedbackStatusModel model(
         obj.value("op_mode").toBool(),
         obj.value("remote").toBool(),
         obj.value("mount").toBool(),
@@ -25,52 +25,52 @@ GunFeedbackModel GunFeedbackModel::fromJsonObject(QJsonObject obj)
     return model;
 }
 
-bool GunFeedbackModel::getOpMode() const
+bool GunFeedbackStatusModel::getOpMode() const
 {
     return _opMode;
 }
 
-bool GunFeedbackModel::getRemote() const
+bool GunFeedbackStatusModel::getRemote() const
 {
     return _remote;
 }
 
-bool GunFeedbackModel::getMount() const
+bool GunFeedbackStatusModel::getMount() const
 {
     return _mount;
 }
 
-bool GunFeedbackModel::getBarrelTemperature() const
+bool GunFeedbackStatusModel::getBarrelTemperature() const
 {
     return _barrelTemp;
 }
 
-bool GunFeedbackModel::getGunReadyToStart() const
+bool GunFeedbackStatusModel::getGunReadyToStart() const
 {
     return _gunReadyToStart;
 }
 
-bool GunFeedbackModel::getGunReadyToFire() const
+bool GunFeedbackStatusModel::getGunReadyToFire() const
 {
     return _gunReadyToFire;
 }
 
-bool GunFeedbackModel::getFireMode() const
+bool GunFeedbackStatusModel::getFireMode() const
 {
     return _fireMode;
 }
 
-bool GunFeedbackModel::getBlindArc() const
+bool GunFeedbackStatusModel::getBlindArc() const
 {
     return _blindArc;
 }
 
-bool GunFeedbackModel::getMissAlignment() const
+bool GunFeedbackStatusModel::getMissAlignment() const
 {
     return _missAlignment;
 }
 
-bool GunFeedbackModel::getMagazine() const
+bool GunFeedbackStatusModel::getMagazine() const
 {
     return _magazine;
 }

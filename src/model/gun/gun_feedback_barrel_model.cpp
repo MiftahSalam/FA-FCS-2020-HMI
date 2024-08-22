@@ -1,4 +1,4 @@
-#include "gun_barrel_model.h"
+#include "gun_feedback_barrel_model.h"
 
 GunBarrelModel::GunBarrelModel(double azimuth, double elevation):
     _azimuth(azimuth), _elevation(elevation)

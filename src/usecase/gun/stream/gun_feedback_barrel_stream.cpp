@@ -1,25 +1,25 @@
-#include "gun_barrel_stream.h"
+#include "gun_feedback_barrel_stream.h"
 #include "src/shared/common/errors/err_json_parse.h"
 #include "src/shared/common/errors/err_object_creation.h"
 #include "src/shared/common/errors/err_osd_data.h"
 #include "src/shared/utils/utils.h"
 
-GunBarrelStream *GunBarrelStream::gunBarrelStream = nullptr;
+GunFeedbackBarrelStream *GunFeedbackBarrelStream::gunBarrelStream = nullptr;
 
-GunBarrelStream::GunBarrelStream(
+GunFeedbackBarrelStream::GunFeedbackBarrelStream(
     TcpMessagingOpts *config,
     GunFeedbackRepository *repoGunFback
     ): cfg(config), repoGunFback(repoGunFback), currentErr(NoError())
 {
     consumer = new TcpMessagingWrapper(this, config);
-    connect(consumer, &TcpMessagingWrapper::signalForwardMessage, this, &GunBarrelStream::onDataReceived);
+    connect(consumer, &TcpMessagingWrapper::signalForwardMessage, this, &GunFeedbackBarrelStream::onDataReceived);
 
     timer = new QTimer(this);
-    connect(timer, &QTimer::timeout, this, &GunBarrelStream::periodUpdate);
+    connect(timer, &QTimer::timeout, this, &GunFeedbackBarrelStream::periodUpdate);
     timer->start(1000);
 }
 
-void GunBarrelStream::onDataReceived(QByteArray data)
+void GunFeedbackBarrelStream::onDataReceived(QByteArray data)
 {
     try {
         QJsonObject respObj = Utils::byteArrayToJsonObject(data);
@@ -43,18 +43,18 @@ void GunBarrelStream::onDataReceived(QByteArray data)
     }
 }
 
-void GunBarrelStream::periodUpdate()
+void GunFeedbackBarrelStream::periodUpdate()
 {
     check();
     qDebug() << Q_FUNC_INFO;
 }
 
-void GunBarrelStream::handleError(const QString &err)
+void GunFeedbackBarrelStream::handleError(const QString &err)
 {
 
 }
 
-GunBarrelStream *GunBarrelStream::getInstance(
+GunFeedbackBarrelStream *GunFeedbackBarrelStream::getInstance(
     TcpMessagingOpts *config = nullptr,
     GunFeedbackRepository *repoGunFback = nullptr
     )
@@ -70,13 +70,13 @@ GunBarrelStream *GunBarrelStream::getInstance(
             throw ErrObjectCreation();
         }
 
-        gunBarrelStream = new GunBarrelStream(config, repoGunFback);
+        gunBarrelStream = new GunFeedbackBarrelStream(config, repoGunFback);
     }
 
     return gunBarrelStream;
 }
 
-BaseError GunBarrelStream::check()
+BaseError GunFeedbackBarrelStream::check()
 {
     auto connError = consumer->checkConnection();
     if (connError.getCode() != 0) {

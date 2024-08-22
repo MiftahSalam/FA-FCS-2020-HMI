@@ -46,50 +46,58 @@ void GunFeedbackRepositoryInMemImp::SetStatus(const GunStatusFeedbackEntity &sta
 
 void GunFeedbackRepositoryInMemImp::SetOpMode(const bool &mode)
 {
+    _statusEntity->setOpMode(mode);
 }
 
 void GunFeedbackRepositoryInMemImp::SetRemote(const bool &remote)
 {
+    _statusEntity->setRemote(remote);
 }
 
 void GunFeedbackRepositoryInMemImp::SetMount(const bool &mount)
 {
-
+    _statusEntity->setMount(mount);
 }
 
 void GunFeedbackRepositoryInMemImp::SetBarrelTemperature(const bool &bTemp)
 {
+    _statusEntity->setBarrelTemperature(bTemp);
 }
 
 void GunFeedbackRepositoryInMemImp::SetGunReadyToStart(const bool &ready)
 {
+    _statusEntity->setGunReadyToStart(ready);
 }
 
 void GunFeedbackRepositoryInMemImp::SetGunReadyToFire(const bool &ready)
 {
+    _statusEntity->setGunReadyToFire(ready);
 }
 
 void GunFeedbackRepositoryInMemImp::SetFireMode(const bool &mode)
 {
+    _statusEntity->setFireMode(mode);
 }
 
 void GunFeedbackRepositoryInMemImp::SetBlindArc(const bool &blind)
 {
+    _statusEntity->setBlindArc(blind);
 }
 
 void GunFeedbackRepositoryInMemImp::SetMissAlign(const bool &miss)
 {
+    _statusEntity->setMissAlignment(miss);
 }
 
 void GunFeedbackRepositoryInMemImp::SetGunMegazine(const bool &magazine)
 {
+    _statusEntity->setMagazine(magazine);
 }
 
 const GunStatusFeedbackEntity *GunFeedbackRepositoryInMemImp::GetStatus() const
 {
     return _statusEntity;
 }
-
 
 void GunFeedbackRepositoryInMemImp::SetBarrel(const float &azimuth, const float &elevation)
 {

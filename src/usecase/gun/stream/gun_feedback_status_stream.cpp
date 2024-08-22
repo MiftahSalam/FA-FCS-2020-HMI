@@ -1,29 +1,29 @@
-#include "gun_feedback_stream.h"
+#include "gun_feedback_status_stream.h"
 #include "src/shared/common/errors/err_json_parse.h"
 #include "src/shared/common/errors/err_object_creation.h"
 #include "src/shared/common/errors/err_osd_data.h"
 #include "src/shared/utils/utils.h"
 
-GunFeedbackStream *GunFeedbackStream::gunFeedbackStream = nullptr;
+GunFeedbackStatusStream *GunFeedbackStatusStream::gunFeedbackStream = nullptr;
 
-GunFeedbackStream::GunFeedbackStream(
+GunFeedbackStatusStream::GunFeedbackStatusStream(
     TcpMessagingOpts *config,
     GunFeedbackRepository *repoGunFback
     ): cfg(config), repoGunFback(repoGunFback), currentErr(NoError())
 {
     consumer = new TcpMessagingWrapper(this, config);
-    connect(consumer, &TcpMessagingWrapper::signalForwardMessage, this, &GunFeedbackStream::onDataReceived);
+    connect(consumer, &TcpMessagingWrapper::signalForwardMessage, this, &GunFeedbackStatusStream::onDataReceived);
 
     timer = new QTimer(this);
-    connect(timer, &QTimer::timeout, this, &GunFeedbackStream::periodUpdate);
+    connect(timer, &QTimer::timeout, this, &GunFeedbackStatusStream::periodUpdate);
     timer->start(1000);
 }
 
-void GunFeedbackStream::onDataReceived(QByteArray data)
+void GunFeedbackStatusStream::onDataReceived(QByteArray data)
 {
     try {
         QJsonObject respObj = Utils::byteArrayToJsonObject(data);
-        GunFeedbackModel model(respObj["op_mode"].toBool(),
+        GunFeedbackStatusModel model(respObj["op_mode"].toBool(),
                                respObj["remote"].toBool(),
                                respObj["mount"].toBool(),
                                respObj["btemp"].toBool(),
@@ -68,18 +68,18 @@ void GunFeedbackStream::onDataReceived(QByteArray data)
     }
 }
 
-void GunFeedbackStream::periodUpdate()
+void GunFeedbackStatusStream::periodUpdate()
 {
     check();
     qDebug() << Q_FUNC_INFO;
 }
 
-void GunFeedbackStream::handleError(const QString &err)
+void GunFeedbackStatusStream::handleError(const QString &err)
 {
 
 }
 
-GunFeedbackStream *GunFeedbackStream::getInstance(
+GunFeedbackStatusStream *GunFeedbackStatusStream::getInstance(
     TcpMessagingOpts *config = nullptr,
     GunFeedbackRepository *repoGunFback = nullptr
     )
@@ -95,13 +95,13 @@ GunFeedbackStream *GunFeedbackStream::getInstance(
             throw ErrObjectCreation();
         }
 
-        gunFeedbackStream = new GunFeedbackStream(config, repoGunFback);
+        gunFeedbackStream = new GunFeedbackStatusStream(config, repoGunFback);
     }
 
     return gunFeedbackStream;
 }
 
-BaseError GunFeedbackStream::check()
+BaseError GunFeedbackStatusStream::check()
 {
     auto connError = consumer->checkConnection();
     if (connError.getCode() != 0) {

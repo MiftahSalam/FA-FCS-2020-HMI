@@ -1,5 +1,5 @@
-#ifndef GUN_BARREL_MODEL_H
-#define GUN_BARREL_MODEL_H
+#ifndef GUN_FEEDBACK_BARREL_MODEL_H
+#define GUN_FEEDBACK_BARREL_MODEL_H
 
 #include <QJsonObject>
 
@@ -19,4 +19,4 @@ private:
 
 };
 
-#endif // GUN_BARREL_MODEL_H
+#endif // GUN_FEEDBACK_BARREL_MODEL_H

@@ -1,16 +1,16 @@
-#ifndef GUN_FEEDBACK_MODEL_H
-#define GUN_FEEDBACK_MODEL_H
+#ifndef GUN_FEEDBACK_STATUS_MODEL_H
+#define GUN_FEEDBACK_STATUS_MODEL_H
 
 #include <QJsonObject>
 
-class GunFeedbackModel
+class GunFeedbackStatusModel
 {
 public:
-    GunFeedbackModel(bool opMode, bool remote, bool mount, bool barrelTemperature, bool gunReadyToStart,
+    GunFeedbackStatusModel(bool opMode, bool remote, bool mount, bool barrelTemperature, bool gunReadyToStart,
                      bool gunReadyToFire, bool fireMode, bool blindArc, bool missAlignment, bool magazine);
-    GunFeedbackModel(){}
+    GunFeedbackStatusModel(){}
 
-    static GunFeedbackModel fromJsonObject(QJsonObject obj);
+    static GunFeedbackStatusModel fromJsonObject(QJsonObject obj);
 
     bool getOpMode() const;
     bool getRemote() const;
@@ -28,4 +28,4 @@ private:
         _gunReadyToFire, _fireMode, _blindArc, _missAlignment, _magazine;
 };
 
-#endif // GUN_FEEDBACK_MODEL_H
+#endif // GUN_FEEDBACK_STATUS_MODEL_H
