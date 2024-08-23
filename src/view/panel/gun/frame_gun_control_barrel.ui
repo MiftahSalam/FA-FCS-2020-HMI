@@ -56,6 +56,11 @@
            <widget class="QComboBox" name="comboBoxGunBarControlMode">
             <item>
              <property name="text">
+              <string>-</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
               <string>Manual</string>
              </property>
             </item>
