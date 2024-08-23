@@ -59,6 +59,21 @@ void GunManagerService::setTechStatus(TECHNICAL_STATUS status)
     currentTechStat = status;
 }
 
+void GunManagerService::setBarrelMode(GunBarrelModeEntity::MODE mode)
+{
+    _modeService->setMode(mode);
+}
+
+void GunManagerService::resetBarrel()
+{
+    _barrelService->setBarrel(GunCommandBarrelRequest(0.,0.));
+}
+
+GunBarrelModeEntity::MODE GunManagerService::getBarrelMode() const
+{
+    return _modeService->getMode();
+}
+
 GunManagerService::OPERATIONAL_STATUS GunManagerService::getCurrentOpStat() const
 {
     return currentOpStat;

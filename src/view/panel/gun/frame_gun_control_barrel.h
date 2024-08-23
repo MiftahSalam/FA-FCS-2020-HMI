@@ -29,7 +29,7 @@ public:
     void setup();
 
 public slots:
-//    void onModeChangeResponse(const QString datafisis, BaseResponse<InputModeModel> mode, bool needConfirm);
+    void onModeChangeResponse(BaseResponse<GunModeBarrelResponse> resp, bool needConfirm);
     void onDataResponse(BaseResponse<GyroModel> data);
 
 signals:
@@ -40,6 +40,7 @@ private slots:
     void onModeChange(int index);
     void onTimeout();
     void onStatusStreamUpdate(GunFeedbackStatusModel model);
+    void onModeCheck();
 
     void on_pushButton_clicked();
 
@@ -49,10 +50,14 @@ private:
     GunManagerService *gunService;
     GunFeedbackStatusStream *statusStream;
 
-    void manualUiSetup();
-    void autoUiSetup();
+    GunBarrelModeEntity::MODE currentMode;
+
+    void noneModeUiSetup();
+    void manualModeUiSetup();
+    void autoModeUiSetup();
     bool validateInput();
     void updateMode();
+    void resetModeIndex();
 
     void setupDI();
 };

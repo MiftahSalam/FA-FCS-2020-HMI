@@ -27,6 +27,7 @@ public:
 
 signals:
     void signal_setModeResponse(BaseResponse<GunModeBarrelResponse> response, bool needConfirm);
+    void signal_modeCheck();
 
 protected:
     GunCommandBarrelModeService(
