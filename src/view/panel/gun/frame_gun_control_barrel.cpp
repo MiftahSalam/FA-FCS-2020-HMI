@@ -7,6 +7,7 @@ FrameGunControlBarrel::FrameGunControlBarrel(QWidget *parent) :
     ui(new Ui::FrameGunControlBarrel)
 {
     ui->setupUi(this);
+    setup();
 }
 
 FrameGunControlBarrel::~FrameGunControlBarrel()

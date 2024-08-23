@@ -32,6 +32,9 @@
       <string>Gun Barrel Control</string>
      </property>
      <layout class="QGridLayout" name="gridLayout">
+      <property name="verticalSpacing">
+       <number>1</number>
+      </property>
       <item row="0" column="0">
        <layout class="QHBoxLayout" name="horizontalLayout">
         <item>
