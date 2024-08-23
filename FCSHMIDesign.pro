@@ -60,6 +60,8 @@ SOURCES += \
     src/model/engagement/engagement_data_model.cpp \
     src/model/gun/cms/gun_command_request.cpp \
     src/model/gun/gun_coverage_model.cpp \
+    src/model/gun/gun_feedback_barrel_model.cpp \
+    src/model/gun/gun_feedback_status_model.cpp \
     src/model/osd/cms/osd_input_mode_request.cpp \
     src/model/osd/cms/osd_set_gyro_request.cpp \
     src/model/osd/cms/osd_set_position_request.cpp \
@@ -97,7 +99,8 @@ SOURCES += \
     src/usecase/engagement/weapon_track_assign_service.cpp \
     src/usecase/gun/cms/gun_command_service.cpp \
     src/usecase/gun/stream/gun_coverage_stream.cpp \
-    src/usecase/gun/stream/gun_feedback_stream.cpp \
+    src/usecase/gun/stream/gun_feedback_barrel_stream.cpp \
+    src/usecase/gun/stream/gun_feedback_status_stream.cpp \
     src/usecase/gun/stream/gun_stream.cpp \
     src/usecase/osd/cms/osd_cms.cpp \
     src/usecase/osd/cms/osd_cms_gyro_data.cpp \
@@ -224,6 +227,8 @@ HEADERS += \
     src/model/engagement/engagement_data_model.h \
     src/model/gun/cms/gun_command_request.h \
     src/model/gun/gun_coverage_model.h \
+    src/model/gun/gun_feedback_barrel_model.h \
+    src/model/gun/gun_feedback_status_model.h \
     src/model/osd/cms/osd_input_mode_request.h \
     src/model/osd/cms/osd_set_gyro_request.h \
     src/model/osd/cms/osd_set_position_request.h \
@@ -266,7 +271,8 @@ HEADERS += \
     src/usecase/engagement/weapon_track_assign_service.h \
     src/usecase/gun/cms/gun_command_service.h \
     src/usecase/gun/stream/gun_coverage_stream.h \
-    src/usecase/gun/stream/gun_feedback_stream.h \
+    src/usecase/gun/stream/gun_feedback_barrel_stream.h \
+    src/usecase/gun/stream/gun_feedback_status_stream.h \
     src/usecase/gun/stream/gun_stream.h \
     src/usecase/gun/stream/gun_stream_base.h \
     src/usecase/osd/cms/i_osd_cms.h \
@@ -292,6 +298,7 @@ HEADERS += \
     src/usecase/track/stream/track_stream_base.h \
     src/usecase/weapon_assign/weapon_assign_service.h \
     src/view/mainwindow.h \
+    src/view/panel/gun/frame_gun_base.h \
     src/view/panel/gun/frame_gun_control_barrel.h \
     src/view/panel/gun/frame_gun_control_fire.h \
     src/view/panel/gun/frame_gun_control_status.h \

@@ -10,6 +10,7 @@ public:
     virtual void SetStatus(const GunStatusFeedbackEntity &status) = 0;
     virtual void SetOpMode(const bool &mode) = 0;
     virtual void SetRemote(const bool &remote) = 0;
+    virtual void SetMount(const bool &mount) = 0;
     virtual void SetBarrelTemperature(const bool &bTemp) = 0;
     virtual void SetGunReadyToStart(const bool &ready) = 0;
     virtual void SetGunReadyToFire(const bool &ready) = 0;

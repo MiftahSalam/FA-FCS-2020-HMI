@@ -18,6 +18,7 @@ public:
     void SetStatus(const GunStatusFeedbackEntity &status) override;
     void SetOpMode(const bool &mode) override;
     void SetRemote(const bool &remote) override;
+    void SetMount(const bool &mount) override;
     void SetBarrelTemperature(const bool &bTemp) override;
     void SetGunReadyToStart(const bool &ready) override;
     void SetGunReadyToFire(const bool &ready) override;
