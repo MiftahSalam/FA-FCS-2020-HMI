@@ -18,7 +18,7 @@ GunCommandBarrelModeService::GunCommandBarrelModeService(
         throw ErrObjectCreation();
     }
 
-    previousMode = repoGunCmd->GetBarrelMode()->getManualMode();
+    previousMode = repoGunCmd->GetBarrelMode()->getMode();
 
     timer = new QTimer(this);
     connect(timer, &QTimer::timeout, this, &GunCommandBarrelModeService::onTimerTimeout);
@@ -35,7 +35,7 @@ void GunCommandBarrelModeService::onReplyFinished()
 
     BaseResponse<GunModeBarrelResponse> resp = errorResponse(httpResponse->error());
     if(resp.getHttpCode() != 0) {
-        _repoGunCmd->SetBarrelMode(GunBarrelModeEntity(previousMode));
+        _repoGunCmd->SetBarrelMode(previousMode);
         synced = false;
 
         emit signal_setModeResponse(resp, !requestSync);
@@ -45,8 +45,11 @@ void GunCommandBarrelModeService::onReplyFinished()
     synced = true;
     resp = toResponse(respRaw);
 
-    _repoGunCmd->SetBarrelMode(resp.getData().getManualMode());
-    previousMode = _repoGunCmd->GetBarrelMode()->getManualMode();
+    bool modeResp = resp.getData().getManualMode();
+    if (!modeResp) {
+        _repoGunCmd->SetBarrelMode(GunBarrelModeEntity::AUTO);
+    }
+    previousMode = _repoGunCmd->GetBarrelMode()->getMode();
 
     emit signal_setModeResponse(resp, !requestSync);
 }
@@ -81,11 +84,17 @@ GunCommandBarrelModeService *GunCommandBarrelModeService::getInstance(
     return instance;
 }
 
-void GunCommandBarrelModeService::setMode(bool manual)
+void GunCommandBarrelModeService::setMode(GunBarrelModeEntity::MODE mode)
 {
     requestSync = false;
-    _repoGunCmd->SetBarrelMode(GunBarrelModeEntity(manual));
-    sendMode(GunModeBarrelRequest(_repoGunCmd->GetBarrelMode()->getManualMode()));
+    _repoGunCmd->SetBarrelMode(mode);
+    bool modeToSend = gunBarrelModeEntityToBool(mode);
+    sendMode(modeToSend);
+}
+
+GunBarrelModeEntity::MODE GunCommandBarrelModeService::getMode() const
+{
+    return _repoGunCmd->GetBarrelMode()->getMode();
 }
 
 void GunCommandBarrelModeService::sendMode(GunModeBarrelRequest request)
@@ -97,6 +106,16 @@ void GunCommandBarrelModeService::sendMode(GunModeBarrelRequest request)
 
     httpResponse = httpClient.post(httpReq, request.toJSON());
     connect(httpResponse, &QNetworkReply::finished, this, &GunCommandBarrelModeService::onReplyFinished);
+}
+
+bool GunCommandBarrelModeService::gunBarrelModeEntityToBool(GunBarrelModeEntity::MODE mode)
+{
+    return mode != GunBarrelModeEntity::AUTO;
+}
+
+GunBarrelModeEntity::MODE GunCommandBarrelModeService::gunResponseModeToBarrelMode(bool mode)
+{
+    return mode ? GunBarrelModeEntity::MANUAL : GunBarrelModeEntity::AUTO;
 }
 
 BaseResponse<GunModeBarrelResponse> GunCommandBarrelModeService::toResponse(QByteArray raw)
@@ -149,6 +168,7 @@ void GunCommandBarrelModeService::sync()
         qDebug()<<Q_FUNC_INFO<<"syncing";
 
         requestSync = true;
-        sendMode(GunModeBarrelRequest(_repoGunCmd->GetBarrelMode()->getManualMode()));
+        bool modeToSend = gunBarrelModeEntityToBool(_repoGunCmd->GetBarrelMode()->getMode());
+        sendMode(modeToSend);
     }
 }

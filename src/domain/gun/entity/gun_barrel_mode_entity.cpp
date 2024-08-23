@@ -1,14 +1,14 @@
 #include "gun_barrel_mode_entity.h"
 
-GunBarrelModeEntity::GunBarrelModeEntity(bool manualMode) : manualMode(manualMode)
+GunBarrelModeEntity::GunBarrelModeEntity(MODE mode) : _mode(mode)
 {}
 
-bool GunBarrelModeEntity::getManualMode() const
+GunBarrelModeEntity::MODE GunBarrelModeEntity::getMode() const
 {
-    return manualMode;
+    return _mode;
 }
 
-void GunBarrelModeEntity::setManualMode(bool newManualMode)
+void GunBarrelModeEntity::setMode(GunBarrelModeEntity::MODE newMode)
 {
-    manualMode = newManualMode;
+    _mode = newMode;
 }
