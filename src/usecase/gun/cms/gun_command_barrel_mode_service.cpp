@@ -57,6 +57,7 @@ void GunCommandBarrelModeService::onReplyFinished()
 void GunCommandBarrelModeService::onTimerTimeout()
 {
     sync();
+    emit signal_modeCheck();
 }
 
 GunCommandBarrelModeService *GunCommandBarrelModeService::getInstance(
