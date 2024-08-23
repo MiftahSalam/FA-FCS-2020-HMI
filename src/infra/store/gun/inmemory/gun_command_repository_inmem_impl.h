@@ -20,16 +20,23 @@ public:
     void SetFire(const bool &fire) override;
     void SetProximity(const bool &proximity) override;
     void SetSiren(const bool &siren) override;
+    void SetBarrelMode(const GunBarrelModeEntity &manual_mode) override;
+    const GunBarrelModeEntity *GetBarrelMode() const override;
     const GunStatusCommandEntity *GetStatus() const override;
 
 protected:
-    GunCommandRepositoryInMemImpl(GunBarrelEntity *bEntity, GunStatusCommandEntity *sEntity);
+    GunCommandRepositoryInMemImpl(
+            GunBarrelEntity *bEntity,
+            GunStatusCommandEntity *sEntity,
+            GunBarrelModeEntity *modeEntity
+            );
 
 private:
     static GunCommandRepositoryInMemImpl *instance;
 
     GunBarrelEntity *_barrelEntity;
     GunStatusCommandEntity *_statusEntity;
+    GunBarrelModeEntity *_modeEntity;
 };
 
 #endif // GUNREPOSITORYINMEMIMPL_H

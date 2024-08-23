@@ -3,10 +3,13 @@
 GunCommandRepositoryInMemImpl* GunCommandRepositoryInMemImpl::instance{nullptr};
 
 GunCommandRepositoryInMemImpl::GunCommandRepositoryInMemImpl(
-        GunBarrelEntity* bEntity, GunStatusCommandEntity* sEntity)
+        GunBarrelEntity* bEntity,
+        GunStatusCommandEntity* sEntity,
+        GunBarrelModeEntity *modeEntity)
 {
     _barrelEntity = bEntity;
     _statusEntity = sEntity;
+    _modeEntity = modeEntity;
 }
 
 GunCommandRepository *GunCommandRepositoryInMemImpl::GetInstance()
@@ -20,7 +23,8 @@ GunCommandRepository *GunCommandRepositoryInMemImpl::GetInstance()
                     false,
                     false
                     );
-        instance = new GunCommandRepositoryInMemImpl(b_entity, s_entity);
+        GunBarrelModeEntity* m_entity = new GunBarrelModeEntity(true);
+        instance = new GunCommandRepositoryInMemImpl(b_entity, s_entity, m_entity);
     }
 
     return instance;
@@ -48,6 +52,16 @@ void GunCommandRepositoryInMemImpl::SetProximity(const bool &proximity)
 
 void GunCommandRepositoryInMemImpl::SetSiren(const bool &siren)
 {
+}
+
+void GunCommandRepositoryInMemImpl::SetBarrelMode(const GunBarrelModeEntity &manual_mode)
+{
+
+}
+
+const GunBarrelModeEntity *GunCommandRepositoryInMemImpl::GetBarrelMode() const
+{
+    return _modeEntity;
 }
 
 const GunBarrelEntity *GunCommandRepositoryInMemImpl::GetBarrel() const

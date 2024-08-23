@@ -1,4 +1,5 @@
 #include "frame_gun_control_barrel.h"
+#include "src/di/di.h"
 #include "ui_frame_gun_control_barrel.h"
 
 FrameGunControlBarrel::FrameGunControlBarrel(QWidget *parent) :
@@ -49,7 +50,7 @@ void FrameGunControlBarrel::on_pushButton_clicked()
 
 void FrameGunControlBarrel::manualUiSetup()
 {
-
+    gunService = DI::getInstance()->getServiceGunManager();
 }
 
 void FrameGunControlBarrel::autoUiSetup()
@@ -58,6 +59,11 @@ void FrameGunControlBarrel::autoUiSetup()
 }
 
 bool FrameGunControlBarrel::validateInput()
+{
+
+}
+
+void FrameGunControlBarrel::setupDI()
 {
 
 }
