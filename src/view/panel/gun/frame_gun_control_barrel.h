@@ -1,7 +1,9 @@
 #ifndef FRAME_GUN_CONTROL_BARREL_H
 #define FRAME_GUN_CONTROL_BARREL_H
 
+#include "src/model/gun/gun_feedback_status_model.h"
 #include "src/usecase/gun/gun_manager_service.h"
+#include "src/usecase/gun/stream/gun_feedback_status_stream.h"
 #include "src/view/shared/frame_text_input.h"
 #include <QFrame>
 
@@ -37,6 +39,7 @@ signals:
 private slots:
     void onModeChange(int index);
     void onTimeout();
+    void onStatusStreamUpdate(GunFeedbackStatusModel model);
 
     void on_pushButton_clicked();
 
@@ -44,10 +47,12 @@ private:
     Ui::FrameGunControlBarrel *ui;
 
     GunManagerService *gunService;
+    GunFeedbackStatusStream *statusStream;
 
     void manualUiSetup();
     void autoUiSetup();
     bool validateInput();
+    void updateMode();
 
     void setupDI();
 };

@@ -23,7 +23,7 @@ GunCommandRepository *GunCommandRepositoryInMemImpl::GetInstance()
                     false,
                     false
                     );
-        GunBarrelModeEntity* m_entity = new GunBarrelModeEntity(true);
+        GunBarrelModeEntity* m_entity = new GunBarrelModeEntity(GunBarrelModeEntity::NONE);
         instance = new GunCommandRepositoryInMemImpl(b_entity, s_entity, m_entity);
     }
 
