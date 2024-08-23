@@ -59,6 +59,11 @@ void GunCommandRepositoryInMemImpl::SetBarrelMode(const GunBarrelModeEntity &man
 
 }
 
+const GunBarrelModeEntity *GunCommandRepositoryInMemImpl::GetBarrelMode() const
+{
+    return _modeEntity;
+}
+
 const GunBarrelEntity *GunCommandRepositoryInMemImpl::GetBarrel() const
 {
 }

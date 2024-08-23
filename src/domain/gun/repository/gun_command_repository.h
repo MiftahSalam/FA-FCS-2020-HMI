@@ -15,6 +15,7 @@ public:
     virtual void SetProximity(const bool &proximity) = 0;
     virtual void SetSiren(const bool &siren) = 0;
     virtual void SetBarrelMode(const GunBarrelModeEntity &manual_mode) = 0;
+    virtual const GunBarrelModeEntity* GetBarrelMode() const  = 0;
     virtual const GunStatusCommandEntity* GetStatus() const = 0;
 };
 #endif // GUN_COMMAND_REPOSITORY_H

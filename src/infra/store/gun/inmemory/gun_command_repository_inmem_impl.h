@@ -21,6 +21,7 @@ public:
     void SetProximity(const bool &proximity) override;
     void SetSiren(const bool &siren) override;
     void SetBarrelMode(const GunBarrelModeEntity &manual_mode) override;
+    const GunBarrelModeEntity *GetBarrelMode() const override;
     const GunStatusCommandEntity *GetStatus() const override;
 
 protected:
