@@ -1,6 +1,7 @@
 #ifndef GUNCOMMANDBARRELMODESERVICE_H
 #define GUNCOMMANDBARRELMODESERVICE_H
 
+#include "qtimer.h"
 #include "src/domain/gun/repository/gun_command_repository.h"
 #include "src/infra/http/http_client_wrapper.h"
 #include "src/model/base_response.h"
@@ -21,10 +22,10 @@ public:
             GunCommandRepository *repoGunCmd = nullptr
             );
 
-    void setMode(GunModeBarrelRequest request);
+    void setMode(bool manual);
 
 signals:
-    void signal_setModeResponse(BaseResponse<GunModeBarrelResponse> response);
+    void signal_setModeResponse(BaseResponse<GunModeBarrelResponse> response, bool needConfirm);
 
 protected:
     GunCommandBarrelModeService(
@@ -36,13 +37,23 @@ protected:
 private slots:
     void onReplyFinished() override;
 
+    void onTimerTimeout();
+
 private:
     static GunCommandBarrelModeService *instance;
     GunCmsConfig *cfgCms;
     GunCommandRepository* _repoGunCmd;
 
+    QTimer *timer;
+
+    bool previousMode;
+    bool synced;
+    bool requestSync;
+
     BaseResponse<GunModeBarrelResponse> toResponse(QByteArray raw);
     BaseResponse<GunModeBarrelResponse> errorResponse(QNetworkReply::NetworkError err);
+    void sync();
+    void sendMode(GunModeBarrelRequest request);
 };
 
 #endif // GUNCOMMANDBARRELMODESERVICE_H

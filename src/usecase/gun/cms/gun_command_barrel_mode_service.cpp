@@ -12,9 +12,18 @@ GunCommandBarrelModeService::GunCommandBarrelModeService(
         GunCommandRepository *repoGunCmd
         ): HttpClientWrapper{parent}, cfgCms(cmsConfig), _repoGunCmd(repoGunCmd)
 {
+    synced = false;
+
     if(parent == nullptr) {
         throw ErrObjectCreation();
     }
+
+    previousMode = repoGunCmd->GetBarrelMode()->getManualMode();
+
+    timer = new QTimer(this);
+    connect(timer, &QTimer::timeout, this, &GunCommandBarrelModeService::onTimerTimeout);
+
+    timer->start(1000);
 }
 
 void GunCommandBarrelModeService::onReplyFinished()
@@ -26,16 +35,25 @@ void GunCommandBarrelModeService::onReplyFinished()
 
     BaseResponse<GunModeBarrelResponse> resp = errorResponse(httpResponse->error());
     if(resp.getHttpCode() != 0) {
-        emit signal_setModeResponse(resp);
+        _repoGunCmd->SetBarrelMode(GunBarrelModeEntity(previousMode));
+        synced = false;
+
+        emit signal_setModeResponse(resp, !requestSync);
         return;
     }
 
+    synced = true;
     resp = toResponse(respRaw);
 
-    //TODO: update repo
     _repoGunCmd->SetBarrelMode(resp.getData().getManualMode());
+    previousMode = _repoGunCmd->GetBarrelMode()->getManualMode();
 
-    emit signal_setModeResponse(resp);
+    emit signal_setModeResponse(resp, !requestSync);
+}
+
+void GunCommandBarrelModeService::onTimerTimeout()
+{
+    sync();
 }
 
 GunCommandBarrelModeService *GunCommandBarrelModeService::getInstance(
@@ -63,12 +81,21 @@ GunCommandBarrelModeService *GunCommandBarrelModeService::getInstance(
     return instance;
 }
 
-void GunCommandBarrelModeService::setMode(GunModeBarrelRequest request)
+void GunCommandBarrelModeService::setMode(bool manual)
 {
+    requestSync = false;
+    _repoGunCmd->SetBarrelMode(GunBarrelModeEntity(manual));
+    sendMode(GunModeBarrelRequest(_repoGunCmd->GetBarrelMode()->getManualMode()));
+}
+
+void GunCommandBarrelModeService::sendMode(GunModeBarrelRequest request)
+{
+    qDebug()<<Q_FUNC_INFO<<"gun barrel mode url: "<<cfgCms->getInstance("")->getModeUrl();
+
     QNetworkRequest httpReq = QNetworkRequest(cfgCms->getInstance("")->getModeUrl());
     httpReq.setHeader(QNetworkRequest::ContentTypeHeader, "application/json");
 
-    httpResponse = httpClient.put(httpReq, request.toJSON());
+    httpResponse = httpClient.post(httpReq, request.toJSON());
     connect(httpResponse, &QNetworkReply::finished, this, &GunCommandBarrelModeService::onReplyFinished);
 }
 
@@ -114,4 +141,14 @@ BaseResponse<GunModeBarrelResponse> GunCommandBarrelModeService::errorResponse(Q
     NoError status;
     return BaseResponse<GunModeBarrelResponse>(status.getCode(), status.getMessage(), model);
 
+}
+
+void GunCommandBarrelModeService::sync()
+{
+    if(!synced) {
+        qDebug()<<Q_FUNC_INFO<<"syncing";
+
+        requestSync = true;
+        sendMode(GunModeBarrelRequest(_repoGunCmd->GetBarrelMode()->getManualMode()));
+    }
 }
