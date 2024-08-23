@@ -33,6 +33,78 @@ void FrameGunDataMonitoring::onStreamStatusReceive(GunFeedbackStatusModel model)
         ui->labelGunStatOp->setText("Not Ready");
         ui->labelGunStatOp->setStyleSheet(COLOR_FAILED_STYLESHEET);
     }
+
+    if (model.getMount() == true){
+        ui->labelGunMount->setText("Yes");
+        ui->labelGunMount->setStyleSheet(COLOR_OK_STYLESHEET);
+    }else{
+        ui->labelGunMount->setText("No");
+        ui->labelGunMount->setStyleSheet(COLOR_FAILED_STYLESHEET);
+    }
+
+    if (model.getRemote() == true){
+        ui->labelGunStatAccess->setText("Remote");
+        ui->labelGunStatAccess->setStyleSheet(COLOR_OK_STYLESHEET);
+    }else{
+        ui->labelGunStatAccess->setText("Local");
+        ui->labelGunStatAccess->setStyleSheet(COLOR_FAILED_STYLESHEET);
+    }
+
+    if (model.getBarrelTemperature() == true){
+        ui->labelGunBarrelTemp->setText("Yes");
+        ui->labelGunBarrelTemp->setStyleSheet(COLOR_OK_STYLESHEET);
+    }else{
+        ui->labelGunBarrelTemp->setText("No");
+        ui->labelGunBarrelTemp->setStyleSheet(COLOR_FAILED_STYLESHEET);
+    }
+
+    if (model.getGunReadyToStart() == true){
+        ui->labelGunStatReadyToStart->setText("Ready");
+        ui->labelGunStatReadyToStart->setStyleSheet(COLOR_OK_STYLESHEET);
+    }else{
+        ui->labelGunStatReadyToStart->setText("No");
+        ui->labelGunStatReadyToStart->setStyleSheet(COLOR_FAILED_STYLESHEET);
+    }
+
+    if (model.getGunReadyToFire() == true){
+        ui->labelGunReadytoFire->setText("Ready");
+        ui->labelGunReadytoFire->setStyleSheet(COLOR_OK_STYLESHEET);
+    }else{
+        ui->labelGunReadytoFire->setText("No");
+        ui->labelGunReadytoFire->setStyleSheet(COLOR_FAILED_STYLESHEET);
+    }
+
+    if (model.getFireMode() == true){
+        ui->labelGunFireMode->setText("Yes");
+        ui->labelGunFireMode->setStyleSheet(COLOR_OK_STYLESHEET);
+    }else{
+        ui->labelGunFireMode->setText("No");
+        ui->labelGunFireMode->setStyleSheet(COLOR_FAILED_STYLESHEET);
+    }
+
+    if (model.getBlindArc() == true){
+        ui->labelBlarc->setText("Yes");
+        ui->labelBlarc->setStyleSheet(COLOR_OK_STYLESHEET);
+    }else{
+        ui->labelBlarc->setText("No");
+        ui->labelBlarc->setStyleSheet(COLOR_FAILED_STYLESHEET);
+    }
+
+    if (model.getMissAlignment() == true){
+        ui->labelGunMissAlgn->setText("Yes");
+        ui->labelGunMissAlgn->setStyleSheet(COLOR_OK_STYLESHEET);
+    }else{
+        ui->labelGunMissAlgn->setText("No");
+        ui->labelGunMissAlgn->setStyleSheet(COLOR_FAILED_STYLESHEET);
+    }
+
+    if (model.getMagazine() == true){
+        ui->labelGunMag->setText("Yes");
+        ui->labelGunMag->setStyleSheet(COLOR_OK_STYLESHEET);
+    }else{
+        ui->labelGunMag->setText("No");
+        ui->labelGunMag->setStyleSheet(COLOR_FAILED_STYLESHEET);
+    }
 }
 
 void FrameGunDataMonitoring::onStreamBarrelReceive(GunFeedbackBarrelModel model)
@@ -54,6 +126,9 @@ void FrameGunDataMonitoring::onTimeout()
 
     auto gunBarrelError = gunBarrelStream->check();
     if (gunBarrelError.getCode() == ERROR_CODE_MESSAGING_NOT_CONNECTED.first){
+        ui->labelGunStatAz->setStyleSheet(COLOR_FAILED_STYLESHEET);
+        ui->labelGunStatEl->setStyleSheet(COLOR_FAILED_STYLESHEET);
+    }else if (gunBarrelError.getCode() == ERROR_CODE_MESSAGING_NO_DATA.first){
         ui->labelGunStatAz->setStyleSheet(COLOR_FAILED_STYLESHEET);
         ui->labelGunStatEl->setStyleSheet(COLOR_FAILED_STYLESHEET);
     }else{

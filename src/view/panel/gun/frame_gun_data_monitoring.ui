@@ -404,7 +404,7 @@
            </widget>
           </item>
           <item>
-           <widget class="QLabel" name="labelGunStatFollow">
+           <widget class="QLabel" name="labelGunFireMode">
             <property name="layoutDirection">
              <enum>Qt::LeftToRight</enum>
             </property>
