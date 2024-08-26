@@ -60,6 +60,16 @@
            </widget>
           </item>
           <item>
+           <widget class="QLabel" name="label_8">
+            <property name="text">
+             <string>Operational mode:</string>
+            </property>
+            <property name="alignment">
+             <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+            </property>
+           </widget>
+          </item>
+          <item>
            <widget class="QLabel" name="label_3">
             <property name="layoutDirection">
              <enum>Qt::LeftToRight</enum>
@@ -197,10 +207,10 @@
              <enum>Qt::LeftToRight</enum>
             </property>
             <property name="styleSheet">
-             <string notr="true">color: rgb(0, 255, 0);</string>
+             <string notr="true">color: rgb(255, 0, 0);</string>
             </property>
             <property name="text">
-             <string>Online</string>
+             <string>Offline</string>
             </property>
             <property name="alignment">
              <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
@@ -224,6 +234,16 @@
            </widget>
           </item>
           <item>
+           <widget class="QLabel" name="labelGunOpMode">
+            <property name="styleSheet">
+             <string notr="true">color: rgb(255, 0, 0);</string>
+            </property>
+            <property name="text">
+             <string>No</string>
+            </property>
+           </widget>
+          </item>
+          <item>
            <widget class="QLabel" name="labelGunStatAccess">
             <property name="layoutDirection">
              <enum>Qt::LeftToRight</enum>
@@ -241,15 +261,21 @@
           </item>
           <item>
            <widget class="QLabel" name="labelGunMount">
+            <property name="styleSheet">
+             <string notr="true">color: rgb(255, 0, 0);</string>
+            </property>
             <property name="text">
-             <string>Yes</string>
+             <string>No</string>
             </property>
            </widget>
           </item>
           <item>
            <widget class="QLabel" name="labelGunBarrelTemp">
+            <property name="styleSheet">
+             <string notr="true">color: rgb(255, 0, 0);</string>
+            </property>
             <property name="text">
-             <string>Yes</string>
+             <string>No</string>
             </property>
            </widget>
           </item>
@@ -259,10 +285,10 @@
              <enum>Qt::LeftToRight</enum>
             </property>
             <property name="styleSheet">
-             <string notr="true">color: rgb(0, 255, 0);</string>
+             <string notr="true">color: rgb(255, 0, 0);</string>
             </property>
             <property name="text">
-             <string>Yes</string>
+             <string>No</string>
             </property>
             <property name="alignment">
              <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
@@ -404,7 +430,7 @@
            </widget>
           </item>
           <item>
-           <widget class="QLabel" name="labelGunStatFollow">
+           <widget class="QLabel" name="labelGunFireMode">
             <property name="layoutDirection">
              <enum>Qt::LeftToRight</enum>
             </property>
@@ -421,22 +447,31 @@
           </item>
           <item>
            <widget class="QLabel" name="labelBlarc">
+            <property name="styleSheet">
+             <string notr="true">color: rgb(255, 0, 0);</string>
+            </property>
             <property name="text">
-             <string>Yes</string>
+             <string>No</string>
             </property>
            </widget>
           </item>
           <item>
            <widget class="QLabel" name="labelGunMissAlgn">
+            <property name="styleSheet">
+             <string notr="true">color: rgb(255, 0, 0);</string>
+            </property>
             <property name="text">
-             <string>Yes</string>
+             <string>No</string>
             </property>
            </widget>
           </item>
           <item>
            <widget class="QLabel" name="labelGunMag">
+            <property name="styleSheet">
+             <string notr="true">color: rgb(255, 0, 0);</string>
+            </property>
             <property name="text">
-             <string>Yes</string>
+             <string>No</string>
             </property>
            </widget>
           </item>
@@ -446,7 +481,7 @@
              <enum>Qt::LeftToRight</enum>
             </property>
             <property name="styleSheet">
-             <string notr="true">color: rgb(0, 255, 0);</string>
+             <string notr="true">color: rgb(255, 0, 0);</string>
             </property>
             <property name="text">
              <string>0.0</string>
