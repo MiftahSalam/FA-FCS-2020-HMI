@@ -7,6 +7,9 @@ FrameGunControlBarrel::FrameGunControlBarrel(QWidget *parent) :
     ui(new Ui::FrameGunControlBarrel)
 {
     ui->setupUi(this);
+
+    setupDI();
+    setup();
 }
 
 FrameGunControlBarrel::~FrameGunControlBarrel()
@@ -26,11 +29,12 @@ void FrameGunControlBarrel::setup()
     ui->groupBoxGunBarrCon->setTitle(prop.title);
     ui->inputAzimuth->setup(prop.azimuth);
     ui->inputElevation->setup(prop.elevation);
+
+    updateMode();
 }
 
 void FrameGunControlBarrel::onDataResponse(BaseResponse<GyroModel> data)
 {
-
 }
 
 void FrameGunControlBarrel::onModeChange(int index)
@@ -43,6 +47,15 @@ void FrameGunControlBarrel::onTimeout()
 
 }
 
+void FrameGunControlBarrel::onStatusStreamUpdate(GunFeedbackStatusModel model)
+{
+    Q_UNUSED(model);
+
+    gunService->setTechStatus(GunManagerService::ONLINE); //temp. TODO: move to ui gun status monitoring panel
+    gunService->updateOpStatus(); //temp. TODO: move to ui gun status monitoring panel
+    updateMode();
+}
+
 void FrameGunControlBarrel::on_pushButton_clicked()
 {
 
@@ -50,7 +63,6 @@ void FrameGunControlBarrel::on_pushButton_clicked()
 
 void FrameGunControlBarrel::manualUiSetup()
 {
-    gunService = DI::getInstance()->getServiceGunManager();
 }
 
 void FrameGunControlBarrel::autoUiSetup()
@@ -63,7 +75,24 @@ bool FrameGunControlBarrel::validateInput()
 
 }
 
+void FrameGunControlBarrel::updateMode()
+{
+    GunManagerService::OPERATIONAL_STATUS opState = gunService->getCurrentOpStat();
+    switch (opState) {
+    case GunManagerService::STANDBY:
+    case GunManagerService::ASSIGNED:
+        ui->comboBoxGunBarControlMode->setEnabled(true);
+        break;
+    default:
+        ui->comboBoxGunBarControlMode->setEnabled(false);
+        break;
+    }
+}
+
 void FrameGunControlBarrel::setupDI()
 {
+    gunService = DI::getInstance()->getServiceGunManager();
+    statusStream = DI::getInstance()->getServiceGunStream()->getServiceGunFeedback();
 
+    connect(statusStream, &GunFeedbackStatusStream::signalDataProcessed, this, &FrameGunControlBarrel::onStatusStreamUpdate);
 }

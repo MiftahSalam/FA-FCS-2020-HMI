@@ -22,7 +22,8 @@ public:
             GunCommandRepository *repoGunCmd = nullptr
             );
 
-    void setMode(bool manual);
+    void setMode(GunBarrelModeEntity::MODE mode);
+    GunBarrelModeEntity::MODE getMode() const;
 
 signals:
     void signal_setModeResponse(BaseResponse<GunModeBarrelResponse> response, bool needConfirm);
@@ -46,7 +47,7 @@ private:
 
     QTimer *timer;
 
-    bool previousMode;
+    GunBarrelModeEntity::MODE previousMode;
     bool synced;
     bool requestSync;
 
@@ -54,6 +55,8 @@ private:
     BaseResponse<GunModeBarrelResponse> errorResponse(QNetworkReply::NetworkError err);
     void sync();
     void sendMode(GunModeBarrelRequest request);
+    bool gunBarrelModeEntityToBool(GunBarrelModeEntity::MODE mode);
+    GunBarrelModeEntity::MODE gunResponseModeToBarrelMode(bool mode);
 };
 
 #endif // GUNCOMMANDBARRELMODESERVICE_H

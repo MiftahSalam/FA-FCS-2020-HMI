@@ -5,13 +5,19 @@
 class GunBarrelModeEntity
 {
 public:
-    GunBarrelModeEntity(bool manualMode);
+    enum MODE{
+        NONE = 0,
+        MANUAL,
+        AUTO
+    };
 
-    bool getManualMode() const;
-    void setManualMode(bool newManualMode);
+    GunBarrelModeEntity(MODE mode);
+
+    MODE getMode() const;
+    void setMode(MODE newManualMode);
 
 private:
-    bool manualMode;
+    MODE _mode;
 };
 
 #endif // GUNBARRELMODEENTITY_H
