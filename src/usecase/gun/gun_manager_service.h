@@ -11,23 +11,25 @@ class GunManagerService : public QObject
 {
     Q_OBJECT
 public:
-    enum TECHNICAL_STATUS{
+    enum TECHNICAL_STATUS
+    {
         OFFLINE = 0,
         ONLINE
     };
-    enum OPERATIONAL_STATUS{
+    enum OPERATIONAL_STATUS
+    {
         NOT_AVAIL = 0,
         STANDBY,
         ASSIGNED
     };
 
     GunManagerService(GunManagerService &other) = delete;
-    void operator=(const GunManagerService&) = delete;
-    static GunManagerService* getInstance(
-            QObject *parent = nullptr,
-            GunCmsConfig *cmsConfig = nullptr,
-            GunFeedbackRepository *feedbackRepo = nullptr,
-            GunCommandRepository *cmdRepo= nullptr);
+    void operator=(const GunManagerService &) = delete;
+    static GunManagerService *getInstance(
+        QObject *parent = nullptr,
+        GunCmsConfig *cmsConfig = nullptr,
+        GunFeedbackRepository *feedbackRepo = nullptr,
+        GunCommandRepository *cmdRepo = nullptr);
 
     OPERATIONAL_STATUS getCurrentOpStat() const;
     TECHNICAL_STATUS getCurrentTechStat() const;
@@ -43,17 +45,24 @@ signals:
     void OnBarrelModeCheck();
 
     const GunBarrelEntity *getCurrentBarrel() const;
+    void setBarrelMode(GunBarrelModeEntity::MODE mode);
+    void resetBarrel();
+    GunBarrelModeEntity::MODE getBarrelMode() const;
+
+signals:
+    void OnBarrelModeResponse(BaseResponse<GunModeBarrelResponse> response, bool needConfirm);
+    void OnBarrelModeCheck();
 
 protected:
     GunManagerService(
-            QObject *parent = nullptr,
-            GunCmsConfig *cmsConfig = nullptr,
-            GunFeedbackRepository *feedbackRepo = nullptr,
-            GunCommandBarrelModeService *modeService= nullptr,
-            GunCommandBarrelService *barrelService= nullptr
-            // TODO : injct gun command status service
-//            GunCommandStatus *statusService= nullptr,
-            );
+        QObject *parent = nullptr,
+        GunCmsConfig *cmsConfig = nullptr,
+        GunFeedbackRepository *feedbackRepo = nullptr,
+        GunCommandBarrelModeService *modeService = nullptr,
+        GunCommandBarrelService *barrelService = nullptr
+        // TODO : injct gun command status service
+        //            GunCommandStatus *statusService= nullptr,
+    );
 
 private:
     static GunManagerService *gunManagerService;
@@ -64,7 +73,7 @@ private:
     GunFeedbackRepository *_feedbackRepository;
 
     // TODO : injct gun command status service
-//            GunCommandStatus *statusService= nullptr,
+    //            GunCommandStatus *statusService= nullptr,
     OPERATIONAL_STATUS currentOpStat;
     TECHNICAL_STATUS currentTechStat;
 };
