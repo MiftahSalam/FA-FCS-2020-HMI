@@ -143,6 +143,9 @@ void FrameGunDataMonitoring::onTimeout()
     auto gunBarrelError = gunBarrelStream->check();
     if (gunBarrelError.getCode() == ERROR_CODE_MESSAGING_NOT_CONNECTED.first){
         notConnectedUiSetupBarrel();
+        gunBarrelStream->resetBarrel();
+        ui->labelGunStatAz->setText(QString::number(gunManagerService->getCurrentBarrel()->azimuth()));
+        ui->labelGunStatEl->setText(QString::number(gunManagerService->getCurrentBarrel()->elevation()));
     }else if (gunBarrelError.getCode() == ERROR_CODE_MESSAGING_NO_DATA.first){
         noDataUiSetupBarrel();
     }else if (gunBarrelError.getCode() == ERROR_CODE_MESSAGING_DATA_INVALID_FORMAT.first){

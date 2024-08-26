@@ -76,6 +76,11 @@ GunFeedbackBarrelStream *GunFeedbackBarrelStream::getInstance(
     return gunBarrelStream;
 }
 
+void GunFeedbackBarrelStream::resetBarrel()
+{
+    repoGunFback->SetBarrel(0.,0.);
+}
+
 BaseError GunFeedbackBarrelStream::check()
 {
     auto connError = consumer->checkConnection();

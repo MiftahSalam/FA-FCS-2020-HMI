@@ -19,7 +19,9 @@ public:
         TcpMessagingOpts *config,
         GunFeedbackRepository *repoGunFback
         );
-    // TODO: add members and implementation
+
+    void resetBarrel();
+
 protected:
     GunFeedbackBarrelStream(
         TcpMessagingOpts *_config = nullptr,
