@@ -7,7 +7,8 @@ FrameGunDataMonitoring::FrameGunDataMonitoring(QWidget *parent) :
     QFrame(parent),
     ui(new Ui::FrameGunDataMonitoring),
     gunStatusStream(DI::getInstance()->getServiceGunStream()->getServiceGunFeedback()),
-    gunBarrelStream(DI::getInstance()->getServiceGunStream()->getServiceGunBarrel())
+    gunBarrelStream(DI::getInstance()->getServiceGunStream()->getServiceGunBarrel()),
+    gunManagerService(DI::getInstance()->getServiceGunManager())
 {
     ui->setupUi(this);
 
@@ -126,12 +127,18 @@ void FrameGunDataMonitoring::onTimeout()
     auto gunStatusError = gunStatusStream->check();
     if (gunStatusError.getCode() == ERROR_CODE_MESSAGING_NOT_CONNECTED.first) {
         offlineUiSetup();
-    }    else if (gunStatusError.getCode() == ERROR_CODE_MESSAGING_NO_DATA.first){
+        gunManagerService->setTechStatus(GunManagerService::OFFLINE);
+        gunStatusStream->resetStatus();
+    }else if (gunStatusError.getCode() == ERROR_CODE_MESSAGING_NO_DATA.first){
         noDataUiSetupStatus();
+        gunManagerService->setTechStatus(GunManagerService::ONLINE);
     }else{
         ui->labelGunStatTech->setText("Online");
         ui->labelGunStatTech->setStyleSheet(COLOR_OK_STYLESHEET);
+        gunManagerService->setTechStatus(GunManagerService::ONLINE);
     }
+
+    updateOperationalUiSetup();
 
     auto gunBarrelError = gunBarrelStream->check();
     if (gunBarrelError.getCode() == ERROR_CODE_MESSAGING_NOT_CONNECTED.first){
@@ -157,6 +164,9 @@ void FrameGunDataMonitoring::noDataUiSetupBarrel()
 
 void FrameGunDataMonitoring::noDataUiSetupStatus()
 {
+    ui->labelGunStatTech->setText("Online");
+    ui->labelGunStatTech->setStyleSheet(COLOR_OK_STYLESHEET);
+
     ui->labelGunOpMode->setStyleSheet(COLOR_FAILED_STYLESHEET);
 
     ui->labelGunMount->setStyleSheet(COLOR_FAILED_STYLESHEET);
@@ -218,4 +228,27 @@ void FrameGunDataMonitoring::offlineUiSetup()
 
     ui->labelGunMag->setText("No");
     ui->labelGunMag->setStyleSheet(COLOR_FAILED_STYLESHEET);
+}
+
+void FrameGunDataMonitoring::updateOperationalUiSetup()
+{
+    gunManagerService->updateOpStatus();
+
+    GunManagerService::OPERATIONAL_STATUS stat = gunManagerService->getCurrentOpStat();
+    switch (stat) {
+    case GunManagerService::NOT_AVAIL:
+        ui->labelGunStatOp->setText("Not Available");
+        ui->labelGunStatOp->setStyleSheet(COLOR_FAILED_STYLESHEET);
+        break;
+    case GunManagerService::STANDBY:
+        ui->labelGunStatOp->setText("Standby");
+        ui->labelGunStatOp->setStyleSheet(COLOR_MANUAL_STYLESHEET);
+        break;
+    case GunManagerService::ASSIGNED:
+        ui->labelGunStatOp->setText("Assigned");
+        ui->labelGunStatOp->setStyleSheet(COLOR_OK_STYLESHEET);
+        break;
+    default:
+        break;
+    }
 }

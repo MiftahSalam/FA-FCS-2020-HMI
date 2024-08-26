@@ -51,8 +51,6 @@ void FrameGunControlBarrel::onStatusStreamUpdate(GunFeedbackStatusModel model)
 {
     Q_UNUSED(model);
 
-    gunService->setTechStatus(GunManagerService::ONLINE); //temp. TODO: move to ui gun status monitoring panel
-    gunService->updateOpStatus(); //temp. TODO: move to ui gun status monitoring panel
     updateMode();
 }
 
