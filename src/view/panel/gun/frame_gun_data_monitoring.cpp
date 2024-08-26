@@ -111,6 +111,14 @@ void FrameGunDataMonitoring::onStreamBarrelReceive(GunFeedbackBarrelModel model)
 {
     ui->labelGunStatAz->setText(QString::number(model.getAzimuth()));
     ui->labelGunStatEl->setText(QString::number(model.getElevation()));
+
+    auto gunBarrelError = gunBarrelStream->check();
+    if (gunBarrelError.getCode() == ERROR_NO.first){
+        ui->labelGunStatAz->setStyleSheet(COLOR_OK_STYLESHEET);
+        ui->labelGunStatEl->setStyleSheet(COLOR_OK_STYLESHEET);
+    }else{
+        barrelFailedUI();
+    }
 }
 
 void FrameGunDataMonitoring::onTimeout()
@@ -126,13 +134,16 @@ void FrameGunDataMonitoring::onTimeout()
 
     auto gunBarrelError = gunBarrelStream->check();
     if (gunBarrelError.getCode() == ERROR_CODE_MESSAGING_NOT_CONNECTED.first){
-        ui->labelGunStatAz->setStyleSheet(COLOR_FAILED_STYLESHEET);
-        ui->labelGunStatEl->setStyleSheet(COLOR_FAILED_STYLESHEET);
+        barrelFailedUI();
     }else if (gunBarrelError.getCode() == ERROR_CODE_MESSAGING_NO_DATA.first){
-        ui->labelGunStatAz->setStyleSheet(COLOR_FAILED_STYLESHEET);
-        ui->labelGunStatEl->setStyleSheet(COLOR_FAILED_STYLESHEET);
-    }else{
-        ui->labelGunStatAz->setStyleSheet(COLOR_OK_STYLESHEET);
-        ui->labelGunStatEl->setStyleSheet(COLOR_OK_STYLESHEET);
+        barrelFailedUI();
+    }else if (gunBarrelError.getCode() == ERROR_CODE_MESSAGING_DATA_INVALID_FORMAT.first){
+        barrelFailedUI();
     }
+}
+
+void FrameGunDataMonitoring::barrelFailedUI()
+{
+    ui->labelGunStatAz->setStyleSheet(COLOR_FAILED_STYLESHEET);
+    ui->labelGunStatEl->setStyleSheet(COLOR_FAILED_STYLESHEET);
 }

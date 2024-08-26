@@ -43,6 +43,8 @@ private:
     GunFeedbackStatusStream* gunStatusStream;
     GunFeedbackBarrelStream* gunBarrelStream;
 
+    void barrelFailedUI();
+
     // void manualUiSetup() override;
     // void autoUiSetup() override;
 
