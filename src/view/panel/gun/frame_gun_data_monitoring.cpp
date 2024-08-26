@@ -27,11 +27,11 @@ FrameGunDataMonitoring::~FrameGunDataMonitoring()
 void FrameGunDataMonitoring::onStreamStatusReceive(GunFeedbackStatusModel model)
 {
     if (model.getOpMode() == true){
-        ui->labelGunStatOp->setText("Standby");
-        ui->labelGunStatOp->setStyleSheet(COLOR_OK_STYLESHEET);
+        ui->labelGunOpMode->setText("Yes");
+        ui->labelGunOpMode->setStyleSheet(COLOR_OK_STYLESHEET);
     } else {
-        ui->labelGunStatOp->setText("Not Ready");
-        ui->labelGunStatOp->setStyleSheet(COLOR_FAILED_STYLESHEET);
+        ui->labelGunOpMode->setText("No");
+        ui->labelGunOpMode->setStyleSheet(COLOR_FAILED_STYLESHEET);
     }
 
     if (model.getMount() == true){
