@@ -37,17 +37,9 @@ public:
     void updateOpStatus();
     void setTechStatus(TECHNICAL_STATUS status);
     void setBarrelMode(GunBarrelModeEntity::MODE mode);
-    void resetBarrel();
     GunBarrelModeEntity::MODE getBarrelMode() const;
-
-signals:
-    void OnBarrelModeResponse(BaseResponse<GunModeBarrelResponse> response, bool needConfirm);
-    void OnBarrelModeCheck();
-
     const GunBarrelEntity *getCurrentBarrel() const;
-    void setBarrelMode(GunBarrelModeEntity::MODE mode);
     void resetBarrel();
-    GunBarrelModeEntity::MODE getBarrelMode() const;
 
 signals:
     void OnBarrelModeResponse(BaseResponse<GunModeBarrelResponse> response, bool needConfirm);
