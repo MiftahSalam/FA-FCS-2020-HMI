@@ -1,5 +1,19 @@
 #include "gun_status_feedback_entity.h"
 
+GunStatusFeedbackEntity::GunStatusFeedbackEntity()
+    :
+    _opMode(false),
+    _remote(false),
+    _mount(false),
+    _barrelTemperature(false),
+    _gunReadyToStart(false),
+    _gunReadyToFire(false),
+    _fireMode(false),
+    _blindArc(false),
+    _missAlignment(false),
+    _magazine(false)
+{}
+
 GunStatusFeedbackEntity::GunStatusFeedbackEntity(bool opMode, bool remote, bool mount, bool barrelTemperature, bool gunReadyToStart, bool gunReadyToFire, bool fireMode, bool blindArc, bool missAlignment, bool magazine):
     _opMode(opMode),
     _remote(remote),

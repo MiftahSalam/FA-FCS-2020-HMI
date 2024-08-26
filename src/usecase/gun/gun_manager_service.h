@@ -35,6 +35,8 @@ public:
     void updateOpStatus();
     void setTechStatus(TECHNICAL_STATUS status);
 
+    const GunBarrelEntity *getCurrentBarrel() const;
+
 protected:
     GunManagerService(
             QObject *parent = nullptr,

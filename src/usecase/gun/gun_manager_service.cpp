@@ -59,6 +59,11 @@ void GunManagerService::setTechStatus(TECHNICAL_STATUS status)
     currentTechStat = status;
 }
 
+const GunBarrelEntity* GunManagerService::getCurrentBarrel() const
+{
+    return _feedbackRepository->GetBarrel();
+}
+
 GunManagerService::OPERATIONAL_STATUS GunManagerService::getCurrentOpStat() const
 {
     return currentOpStat;

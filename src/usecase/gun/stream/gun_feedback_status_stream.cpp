@@ -104,6 +104,11 @@ GunFeedbackStatusStream *GunFeedbackStatusStream::getInstance(
     return gunFeedbackStream;
 }
 
+void GunFeedbackStatusStream::resetStatus()
+{
+    repoGunFback->SetStatus(GunStatusFeedbackEntity());
+}
+
 BaseError GunFeedbackStatusStream::check()
 {
     auto connError = consumer->checkConnection();

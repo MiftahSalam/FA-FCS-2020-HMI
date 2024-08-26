@@ -1,7 +1,6 @@
 #include "gun_feedback_barrel_stream.h"
 #include "src/shared/common/errors/err_json_parse.h"
 #include "src/shared/common/errors/err_object_creation.h"
-#include "src/shared/common/errors/err_osd_data.h"
 #include "src/shared/utils/utils.h"
 
 GunFeedbackBarrelStream *GunFeedbackBarrelStream::gunBarrelStream = nullptr;
@@ -34,8 +33,9 @@ void GunFeedbackBarrelStream::onDataReceived(QByteArray data)
             model.getElevation()
             );
 
-        emit signalDataProcessed(model);
+        currentErr = NoError();
 
+        emit signalDataProcessed(model);
     }catch(ErrJsonParse &e) {
         qDebug()<<Q_FUNC_INFO<<"caught error: "<<e.getMessage();
     }  catch (...) {
@@ -76,6 +76,11 @@ GunFeedbackBarrelStream *GunFeedbackBarrelStream::getInstance(
     return gunBarrelStream;
 }
 
+void GunFeedbackBarrelStream::resetBarrel()
+{
+    repoGunFback->SetBarrel(0.,0.);
+}
+
 BaseError GunFeedbackBarrelStream::check()
 {
     auto connError = consumer->checkConnection();
@@ -83,6 +88,7 @@ BaseError GunFeedbackBarrelStream::check()
         currentErr = static_cast<BaseError>(connError);
         return currentErr;
     }
+    currentErr = connError;
 
     return currentErr;
 }
