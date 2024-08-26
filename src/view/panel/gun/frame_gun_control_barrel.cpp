@@ -79,14 +79,11 @@ void FrameGunControlBarrel::onModeChange(int index)
 
 void FrameGunControlBarrel::onTimeout()
 {
-
 }
 
 void FrameGunControlBarrel::onStatusStreamUpdate(GunFeedbackStatusModel model)
 {
     Q_UNUSED(model);
-
-    updateMode();
 }
 
 void FrameGunControlBarrel::onModeCheck()
@@ -117,6 +114,8 @@ void FrameGunControlBarrel::onModeCheck()
 
         currentMode = curMode;
     }
+
+    updateMode();
 }
 
 void FrameGunControlBarrel::on_pushButton_clicked()

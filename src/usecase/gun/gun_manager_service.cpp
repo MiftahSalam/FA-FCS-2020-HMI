@@ -114,6 +114,8 @@ GunManagerService *GunManagerService::getInstance(QObject *parent,
             cmdRepo);
         // TODO : gun command status service
         gunManagerService = new GunManagerService(parent, cmsConfig, feedbackRepo, modeService, barrelService);
+
+        connect(modeService, &GunCommandBarrelModeService::signal_modeCheck, gunManagerService, &GunManagerService::OnBarrelModeCheck);
     }
 
     return gunManagerService;
