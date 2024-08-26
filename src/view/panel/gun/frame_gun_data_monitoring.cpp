@@ -33,6 +33,8 @@ void FrameGunDataMonitoring::onStreamStatusReceive(GunFeedbackStatusModel model)
     }else{
         ui->labelGunStatAccess->setText("Local");
         ui->labelGunStatAccess->setStyleSheet(COLOR_FAILED_STYLESHEET);
+
+        gunManagerService->resetOpStatus();
     }
 
     if (model.getOpMode() == true){

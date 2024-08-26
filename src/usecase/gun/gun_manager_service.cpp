@@ -60,6 +60,9 @@ void GunManagerService::updateOpStatus()
 void GunManagerService::setTechStatus(TECHNICAL_STATUS status)
 {
     currentTechStat = status;
+    if (currentTechStat == TECHNICAL_STATUS::OFFLINE) {
+        resetOpStatus();
+    }
 }
 
 void GunManagerService::setBarrelMode(GunBarrelModeEntity::MODE mode)
@@ -70,6 +73,13 @@ void GunManagerService::setBarrelMode(GunBarrelModeEntity::MODE mode)
 void GunManagerService::resetBarrel()
 {
     _barrelService->setBarrel(GunCommandBarrelRequest(0., 0.));
+}
+
+void GunManagerService::resetOpStatus()
+{
+    currentOpStat = OPERATIONAL_STATUS::NOT_AVAIL;
+    _modeService->setMode(GunBarrelModeEntity::NONE);
+    resetBarrel();
 }
 
 GunBarrelModeEntity::MODE GunManagerService::getBarrelMode() const
@@ -116,6 +126,7 @@ GunManagerService *GunManagerService::getInstance(QObject *parent,
         gunManagerService = new GunManagerService(parent, cmsConfig, feedbackRepo, modeService, barrelService);
 
         connect(modeService, &GunCommandBarrelModeService::signal_modeCheck, gunManagerService, &GunManagerService::OnBarrelModeCheck);
+        connect(modeService, &GunCommandBarrelModeService::signal_setModeResponse, gunManagerService, &GunManagerService::OnBarrelModeResponse);
     }
 
     return gunManagerService;

@@ -40,6 +40,7 @@ public:
     GunBarrelModeEntity::MODE getBarrelMode() const;
     const GunBarrelEntity *getCurrentBarrel() const;
     void resetBarrel();
+    void resetOpStatus();
 
 signals:
     void OnBarrelModeResponse(BaseResponse<GunModeBarrelResponse> response, bool needConfirm);
