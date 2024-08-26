@@ -26,6 +26,14 @@ FrameGunDataMonitoring::~FrameGunDataMonitoring()
 
 void FrameGunDataMonitoring::onStreamStatusReceive(GunFeedbackStatusModel model)
 {
+    if (model.getRemote() == true){
+        ui->labelGunStatAccess->setText("Remote");
+        ui->labelGunStatAccess->setStyleSheet(COLOR_OK_STYLESHEET);
+    }else{
+        ui->labelGunStatAccess->setText("Local");
+        ui->labelGunStatAccess->setStyleSheet(COLOR_FAILED_STYLESHEET);
+    }
+
     if (model.getOpMode() == true){
         ui->labelGunOpMode->setText("Yes");
         ui->labelGunOpMode->setStyleSheet(COLOR_OK_STYLESHEET);
@@ -40,14 +48,6 @@ void FrameGunDataMonitoring::onStreamStatusReceive(GunFeedbackStatusModel model)
     }else{
         ui->labelGunMount->setText("No");
         ui->labelGunMount->setStyleSheet(COLOR_FAILED_STYLESHEET);
-    }
-
-    if (model.getRemote() == true){
-        ui->labelGunStatAccess->setText("Remote");
-        ui->labelGunStatAccess->setStyleSheet(COLOR_OK_STYLESHEET);
-    }else{
-        ui->labelGunStatAccess->setText("Local");
-        ui->labelGunStatAccess->setStyleSheet(COLOR_FAILED_STYLESHEET);
     }
 
     if (model.getBarrelTemperature() == true){
@@ -117,7 +117,7 @@ void FrameGunDataMonitoring::onStreamBarrelReceive(GunFeedbackBarrelModel model)
         ui->labelGunStatAz->setStyleSheet(COLOR_OK_STYLESHEET);
         ui->labelGunStatEl->setStyleSheet(COLOR_OK_STYLESHEET);
     }else{
-        barrelFailedUI();
+        invalidDataUiSetupBarrel();
     }
 }
 
@@ -125,8 +125,9 @@ void FrameGunDataMonitoring::onTimeout()
 {
     auto gunStatusError = gunStatusStream->check();
     if (gunStatusError.getCode() == ERROR_CODE_MESSAGING_NOT_CONNECTED.first) {
-        ui->labelGunStatTech->setText("Offline");
-        ui->labelGunStatTech->setStyleSheet(COLOR_FAILED_STYLESHEET);
+        offlineUiSetup();
+    }    else if (gunStatusError.getCode() == ERROR_CODE_MESSAGING_NO_DATA.first){
+        noDataUiSetupStatus();
     }else{
         ui->labelGunStatTech->setText("Online");
         ui->labelGunStatTech->setStyleSheet(COLOR_OK_STYLESHEET);
@@ -134,16 +135,87 @@ void FrameGunDataMonitoring::onTimeout()
 
     auto gunBarrelError = gunBarrelStream->check();
     if (gunBarrelError.getCode() == ERROR_CODE_MESSAGING_NOT_CONNECTED.first){
-        barrelFailedUI();
+        notConnectedUiSetupBarrel();
     }else if (gunBarrelError.getCode() == ERROR_CODE_MESSAGING_NO_DATA.first){
-        barrelFailedUI();
+        noDataUiSetupBarrel();
     }else if (gunBarrelError.getCode() == ERROR_CODE_MESSAGING_DATA_INVALID_FORMAT.first){
-        barrelFailedUI();
+        invalidDataUiSetupBarrel();
     }
 }
 
-void FrameGunDataMonitoring::barrelFailedUI()
+void FrameGunDataMonitoring::notConnectedUiSetupBarrel()
 {
     ui->labelGunStatAz->setStyleSheet(COLOR_FAILED_STYLESHEET);
     ui->labelGunStatEl->setStyleSheet(COLOR_FAILED_STYLESHEET);
+}
+
+void FrameGunDataMonitoring::noDataUiSetupBarrel()
+{
+    ui->labelGunStatAz->setStyleSheet(COLOR_FAILED_STYLESHEET);
+    ui->labelGunStatEl->setStyleSheet(COLOR_FAILED_STYLESHEET);
+}
+
+void FrameGunDataMonitoring::noDataUiSetupStatus()
+{
+    ui->labelGunOpMode->setStyleSheet(COLOR_FAILED_STYLESHEET);
+
+    ui->labelGunMount->setStyleSheet(COLOR_FAILED_STYLESHEET);
+
+    ui->labelGunStatAccess->setStyleSheet(COLOR_FAILED_STYLESHEET);
+
+    ui->labelGunBarrelTemp->setStyleSheet(COLOR_FAILED_STYLESHEET);
+
+    ui->labelGunStatReadyToStart->setStyleSheet(COLOR_FAILED_STYLESHEET);
+
+    ui->labelGunReadytoFire->setStyleSheet(COLOR_FAILED_STYLESHEET);
+
+    ui->labelGunFireMode->setStyleSheet(COLOR_FAILED_STYLESHEET);
+
+    ui->labelBlarc->setStyleSheet(COLOR_FAILED_STYLESHEET);
+
+    ui->labelGunMissAlgn->setStyleSheet(COLOR_FAILED_STYLESHEET);
+
+    ui->labelGunMag->setStyleSheet(COLOR_FAILED_STYLESHEET);
+}
+
+void FrameGunDataMonitoring::invalidDataUiSetupBarrel()
+{
+    ui->labelGunStatAz->setStyleSheet(COLOR_FAILED_STYLESHEET);
+    ui->labelGunStatEl->setStyleSheet(COLOR_FAILED_STYLESHEET);
+}
+
+void FrameGunDataMonitoring::offlineUiSetup()
+{
+    ui->labelGunStatTech->setText("Offline");
+    ui->labelGunStatTech->setStyleSheet(COLOR_FAILED_STYLESHEET);
+
+    ui->labelGunOpMode->setText("No");
+    ui->labelGunOpMode->setStyleSheet(COLOR_FAILED_STYLESHEET);
+
+    ui->labelGunMount->setText("No");
+    ui->labelGunMount->setStyleSheet(COLOR_FAILED_STYLESHEET);
+
+    ui->labelGunStatAccess->setText("Local");
+    ui->labelGunStatAccess->setStyleSheet(COLOR_FAILED_STYLESHEET);
+
+    ui->labelGunBarrelTemp->setText("No");
+    ui->labelGunBarrelTemp->setStyleSheet(COLOR_FAILED_STYLESHEET);
+
+    ui->labelGunStatReadyToStart->setText("No");
+    ui->labelGunStatReadyToStart->setStyleSheet(COLOR_FAILED_STYLESHEET);
+
+    ui->labelGunReadytoFire->setText("No");
+    ui->labelGunReadytoFire->setStyleSheet(COLOR_FAILED_STYLESHEET);
+
+    ui->labelGunFireMode->setText("No");
+    ui->labelGunFireMode->setStyleSheet(COLOR_FAILED_STYLESHEET);
+
+    ui->labelBlarc->setText("No");
+    ui->labelBlarc->setStyleSheet(COLOR_FAILED_STYLESHEET);
+
+    ui->labelGunMissAlgn->setText("No");
+    ui->labelGunMissAlgn->setStyleSheet(COLOR_FAILED_STYLESHEET);
+
+    ui->labelGunMag->setText("No");
+    ui->labelGunMag->setStyleSheet(COLOR_FAILED_STYLESHEET);
 }
