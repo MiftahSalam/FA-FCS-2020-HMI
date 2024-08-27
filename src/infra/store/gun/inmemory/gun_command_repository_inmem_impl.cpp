@@ -56,7 +56,7 @@ void GunCommandRepositoryInMemImpl::SetSiren(const bool &siren)
 
 void GunCommandRepositoryInMemImpl::SetBarrelMode(const GunBarrelModeEntity &manual_mode)
 {
-
+    _modeEntity->setMode(manual_mode.getMode());
 }
 
 const GunBarrelModeEntity *GunCommandRepositoryInMemImpl::GetBarrelMode() const
