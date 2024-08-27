@@ -46,7 +46,7 @@ void FrameGunControlBarrel::onModeChangeResponse(BaseResponse<GunModeBarrelRespo
     {
         if (needConfirm)
         {
-            QMessageBox::warning(this, "Request Error", QString("Failed to input mode with error: %1").arg(resp.getMessage()));
+            QMessageBox::warning(this, "Request Error", QString("Failed to input gun mode with error: %1").arg(resp.getMessage()));
         }
 
         return;

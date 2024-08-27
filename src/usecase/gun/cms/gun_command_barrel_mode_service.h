@@ -22,7 +22,7 @@ public:
             GunCommandRepository *repoGunCmd = nullptr
             );
 
-    void setMode(GunBarrelModeEntity::MODE mode);
+    void setModeWithConfirm(GunBarrelModeEntity::MODE mode, bool confirm);
     GunBarrelModeEntity::MODE getMode() const;
 
 signals:

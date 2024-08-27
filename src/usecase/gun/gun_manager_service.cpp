@@ -67,7 +67,7 @@ void GunManagerService::setTechStatus(TECHNICAL_STATUS status)
 
 void GunManagerService::setBarrelMode(GunBarrelModeEntity::MODE mode)
 {
-    _modeService->setMode(mode);
+    _modeService->setModeWithConfirm(mode, true);
 }
 
 void GunManagerService::resetBarrel()
@@ -77,9 +77,11 @@ void GunManagerService::resetBarrel()
 
 void GunManagerService::resetOpStatus()
 {
-    currentOpStat = OPERATIONAL_STATUS::NOT_AVAIL;
-    _modeService->setMode(GunBarrelModeEntity::NONE);
-    resetBarrel();
+    if (currentOpStat != OPERATIONAL_STATUS::NOT_AVAIL) {
+        currentOpStat = OPERATIONAL_STATUS::NOT_AVAIL;
+        _modeService->setModeWithConfirm(GunBarrelModeEntity::NONE, false);
+        resetBarrel();
+    }
 }
 
 GunBarrelModeEntity::MODE GunManagerService::getBarrelMode() const
