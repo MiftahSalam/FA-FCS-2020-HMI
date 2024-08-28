@@ -56,6 +56,9 @@ void FrameGunControlBarrel::onModeChangeResponse(BaseResponse<GunModeBarrelRespo
 
     switch (currentMode)
     {
+    case GunBarrelModeEntity::NONE:
+        noneModeUiSetup();
+        break;
     case GunBarrelModeEntity::AUTO:
         autoModeUiSetup();
         break;
@@ -125,16 +128,25 @@ void FrameGunControlBarrel::on_pushButton_clicked()
 
 void FrameGunControlBarrel::noneModeUiSetup()
 {
-
+    ui->inputAzimuth->setInputEnable(false);
+    ui->inputElevation->setInputEnable(false);
+    ui->pushButtonGunBarControlApply->setEnabled(false);
 }
 
 void FrameGunControlBarrel::manualModeUiSetup()
 {
+    ui->inputAzimuth->setModeManual();
+    ui->inputAzimuth->setInputEnable(true);
+    ui->inputElevation->setModeManual();
+    ui->inputElevation->setInputEnable(true);
+    ui->pushButtonGunBarControlApply->setEnabled(true);
 }
 
 void FrameGunControlBarrel::autoModeUiSetup()
 {
-
+    ui->inputAzimuth->setInputEnable(false);
+    ui->inputElevation->setInputEnable(false);
+    ui->pushButtonGunBarControlApply->setEnabled(false);
 }
 
 bool FrameGunControlBarrel::validateInput()
