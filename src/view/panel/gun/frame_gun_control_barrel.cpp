@@ -121,9 +121,9 @@ void FrameGunControlBarrel::onModeCheck()
     updateMode();
 }
 
-void FrameGunControlBarrel::on_pushButton_clicked()
+void FrameGunControlBarrel::on_pushButtonGunBarControlApply_clicked()
 {
-
+    validateInput();
 }
 
 void FrameGunControlBarrel::noneModeUiSetup()
@@ -151,7 +151,27 @@ void FrameGunControlBarrel::autoModeUiSetup()
 
 bool FrameGunControlBarrel::validateInput()
 {
+    bool ok;
 
+    QString azimuth = ui->inputAzimuth->getCurrentValue();
+    float valueAz = azimuth.toFloat(&ok);
+
+    if ((valueAz < 0) || (valueAz > 360) || (!ok))
+    {
+        QMessageBox::critical(this, "Fatal Error Barrel Control", "Invalid azimuth input : out of range.\nValid input : 0-360");
+        return false;
+    }
+
+    QString elevation = ui->inputElevation->getCurrentValue();
+    float valueEl = elevation.toFloat(&ok);
+
+    if ((valueEl < -20) || (valueEl > 80) || (!ok))
+    {
+        QMessageBox::critical(this, "Fatal Error Barrel Control", "Invalid elevation input : out of range.\nValid input : -20 to 80");
+        return false;
+    }
+
+    return true;
 }
 
 void FrameGunControlBarrel::updateMode()

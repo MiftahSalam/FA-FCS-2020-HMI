@@ -42,7 +42,7 @@ private slots:
     void onStatusStreamUpdate(GunFeedbackStatusModel model);
     void onModeCheck();
 
-    void on_pushButton_clicked();
+    void on_pushButtonGunBarControlApply_clicked();
 
 private:
     Ui::FrameGunControlBarrel *ui;
