@@ -56,6 +56,9 @@ void FrameGunControlBarrel::onModeChangeResponse(BaseResponse<GunModeBarrelRespo
 
     switch (currentMode)
     {
+    case GunBarrelModeEntity::NONE:
+        noneModeUiSetup();
+        break;
     case GunBarrelModeEntity::AUTO:
         autoModeUiSetup();
         break;
@@ -65,10 +68,23 @@ void FrameGunControlBarrel::onModeChangeResponse(BaseResponse<GunModeBarrelRespo
     default:
         break;
     }
+
+    resetBarrel();
 }
 
-void FrameGunControlBarrel::onDataResponse(BaseResponse<GyroModel> data)
+void FrameGunControlBarrel::onBarrelDataResponse(BaseResponse<GunCommandBarrelResponse> resp)
 {
+    qDebug() << Q_FUNC_INFO << "resp code:" << resp.getHttpCode() << "resp msg:" << resp.getMessage();
+
+    if (resp.getHttpCode() != 0)
+    {
+        QMessageBox::critical(this, "Fatal Error Barrel Control", QString("Failed to change manual data with error: %1").arg(resp.getMessage()));
+        return;
+    }
+
+    qDebug() << Q_FUNC_INFO
+             << "resp data getAzimuth: " << resp.getData().getAzimuth()
+             << "resp data getElevation: " << resp.getData().getElevation();
 }
 
 void FrameGunControlBarrel::onModeChange(int index)
@@ -108,7 +124,7 @@ void FrameGunControlBarrel::onModeCheck()
             break;
         }
 
-        gunService->resetBarrel();
+        resetBarrel();
 
         connect(ui->comboBoxGunBarControlMode, QOverload<int>::of(&QComboBox::currentIndexChanged), this, &FrameGunControlBarrel::onModeChange);
 
@@ -118,28 +134,72 @@ void FrameGunControlBarrel::onModeCheck()
     updateMode();
 }
 
-void FrameGunControlBarrel::on_pushButton_clicked()
+void FrameGunControlBarrel::on_pushButtonGunBarControlApply_clicked()
 {
+    if (!validateInput())
+    {
+        return;
+    }
 
+    try
+    {
+        float azimuth = ui->inputAzimuth->getCurrentValue().toFloat();
+        float elevation = ui->inputElevation->getCurrentValue().toFloat();
+
+        gunService->setBarrel(azimuth, elevation);
+    }
+    catch (...)
+    {
+        QMessageBox::critical(this, "Fatal Error Barrel Control", "Request barrel");
+    }
 }
 
 void FrameGunControlBarrel::noneModeUiSetup()
 {
-
+    ui->inputAzimuth->setInputEnable(false);
+    ui->inputElevation->setInputEnable(false);
+    ui->pushButtonGunBarControlApply->setEnabled(false);
 }
 
 void FrameGunControlBarrel::manualModeUiSetup()
 {
+    ui->inputAzimuth->setModeManual();
+    ui->inputAzimuth->setInputEnable(true);
+    ui->inputElevation->setModeManual();
+    ui->inputElevation->setInputEnable(true);
+    ui->pushButtonGunBarControlApply->setEnabled(true);
 }
 
 void FrameGunControlBarrel::autoModeUiSetup()
 {
-
+    ui->inputAzimuth->setInputEnable(false);
+    ui->inputElevation->setInputEnable(false);
+    ui->pushButtonGunBarControlApply->setEnabled(false);
 }
 
 bool FrameGunControlBarrel::validateInput()
 {
+    bool ok;
 
+    QString azimuth = ui->inputAzimuth->getCurrentValue();
+    float valueAz = azimuth.toFloat(&ok);
+
+    if ((valueAz < 0) || (valueAz > 360) || (!ok))
+    {
+        QMessageBox::critical(this, "Fatal Error Barrel Control", "Invalid azimuth input : out of range.\nValid input : 0-360");
+        return false;
+    }
+
+    QString elevation = ui->inputElevation->getCurrentValue();
+    float valueEl = elevation.toFloat(&ok);
+
+    if ((valueEl < -20) || (valueEl > 80) || (!ok))
+    {
+        QMessageBox::critical(this, "Fatal Error Barrel Control", "Invalid elevation input : out of range.\nValid input : -20 to 80");
+        return false;
+    }
+
+    return true;
 }
 
 void FrameGunControlBarrel::updateMode()
@@ -156,6 +216,13 @@ void FrameGunControlBarrel::updateMode()
     }
 }
 
+void FrameGunControlBarrel::resetBarrel()
+{
+    gunService->resetBarrel();
+    ui->inputAzimuth->setValue("0.0");
+    ui->inputElevation->setValue("0.0");
+}
+
 void FrameGunControlBarrel::setupDI()
 {
     gunService = DI::getInstance()->getServiceGunManager();
@@ -163,5 +230,6 @@ void FrameGunControlBarrel::setupDI()
 
     connect(gunService, &GunManagerService::OnBarrelModeCheck, this, &FrameGunControlBarrel::onModeCheck);
     connect(gunService, &GunManagerService::OnBarrelModeResponse, this, &FrameGunControlBarrel::onModeChangeResponse);
+    connect(gunService, &GunManagerService::OnBarrelPositionResponse, this, &FrameGunControlBarrel::onBarrelDataResponse);
     connect(statusStream, &GunFeedbackStatusStream::signalDataProcessed, this, &FrameGunControlBarrel::onStatusStreamUpdate);
 }

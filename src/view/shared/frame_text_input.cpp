@@ -21,6 +21,9 @@ void FrameTextInput::setup(const TextInputProp &props)
 void FrameTextInput::setInputEnable(bool enable)
 {
     ui->textInput->setEnabled(enable);
+    if (!enable) {
+        ui->textInput->setStyleSheet(COLOR_DISABLE_STYLESHEET);
+    }
 }
 
 void FrameTextInput::setStatusOk()
@@ -31,7 +34,6 @@ void FrameTextInput::setStatusOk()
 void FrameTextInput::setStatusFailed()
 {
     ui->textInput->setStyleSheet(COLOR_FAILED_STYLESHEET);
-
 }
 
 void FrameTextInput::setModeManual()

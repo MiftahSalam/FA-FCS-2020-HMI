@@ -25,7 +25,7 @@ void GunCommandBarrelService::onReplyFinished()
     qDebug()<<Q_FUNC_INFO<<"err: "<<httpResponse->error();
 
     BaseResponse<GunCommandBarrelResponse> resp = errorResponse(httpResponse->error());
-    if(resp.getHttpCode() != 0) {
+    if(resp.getHttpCode() != 0 || respRaw.isEmpty()) {
         emit signal_setBarrelResponse(resp);
         return;
     }
@@ -68,7 +68,7 @@ void GunCommandBarrelService::setBarrel(GunCommandBarrelRequest request)
     QNetworkRequest httpReq = QNetworkRequest(cfgCms->getInstance("")->getManualBarrelUrl());
     httpReq.setHeader(QNetworkRequest::ContentTypeHeader, "application/json");
 
-    httpResponse = httpClient.put(httpReq, request.toJSON());
+    httpResponse = httpClient.post(httpReq, request.toJSON());
     connect(httpResponse, &QNetworkReply::finished, this, &GunCommandBarrelService::onReplyFinished);
 }
 

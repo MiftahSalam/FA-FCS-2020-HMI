@@ -75,6 +75,11 @@ void GunManagerService::resetBarrel()
     _barrelService->setBarrel(GunCommandBarrelRequest(0., 0.));
 }
 
+void GunManagerService::setBarrel(float az, float el)
+{
+    _barrelService->setBarrel(GunCommandBarrelRequest(az, el));
+}
+
 void GunManagerService::resetOpStatus()
 {
     if (currentOpStat != OPERATIONAL_STATUS::NOT_AVAIL) {
@@ -129,6 +134,7 @@ GunManagerService *GunManagerService::getInstance(QObject *parent,
 
         connect(modeService, &GunCommandBarrelModeService::signal_modeCheck, gunManagerService, &GunManagerService::OnBarrelModeCheck);
         connect(modeService, &GunCommandBarrelModeService::signal_setModeResponse, gunManagerService, &GunManagerService::OnBarrelModeResponse);
+        connect(barrelService, &GunCommandBarrelService::signal_setBarrelResponse, gunManagerService, &GunManagerService::OnBarrelPositionResponse);
     }
 
     return gunManagerService;

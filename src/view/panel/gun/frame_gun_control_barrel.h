@@ -30,7 +30,7 @@ public:
 
 public slots:
     void onModeChangeResponse(BaseResponse<GunModeBarrelResponse> resp, bool needConfirm);
-    void onDataResponse(BaseResponse<GyroModel> data);
+    void onBarrelDataResponse(BaseResponse<GunCommandBarrelResponse> resp);
 
 signals:
     void signalChangeControlMode(bool manual_mode);
@@ -42,7 +42,7 @@ private slots:
     void onStatusStreamUpdate(GunFeedbackStatusModel model);
     void onModeCheck();
 
-    void on_pushButton_clicked();
+    void on_pushButtonGunBarControlApply_clicked();
 
 private:
     Ui::FrameGunControlBarrel *ui;
@@ -57,7 +57,7 @@ private:
     void autoModeUiSetup();
     bool validateInput();
     void updateMode();
-    void resetModeIndex();
+    void resetBarrel();
 
     void setupDI();
 };
