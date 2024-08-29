@@ -4,17 +4,19 @@
 GunManagerService *GunManagerService::gunManagerService = nullptr;
 
 GunManagerService::GunManagerService(
-    QObject *parent,
-    GunCmsConfig *cmsConfig,
-    GunFeedbackRepository *feedbackRepo,
-    GunCommandBarrelModeService *modeService,
-    GunCommandBarrelService *barrelService) : QObject(parent),
-                                              _cmsConfig(cmsConfig),
-                                              _modeService(modeService),
-                                              _barrelService(barrelService),
-                                              _feedbackRepository(feedbackRepo),
-                                              currentOpStat(GunManagerService::NOT_AVAIL),
-                                              currentTechStat(GunManagerService::OFFLINE)
+        QObject *parent,
+        GunCmsConfig *cmsConfig,
+        GunFeedbackRepository *feedbackRepo,
+        GunCommandBarrelModeService *modeService,
+        GunCommandBarrelService *barrelService,
+        GunCommandStatusService *statusService ) : QObject(parent),
+    _cmsConfig(cmsConfig),
+    _modeService(modeService),
+    _barrelService(barrelService),
+    _feedbackRepository(feedbackRepo),
+    _statusService(statusService),
+    currentOpStat(GunManagerService::NOT_AVAIL),
+    currentTechStat(GunManagerService::OFFLINE)
 {
 }
 
@@ -50,7 +52,7 @@ void GunManagerService::updateOpStatus()
             currentOpStat = OPERATIONAL_STATUS::NOT_AVAIL;
         }
     }
-    break;
+        break;
     default:
         currentOpStat = OPERATIONAL_STATUS::NOT_AVAIL;
         break;
@@ -122,19 +124,24 @@ GunManagerService *GunManagerService::getInstance(QObject *parent,
         }
 
         GunCommandBarrelModeService *modeService = GunCommandBarrelModeService::getInstance(
-            new HttpClientWrapper(),
-            cmsConfig,
-            cmdRepo);
+                    new HttpClientWrapper(),
+                    cmsConfig,
+                    cmdRepo);
         GunCommandBarrelService *barrelService = GunCommandBarrelService::getInstance(
-            new HttpClientWrapper(),
-            cmsConfig,
-            cmdRepo);
-        // TODO : gun command status service
-        gunManagerService = new GunManagerService(parent, cmsConfig, feedbackRepo, modeService, barrelService);
+                    new HttpClientWrapper(),
+                    cmsConfig,
+                    cmdRepo);
+        GunCommandStatusService *statusService = GunCommandStatusService::getInstance(
+                    new HttpClientWrapper(),
+                    cmsConfig,
+                    cmdRepo);
+
+        gunManagerService = new GunManagerService(parent, cmsConfig, feedbackRepo, modeService, barrelService, statusService);
 
         connect(modeService, &GunCommandBarrelModeService::signal_modeCheck, gunManagerService, &GunManagerService::OnBarrelModeCheck);
         connect(modeService, &GunCommandBarrelModeService::signal_setModeResponse, gunManagerService, &GunManagerService::OnBarrelModeResponse);
         connect(barrelService, &GunCommandBarrelService::signal_setBarrelResponse, gunManagerService, &GunManagerService::OnBarrelPositionResponse);
+        connect(statusService, &GunCommandStatusService::signal_setStatusResponse, gunManagerService, &GunManagerService::OnStatusResponse);
     }
 
     return gunManagerService;

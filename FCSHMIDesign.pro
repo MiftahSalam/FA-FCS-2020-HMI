@@ -61,6 +61,8 @@ SOURCES += \
     src/model/engagement/engagement_data_model.cpp \
     src/model/gun/cms/gun_command_barrel_request.cpp \
     src/model/gun/cms/gun_command_barrel_response.cpp \
+    src/model/gun/cms/gun_command_status_request.cpp \
+    src/model/gun/cms/gun_command_status_response.cpp \
     src/model/gun/cms/gun_mode_barrel_request.cpp \
     src/model/gun/cms/gun_mode_barrel_response.cpp \
     src/model/gun/gun_coverage_model.cpp \
@@ -104,6 +106,7 @@ SOURCES += \
     src/usecase/engagement/weapon_track_assign_service.cpp \
     src/usecase/gun/cms/gun_command_barrel_mode_service.cpp \
     src/usecase/gun/cms/gun_command_barrel_service.cpp \
+    src/usecase/gun/cms/gun_command_status_service.cpp \
     src/usecase/gun/gun_manager_service.cpp \
     src/usecase/gun/stream/gun_coverage_stream.cpp \
     src/usecase/gun/stream/gun_feedback_barrel_stream.cpp \
@@ -235,6 +238,8 @@ HEADERS += \
     src/model/engagement/engagement_data_model.h \
     src/model/gun/cms/gun_command_barrel_request.h \
     src/model/gun/cms/gun_command_barrel_response.h \
+    src/model/gun/cms/gun_command_status_request.h \
+    src/model/gun/cms/gun_command_status_response.h \
     src/model/gun/cms/gun_mode_barrel_request.h \
     src/model/gun/cms/gun_mode_barrel_response.h \
     src/model/gun/gun_coverage_model.h \
@@ -283,6 +288,7 @@ HEADERS += \
     src/usecase/engagement/weapon_track_assign_service.h \
     src/usecase/gun/cms/gun_command_barrel_mode_service.h \
     src/usecase/gun/cms/gun_command_barrel_service.h \
+    src/usecase/gun/cms/gun_command_status_service.h \
     src/usecase/gun/gun_manager_service.h \
     src/usecase/gun/stream/gun_coverage_stream.h \
     src/usecase/gun/stream/gun_feedback_barrel_stream.h \
