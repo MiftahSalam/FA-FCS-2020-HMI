@@ -21,6 +21,7 @@ public:
             GunCommandRepository *repoGunCmd = nullptr
             );
 
+    const GunStatusCommandEntity* getCurrentStatus() const;
     void setStatus(GunCommandStatusRequest request);
     void setStatusMount(bool on);
     void setStatusSingleShot(bool on);

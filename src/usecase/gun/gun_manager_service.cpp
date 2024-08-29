@@ -91,6 +91,11 @@ void GunManagerService::resetOpStatus()
     }
 }
 
+const GunStatusCommandEntity* GunManagerService::getCurrentStatus() const
+{
+    return _statusService->getCurrentStatus();
+}
+
 void GunManagerService::resetStatus()
 {
     _statusService->setStatus(GunCommandStatusRequest());

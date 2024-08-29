@@ -43,6 +43,7 @@ public:
     void setBarrel(float az, float el);
     void resetBarrel();
     void resetOpStatus();
+    const GunStatusCommandEntity* getCurrentStatus() const;
     void resetStatus();
     void setStatusMount(bool on);
     void setStatusSingleShot(bool on);

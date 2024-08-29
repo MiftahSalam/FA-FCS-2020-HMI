@@ -68,8 +68,14 @@ GunCommandStatusService *GunCommandStatusService::getInstance(
     return instance;
 }
 
+const GunStatusCommandEntity *GunCommandStatusService::getCurrentStatus() const
+{
+    return _repoGunCmd->GetStatus();
+}
+
 void GunCommandStatusService::setStatus(GunCommandStatusRequest request)
 {
+    /*
     _repoGunCmd->SetStatus(GunStatusCommandEntity(
                                request.getMount(),
                                request.getSingleShot(),
@@ -77,6 +83,7 @@ void GunCommandStatusService::setStatus(GunCommandStatusRequest request)
                                request.getProxFuze(),
                                request.getSiren()
                                ));
+    */
     sendStatus(request);
 }
 
@@ -91,10 +98,10 @@ void GunCommandStatusService::sendStatus(GunCommandStatusRequest request)
 
 void GunCommandStatusService::setStatusMount(bool on)
 {
-    _repoGunCmd->SetMount(on);
+//    _repoGunCmd->SetMount(on);
     auto curStatus = _repoGunCmd->GetStatus();
     sendStatus(GunCommandStatusRequest(
-                   curStatus->mount(),
+                   on,
                    curStatus->single_shot(),
                    curStatus->fire(),
                    curStatus->proximity(),
@@ -104,11 +111,11 @@ void GunCommandStatusService::setStatusMount(bool on)
 
 void GunCommandStatusService::setStatusSingleShot(bool on)
 {
-    _repoGunCmd->SetSingleShot(on);
+//    _repoGunCmd->SetSingleShot(on);
     auto curStatus = _repoGunCmd->GetStatus();
     sendStatus(GunCommandStatusRequest(
                    curStatus->mount(),
-                   curStatus->single_shot(),
+                   on,
                    curStatus->fire(),
                    curStatus->proximity(),
                    curStatus->siren()
@@ -117,12 +124,12 @@ void GunCommandStatusService::setStatusSingleShot(bool on)
 
 void GunCommandStatusService::setStatusFire(bool on)
 {
-    _repoGunCmd->SetFire(on);
+//    _repoGunCmd->SetFire(on);
     auto curStatus = _repoGunCmd->GetStatus();
     sendStatus(GunCommandStatusRequest(
                    curStatus->mount(),
                    curStatus->single_shot(),
-                   curStatus->fire(),
+                   on,
                    curStatus->proximity(),
                    curStatus->siren()
                    ));
@@ -130,27 +137,27 @@ void GunCommandStatusService::setStatusFire(bool on)
 
 void GunCommandStatusService::setStatusProxFuze(bool on)
 {
-    _repoGunCmd->SetProximity(on);
+//    _repoGunCmd->SetProximity(on);
     auto curStatus = _repoGunCmd->GetStatus();
     sendStatus(GunCommandStatusRequest(
                    curStatus->mount(),
                    curStatus->single_shot(),
                    curStatus->fire(),
-                   curStatus->proximity(),
+                   on,
                    curStatus->siren()
                    ));
 }
 
 void GunCommandStatusService::setStatusSiren(bool on)
 {
-    _repoGunCmd->SetSiren(on);
+//    _repoGunCmd->SetSiren(on);
     auto curStatus = _repoGunCmd->GetStatus();
     sendStatus(GunCommandStatusRequest(
                    curStatus->mount(),
                    curStatus->single_shot(),
                    curStatus->fire(),
                    curStatus->proximity(),
-                   curStatus->siren()
+                   on
                    ));
 }
 

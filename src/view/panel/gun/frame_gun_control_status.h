@@ -42,6 +42,7 @@ private:
     GunManagerService *gunService;
 
     GunManagerService::OPERATIONAL_STATUS currentOpMode;
+    GunCommandStatusRequest previousStatus;
 
     void availableUiSetup(bool available);
     void updateMode();
