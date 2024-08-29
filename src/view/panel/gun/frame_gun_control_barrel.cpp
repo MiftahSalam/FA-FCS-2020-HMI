@@ -34,6 +34,7 @@ void FrameGunControlBarrel::setup()
     ui->inputAzimuth->setup(prop.azimuth);
     ui->inputElevation->setup(prop.elevation);
 
+    noneModeUiSetup();
     updateMode();
 }
 

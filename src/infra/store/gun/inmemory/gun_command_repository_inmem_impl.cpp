@@ -32,26 +32,36 @@ GunCommandRepository *GunCommandRepositoryInMemImpl::GetInstance()
 
 void GunCommandRepositoryInMemImpl::SetStatus(const GunStatusCommandEntity &status)
 {
+    _statusEntity->setMount(status.mount());
+    _statusEntity->setSingle_shot(status.single_shot());
+    _statusEntity->setFire(status.fire());
+    _statusEntity->setProximity(status.proximity());
+    _statusEntity->setSiren(status.siren());
 }
 
 void GunCommandRepositoryInMemImpl::SetMount(const bool &mount)
 {
+    _statusEntity->setMount(mount);
 }
 
 void GunCommandRepositoryInMemImpl::SetSingleShot(const bool &single_shot)
 {
+    _statusEntity->setSingle_shot(single_shot);
 }
 
 void GunCommandRepositoryInMemImpl::SetFire(const bool &fire)
 {
+    _statusEntity->setFire(fire);
 }
 
 void GunCommandRepositoryInMemImpl::SetProximity(const bool &proximity)
 {
+    _statusEntity->setProximity(proximity);
 }
 
 void GunCommandRepositoryInMemImpl::SetSiren(const bool &siren)
 {
+    _statusEntity->setSiren(siren);
 }
 
 void GunCommandRepositoryInMemImpl::SetBarrelMode(const GunBarrelModeEntity &manual_mode)
@@ -70,8 +80,8 @@ const GunBarrelEntity *GunCommandRepositoryInMemImpl::GetBarrel() const
 
 const GunStatusCommandEntity *GunCommandRepositoryInMemImpl::GetStatus() const
 {
+    return _statusEntity;
 }
-
 
 void GunCommandRepositoryInMemImpl::SetBarrel(const float &azimuth, const float &elevation)
 {
