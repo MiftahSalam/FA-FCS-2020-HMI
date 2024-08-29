@@ -68,6 +68,7 @@ private:
     // TODO: add gun stream service
     GunStream *serviceGunStream;
     // TODO: add weapon track engagement stream service
+    FireTriangleStream *serviceFireTriangle;
 
 };
 
