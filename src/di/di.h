@@ -11,6 +11,7 @@
 #include "src/usecase/osd/stream/osd_stream.h"
 #include "src/usecase/track/stream/track_stream.h"
 #include "src/usecase/gun/stream/gun_stream.h"
+#include "src/usecase/fire_triangle/stream/fire_triangle_stream.h"
 
 class DI
 {
@@ -28,6 +29,7 @@ public:
     TrackRepository *getRepoTrack() const;
     FireTriangleRepository *getRepoFireTriangle() const;
     GunStream *getServiceGunStream() const;
+    FireTriangleStream *getServiceFireTriangle() const;
 
     // GunCommandService *getGunCMSService() const;
     // GunFeedbackStream *getServiceGunStream() const;

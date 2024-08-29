@@ -59,6 +59,7 @@ SOURCES += \
     src/main.cpp \
     src/model/engagement/cms/engagement_correction_set_request.cpp \
     src/model/engagement/engagement_data_model.cpp \
+    src/model/fire_triangle/fire_triangle_model.cpp \
     src/model/gun/cms/gun_command_barrel_request.cpp \
     src/model/gun/cms/gun_command_barrel_response.cpp \
     src/model/gun/cms/gun_mode_barrel_request.cpp \
@@ -235,6 +236,7 @@ HEADERS += \
     src/model/base_response.h \
     src/model/engagement/cms/engagement_correction_set_request.h \
     src/model/engagement/engagement_data_model.h \
+    src/model/fire_triangle/fire_triangle_model.h \
     src/model/gun/cms/gun_command_barrel_request.h \
     src/model/gun/cms/gun_command_barrel_response.h \
     src/model/gun/cms/gun_mode_barrel_request.h \
