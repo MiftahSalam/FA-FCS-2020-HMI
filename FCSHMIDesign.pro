@@ -102,6 +102,8 @@ SOURCES += \
     src/usecase/engagement/cms/engagement_data_correction_40mm_service.cpp \
     src/usecase/engagement/stream/engagement_data_40mm_stream.cpp \
     src/usecase/engagement/weapon_track_assign_service.cpp \
+    src/usecase/fire_triangle/stream/fire_triangle_service.cpp \
+    src/usecase/fire_triangle/stream/fire_triangle_stream.cpp \
     src/usecase/gun/cms/gun_command_barrel_mode_service.cpp \
     src/usecase/gun/cms/gun_command_barrel_service.cpp \
     src/usecase/gun/gun_manager_service.cpp \
@@ -281,6 +283,8 @@ HEADERS += \
     src/usecase/engagement/stream/engagement_data_40mm_stream.h \
     src/usecase/engagement/stream/engagement_data_base_stream.h \
     src/usecase/engagement/weapon_track_assign_service.h \
+    src/usecase/fire_triangle/stream/fire_triangle_service.h \
+    src/usecase/fire_triangle/stream/fire_triangle_stream.h \
     src/usecase/gun/cms/gun_command_barrel_mode_service.h \
     src/usecase/gun/cms/gun_command_barrel_service.h \
     src/usecase/gun/gun_manager_service.h \
