@@ -149,6 +149,7 @@ SOURCES += \
     src/view/panel/wap/frame_weapon_assign.cpp \
     src/view/shared/frame_text_input.cpp \
     src/view/tda/components/tda_compass_object.cpp \
+    src/view/tda/components/tda_fire_triangle_object.cpp \
     src/view/tda/components/tda_gun_barrel_object.cpp \
     src/view/tda/components/tda_gun_coverage_object.cpp \
     src/view/tda/components/tda_heading_marker_object.cpp \
@@ -335,6 +336,7 @@ HEADERS += \
     src/view/shared/constant_ui.h \
     src/view/shared/frame_text_input.h \
     src/view/tda/components/tda_compass_object.h \
+    src/view/tda/components/tda_fire_triangle_object.h \
     src/view/tda/components/tda_gun_barrel_object.h \
     src/view/tda/components/tda_gun_coverage_object.h \
     src/view/tda/components/tda_heading_marker_object.h \
