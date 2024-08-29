@@ -3,7 +3,11 @@
 #include "qjsonobject.h"
 
 GunCommandStatusRequest::GunCommandStatusRequest()
-{
+    : mount(false),
+      singleShot(false),
+      fireOrder(false),
+      proxFuze(false),
+      siren(false){
 
 }
 

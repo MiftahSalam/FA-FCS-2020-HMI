@@ -91,6 +91,36 @@ void GunManagerService::resetOpStatus()
     }
 }
 
+void GunManagerService::resetStatus()
+{
+    _statusService->setStatus(GunCommandStatusRequest());
+}
+
+void GunManagerService::setStatusMount(bool on)
+{
+    _statusService->setStatusMount(on);
+}
+
+void GunManagerService::setStatusSingleShot(bool on)
+{
+    _statusService->setStatusSingleShot(on);
+}
+
+void GunManagerService::setStatusFire(bool on)
+{
+    _statusService->setStatusFire(on);
+}
+
+void GunManagerService::setStatusProxFuze(bool on)
+{
+    _statusService->setStatusProxFuze(on);
+}
+
+void GunManagerService::setStatusSiren(bool on)
+{
+    _statusService->setStatusSiren(on);
+}
+
 GunBarrelModeEntity::MODE GunManagerService::getBarrelMode() const
 {
     return _modeService->getMode();

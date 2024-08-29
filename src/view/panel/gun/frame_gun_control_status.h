@@ -26,6 +26,16 @@ public slots:
 private slots:
     void onModeCheck();
 
+    void on_pushButtonControlMount_clicked(bool checked);
+
+    void on_pushButtonControlSingleshoot_clicked(bool checked);
+
+    void on_pushButtonControlFire_clicked(bool checked);
+
+    void on_pushButtonControlProxFuze_clicked(bool checked);
+
+    void on_pushButtonControlSiren_clicked(bool checked);
+
 private:
     Ui::FrameGunControlStatus *ui;
 

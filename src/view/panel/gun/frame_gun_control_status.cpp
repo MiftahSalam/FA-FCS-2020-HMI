@@ -35,6 +35,13 @@ void FrameGunControlStatus::onStatusDataResponse(BaseResponse<GunCommandStatusRe
         QMessageBox::critical(this, "Fatal Error Status Control", QString("Failed to change status data with error: %1").arg(resp.getMessage()));
         return;
     }
+
+    ui->pushButtonControlMount->setText(resp.getData().getMount() ? "On" : "Off");
+    ui->pushButtonControlSingleshoot->setText(resp.getData().getSingleShot() ? "On" : "Off");
+    ui->pushButtonControlFire->setText(resp.getData().getFireOrder() ? "Fire" : "Not Fire");
+    ui->pushButtonControlProxFuze->setText(resp.getData().getProxFuze() ? "On" : "Off");
+    ui->pushButtonControlSiren->setText(resp.getData().getSiren() ? "On" : "Off");
+
 }
 
 void FrameGunControlStatus::onModeCheck()
@@ -57,7 +64,6 @@ void FrameGunControlStatus::updateMode()
 
     if (opState != currentOpMode)
     {
-
         switch (opState) {
         case GunManagerService::STANDBY:
         case GunManagerService::ASSIGNED:
@@ -77,7 +83,7 @@ void FrameGunControlStatus::resetStatus()
 {
     ui->pushButtonControlMount->setText("Off");
     ui->pushButtonControlSingleshoot->setText("Off");
-    ui->pushButtonControlFire->setText("Off");
+    ui->pushButtonControlFire->setText("No Fire");
     ui->pushButtonControlProxFuze->setText("Off");
     ui->pushButtonControlSiren->setText("Off");
 
@@ -86,11 +92,51 @@ void FrameGunControlStatus::resetStatus()
     ui->pushButtonControlFire->setChecked(false);
     ui->pushButtonControlProxFuze->setChecked(false);
     ui->pushButtonControlSiren->setChecked(false);
+
+    gunService->resetStatus();
 }
 
 void FrameGunControlStatus::setupDI()
 {
     gunService = DI::getInstance()->getServiceGunManager();
 
+    currentOpMode = gunService->getCurrentOpStat();
+
     connect(gunService, &GunManagerService::OnBarrelModeCheck, this, &FrameGunControlStatus::onModeCheck);
+    connect(gunService, &GunManagerService::OnStatusResponse, this, &FrameGunControlStatus::onStatusDataResponse);
 }
+
+void FrameGunControlStatus::on_pushButtonControlMount_clicked(bool checked)
+{
+//    ui->pushButtonControlMount->setText(checked ? "On" : "Off");
+    gunService->setStatusMount(checked);
+}
+
+
+void FrameGunControlStatus::on_pushButtonControlSingleshoot_clicked(bool checked)
+{
+//    ui->pushButtonControlSingleshoot->setText(checked ? "On" : "Off");
+    gunService->setStatusSingleShot(checked);
+}
+
+
+void FrameGunControlStatus::on_pushButtonControlFire_clicked(bool checked)
+{
+//    ui->pushButtonControlFire->setText(checked ? "Fire" : "No Fire");
+    gunService->setStatusFire(checked);
+}
+
+
+void FrameGunControlStatus::on_pushButtonControlProxFuze_clicked(bool checked)
+{
+//    ui->pushButtonControlProxFuze->setText(checked ? "On" : "Off");
+    gunService->setStatusProxFuze(checked);
+}
+
+
+void FrameGunControlStatus::on_pushButtonControlSiren_clicked(bool checked)
+{
+//    ui->pushButtonControlSiren->setText(checked ? "On" : "Off");
+    gunService->setStatusSiren(checked);
+}
+

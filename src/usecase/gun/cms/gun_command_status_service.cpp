@@ -70,11 +70,88 @@ GunCommandStatusService *GunCommandStatusService::getInstance(
 
 void GunCommandStatusService::setStatus(GunCommandStatusRequest request)
 {
+    _repoGunCmd->SetStatus(GunStatusCommandEntity(
+                               request.getMount(),
+                               request.getSingleShot(),
+                               request.getFireOrder(),
+                               request.getProxFuze(),
+                               request.getSiren()
+                               ));
+    sendStatus(request);
+}
+
+void GunCommandStatusService::sendStatus(GunCommandStatusRequest request)
+{
     QNetworkRequest httpReq = QNetworkRequest(cfgCms->getInstance("")->getStatusUrl());
     httpReq.setHeader(QNetworkRequest::ContentTypeHeader, "application/json");
 
-    httpResponse = httpClient.put(httpReq, request.toJSON());
+    httpResponse = httpClient.post(httpReq, request.toJSON());
     connect(httpResponse, &QNetworkReply::finished, this, &GunCommandStatusService::onReplyFinished);
+}
+
+void GunCommandStatusService::setStatusMount(bool on)
+{
+    _repoGunCmd->SetMount(on);
+    auto curStatus = _repoGunCmd->GetStatus();
+    sendStatus(GunCommandStatusRequest(
+                   curStatus->mount(),
+                   curStatus->single_shot(),
+                   curStatus->fire(),
+                   curStatus->proximity(),
+                   curStatus->siren()
+                   ));
+}
+
+void GunCommandStatusService::setStatusSingleShot(bool on)
+{
+    _repoGunCmd->SetSingleShot(on);
+    auto curStatus = _repoGunCmd->GetStatus();
+    sendStatus(GunCommandStatusRequest(
+                   curStatus->mount(),
+                   curStatus->single_shot(),
+                   curStatus->fire(),
+                   curStatus->proximity(),
+                   curStatus->siren()
+                   ));
+}
+
+void GunCommandStatusService::setStatusFire(bool on)
+{
+    _repoGunCmd->SetFire(on);
+    auto curStatus = _repoGunCmd->GetStatus();
+    sendStatus(GunCommandStatusRequest(
+                   curStatus->mount(),
+                   curStatus->single_shot(),
+                   curStatus->fire(),
+                   curStatus->proximity(),
+                   curStatus->siren()
+                   ));
+}
+
+void GunCommandStatusService::setStatusProxFuze(bool on)
+{
+    _repoGunCmd->SetProximity(on);
+    auto curStatus = _repoGunCmd->GetStatus();
+    sendStatus(GunCommandStatusRequest(
+                   curStatus->mount(),
+                   curStatus->single_shot(),
+                   curStatus->fire(),
+                   curStatus->proximity(),
+                   curStatus->siren()
+                   ));
+}
+
+void GunCommandStatusService::setStatusSiren(bool on)
+{
+    _repoGunCmd->SetSiren(on);
+    auto curStatus = _repoGunCmd->GetStatus();
+    sendStatus(GunCommandStatusRequest(
+                   curStatus->mount(),
+                   curStatus->single_shot(),
+                   curStatus->fire(),
+                   curStatus->proximity(),
+                   curStatus->siren()
+                   ));
 }
 
 BaseResponse<GunCommandStatusResponse> GunCommandStatusService::toResponse(QByteArray raw)

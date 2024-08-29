@@ -43,6 +43,12 @@ public:
     void setBarrel(float az, float el);
     void resetBarrel();
     void resetOpStatus();
+    void resetStatus();
+    void setStatusMount(bool on);
+    void setStatusSingleShot(bool on);
+    void setStatusFire(bool on);
+    void setStatusProxFuze(bool on);
+    void setStatusSiren(bool on);
 
 signals:
     void OnBarrelModeResponse(BaseResponse<GunModeBarrelResponse> response, bool needConfirm);

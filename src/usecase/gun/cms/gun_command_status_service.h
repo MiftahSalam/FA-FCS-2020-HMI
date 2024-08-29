@@ -22,6 +22,11 @@ public:
             );
 
     void setStatus(GunCommandStatusRequest request);
+    void setStatusMount(bool on);
+    void setStatusSingleShot(bool on);
+    void setStatusFire(bool on);
+    void setStatusProxFuze(bool on);
+    void setStatusSiren(bool on);
 
 signals:
     void signal_setStatusResponse(BaseResponse<GunCommandStatusResponse> response);
@@ -43,6 +48,7 @@ private:
 
     BaseResponse<GunCommandStatusResponse> toResponse(QByteArray raw);
     BaseResponse<GunCommandStatusResponse> errorResponse(QNetworkReply::NetworkError err);
+    void sendStatus(GunCommandStatusRequest request);
 };
 
 #endif // GUNCOMMANDSTATUSSERVICE_H
