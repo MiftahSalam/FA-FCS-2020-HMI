@@ -1,4 +1,5 @@
 #include "di.h"
+#include "src/infra/store/weapon_assign/inmemory/weapon_assignment_repository_inmem_impl.h"
 
 DI* DI::di = nullptr;
 
@@ -10,15 +11,14 @@ DI::DI()
     repoGun = new GunRepository(nullptr);
     repoTrack = new TrackRepository(nullptr);
     repoFireTriangle = new FireTriangleRepository(nullptr);
-
-    // TODO: add weapon assignment repository
+    repoWeaponAssign = WeaponAssignmentRepositoryInMemImpl::GetInstance();
 
     // TODO: add weapon track engagement repository
     // TODO: add engagement correction repository
 
     serviceOSDCMS = new OSDCMS(nullptr, config->getOsdCmsConfig(), repoOSD);
     serviceGunManager = GunManagerService::getInstance(nullptr, config->getGunCmsConfig(), repoGun->getRepoGunFeedback(), repoGun->getRepoGunCmd());
-
+    serviceWeaponAssign = WeaponAssignService::getInstance(nullptr, repoWeaponAssign);
     // TODO: add weapon assignment service
 
     // TODO: add weapon track engagement service
@@ -29,6 +29,11 @@ DI::DI()
     serviceGunStream = new GunStream(nullptr, config->getTcpMessageConfig(), repoGun);
     // TODO: add weapon track engagement stream service
     serviceFireTriangle = new FireTriangleStream(nullptr, config->getTcpMessageConfig(), repoFireTriangle);
+}
+
+WeaponAssignService *DI::getServiceWeaponAssign() const
+{
+    return serviceWeaponAssign;
 }
 
 GunManagerService *DI::getServiceGunManager() const
