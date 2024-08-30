@@ -17,12 +17,24 @@ public:
     explicit FrameWeaponAssign(QWidget *parent = nullptr);
     ~FrameWeaponAssign();
 
+private slots:
+    void onComboBoxWAPWeaponChanged(int index);
+
+    void onComboBoxWAPModeChanged(int index);
+
+    void onGunCheck();
+
 private:
     Ui::FrameWeaponAssign *ui;
+
+    GunBarrelModeEntity::MODE currentGunMode;
 
     WeaponAssignService *_waService;
     GunManagerService *_gunService;
 
+    void availableUiSetup(bool available);
+    void resetMode();
+    void initWeaponList();
     void setupDI();
 };
 

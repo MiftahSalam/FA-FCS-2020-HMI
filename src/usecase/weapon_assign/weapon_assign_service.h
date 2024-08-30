@@ -15,6 +15,8 @@ public:
             QObject *parent = nullptr,
             WeaponAssignmentRepository *waRepo = nullptr);
 
+    void initAllAssignment(QStringList weapons);
+    void resetAllAssignment();
     bool SetAssignment(const std::string &weapon, const WeaponAssign::WeaponAssignMode &mode);
     const WeaponAssign* GetAssignment(const QString &weapon);
     QList<WeaponAssign*> GetAllAssignment() const;
