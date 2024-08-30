@@ -62,11 +62,6 @@
               <string>-</string>
              </property>
             </item>
-            <item>
-             <property name="text">
-              <string>40 mm</string>
-             </property>
-            </item>
            </widget>
           </item>
          </layout>
@@ -91,16 +86,6 @@
               <height>0</height>
              </size>
             </property>
-            <item>
-             <property name="text">
-              <string>-</string>
-             </property>
-            </item>
-            <item>
-             <property name="text">
-              <string>Direct</string>
-             </property>
-            </item>
            </widget>
           </item>
          </layout>

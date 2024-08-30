@@ -4,6 +4,7 @@
 #include "src/domain/weapon_assign/repository/weapon_assignment_repository.h"
 
 #include <QObject>
+#include <QMap>
 
 class WeaponAssignService : public QObject
 {
@@ -15,7 +16,8 @@ public:
             QObject *parent = nullptr,
             WeaponAssignmentRepository *waRepo = nullptr);
 
-    void initAllAssignment(QStringList weapons);
+    const QStringList getAvailableWeapons() const;
+    const QList<WeaponAssign::WeaponAssignMode> getAvailableWeaponsAssignMode(QString weapon) const;
     void resetAllAssignment();
     bool SetAssignment(const std::string &weapon, const WeaponAssign::WeaponAssignMode &mode);
     const WeaponAssign* GetAssignment(const QString &weapon);
@@ -29,6 +31,8 @@ protected:
 
 private:
     static WeaponAssignService *instance;
+
+    QMap<QString, QList<WeaponAssign::WeaponAssignMode>> AVAILABLE_WEAPONS_ASSIGN;
 
     WeaponAssignmentRepository *_repoWA;
 };

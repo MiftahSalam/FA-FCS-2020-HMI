@@ -36,21 +36,26 @@ void FrameWeaponAssign::onComboBoxWAPWeaponChanged(int index)
     if (index) {
         auto wa = _waService->GetAssignment(ui->comboBoxWAPWeapon->currentText());
         if (wa) {
-            auto mode = wa->getMode();
             disconnect(ui->comboBoxWAPMode, QOverload<int>::of(&QComboBox::currentIndexChanged), this, &FrameWeaponAssign::onComboBoxWAPModeChanged);
+            updateWeaponModeUI(QString::fromStdString(wa->getWeapon()));
+            auto mode = wa->getMode();
             ui->comboBoxWAPMode->setCurrentIndex((int)mode);
             connect(ui->comboBoxWAPMode, QOverload<int>::of(&QComboBox::currentIndexChanged), this, &FrameWeaponAssign::onComboBoxWAPModeChanged);
         }
+    } else {
+        ui->comboBoxWAPMode->clear();
     }
 }
 
 void FrameWeaponAssign::onComboBoxWAPModeChanged(int index)
 {
-    std::string weapon = ui->comboBoxWAPWeapon->currentText().toStdString();
-    if (weapon != "-") {
-        _waService->SetAssignment(weapon, (WeaponAssign::WeaponAssignMode)index);
-    } else {
-        QMessageBox::warning(this, "Warning Weapon Assign Control", QString("No weapon selected"));
+    if (index >= 0) {
+        std::string weapon = ui->comboBoxWAPWeapon->currentText().toStdString();
+        if (weapon != "-") {
+            _waService->SetAssignment(weapon, (WeaponAssign::WeaponAssignMode)index);
+        } else {
+            QMessageBox::warning(this, "Warning Weapon Assign Control", QString("No weapon selected"));
+        }
     }
 }
 
@@ -81,6 +86,26 @@ void FrameWeaponAssign::availableUiSetup(bool available)
     ui->comboBoxWAPMode->setEnabled(available);
 }
 
+void FrameWeaponAssign::updateWeaponModeUI(QString weapon)
+{
+    auto modeList = _waService->getAvailableWeaponsAssignMode(weapon);
+    ui->comboBoxWAPMode->clear();
+    for (int var = 0; var < modeList.size(); var++) {
+        QString modeStr;
+        switch (modeList.at(var)) {
+        case WeaponAssign::NONE:
+            modeStr = "-";
+            break;
+        case WeaponAssign::DIRECT:
+            modeStr = "Direct";
+            break;
+        default:
+            break;
+        }
+        ui->comboBoxWAPMode->insertItem((int)modeList.at(var), modeStr);
+    }
+}
+
 void FrameWeaponAssign::resetMode()
 {
     availableUiSetup(false);
@@ -89,7 +114,7 @@ void FrameWeaponAssign::resetMode()
     disconnect(ui->comboBoxWAPMode, QOverload<int>::of(&QComboBox::currentIndexChanged), this, &FrameWeaponAssign::onComboBoxWAPModeChanged);
 
     ui->comboBoxWAPWeapon->setCurrentIndex(0);
-    ui->comboBoxWAPMode->setCurrentIndex(0);
+    ui->comboBoxWAPMode->clear();
 
     connect(ui->comboBoxWAPWeapon, QOverload<int>::of(&QComboBox::currentIndexChanged), this, &FrameWeaponAssign::onComboBoxWAPWeaponChanged);
     connect(ui->comboBoxWAPMode, QOverload<int>::of(&QComboBox::currentIndexChanged), this, &FrameWeaponAssign::onComboBoxWAPModeChanged);
@@ -99,12 +124,9 @@ void FrameWeaponAssign::resetMode()
 
 void FrameWeaponAssign::initWeaponList()
 {
-    QStringList weapons;
-    for (int var = 0; var < ui->comboBoxWAPWeapon->count(); var++) {
-        if (ui->comboBoxWAPWeapon->itemText(var) != "-") {
-            weapons.append(ui->comboBoxWAPWeapon->itemText(var));
-        }
+    QStringList weapons = _waService->getAvailableWeapons();
+    for (int var = 0; var < weapons.size(); var++) {
+        ui->comboBoxWAPWeapon->insertItem(var+1, weapons.at(var));
     }
-    _waService->initAllAssignment(weapons);
 }
 
