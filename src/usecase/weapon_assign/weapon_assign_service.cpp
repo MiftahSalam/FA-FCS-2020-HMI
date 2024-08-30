@@ -6,7 +6,16 @@ WeaponAssignService *WeaponAssignService::instance = nullptr;
 WeaponAssignService::WeaponAssignService(QObject *parent, WeaponAssignmentRepository *repoWA)
     : QObject{parent}, _repoWA(repoWA)
 {
+    AVAILABLE_WEAPONS_ASSIGN.insert(
+                "40mm", QList<WeaponAssign::WeaponAssignMode>()<<WeaponAssign::NONE<<WeaponAssign::DIRECT
+                );
 
+    for (auto it = AVAILABLE_WEAPONS_ASSIGN.keyValueBegin(); it != AVAILABLE_WEAPONS_ASSIGN.keyValueEnd(); ++it) {
+        _repoWA->AddAssignment(
+                    WeaponAssign(it->first.toStdString(),
+                                 (WeaponAssign::WeaponAssignMode)it->second.first())
+                    );
+    }
 }
 
 WeaponAssignService *WeaponAssignService::getInstance(QObject *parent, WeaponAssignmentRepository *waRepo)
@@ -25,11 +34,14 @@ WeaponAssignService *WeaponAssignService::getInstance(QObject *parent, WeaponAss
 
 }
 
-void WeaponAssignService::initAllAssignment(QStringList weapons)
+const QStringList WeaponAssignService::getAvailableWeapons() const
 {
-    foreach (QString weapon, weapons) {
-        _repoWA->AddAssignment(WeaponAssign(weapon.toStdString(), WeaponAssign::NONE));
-    }
+    return AVAILABLE_WEAPONS_ASSIGN.keys();
+}
+
+const QList<WeaponAssign::WeaponAssignMode> WeaponAssignService::getAvailableWeaponsAssignMode(QString weapon) const
+{
+    return AVAILABLE_WEAPONS_ASSIGN.value(weapon);
 }
 
 void WeaponAssignService::resetAllAssignment()

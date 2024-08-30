@@ -8,7 +8,8 @@ class WeaponAssign
 public:
     enum WeaponAssignMode {
         NONE = 0,
-        DIRECT
+        DIRECT,
+        TWS
     };
 
     WeaponAssign();

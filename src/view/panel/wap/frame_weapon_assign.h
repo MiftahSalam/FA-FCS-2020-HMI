@@ -33,6 +33,7 @@ private:
     GunManagerService *_gunService;
 
     void availableUiSetup(bool available);
+    void updateWeaponModeUI(QString weapon);
     void resetMode();
     void initWeaponList();
     void setupDI();
