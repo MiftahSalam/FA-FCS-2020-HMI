@@ -24,10 +24,6 @@ void TDAFireTriangleObject::Draw(QPainter *painter, const int &side, const int &
     int ttlf_x_Pixel = (int)(ttlf_x_NM*(side/tdaScale));
     int ttlf_y_Pixel = (int)(ttlf_y_NM*(side/tdaScale));
 
-    qDebug()<< "side-------------"<<side;
-    qDebug()<< "----------------ttlf x"<<ttlf_x_Pixel;
-    qDebug()<< "----------------ttlf y"<<ttlf_y_Pixel;
-
     //posisi track
     float track_x = 5000;
     float track_y = 2000;
@@ -41,9 +37,9 @@ void TDAFireTriangleObject::Draw(QPainter *painter, const int &side, const int &
 
     painter->translate(center_point);
     painter->setPen(QColor(30,144,255,255));
-    painter->drawLine(0,0, ttlf_x_Pixel, ttlf_y_Pixel);
-    painter->drawLine(ttlf_x_Pixel, ttlf_y_Pixel, track_x_Pixel, track_y_Pixel);
-    painter->drawLine(track_x_Pixel, track_y_Pixel, 0, 0);
+    painter->drawLine(0,0, ttlf_x_Pixel, -ttlf_y_Pixel);
+    painter->drawLine(ttlf_x_Pixel, -ttlf_y_Pixel, track_x_Pixel, -track_y_Pixel);
+    painter->drawLine(track_x_Pixel, -track_y_Pixel, 0, 0);
     painter->translate(-center_point);
 }
 
