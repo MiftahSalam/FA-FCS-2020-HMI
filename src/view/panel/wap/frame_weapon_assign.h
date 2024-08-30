@@ -1,6 +1,8 @@
 #ifndef FRAME_WEAPON_ASSIGN_H
 #define FRAME_WEAPON_ASSIGN_H
 
+#include "src/usecase/gun/gun_manager_service.h"
+#include "src/usecase/weapon_assign/weapon_assign_service.h"
 #include <QWidget>
 
 namespace Ui {
@@ -17,6 +19,11 @@ public:
 
 private:
     Ui::FrameWeaponAssign *ui;
+
+    WeaponAssignService *_waService;
+    GunManagerService *_gunService;
+
+    void setupDI();
 };
 
 #endif // FRAME_WEAPON_ASSIGN_H

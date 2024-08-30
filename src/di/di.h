@@ -1,6 +1,7 @@
 #ifndef DI_H
 #define DI_H
 
+#include "src/domain/weapon_assign/repository/weapon_assignment_repository.h"
 #include "src/infra/store/fire_triangle/fire_triangle_repository.h"
 #include "src/infra/store/gun/gun_repository.h"
 #include "src/infra/store/osd/osd_repository.h"
@@ -12,6 +13,7 @@
 #include "src/usecase/track/stream/track_stream.h"
 #include "src/usecase/gun/stream/gun_stream.h"
 #include "src/usecase/fire_triangle/stream/fire_triangle_stream.h"
+#include "src/usecase/weapon_assign/weapon_assign_service.h"
 
 class DI
 {
@@ -25,16 +27,16 @@ public:
     OSDStream *getServiceOSDStream() const;
     OSDRepository *getRepoOSD() const;
     GunRepository *getRepoGun() const;
-    TrackStream *getServiceTrackStream() const;
     TrackRepository *getRepoTrack() const;
     FireTriangleRepository *getRepoFireTriangle() const;
+
+    TrackStream *getServiceTrackStream() const;
     GunStream *getServiceGunStream() const;
     FireTriangleStream *getServiceFireTriangle() const;
 
-    // GunCommandService *getGunCMSService() const;
-    // GunFeedbackStream *getServiceGunStream() const;
-
     GunManagerService *getServiceGunManager() const;
+
+    WeaponAssignService *getServiceWeaponAssign() const;
 
 protected:
     DI();
@@ -48,8 +50,7 @@ private:
     GunRepository *repoGun;
     TrackRepository *repoTrack;
     FireTriangleRepository *repoFireTriangle;
-
-    // TODO: add weapon assignment repository
+    WeaponAssignmentRepository  *repoWeaponAssign;
 
     // TODO: add weapon track engagement repository
 
@@ -57,15 +58,14 @@ private:
 
     OSDCMS *serviceOSDCMS;
     GunManagerService *serviceGunManager;
+    WeaponAssignService *serviceWeaponAssign;
 
-    // TODO: add weapon assignment service
 
     // TODO: add weapon track engagement service
-    TrackStream *serviceTrackStream;
     // TODO: add engagement correction service
 
+    TrackStream *serviceTrackStream;
     OSDStream *serviceOSDStream;
-    // TODO: add gun stream service
     GunStream *serviceGunStream;
     // TODO: add weapon track engagement stream service
     FireTriangleStream *serviceFireTriangle;
