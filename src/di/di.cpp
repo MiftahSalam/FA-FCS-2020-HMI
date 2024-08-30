@@ -26,12 +26,9 @@ DI::DI()
     // TODO: add engagement correction service
 
     serviceOSDStream = new OSDStream(nullptr, config->getTcpMessageConfig(), repoOSD, serviceOSDCMS);
-    // TODO: add gun stream service
     serviceGunStream = new GunStream(nullptr, config->getTcpMessageConfig(), repoGun);
     // TODO: add weapon track engagement stream service
-
-    //    serviceOSDStream = new OSDStream(nullptr, config->getAmqpConfig());
-
+    serviceFireTriangle = new FireTriangleStream(nullptr, config->getTcpMessageConfig(), repoFireTriangle);
 }
 
 GunManagerService *DI::getServiceGunManager() const
@@ -62,6 +59,11 @@ FireTriangleRepository *DI::getRepoFireTriangle() const
 GunStream *DI::getServiceGunStream() const
 {
     return serviceGunStream;
+}
+
+FireTriangleStream *DI::getServiceFireTriangle() const
+{
+    return serviceFireTriangle;
 }
 
 OSDRepository *DI::getRepoOSD() const

@@ -59,6 +59,7 @@ SOURCES += \
     src/main.cpp \
     src/model/engagement/cms/engagement_correction_set_request.cpp \
     src/model/engagement/engagement_data_model.cpp \
+    src/model/fire_triangle/fire_triangle_model.cpp \
     src/model/gun/cms/gun_command_barrel_request.cpp \
     src/model/gun/cms/gun_command_barrel_response.cpp \
     src/model/gun/cms/gun_command_status_request.cpp \
@@ -104,6 +105,8 @@ SOURCES += \
     src/usecase/engagement/cms/engagement_data_correction_40mm_service.cpp \
     src/usecase/engagement/stream/engagement_data_40mm_stream.cpp \
     src/usecase/engagement/weapon_track_assign_service.cpp \
+    src/usecase/fire_triangle/stream/fire_triangle_service.cpp \
+    src/usecase/fire_triangle/stream/fire_triangle_stream.cpp \
     src/usecase/gun/cms/gun_command_barrel_mode_service.cpp \
     src/usecase/gun/cms/gun_command_barrel_service.cpp \
     src/usecase/gun/cms/gun_command_status_service.cpp \
@@ -236,6 +239,7 @@ HEADERS += \
     src/model/base_response.h \
     src/model/engagement/cms/engagement_correction_set_request.h \
     src/model/engagement/engagement_data_model.h \
+    src/model/fire_triangle/fire_triangle_model.h \
     src/model/gun/cms/gun_command_barrel_request.h \
     src/model/gun/cms/gun_command_barrel_response.h \
     src/model/gun/cms/gun_command_status_request.h \
@@ -286,6 +290,8 @@ HEADERS += \
     src/usecase/engagement/stream/engagement_data_40mm_stream.h \
     src/usecase/engagement/stream/engagement_data_base_stream.h \
     src/usecase/engagement/weapon_track_assign_service.h \
+    src/usecase/fire_triangle/stream/fire_triangle_service.h \
+    src/usecase/fire_triangle/stream/fire_triangle_stream.h \
     src/usecase/gun/cms/gun_command_barrel_mode_service.h \
     src/usecase/gun/cms/gun_command_barrel_service.h \
     src/usecase/gun/cms/gun_command_status_service.h \
