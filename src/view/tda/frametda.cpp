@@ -341,7 +341,7 @@ void FrameTDA::setupTdaObjects()
     TDAHeadingMarkerObject *headingMarker = new TDAHeadingMarkerObject(this, osdRepo->getRepoOSDInertia(), tdaConfig);
     TDAGunBarrelObject *gunBarrel = new TDAGunBarrelObject(this, osdRepo->getRepoOSDInertia(), gunRepo->getRepoGunFeedback(), tdaConfig);
     TDATracksObject *tracksObject = new TDATracksObject(this, trackRepo->getRepoTrackArpa(), tdaScale);
-    TDAFireTriangleObject *fireTriangle = new TDAFireTriangleObject(this, fireTriangleRepo->getRepoFT40mm());
+    TDAFireTriangleObject *fireTriangle = new TDAFireTriangleObject(this, fireTriangleRepo->getRepoFT40mm(), tdaConfig);
 
     objectItems << compass << tracksObject << headingMarker << gunBarrel << gunCoverage << fireTriangle;
 }
