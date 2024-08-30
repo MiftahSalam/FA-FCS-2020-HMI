@@ -18,8 +18,12 @@ FireTriangleBaseRepository *FireTriangleRepositoryInMemImpl::GetInstance()
 
 void FireTriangleRepositoryInMemImpl::SetFireTriangle(const FireTriangleEntity &fte)
 {
+    _entity->setTTLF(fte.getTTLF());
+    _entity->setTTLFX(fte.getTTLFX());
+    _entity->setTTLFY(fte.getTTLFY());
 }
 
 const FireTriangleEntity *FireTriangleRepositoryInMemImpl::GetFireTriangle() const
 {
+    return _entity;
 }
