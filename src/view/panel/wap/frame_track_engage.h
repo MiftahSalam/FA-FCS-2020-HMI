@@ -2,6 +2,7 @@
 #define FRAME_TRACK_ENGAGE_H
 
 #include "src/infra/store/track/track_repository_listener.h"
+#include "src/usecase/engagement/weapon_track_assign_service.h"
 #include "src/usecase/gun/gun_manager_service.h"
 #include "src/usecase/weapon_assign/weapon_assign_service.h"
 #include <QWidget>
@@ -38,6 +39,7 @@ private:
     Ui::FrameTrackEngage *ui;
 
     WeaponAssignService *_waService;
+    WeaponTrackAssignService *_wtaService;
     GunManagerService *_gunService;
 
     GunBarrelModeEntity::MODE currentGunMode;

@@ -78,6 +78,7 @@ void FrameTrackEngage::resetMode()
 void FrameTrackEngage::setupDI()
 {
     _waService = DI::getInstance()->getServiceWeaponAssign();
+    _wtaService = DI::getInstance()->getServiceWeaponTrackAssign();
     _gunService = DI::getInstance()->getServiceGunManager();
 
     connect(_gunService, &GunManagerService::OnBarrelModeCheck, this, &FrameTrackEngage::onGunCheck);
@@ -116,7 +117,19 @@ void FrameTrackEngage::on_pushButtonTrackEngAssign_clicked()
 
 void FrameTrackEngage::onComboBoxTrackEngTNChange(int index)
 {
-
+    if (index > 0) {
+        const QString weapon = ui->comboBoxTrackEngWeapon->currentText();
+        const int tn = ui->comboBoxTrackEngTN->currentText().toInt();
+        if(_wtaService->IsEngage(weapon, tn)) {
+            ui->pushButtonTrackEngAssign->setText("Break");
+        } else {
+            ui->pushButtonTrackEngAssign->setText("Assign");
+        }
+        ui->pushButtonTrackEngAssign->setEnabled(true);
+    } else {
+        ui->pushButtonTrackEngAssign->setText("Assign/Break");
+        ui->pushButtonTrackEngAssign->setEnabled(false);
+    }
 }
 
 void FrameTrackEngage::onComboBoxTrackEngWeaponChange(int index)
@@ -129,7 +142,6 @@ void FrameTrackEngage::onComboBoxTrackEngWeaponChange(int index)
         ui->comboBoxTrackEngTN->setCurrentIndex(0);
         connect(ui->comboBoxTrackEngTN, QOverload<int>::of(&QComboBox::currentIndexChanged), this, &FrameTrackEngage::onComboBoxTrackEngTNChange);
         ui->comboBoxTrackEngTN->setEnabled(wa_mode == WeaponAssign::DIRECT);
-        ui->pushButtonTrackEngAssign->setEnabled(wa_mode == WeaponAssign::DIRECT);
     } else {
         noWeaponUI();
     }

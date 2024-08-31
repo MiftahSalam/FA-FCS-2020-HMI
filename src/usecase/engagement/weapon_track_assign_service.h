@@ -21,6 +21,7 @@ public:
             );
 
     // TODO: implementation
+    bool IsEngage(const QString &weapon, const int &trackId);
     bool SetEngagement(const QString &weapon, const int &trackId);
     bool BreakEngagement(const QString &weapon, const int &trackId);
     const WeaponTrackAssignEntity* GetEngagementTrack(const QString &weapon) const;
