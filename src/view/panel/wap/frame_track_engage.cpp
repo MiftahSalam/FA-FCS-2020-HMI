@@ -29,8 +29,7 @@ FrameTrackEngage::~FrameTrackEngage()
     delete ui;
 }
 
-//{"id": 3,"range": 3.3,"bearing": 4.5,"bearing_type": "R","speed": 2.1,"course": 2.3}
-//{"id": 4,"range": 2.3,"bearing": 40.5,"bearing_type": "R","speed": 2.1,"course": 2.3}
+//{"id": 3,"range": 3.3,"bearing": 4.5,"bearing_type": "R","speed": 2.1,"course": 2.3}{"id": 4,"range": 2.3,"bearing": 40.5,"bearing_type": "R","speed": 2.1,"course": 2.3}{"id": 1,"range": 1.3,"bearing": 40.5,"bearing_type": "R","speed": 2.1,"course": 2.3}
 void FrameTrackEngage::OnTracksAdded(std::list<TrackBaseEntity *> tnList)
 {
     QList<TrackBaseEntity*> track_list(tnList.begin(), tnList.end());
@@ -66,6 +65,11 @@ void FrameTrackEngage::OnTrackPropertyChanged(int tn, TrackBaseEntity *track)
 
 void FrameTrackEngage::resetMode()
 {
+    QString weapon = ui->comboBoxTrackEngWeapon->currentText();
+    if (weapon != "-") {
+        _wtaService->BreakEngagementWeapon(weapon);
+    }
+
     availableUiSetup(false);
 
     disconnect(ui->comboBoxTrackEngTN, QOverload<int>::of(&QComboBox::currentIndexChanged), this, &FrameTrackEngage::onComboBoxTrackEngTNChange);
@@ -73,6 +77,7 @@ void FrameTrackEngage::resetMode()
 
     ui->comboBoxTrackEngTN->setCurrentIndex(0);
     ui->comboBoxTrackEngWeapon->setCurrentIndex(0);
+    ui->pushButtonTrackEngAssign->setText("Assign/Break");
 
     connect(ui->comboBoxTrackEngTN, QOverload<int>::of(&QComboBox::currentIndexChanged), this, &FrameTrackEngage::onComboBoxTrackEngTNChange);
     connect(ui->comboBoxTrackEngWeapon, QOverload<int>::of(&QComboBox::currentIndexChanged), this, &FrameTrackEngage::onComboBoxTrackEngWeaponChange);
@@ -199,9 +204,15 @@ void FrameTrackEngage::onAssignModeChange(const QString &weapon, const WeaponAss
 {
     if (ui->comboBoxTrackEngWeapon->currentText() == weapon) {
         disconnect(ui->comboBoxTrackEngTN, QOverload<int>::of(&QComboBox::currentIndexChanged), this, &FrameTrackEngage::onComboBoxTrackEngTNChange);
+
         ui->comboBoxTrackEngTN->setCurrentIndex(0);
         ui->comboBoxTrackEngTN->setEnabled(mode == WeaponAssign::DIRECT);
         ui->pushButtonTrackEngAssign->setEnabled(mode == WeaponAssign::DIRECT);
+
+        _wtaService->BreakEngagementWeapon(weapon);
+        ui->pushButtonTrackEngAssign->setEnabled(false);
+        ui->pushButtonTrackEngAssign->setText("Assign/Break");
+
         connect(ui->comboBoxTrackEngTN, QOverload<int>::of(&QComboBox::currentIndexChanged), this, &FrameTrackEngage::onComboBoxTrackEngTNChange);
     }
 }

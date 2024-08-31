@@ -29,6 +29,17 @@ bool WeaponTrackAssignmentRepositoryInMemImpl::AddEngagement(const WeaponTrackAs
 
 bool WeaponTrackAssignmentRepositoryInMemImpl::BreakEngagement(const WeaponTrackAssignEntity &wta)
 {
+    if (_wtaEntities.size() > 0) {
+        QList<WeaponTrackAssignEntity*> wta_list(_wtaEntities.begin(), _wtaEntities.end());
+        foreach (auto _wta, wta_list) {
+            if (_wta->getTrackId() == wta.getTrackId() && _wta->getWeapon() == wta.getWeapon()) {
+                _wtaEntities.remove(_wta);
+                return true;
+            }
+        }
+    }
+
+    return false;
 }
 
 bool WeaponTrackAssignmentRepositoryInMemImpl::ClearAllEngagement()
@@ -52,4 +63,5 @@ const WeaponTrackAssignEntity *WeaponTrackAssignmentRepositoryInMemImpl::GetEnga
 
 std::list<WeaponTrackAssignEntity *> WeaponTrackAssignmentRepositoryInMemImpl::GetAllEngagement() const
 {
+    return _wtaEntities;
 }

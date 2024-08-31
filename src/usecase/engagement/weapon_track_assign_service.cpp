@@ -93,6 +93,17 @@ void WeaponTrackAssignService::BreakEngagementTrack(const int &trackId)
     }
 }
 
+void WeaponTrackAssignService::BreakEngagementWeapon(const QString &weapon)
+{
+    auto wta = _repoWTA->GetAllEngagement();
+    QList<WeaponTrackAssignEntity*> wta_list(wta.begin(), wta.end());
+    foreach (auto wta, wta_list) {
+        if (wta->getWeapon() == weapon.toStdString()) {
+            _repoWTA->BreakEngagement(WeaponTrackAssignEntity(weapon.toStdString(), wta->getTrackId()));
+        }
+    }
+}
+
 const WeaponTrackAssignEntity *WeaponTrackAssignService::GetEngagementTrack(const QString &weapon) const
 {
 

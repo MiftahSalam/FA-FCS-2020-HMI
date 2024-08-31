@@ -25,6 +25,7 @@ public:
     bool SetEngagement(const QString &weapon, const int &trackId);
     bool BreakEngagement(const QString &weapon, const int &trackId);
     void BreakEngagementTrack(const int &trackId);
+    void BreakEngagementWeapon(const QString &weapon);
     const WeaponTrackAssignEntity* GetEngagementTrack(const QString &weapon) const;
     QList<WeaponTrackAssignEntity*> GetEngagementWeapons(const int &trackId) const;
     QList<WeaponTrackAssignEntity*> GetAllEngagement() const;
