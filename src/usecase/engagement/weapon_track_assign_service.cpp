@@ -78,7 +78,19 @@ bool WeaponTrackAssignService::SetEngagement(const QString &weapon, const int &t
 
 bool WeaponTrackAssignService::BreakEngagement(const QString &weapon, const int &trackId)
 {
+    // TODO: implement break request to server
+    return _repoWTA->BreakEngagement(WeaponTrackAssignEntity(weapon.toStdString(), trackId));
+}
 
+void WeaponTrackAssignService::BreakEngagementTrack(const int &trackId)
+{
+    auto wta = _repoWTA->GetAllEngagement();
+    QList<WeaponTrackAssignEntity*> wta_list(wta.begin(), wta.end());
+    foreach (auto wta, wta_list) {
+        if (wta->getTrackId() == trackId) {
+            _repoWTA->BreakEngagement(WeaponTrackAssignEntity(wta->getWeapon(), trackId));
+        }
+    }
 }
 
 const WeaponTrackAssignEntity *WeaponTrackAssignService::GetEngagementTrack(const QString &weapon) const

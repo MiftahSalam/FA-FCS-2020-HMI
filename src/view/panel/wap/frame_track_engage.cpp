@@ -52,6 +52,7 @@ void FrameTrackEngage::OnTracksRemoved(std::list<int> tnIdList)
         int idx = ui->comboBoxTrackEngTN->findText(QString::number(track_list.at(var)));
         if (idx > 0) {
             // TODO: handler already assigned track
+            _wtaService->BreakEngagementTrack(track_list.at(var));
             ui->comboBoxTrackEngTN->removeItem(idx);
         }
     }
@@ -125,7 +126,11 @@ void FrameTrackEngage::on_pushButtonTrackEngAssign_clicked()
                 QMessageBox::warning(this, "Warning Track Assign Control", QString("Track already assigned"));
             }
         } else {
-            QMessageBox::warning(this, "Warning Track Assign Control", QString("Track already assigned"));
+            if(_wtaService->BreakEngagement(weapon, tn)) {
+                ui->pushButtonTrackEngAssign->setText("Assign");
+            } else {
+                QMessageBox::critical(this, "Error Track Break Control", QString("Failed to break track"));
+            }
         }
     }
 }
