@@ -45,10 +45,20 @@ void FrameTrackEngage::OnTracksAdded(std::list<TrackBaseEntity *> tnList)
 
 void FrameTrackEngage::OnTracksRemoved(std::list<int> tnIdList)
 {
+    QList<int> track_list(tnIdList.begin(), tnIdList.end());
+    for (int var = 0; var < track_list.size(); var++) {
+        int idx = ui->comboBoxTrackEngTN->findText(QString::number(track_list.at(var)));
+        if (idx > 0) {
+            // TODO: handler already assigned track
+            ui->comboBoxTrackEngTN->removeItem(idx);
+        }
+    }
 }
 
 void FrameTrackEngage::OnTrackPropertyChanged(int tn, TrackBaseEntity *track)
 {
+    Q_UNUSED(tn);
+    Q_UNUSED(track);
 }
 
 void FrameTrackEngage::resetMode()
