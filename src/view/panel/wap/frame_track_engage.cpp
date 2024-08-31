@@ -41,6 +41,7 @@ void FrameTrackEngage::setupDI()
     _gunService = DI::getInstance()->getServiceGunManager();
 
     connect(_gunService, &GunManagerService::OnBarrelModeCheck, this, &FrameTrackEngage::onGunCheck);
+    connect(_waService, &WeaponAssignService::OnAssignModeChange, this, &FrameTrackEngage::onAssignModeChange);
 }
 
 void FrameTrackEngage::availableUiSetup(bool available)
@@ -81,12 +82,17 @@ void FrameTrackEngage::onComboBoxTrackEngTNChange(int index)
 void FrameTrackEngage::onComboBoxTrackEngWeaponChange(int index)
 {
     if (index > 0) {
-        ui->comboBoxTrackEngTN->setEnabled(true);
-        ui->pushButtonTrackEngAssign->setEnabled(true);
+        auto wa = _waService->GetAssignment(ui->comboBoxTrackEngWeapon->currentText());
+        auto wa_mode = wa->getMode();
+
+        disconnect(ui->comboBoxTrackEngTN, QOverload<int>::of(&QComboBox::currentIndexChanged), this, &FrameTrackEngage::onComboBoxTrackEngTNChange);
+        ui->comboBoxTrackEngTN->setCurrentIndex(0);
+        connect(ui->comboBoxTrackEngTN, QOverload<int>::of(&QComboBox::currentIndexChanged), this, &FrameTrackEngage::onComboBoxTrackEngTNChange);
+        ui->comboBoxTrackEngTN->setEnabled(wa_mode == WeaponAssign::DIRECT);
+        ui->pushButtonTrackEngAssign->setEnabled(wa_mode == WeaponAssign::DIRECT);
     } else {
         noWeaponUI();
     }
-
 }
 
 void FrameTrackEngage::onGunCheck()
@@ -108,6 +114,17 @@ void FrameTrackEngage::onGunCheck()
         }
 
         currentGunMode = curMode;
+    }
+}
+
+void FrameTrackEngage::onAssignModeChange(const QString &weapon, const WeaponAssign::WeaponAssignMode &mode)
+{
+    if (ui->comboBoxTrackEngWeapon->currentText() == weapon) {
+        disconnect(ui->comboBoxTrackEngTN, QOverload<int>::of(&QComboBox::currentIndexChanged), this, &FrameTrackEngage::onComboBoxTrackEngTNChange);
+        ui->comboBoxTrackEngTN->setCurrentIndex(0);
+        ui->comboBoxTrackEngTN->setEnabled(mode == WeaponAssign::DIRECT);
+        ui->pushButtonTrackEngAssign->setEnabled(mode == WeaponAssign::DIRECT);
+       connect(ui->comboBoxTrackEngTN, QOverload<int>::of(&QComboBox::currentIndexChanged), this, &FrameTrackEngage::onComboBoxTrackEngTNChange);
     }
 }
 

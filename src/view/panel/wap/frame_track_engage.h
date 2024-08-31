@@ -25,6 +25,8 @@ private slots:
     void onComboBoxTrackEngWeaponChange(int index);
 
     void onGunCheck();
+    void onAssignModeChange(const QString &weapon, const WeaponAssign::WeaponAssignMode &mode);
+
 
 private:
     Ui::FrameTrackEngage *ui;
