@@ -13,12 +13,16 @@ TrackArpaStream::TrackArpaStream(
         ): cfg(config), arpaConfig(confiArpa), _repoArpa(repoArpa), currentErr(NoError())
 {
     consumer = new TcpMessagingWrapper(this, config);
-    connect(consumer, &TcpMessagingWrapper::signalForwardMessage, this, &TrackArpaStream::onDataReceived);
 
     timer = new QTimer(this);
     connect(timer, &QTimer::timeout, this, &TrackArpaStream::periodUpdate);
 
     timer->start(1000);
+
+    // delay for listener to ready
+    QTimer::singleShot(10000, this, [this]() {
+        connect(consumer, &TcpMessagingWrapper::signalForwardMessage, this, &TrackArpaStream::onDataReceived);
+    });
 }
 
 TrackArpaStream *TrackArpaStream::getInstance(
