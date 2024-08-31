@@ -3,6 +3,8 @@
 #include "src/infra/store/track/track_repository_publisher.h"
 #include "ui_frame_track_engage.h"
 
+#include <QMessageBox>
+
 FrameTrackEngage::FrameTrackEngage(QWidget *parent) :
     QWidget(parent),
     ui(new Ui::FrameTrackEngage)
@@ -112,7 +114,20 @@ void FrameTrackEngage::initWeaponList()
 
 void FrameTrackEngage::on_pushButtonTrackEngAssign_clicked()
 {
+    const QString weapon = ui->comboBoxTrackEngWeapon->currentText();
+    const int tn = ui->comboBoxTrackEngTN->currentText().toInt();
 
+    if (weapon != "-" && tn > 0) {
+        if (!_wtaService->IsEngage(weapon, tn)) {
+            if(_wtaService->SetEngagement(weapon, tn)) {
+                ui->pushButtonTrackEngAssign->setText("Break");
+            } else {
+                QMessageBox::warning(this, "Warning Track Assign Control", QString("Track already assigned"));
+            }
+        } else {
+            QMessageBox::warning(this, "Warning Track Assign Control", QString("Track already assigned"));
+        }
+    }
 }
 
 void FrameTrackEngage::onComboBoxTrackEngTNChange(int index)

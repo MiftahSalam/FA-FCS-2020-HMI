@@ -60,7 +60,7 @@ bool WeaponTrackAssignService::IsEngage(const QString &weapon, const int &trackI
 
 bool WeaponTrackAssignService::SetEngagement(const QString &weapon, const int &trackId)
 {
-
+    return _repoWTA->AddEngagement(WeaponTrackAssignEntity(weapon.toStdString(), trackId));
 }
 
 bool WeaponTrackAssignService::BreakEngagement(const QString &weapon, const int &trackId)
