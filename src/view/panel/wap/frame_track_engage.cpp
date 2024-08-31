@@ -1,5 +1,6 @@
 #include "frame_track_engage.h"
 #include "src/di/di.h"
+#include "src/infra/store/track/track_repository_publisher.h"
 #include "ui_frame_track_engage.h"
 
 FrameTrackEngage::FrameTrackEngage(QWidget *parent) :
@@ -10,6 +11,11 @@ FrameTrackEngage::FrameTrackEngage(QWidget *parent) :
 
     setupDI();
 
+    // add this to listener
+    TrackBaseRepository *arpaRepo = DI::getInstance()->getRepoTrack()->getRepoTrackArpa();
+    TrackRepositoryPublisher *publisher = dynamic_cast<TrackRepositoryPublisher *>(arpaRepo);
+    publisher->AddListener(this);
+
     currentGunMode = _gunService->getBarrelMode();
 
     initWeaponList();
@@ -19,6 +25,30 @@ FrameTrackEngage::FrameTrackEngage(QWidget *parent) :
 FrameTrackEngage::~FrameTrackEngage()
 {
     delete ui;
+}
+
+//{"id": 3,"range": 3.3,"bearing": 4.5,"bearing_type": "R","speed": 2.1,"course": 2.3}
+//{"id": 4,"range": 2.3,"bearing": 40.5,"bearing_type": "R","speed": 2.1,"course": 2.3}
+void FrameTrackEngage::OnTracksAdded(std::list<TrackBaseEntity *> tnList)
+{
+    QList<TrackBaseEntity*> track_list(tnList.begin(), tnList.end());
+    QStringList trIds;
+    foreach (auto tr, track_list) {
+        trIds.append(QString::number(tr->getId()));
+    }
+
+    if (!trIds.isEmpty()) {
+        ui->comboBoxTrackEngTN->insertItems(ui->comboBoxTrackEngTN->count(), trIds);
+        ui->comboBoxTrackEngTN->model()->sort(0);
+    }
+}
+
+void FrameTrackEngage::OnTracksRemoved(std::list<int> tnIdList)
+{
+}
+
+void FrameTrackEngage::OnTrackPropertyChanged(int tn, TrackBaseEntity *track)
+{
 }
 
 void FrameTrackEngage::resetMode()
@@ -124,7 +154,7 @@ void FrameTrackEngage::onAssignModeChange(const QString &weapon, const WeaponAss
         ui->comboBoxTrackEngTN->setCurrentIndex(0);
         ui->comboBoxTrackEngTN->setEnabled(mode == WeaponAssign::DIRECT);
         ui->pushButtonTrackEngAssign->setEnabled(mode == WeaponAssign::DIRECT);
-       connect(ui->comboBoxTrackEngTN, QOverload<int>::of(&QComboBox::currentIndexChanged), this, &FrameTrackEngage::onComboBoxTrackEngTNChange);
+        connect(ui->comboBoxTrackEngTN, QOverload<int>::of(&QComboBox::currentIndexChanged), this, &FrameTrackEngage::onComboBoxTrackEngTNChange);
     }
 }
 
