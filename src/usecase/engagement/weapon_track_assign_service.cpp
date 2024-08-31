@@ -53,6 +53,19 @@ WeaponTrackAssignService *WeaponTrackAssignService::getInstance(
     return instance;
 }
 
+bool WeaponTrackAssignService::IsWeaponEngaged(const QString &weapon)
+{
+    auto wta = _repoWTA->GetAllEngagement();
+    QList<WeaponTrackAssignEntity*> wta_list(wta.begin(), wta.end());
+    foreach (auto wta, wta_list) {
+        if (wta->getWeapon() == weapon.toStdString()) {
+            return true;
+        }
+    }
+
+    return false;
+}
+
 bool WeaponTrackAssignService::IsEngage(const QString &weapon, const int &trackId)
 {
     return _repoWTA->GetEngagement(WeaponTrackAssignEntity(weapon.toStdString(), trackId)) != nullptr;

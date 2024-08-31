@@ -135,12 +135,18 @@ void FrameTrackEngage::onComboBoxTrackEngTNChange(int index)
     if (index > 0) {
         const QString weapon = ui->comboBoxTrackEngWeapon->currentText();
         const int tn = ui->comboBoxTrackEngTN->currentText().toInt();
-        if(_wtaService->IsEngage(weapon, tn)) {
-            ui->pushButtonTrackEngAssign->setText("Break");
-        } else {
+        if (!_wtaService->IsWeaponEngaged(weapon)) {
             ui->pushButtonTrackEngAssign->setText("Assign");
+            ui->pushButtonTrackEngAssign->setEnabled(true);
+        } else {
+            if(_wtaService->IsEngage(weapon, tn)) {
+                ui->pushButtonTrackEngAssign->setText("Break");
+                ui->pushButtonTrackEngAssign->setEnabled(true);
+            } else {
+                ui->pushButtonTrackEngAssign->setText("Assign/Break");
+                ui->pushButtonTrackEngAssign->setEnabled(false);
+            }
         }
-        ui->pushButtonTrackEngAssign->setEnabled(true);
     } else {
         ui->pushButtonTrackEngAssign->setText("Assign/Break");
         ui->pushButtonTrackEngAssign->setEnabled(false);
