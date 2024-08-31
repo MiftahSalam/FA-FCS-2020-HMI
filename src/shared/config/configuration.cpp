@@ -12,6 +12,7 @@ Configuration::Configuration()
 //    amqpConfig = AMQPConfig::getInstance(COMMON_CONFIG_PATH);
     tcpMessageConfig = MessagingTcpConfig::getInstance(COMMON_CONFIG_PATH);
     tdaConfig = TDAConfig::getInstance(COMMON_CONFIG_PATH);
+    trackWeaponAssignCmsConfig = TrackWeaponAssignConfig::getInstance(COMMON_CONFIG_PATH);
 }
 
 OSDCmsConfig *Configuration::getOsdCmsConfig() const
@@ -37,6 +38,11 @@ TDAConfig *Configuration::getTDAConfig() const
 GunCmsConfig *Configuration::getGunCmsConfig() const
 {
     return gunCmsConfig;
+}
+
+TrackWeaponAssignConfig *Configuration::getTrackWeaponAssignCmsConfig() const
+{
+    return trackWeaponAssignCmsConfig;
 }
 
 //AMQPConfig *Configuration::getAmqpConfig() const
