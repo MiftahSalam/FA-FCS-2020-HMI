@@ -1,4 +1,5 @@
 #include "frame_track_engage.h"
+#include "src/di/di.h"
 #include "ui_frame_track_engage.h"
 
 FrameTrackEngage::FrameTrackEngage(QWidget *parent) :
@@ -7,6 +8,11 @@ FrameTrackEngage::FrameTrackEngage(QWidget *parent) :
 {
     ui->setupUi(this);
 
+    setupDI();
+
+    currentGunMode = _gunService->getBarrelMode();
+
+    initWeaponList();
     resetMode();
 }
 
@@ -29,11 +35,37 @@ void FrameTrackEngage::resetMode()
     connect(ui->comboBoxTrackEngWeapon, QOverload<int>::of(&QComboBox::currentIndexChanged), this, &FrameTrackEngage::onComboBoxTrackEngWeaponChange);
 }
 
+void FrameTrackEngage::setupDI()
+{
+    _waService = DI::getInstance()->getServiceWeaponAssign();
+    _gunService = DI::getInstance()->getServiceGunManager();
+
+    connect(_gunService, &GunManagerService::OnBarrelModeCheck, this, &FrameTrackEngage::onGunCheck);
+}
+
 void FrameTrackEngage::availableUiSetup(bool available)
 {
     ui->comboBoxTrackEngTN->setEnabled(available);
     ui->comboBoxTrackEngWeapon->setEnabled(available);
     ui->pushButtonTrackEngAssign->setEnabled(available);
+}
+
+void FrameTrackEngage::noWeaponUI()
+{
+    disconnect(ui->comboBoxTrackEngWeapon, QOverload<int>::of(&QComboBox::currentIndexChanged), this, &FrameTrackEngage::onComboBoxTrackEngWeaponChange);
+    ui->comboBoxTrackEngTN->setEnabled(false);
+    ui->comboBoxTrackEngTN->setCurrentIndex(0);
+    ui->pushButtonTrackEngAssign->setEnabled(false);
+    ui->pushButtonTrackEngAssign->setText("Assign/Break");
+    connect(ui->comboBoxTrackEngWeapon, QOverload<int>::of(&QComboBox::currentIndexChanged), this, &FrameTrackEngage::onComboBoxTrackEngWeaponChange);
+}
+
+void FrameTrackEngage::initWeaponList()
+{
+    QStringList weapons = _waService->getAvailableWeapons();
+    for (int var = 0; var < weapons.size(); var++) {
+        ui->comboBoxTrackEngWeapon->insertItem(var+1, weapons.at(var));
+    }
 }
 
 void FrameTrackEngage::on_pushButtonTrackEngAssign_clicked()
@@ -48,6 +80,34 @@ void FrameTrackEngage::onComboBoxTrackEngTNChange(int index)
 
 void FrameTrackEngage::onComboBoxTrackEngWeaponChange(int index)
 {
+    if (index > 0) {
+        ui->comboBoxTrackEngTN->setEnabled(true);
+        ui->pushButtonTrackEngAssign->setEnabled(true);
+    } else {
+        noWeaponUI();
+    }
 
+}
+
+void FrameTrackEngage::onGunCheck()
+{
+    auto curMode = _gunService->getBarrelMode();
+    if ((GunBarrelModeEntity::MODE)curMode != currentGunMode)
+    {
+        switch (curMode) {
+        case GunBarrelModeEntity::NONE:
+        case GunBarrelModeEntity::MANUAL:
+            resetMode();
+            break;
+        case GunBarrelModeEntity::AUTO:
+            availableUiSetup(true);
+            onComboBoxTrackEngWeaponChange(0);
+            break;
+        default:
+            break;
+        }
+
+        currentGunMode = curMode;
+    }
 }
 
