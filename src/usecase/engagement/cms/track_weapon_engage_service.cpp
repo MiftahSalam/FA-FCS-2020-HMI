@@ -1,4 +1,5 @@
 #include "track_weapon_engage_service.h"
+#include "src/shared/common/errors/err_http.h"
 #include "src/shared/common/errors/helper_err.h"
 #include "src/shared/common/errors/err_json_parse.h"
 #include "src/shared/common/errors/err_object_creation.h"
@@ -58,12 +59,13 @@ void TrackWeaponEngageService::onReplyFinished()
     qDebug()<<Q_FUNC_INFO<<"respRaw: "<<respRaw;
     qDebug()<<Q_FUNC_INFO<<"err: "<<httpResponse->error();
 
-    BaseResponse<TrackAssignResponse> resp = errorResponse(httpResponse->error());
+    BaseResponse<TrackAssignResponse> resp = errorHttpResponse(httpResponse->error());
     if(resp.getHttpCode() != 0 || respRaw.isEmpty()) {
         // TODO: check header to choose signal flag to emit
         emit signal_trackAssignmentResponse(resp, true);
         return;
     }
+
 
     resp = toResponse(respRaw);
 
@@ -73,9 +75,10 @@ void TrackWeaponEngageService::onReplyFinished()
 
 BaseResponse<TrackAssignResponse> TrackWeaponEngageService::toResponse(QByteArray raw)
 {
+    TrackAssignResponse model;
     try {
         QJsonObject respObj = Utils::byteArrayToJsonObject(raw);
-        int respCode = respObj["code"].toInt();
+        int respCode = respObj["code"].toString().toInt();
         QString respMsg = respObj["message"].toString();
         QJsonObject respData = respObj["data"].toObject();
         TrackAssignResponse model(respData["id"].toInt(),"40mm"); //TODO: set weapon from response body
@@ -88,31 +91,39 @@ BaseResponse<TrackAssignResponse> TrackWeaponEngageService::toResponse(QByteArra
              <<resp.getData().getTrackId()
             <<QString::fromStdString(resp.getData().getWeapon());
 
+        ErrHelper::throwTrackEngageError(respCode);
+
         return resp;
     } catch (ErrJsonParse &e) {
+        qDebug()<<Q_FUNC_INFO<<"caught error json parser: "<<e.getMessage();
+    }  catch (BaseError &e) {
         qDebug()<<Q_FUNC_INFO<<"caught error: "<<e.getMessage();
+        return BaseResponse<TrackAssignResponse>(e.getCode(), e.getMessage(), model);
     }  catch (...) {
         qDebug()<<Q_FUNC_INFO<<"caught unkbnown error";
     }
 
     ErrUnknown status;
-    TrackAssignResponse model;
     return BaseResponse<TrackAssignResponse>(status.getCode(), status.getMessage(), model);
 
 }
 
-BaseResponse<TrackAssignResponse> TrackWeaponEngageService::errorResponse(QNetworkReply::NetworkError err)
+BaseResponse<TrackAssignResponse> TrackWeaponEngageService::errorHttpResponse(QNetworkReply::NetworkError err)
 {
     TrackAssignResponse model;
     try {
-        ErrHelper::throwHttpError(err);
+        switch (err) {
+        case QNetworkReply::ConnectionRefusedError:
+            throw ErrHttpConnRefused();
+            break;
+        default:
+            break;
+        }
     } catch (BaseError &e) {
         qDebug()<<Q_FUNC_INFO<<"caught error: "<<e.getMessage();
         return BaseResponse<TrackAssignResponse>(e.getCode(), e.getMessage(), model);
     }  catch (...) {
         qDebug()<<Q_FUNC_INFO<<"caught unkbnown error";
-        ErrUnknown status;
-        return BaseResponse<TrackAssignResponse>(status.getCode(), status.getMessage(), model);
     }
 
     NoError status;

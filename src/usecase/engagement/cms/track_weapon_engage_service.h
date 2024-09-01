@@ -45,7 +45,7 @@ private:
 //    EngagementDataCorrectionRepository* _repoEngCorr;
 
     BaseResponse<TrackAssignResponse> toResponse(QByteArray raw);
-    BaseResponse<TrackAssignResponse> errorResponse(QNetworkReply::NetworkError err);
+    BaseResponse<TrackAssignResponse> errorHttpResponse(QNetworkReply::NetworkError err);
 };
 
 #endif // TRACKWEAPONENGAGESERVICE_H
