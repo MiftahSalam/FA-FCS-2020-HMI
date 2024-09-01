@@ -21,7 +21,16 @@ DI::DI()
     serviceOSDCMS = new OSDCMS(nullptr, config->getOsdCmsConfig(), repoOSD);
     serviceGunManager = GunManagerService::getInstance(nullptr, config->getGunCmsConfig(), repoGun->getRepoGunFeedback(), repoGun->getRepoGunCmd());
     serviceWeaponAssign = WeaponAssignService::getInstance(nullptr, repoWeaponAssign);
-    serviceWeaponTrackAssign = WeaponTrackAssignService::getInstance(nullptr, config->getTrackWeaponAssignCmsConfig(), repoWeaponAssign, repoTrackWeaponAssign);
+    serviceWeaponTrackAssign = WeaponTrackAssignService::getInstance(
+                nullptr,
+                config->getTrackWeaponAssignCmsConfig(),
+                repoGun->getRepoGunCoverage(),
+                repoTrack->getRepoTrackArpa(),
+                repoOSD->getRepoOSDInertia(),
+                nullptr,
+                repoWeaponAssign,
+                repoTrackWeaponAssign
+                );
 
     // TODO: add weapon track engagement service
     serviceTrackStream = new TrackStream(nullptr, config->getTcpMessageConfig(), config->getArpaConfig(), repoTrack);
