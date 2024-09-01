@@ -33,6 +33,7 @@ private slots:
 
     void onGunCheck();
     void onAssignModeChange(const QString &weapon, const WeaponAssign::WeaponAssignMode &mode);
+    void onAssignmentResponseData(BaseResponse<TrackAssignResponse> resp, bool assign);
 
 
 private:

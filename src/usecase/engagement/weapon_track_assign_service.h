@@ -30,7 +30,7 @@ public:
     bool IsWeaponEngaged(const QString &weapon);
     bool IsEngage(const QString &weapon, const int &trackId);
     void SetEngagement(const QString &weapon, const int &trackId);
-    bool BreakEngagement(const QString &weapon, const int &trackId);
+    void BreakEngagement(const QString &weapon, const int &trackId);
     void BreakEngagementTrack(const int &trackId);
     void BreakEngagementWeapon(const QString &weapon);
     const WeaponTrackAssignEntity* GetEngagementTrack(const QString &weapon) const;
@@ -39,6 +39,7 @@ public:
 
 signals:
 //    void signal_setTrackAssignResponse(BaseResponse<TrackAssignModel> response);
+    void signal_assignmentResponseData(BaseResponse<TrackAssignResponse> response, bool assign);
 
 protected:
     WeaponTrackAssignService(
@@ -53,7 +54,7 @@ protected:
             );
 
 private slots:
-    void onReplyFinished();
+    void onTrackAssignmentResponse(BaseResponse<TrackAssignResponse> resp, bool assign);
 
 private:
     static WeaponTrackAssignService *instance;
@@ -67,8 +68,6 @@ private:
     WeaponTrackAssignmentRepository *_repoWTA;
 
     bool isEngageable(const int trackId);
-    //    BaseResponse<TrackAssignModel> toResponse(QByteArray raw) override;
-    //    BaseResponse<TrackAssignModel> errorResponse(QNetworkReply::NetworkError err) override;
 };
 
 #endif // WEAPONTRACKASSIGNSERVICE_H

@@ -24,56 +24,6 @@ WeaponTrackAssignService::WeaponTrackAssignService(QObject *parent,
 {
 }
 
-void WeaponTrackAssignService::onReplyFinished()
-{
-
-}
-
-bool WeaponTrackAssignService::isEngageable(const int trackId)
-{
-    const TrackBaseEntity* track = _repoTrack->FindOne(trackId);
-    if (track) {
-        float max_range = _repoGunCov->GetGunCoverage()->getMax_range()/1852.;
-        float orientation = _repoGunCov->GetGunCoverage()->getGunOrientation();
-        float blind_arc = _repoGunCov->GetGunCoverage()->getBlindArc();
-        if (track->getRange() <= max_range) {
-            float shipHeading = _repoInertia->GetInertia()->heading();
-            float minBArc = 180.0 + orientation + shipHeading - (blind_arc / 2);
-            float maxBArc = 180.0 + orientation + shipHeading + (blind_arc / 2);
-
-            while (minBArc > 360 || minBArc < 0) {
-                if (minBArc > 360) {
-                    minBArc = minBArc - 360;
-                }
-                if (minBArc < 0) {
-                    minBArc = minBArc + 360;
-                }
-            }
-
-            while (maxBArc > 360 || maxBArc < 0) {
-                if (maxBArc > 360) {
-                    maxBArc = maxBArc - 360;
-                }
-                if (maxBArc < 0) {
-                    maxBArc = maxBArc + 360;
-                }
-            }
-
-            if (minBArc > maxBArc) {
-                if ((track->getBearing() > maxBArc) && (track->getBearing() < minBArc)) {
-                    return true;
-                }
-            } else {
-                if ((track->getBearing() > maxBArc) || (track->getBearing() < minBArc)) {
-                    return true;
-                }
-            }
-        }
-    }
-
-    return false;
-}
-
 WeaponTrackAssignService *WeaponTrackAssignService::getInstance(QObject *parent,
                                                                 TrackWeaponAssignConfig *cmsConfig,
                                                                 GunCoverageRepository *repoGunCov,
@@ -122,9 +72,71 @@ WeaponTrackAssignService *WeaponTrackAssignService::getInstance(QObject *parent,
                     engageCmsService,
                     repoWA,
                     repoWTA);
+
+        connect(engageCmsService, &TrackWeaponEngageService::signal_trackAssignmentResponse,
+                instance, &WeaponTrackAssignService::onTrackAssignmentResponse);
     }
 
     return instance;
+}
+
+void WeaponTrackAssignService::onTrackAssignmentResponse(BaseResponse<TrackAssignResponse> resp, bool assign)
+{
+    if (resp.getHttpCode() == 0)
+    {
+        if (assign) {
+            _repoWTA->AddEngagement(WeaponTrackAssignEntity(resp.getData().getWeapon(), resp.getData().getTrackId()));
+        } else {
+            _repoWTA->BreakEngagement(WeaponTrackAssignEntity(resp.getData().getWeapon(), resp.getData().getTrackId()));
+        }
+    }
+
+    emit signal_assignmentResponseData(resp, assign);
+}
+
+bool WeaponTrackAssignService::isEngageable(const int trackId)
+{
+    const TrackBaseEntity* track = _repoTrack->FindOne(trackId);
+    if (track) {
+        float max_range = _repoGunCov->GetGunCoverage()->getMax_range()/1852.;
+        float orientation = _repoGunCov->GetGunCoverage()->getGunOrientation();
+        float blind_arc = _repoGunCov->GetGunCoverage()->getBlindArc();
+        if (track->getRange() <= max_range) {
+            float shipHeading = _repoInertia->GetInertia()->heading();
+            float minBArc = 180.0 + orientation + shipHeading - (blind_arc / 2);
+            float maxBArc = 180.0 + orientation + shipHeading + (blind_arc / 2);
+
+            while (minBArc > 360 || minBArc < 0) {
+                if (minBArc > 360) {
+                    minBArc = minBArc - 360;
+                }
+                if (minBArc < 0) {
+                    minBArc = minBArc + 360;
+                }
+            }
+
+            while (maxBArc > 360 || maxBArc < 0) {
+                if (maxBArc > 360) {
+                    maxBArc = maxBArc - 360;
+                }
+                if (maxBArc < 0) {
+                    maxBArc = maxBArc + 360;
+                }
+            }
+
+            if (minBArc > maxBArc) {
+                if ((track->getBearing() > maxBArc) && (track->getBearing() < minBArc)) {
+                    return true;
+                }
+            } else {
+                if ((track->getBearing() > maxBArc) || (track->getBearing() < minBArc)) {
+                    return true;
+                }
+            }
+        }
+    }
+
+    return false;
 }
 
 bool WeaponTrackAssignService::IsWeaponEngaged(const QString &weapon)
@@ -147,26 +159,22 @@ bool WeaponTrackAssignService::IsEngage(const QString &weapon, const int &trackI
 
 void WeaponTrackAssignService::SetEngagement(const QString &weapon, const int &trackId)
 {
-    try {
-        if(isEngageable(trackId)) {
-            // TODO: implement assign request to server
-            if(!_repoWTA->AddEngagement(WeaponTrackAssignEntity(weapon.toStdString(), trackId))) {
-                throw ErrEngagementTrackAlreadyEngaged();
-            }
-        } else {
-            throw ErrEngagementTrackNotEngageable();
-        }
-    } catch (BaseError &e) {
-        throw e;
-    } catch (...) {
-        throw ErrUnknown();
+    if(isEngageable(trackId)) {
+        _cmsEngageService->sendAssignment(TrackAssignRequest(
+                                              trackId,
+                                              weapon.toStdString()
+                                              ), true);
+    } else {
+        throw ErrEngagementTrackNotEngageable();
     }
 }
 
-bool WeaponTrackAssignService::BreakEngagement(const QString &weapon, const int &trackId)
+void WeaponTrackAssignService::BreakEngagement(const QString &weapon, const int &trackId)
 {
-    // TODO: implement break request to server
-    return _repoWTA->BreakEngagement(WeaponTrackAssignEntity(weapon.toStdString(), trackId));
+    _cmsEngageService->sendAssignment(TrackAssignRequest(
+                                          trackId,
+                                          weapon.toStdString()
+                                          ), false);
 }
 
 void WeaponTrackAssignService::BreakEngagementTrack(const int &trackId)

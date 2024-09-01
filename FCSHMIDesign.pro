@@ -59,6 +59,8 @@ SOURCES += \
     src/infra/store/weapon_track_assign/weapon_track_assignment_repository_inmem_impl.cpp \
     src/main.cpp \
     src/model/engagement/cms/engagement_correction_set_request.cpp \
+    src/model/engagement/cms/track_assign_request.cpp \
+    src/model/engagement/cms/track_assign_response.cpp \
     src/model/engagement/engagement_data_model.cpp \
     src/model/fire_triangle/fire_triangle_model.cpp \
     src/model/gun/cms/gun_command_barrel_request.cpp \
@@ -106,6 +108,7 @@ SOURCES += \
     src/shared/utils/track/track_utils.cpp \
     src/shared/utils/utils.cpp \
     src/usecase/engagement/cms/engagement_data_correction_40mm_service.cpp \
+    src/usecase/engagement/cms/track_weapon_engage_service.cpp \
     src/usecase/engagement/stream/engagement_data_40mm_stream.cpp \
     src/usecase/engagement/weapon_track_assign_service.cpp \
     src/usecase/fire_triangle/stream/fire_triangle_service.cpp \
@@ -242,6 +245,8 @@ HEADERS += \
     src/model/base_request.h \
     src/model/base_response.h \
     src/model/engagement/cms/engagement_correction_set_request.h \
+    src/model/engagement/cms/track_assign_request.h \
+    src/model/engagement/cms/track_assign_response.h \
     src/model/engagement/engagement_data_model.h \
     src/model/fire_triangle/fire_triangle_model.h \
     src/model/gun/cms/gun_command_barrel_request.h \
@@ -293,6 +298,7 @@ HEADERS += \
     src/shared/utils/track/track_utils.h \
     src/shared/utils/utils.h \
     src/usecase/engagement/cms/engagement_data_correction_40mm_service.h \
+    src/usecase/engagement/cms/track_weapon_engage_service.h \
     src/usecase/engagement/stream/engagement_data_40mm_stream.h \
     src/usecase/engagement/stream/engagement_data_base_stream.h \
     src/usecase/engagement/weapon_track_assign_service.h \

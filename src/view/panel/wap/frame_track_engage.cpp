@@ -29,7 +29,7 @@ FrameTrackEngage::~FrameTrackEngage()
     delete ui;
 }
 
-//{"id": 3,"range": 3.3,"bearing": 4.5,"bearing_type": "R","speed": 2.1,"course": 2.3}{"id": 4,"range": 2.3,"bearing": 40.5,"bearing_type": "R","speed": 2.1,"course": 2.3}{"id": 1,"range": 0.3,"bearing": 40.5,"bearing_type": "R","speed": 2.1,"course": 2.3}
+//{"id": 3,"range": 3.3,"bearing": 4.5,"bearing_type": "R","speed": 2.1,"course": 2.3}{"id": 4,"range": 2.3,"bearing": 40.5,"bearing_type": "R","speed": 2.1,"course": 2.3}{"id": 1,"range": 0.3,"bearing": 40.5,"bearing_type": "R","speed": 2.1,"course": 2.3}{"id": 2,"range": 0.3,"bearing": 240.5,"bearing_type": "R","speed": 2.1,"course": 2.3}
 void FrameTrackEngage::OnTracksAdded(std::list<TrackBaseEntity *> tnList)
 {
     QList<TrackBaseEntity*> track_list(tnList.begin(), tnList.end());
@@ -91,6 +91,8 @@ void FrameTrackEngage::setupDI()
 
     connect(_gunService, &GunManagerService::OnBarrelModeCheck, this, &FrameTrackEngage::onGunCheck);
     connect(_waService, &WeaponAssignService::OnAssignModeChange, this, &FrameTrackEngage::onAssignModeChange);
+    connect(_wtaService, &WeaponTrackAssignService::signal_assignmentResponseData,
+            this, &FrameTrackEngage::onAssignmentResponseData);
 }
 
 void FrameTrackEngage::availableUiSetup(bool available)
@@ -126,17 +128,12 @@ void FrameTrackEngage::on_pushButtonTrackEngAssign_clicked()
     if (weapon != "-" && tn > 0) {
         if (!_wtaService->IsEngage(weapon, tn)) {
             try {
-               _wtaService->SetEngagement(weapon, tn);
-               ui->pushButtonTrackEngAssign->setText("Break");
+                _wtaService->SetEngagement(weapon, tn);
             }  catch (BaseError &e) {
                 QMessageBox::warning(this, "Warning Track Assign Control", QString("Failed to assign track with error: %1").arg(e.getMessage()));
             }
         } else {
-            if(_wtaService->BreakEngagement(weapon, tn)) {
-                ui->pushButtonTrackEngAssign->setText("Assign");
-            } else {
-                QMessageBox::critical(this, "Error Track Break Control", QString("Failed to break track"));
-            }
+            _wtaService->BreakEngagement(weapon, tn);
         }
     }
 }
@@ -215,6 +212,28 @@ void FrameTrackEngage::onAssignModeChange(const QString &weapon, const WeaponAss
         ui->pushButtonTrackEngAssign->setText("Assign/Break");
 
         connect(ui->comboBoxTrackEngTN, QOverload<int>::of(&QComboBox::currentIndexChanged), this, &FrameTrackEngage::onComboBoxTrackEngTNChange);
+    }
+}
+
+void FrameTrackEngage::onAssignmentResponseData(BaseResponse<TrackAssignResponse> resp, bool assign)
+{
+    qDebug() << Q_FUNC_INFO << "resp code:" << resp.getHttpCode() << "resp msg:" << resp.getMessage();
+
+    if (resp.getHttpCode() != 0)
+    {
+        if (assign) {
+            QMessageBox::warning(this, "Warning Track Assign Control", QString("Failed to assign track with error: %1").arg(resp.getMessage()));
+        } else {
+            QMessageBox::warning(this, "Warning Track Assign Control", QString("Failed to break track with error: %1").arg(resp.getMessage()));
+        }
+
+        return;
+    }
+
+    if (assign) {
+        ui->pushButtonTrackEngAssign->setText("Break");
+    } else {
+        ui->pushButtonTrackEngAssign->setText("Assign");
     }
 }
 
