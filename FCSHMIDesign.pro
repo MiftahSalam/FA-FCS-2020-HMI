@@ -87,6 +87,7 @@ SOURCES += \
     src/model/track/arpa/track_arpa_model.cpp \
     src/shared/common/errors/err_amqp.cpp \
     src/shared/common/errors/err_base.cpp \
+    src/shared/common/errors/err_engagement.cpp \
     src/shared/common/errors/err_http.cpp \
     src/shared/common/errors/err_json_parse.cpp \
     src/shared/common/errors/err_messaging.cpp \
@@ -272,6 +273,7 @@ HEADERS += \
     src/model/track/arpa/track_arpa_model.h \
     src/shared/common/errors/err_amqp.h \
     src/shared/common/errors/err_base.h \
+    src/shared/common/errors/err_engagement.h \
     src/shared/common/errors/err_http.h \
     src/shared/common/errors/err_json_parse.h \
     src/shared/common/errors/err_messaging.h \
