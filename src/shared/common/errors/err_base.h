@@ -31,6 +31,10 @@ const QPair<int, QString> ERROR_CODE_OSD_DATA_OUT_OF_RANGE(73, "osd data out of 
 const QPair<int, QString> ERROR_CODE_OSD_DATA_PARTIALLY_INVALID(74, "osd data some data are invalid");
 const QPair<int, QString> ERROR_CODE_OSD_DATA_INVALID(75, "osd data invalid");
 
+const QPair<int, QString> ERROR_CODE_ENGAGEMENT_TRACK_NOT_FOUND(81, "enagagement track not found");
+const QPair<int, QString> ERROR_CODE_ENGAGEMENT_TRACK_NOT_ENGAGEABLE(82, "enagagement track not engageable");
+const QPair<int, QString> ERROR_CODE_ENGAGEMENT_TRACK_ALREADY_ENGAGED(83, "enagagement track already engaged");
+
 class BaseError: public QException
 {
 public:
