@@ -35,9 +35,9 @@ SOURCES += \
     src/domain/osd/entity/osd_wind_entity.cpp \
     src/domain/track/entity/track_base_entity.cpp \
     src/domain/weapon_assign/entity/weapon_assign_entity.cpp \
-    src/domain/weapon_assign/entity/weapon_engage_data_entity.cpp \
     src/infra/http/http_client_wrapper.cpp \
     src/infra/messaging/tcp/tcp_messaging_wrapper.cpp \
+    src/infra/store/engagement/engagement_repository.cpp \
     src/infra/store/engagement/inmemory/engagement_data_correction_repository_inmem_impl.cpp \
     src/infra/store/engagement/inmemory/engagement_data_repository_inmem_impl.cpp \
     src/infra/store/fire_triangle/fire_triangle_repository.cpp \
@@ -105,6 +105,7 @@ SOURCES += \
     src/shared/utils/utils.cpp \
     src/usecase/engagement/cms/engagement_data_correction_40mm_service.cpp \
     src/usecase/engagement/stream/engagement_data_40mm_stream.cpp \
+    src/usecase/engagement/stream/engagement_stream.cpp \
     src/usecase/engagement/weapon_track_assign_service.cpp \
     src/usecase/fire_triangle/stream/fire_triangle_service.cpp \
     src/usecase/fire_triangle/stream/fire_triangle_stream.cpp \
@@ -212,10 +213,10 @@ HEADERS += \
     src/domain/track/entity/track_base_entity.h \
     src/domain/track/repository/track_base_repository.h \
     src/domain/weapon_assign/entity/weapon_assign_entity.h \
-    src/domain/weapon_assign/entity/weapon_engage_data_entity.h \
     src/domain/weapon_assign/repository/weapon_assignment_repository.h \
     src/infra/http/http_client_wrapper.h \
     src/infra/messaging/tcp/tcp_messaging_wrapper.h \
+    src/infra/store/engagement/engagement_repository.h \
     src/infra/store/engagement/inmemory/engagement_data_correction_repository_inmem_impl.h \
     src/infra/store/engagement/inmemory/engagement_data_repository_inmem_impl.h \
     src/infra/store/fire_triangle/fire_triangle_repository.h \
@@ -291,6 +292,7 @@ HEADERS += \
     src/usecase/engagement/cms/engagement_data_correction_40mm_service.h \
     src/usecase/engagement/stream/engagement_data_40mm_stream.h \
     src/usecase/engagement/stream/engagement_data_base_stream.h \
+    src/usecase/engagement/stream/engagement_stream.h \
     src/usecase/engagement/weapon_track_assign_service.h \
     src/usecase/fire_triangle/stream/fire_triangle_service.h \
     src/usecase/fire_triangle/stream/fire_triangle_stream.h \
