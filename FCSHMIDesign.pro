@@ -35,6 +35,7 @@ SOURCES += \
     src/domain/osd/entity/osd_wind_entity.cpp \
     src/domain/track/entity/track_base_entity.cpp \
     src/domain/weapon_assign/entity/weapon_assign_entity.cpp \
+    src/domain/weapon_assign/entity/weapon_engage_data_entity.cpp \
     src/infra/http/http_client_wrapper.cpp \
     src/infra/messaging/tcp/tcp_messaging_wrapper.cpp \
     src/infra/store/engagement/inmemory/engagement_data_correction_repository_inmem_impl.cpp \
@@ -211,6 +212,7 @@ HEADERS += \
     src/domain/track/entity/track_base_entity.h \
     src/domain/track/repository/track_base_repository.h \
     src/domain/weapon_assign/entity/weapon_assign_entity.h \
+    src/domain/weapon_assign/entity/weapon_engage_data_entity.h \
     src/domain/weapon_assign/repository/weapon_assignment_repository.h \
     src/infra/http/http_client_wrapper.h \
     src/infra/messaging/tcp/tcp_messaging_wrapper.h \
