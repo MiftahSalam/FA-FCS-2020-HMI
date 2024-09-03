@@ -64,7 +64,6 @@ void OSDCMSWindData::onReplyFinished()
 
     resp = toResponse(respRaw);
 
-    //TODO: update repo
     repoWind->SetWind(OSDWindEntity(
                              resp.getData().getSpeed(),
                              resp.getData().getDirection(),

@@ -50,7 +50,6 @@ void FrameTrackEngage::OnTracksRemoved(std::list<int> tnIdList)
     for (int var = 0; var < track_list.size(); var++) {
         int idx = ui->comboBoxTrackEngTN->findText(QString::number(track_list.at(var)));
         if (idx > 0) {
-            // TODO: handler already assigned track
             _wtaService->BreakEngagementTrack(track_list.at(var));
             ui->comboBoxTrackEngTN->removeItem(idx);
         }

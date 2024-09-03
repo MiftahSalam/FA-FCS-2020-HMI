@@ -72,7 +72,6 @@ void OSDStreamGyro::onDataReceived(QByteArray data)
 
         auto inertiaMode = serviceMode->getDataMode().getInersia();
         if (!inertiaMode) {
-            //TODO: update repo
             _repoInertia->SetInertia(OSDInertiaEntity(
                                       model.getHeading(),
                                       model.getPicth(),

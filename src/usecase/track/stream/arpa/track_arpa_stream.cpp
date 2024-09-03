@@ -115,7 +115,6 @@ void TrackArpaStream::onDataReceived(QByteArray data)
     }
 }
 
-// TODO: implementation
 void TrackArpaStream::periodUpdate()
 {
     check();

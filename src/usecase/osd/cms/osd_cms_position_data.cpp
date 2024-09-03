@@ -66,7 +66,6 @@ void OSDCMSPositionData::onReplyFinished()
 
     resp = toResponse(respRaw);
 
-    //TODO: update repo
     repoPos->SetPosition(OSDPositionEntity(
                              resp.getData().getLatitude(),
                              resp.getData().getLongitude(),

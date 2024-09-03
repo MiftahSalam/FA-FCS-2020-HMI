@@ -66,7 +66,6 @@ void OSDCMSWeatherData::onReplyFinished()
 
     resp = toResponse(respRaw);
 
-    //TODO: update repo
     repoWeather->SetWeather(OSDWeatherEntity(
         resp.getData().getTemperature(),
         resp.getData().getPressure(),
