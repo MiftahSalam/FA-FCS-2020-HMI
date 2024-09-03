@@ -39,7 +39,7 @@ TrackWeaponEngageService *TrackWeaponEngageService::getInstance(
 
 void TrackWeaponEngageService::sendAssignment(TrackAssignRequest request, bool assign)
 {
-    QNetworkRequest httpReq = QNetworkRequest(_cmsConfig->getInstance("")->getAssignUrl()+"/"+QString::number(request.getTrackId()));
+    QNetworkRequest httpReq = QNetworkRequest(_cmsConfig->getInstance("")->getAssignUrl());
     httpReq.setHeader(QNetworkRequest::ContentTypeHeader, "application/json");
 
     if (assign) {
@@ -55,22 +55,20 @@ void TrackWeaponEngageService::onReplyFinished()
 {
     QByteArray respRaw = httpResponse->readAll();
 
-    qDebug()<<Q_FUNC_INFO<<"respHeaderRaw: "<<httpResponse->rawHeaderPairs();
     qDebug()<<Q_FUNC_INFO<<"respRaw: "<<respRaw;
     qDebug()<<Q_FUNC_INFO<<"err: "<<httpResponse->error();
 
     BaseResponse<TrackAssignResponse> resp = errorHttpResponse(httpResponse->error());
+    bool assign = isAssignResponse();
     if(resp.getHttpCode() != 0 || respRaw.isEmpty()) {
-        // TODO: check header to choose signal flag to emit
-        emit signal_trackAssignmentResponse(resp, true);
+        emit signal_trackAssignmentResponse(resp, assign);
         return;
     }
 
 
     resp = toResponse(respRaw);
 
-    // TODO: check header to choose signal flag to emit
-    emit signal_trackAssignmentResponse(resp, true);
+    emit signal_trackAssignmentResponse(resp, assign);
 }
 
 BaseResponse<TrackAssignResponse> TrackWeaponEngageService::toResponse(QByteArray raw)
@@ -81,8 +79,8 @@ BaseResponse<TrackAssignResponse> TrackWeaponEngageService::toResponse(QByteArra
         int respCode = respObj["code"].toString().toInt();
         QString respMsg = respObj["message"].toString();
         QJsonObject respData = respObj["data"].toObject();
-        TrackAssignResponse model(respData["id"].toInt(),"40mm"); //TODO: set weapon from response body
-//        TrackAssignResponse model(respData["id"].toInt(),respData["weapon"].toString().toStdString());
+        //        TrackAssignResponse model(respData["id"].toInt(),"40mm");
+        TrackAssignResponse model(respData["id"].toInt(),respData["weapon"].toString().toStdString());
         BaseResponse<TrackAssignResponse> resp(respCode, respMsg, model);
 
         qDebug()<<Q_FUNC_INFO<<"resp"
@@ -129,4 +127,20 @@ BaseResponse<TrackAssignResponse> TrackWeaponEngageService::errorHttpResponse(QN
     NoError status;
     return BaseResponse<TrackAssignResponse>(status.getCode(), status.getMessage(), model);
 
+}
+
+bool TrackWeaponEngageService::isAssignResponse()
+{
+    auto headers = httpResponse->rawHeaderPairs();
+    QString method;
+
+    qDebug()<<Q_FUNC_INFO<<"respHeaderRaw: "<<headers;
+
+    foreach (auto header, headers) {
+        if (header.first == "Method") {
+            method = header.second;
+            return method == "POST";
+        }
+    }
+    return true;
 }

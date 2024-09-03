@@ -14,7 +14,8 @@ TrackAssignRequest::TrackAssignRequest(int trackId, const std::string &weapon) :
 QByteArray TrackAssignRequest::toJSON()
 {
     QJsonObject obj;
-    obj["track_id"] = trackId;
+    obj["id"] = trackId;
+    obj["weapon"] = QString::fromStdString(weapon);
 
     return QJsonDocument(obj).toJson();
 }
