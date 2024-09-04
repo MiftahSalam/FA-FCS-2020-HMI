@@ -3,11 +3,12 @@
 #include <QTextStream>
 #include <cmath>
 #include <QDebug>
+#include "src/shared/utils/utils.h"
 
 TDAFireTriangleObject::TDAFireTriangleObject(QObject *parent, FireTriangleBaseRepository *repoFireTriangle, TDAConfig *configTDA):
     TDAObjectBase (parent), fireTriangleRepo(repoFireTriangle), tdaConfig(configTDA)
 {
-    fireTriangleRepo->SetFireTriangle(FireTriangleEntity(60,2000,2000));
+    fireTriangleRepo->SetFireTriangle(FireTriangleEntity(60,6820.2734375,7313.2666015625));
 }
 
 void TDAFireTriangleObject::Draw(QPainter *painter, const int &side, const int &width, const int &height, const QPoint &off_center)
@@ -25,21 +26,21 @@ void TDAFireTriangleObject::Draw(QPainter *painter, const int &side, const int &
     int ttlf_y_Pixel = (int)(ttlf_y_NM*(side/tdaScale));
 
     //posisi track
-    float track_x = 5000;
-    float track_y = 2000;
+    float range = 3704/1852; // konversi m to NM
+    int rangePixel = (int)(range*(side/tdaScale));
+    float bearing = 23;
 
-    //konversi ke NM
-    float track_x_NM = track_x/1852;
-    float track_y_NM = track_y/1852;
+    const double rad2deg = (bearing - 90) * M_PI / 180;
+    int track_x_Pixel = rangePixel * qCos(rad2deg);
+    int track_y_Pixel = rangePixel * qSin(rad2deg);
 
-    int track_x_Pixel = (int)(track_x_NM*(side/tdaScale));
-    int track_y_Pixel = (int)(track_y_NM*(side/tdaScale));
+    // qDebug()<<"range"<<rangePixel<<"track X"<<track_x_Pixel<<"track Y"<<track_y_Pixel;
 
     painter->translate(center_point);
     painter->setPen(QColor(30,144,255,255));
     painter->drawLine(0,0, ttlf_x_Pixel, -ttlf_y_Pixel);
-    painter->drawLine(ttlf_x_Pixel, -ttlf_y_Pixel, track_x_Pixel, -track_y_Pixel);
-    painter->drawLine(track_x_Pixel, -track_y_Pixel, 0, 0);
+    painter->drawLine(ttlf_x_Pixel, -ttlf_y_Pixel, track_x_Pixel, track_y_Pixel);
+    painter->drawLine(track_x_Pixel, track_y_Pixel, 0, 0);
     painter->translate(-center_point);
 }
 
