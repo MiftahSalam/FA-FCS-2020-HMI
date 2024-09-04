@@ -11,6 +11,7 @@ Configuration::Configuration()
     gunCmsConfig = GunCmsConfig::getInstance(COMMON_CONFIG_PATH);
 //    amqpConfig = AMQPConfig::getInstance(COMMON_CONFIG_PATH);
     tcpMessageConfig = MessagingTcpConfig::getInstance(COMMON_CONFIG_PATH);
+    serialMessageConfig = MessagingSerialConfig::getInstance(COMMON_CONFIG_PATH);
     tdaConfig = TDAConfig::getInstance(COMMON_CONFIG_PATH);
 }
 
@@ -37,6 +38,11 @@ TDAConfig *Configuration::getTDAConfig() const
 GunCmsConfig *Configuration::getGunCmsConfig() const
 {
     return gunCmsConfig;
+}
+
+MessagingSerialConfig *Configuration::getSerialMessageConfig() const
+{
+    return serialMessageConfig;
 }
 
 //AMQPConfig *Configuration::getAmqpConfig() const

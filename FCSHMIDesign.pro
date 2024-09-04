@@ -4,7 +4,7 @@
 #
 #-------------------------------------------------
 
-QT       += core gui network testlib
+QT       += core gui network testlib serialport
 
 #include($$PWD/qredis/qredis.pri)
 
@@ -36,6 +36,7 @@ SOURCES += \
     src/domain/track/entity/track_base_entity.cpp \
     src/domain/weapon_assign/entity/weapon_assign_entity.cpp \
     src/infra/http/http_client_wrapper.cpp \
+    src/infra/messaging/serial/serial_messaging_wrapper.cpp \
     src/infra/messaging/tcp/tcp_messaging_wrapper.cpp \
     src/infra/store/engagement/inmemory/engagement_data_correction_repository_inmem_impl.cpp \
     src/infra/store/engagement/inmemory/engagement_data_repository_inmem_impl.cpp \
@@ -97,6 +98,7 @@ SOURCES += \
     src/shared/config/arpa_config.cpp \
     src/shared/config/configuration.cpp \
     src/shared/config/gun_cms_config.cpp \
+    src/shared/config/messaging_serial_config.cpp \
     src/shared/config/messaging_tcp_config.cpp \
     src/shared/config/osd_cms_config.cpp \
     src/shared/config/tda_config.cpp \
@@ -213,6 +215,7 @@ HEADERS += \
     src/domain/weapon_assign/entity/weapon_assign_entity.h \
     src/domain/weapon_assign/repository/weapon_assignment_repository.h \
     src/infra/http/http_client_wrapper.h \
+    src/infra/messaging/serial/serial_messaging_wrapper.h \
     src/infra/messaging/tcp/tcp_messaging_wrapper.h \
     src/infra/store/engagement/inmemory/engagement_data_correction_repository_inmem_impl.h \
     src/infra/store/engagement/inmemory/engagement_data_repository_inmem_impl.h \
@@ -281,6 +284,8 @@ HEADERS += \
     src/shared/config/base_config.h \
     src/shared/config/configuration.h \
     src/shared/config/gun_cms_config.h \
+    src/shared/config/messaging_serial_config \
+    src/shared/config/messaging_serial_config.h \
     src/shared/config/messaging_tcp_config.h \
     src/shared/config/osd_cms_config.h \
     src/shared/config/tda_config.h \
