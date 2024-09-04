@@ -112,6 +112,7 @@ SOURCES += \
     src/usecase/gun/cms/gun_command_barrel_mode_service.cpp \
     src/usecase/gun/cms/gun_command_barrel_service.cpp \
     src/usecase/gun/cms/gun_command_status_service.cpp \
+    src/usecase/gun/gun_firing_service.cpp \
     src/usecase/gun/gun_manager_service.cpp \
     src/usecase/gun/stream/gun_coverage_stream.cpp \
     src/usecase/gun/stream/gun_feedback_barrel_stream.cpp \
@@ -300,6 +301,7 @@ HEADERS += \
     src/usecase/gun/cms/gun_command_barrel_mode_service.h \
     src/usecase/gun/cms/gun_command_barrel_service.h \
     src/usecase/gun/cms/gun_command_status_service.h \
+    src/usecase/gun/gun_firing_service.h \
     src/usecase/gun/gun_manager_service.h \
     src/usecase/gun/stream/gun_coverage_stream.h \
     src/usecase/gun/stream/gun_feedback_barrel_stream.h \

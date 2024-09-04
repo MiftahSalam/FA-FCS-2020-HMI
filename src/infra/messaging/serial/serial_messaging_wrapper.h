@@ -13,6 +13,7 @@ public:
     explicit SerialMessagingWrapper(QObject *parent = nullptr, SerialMessagingOpts *cfg = nullptr);
 
     BaseError checkConnection();
+    void sendActivateButtonMessage(QByteArray data);
 
 signals:
     void signalForwardMessage(QByteArray msg);

@@ -40,6 +40,11 @@ BaseError SerialMessagingWrapper::checkConnection()
     }
 }
 
+void SerialMessagingWrapper::sendActivateButtonMessage(QByteArray data)
+{
+    serialPort->write(data);
+}
+
 void SerialMessagingWrapper::onReadyRead()
 {
     QDateTime now = QDateTime::currentDateTime();
