@@ -22,6 +22,9 @@ public:
 
     void Draw(QPainter *painter, const int &side, const int &width, const int &height, const QPoint &off_center) override;
 
+private slots:
+    void OnWeaponAssignment(BaseResponse<TrackAssignResponse> resp, bool assign);
+
 private:
     FireTriangleBaseRepository *fireTriangleRepo;
     TrackBaseRepository *arpaRepo;
@@ -29,6 +32,7 @@ private:
     TDAConfig *tdaConfig;
 
     double tdaScale;
+    int currAssignedTrack;
 
 };
 
