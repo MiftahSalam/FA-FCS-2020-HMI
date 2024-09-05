@@ -27,8 +27,16 @@ GunFiringService::GunFiringService(
     connect(timer, &QTimer::timeout, this, &GunFiringService::OnTimeout);
 }
 
-void GunFiringService::OnWeaponAssign(const QString &weapon, const bool &assign)
+void GunFiringService::OnWeaponAssign(BaseResponse<TrackAssignResponse> resp, bool assign)
 {
+    if (resp.getHttpCode() != 0)
+    {
+        qDebug() << Q_FUNC_INFO << "error resp code:" << resp.getHttpCode() << "resp msg:" << resp.getMessage();
+        return;
+    }
+
+    QString weapon = QString::fromStdString(resp.getData().getWeapon());
+
     if (assign) {
         if (!_weaponsReady.contains(weapon)) {
             _weaponsOpenFire.removeAll(weapon);
@@ -44,6 +52,8 @@ void GunFiringService::OnWeaponAssign(const QString &weapon, const bool &assign)
     } else {
         timer->stop();
     }
+
+    emit signal_FiringChange(weapon, _weaponsReady.contains(weapon));
 }
 
 void GunFiringService::OnTimeout()
@@ -91,10 +101,13 @@ GunFiringService *GunFiringService::getInstance(QObject *parent,
         if(wtaService == nullptr) {
             throw ErrObjectCreation();
         }
+
         SerialMessagingOpts *gunFiringStreamVal = serialConfig->getInstance("")->getContent().value("fire_button");
 
 
         instance = new GunFiringService(parent, gunFiringStreamVal, gunStatusREpo, waService, wtaService);
+
+        connect(wtaService, &WeaponTrackAssignService::signal_assignmentResponseData, instance, &GunFiringService::OnWeaponAssign);
     }
 
     return instance;

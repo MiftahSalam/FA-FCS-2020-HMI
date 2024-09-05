@@ -36,8 +36,11 @@ protected:
             WeaponTrackAssignService *wtaService = nullptr
             );
 
+signals:
+    void signal_FiringChange(const QString &weapon, const bool open);
+
 private slots:
-    void OnWeaponAssign(const QString &weapon, const bool &assign);
+    void OnWeaponAssign(BaseResponse<TrackAssignResponse> resp, bool assign);
     void OnTimeout();
 
 private:

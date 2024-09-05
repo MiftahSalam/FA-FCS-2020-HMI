@@ -24,6 +24,7 @@ private:
     Ui::FrameGunControlFire *ui;
 
     GunFiringService* _fireService;
+    bool _openFire;
 
     void setupDI();
     void setupUINoFire();
