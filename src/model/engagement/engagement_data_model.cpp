@@ -13,7 +13,14 @@ EngagementDataModel::EngagementDataModel(const std::string &weapon, float azimut
 
 EngagementDataModel EngagementDataModel::fromJsonObject(QJsonObject obj)
 {
+    EngagementDataModel model(
+        (""),
+        obj.value("azimuth").toDouble(),
+        obj.value("elevation").toDouble(),
+        obj.value("status").toInt()
+        );
 
+    return model;
 }
 
 std::string EngagementDataModel::weapon() const

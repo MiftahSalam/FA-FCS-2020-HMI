@@ -14,7 +14,7 @@ DI::DI()
     repoFireTriangle = new FireTriangleRepository(nullptr);
     repoWeaponAssign = WeaponAssignmentRepositoryInMemImpl::GetInstance();
     repoTrackWeaponAssign = WeaponTrackAssignmentRepositoryInMemImpl::GetInstance();
-
+    repoEngagement = new EngagementRepository(nullptr);
     // TODO: add weapon track engagement repository
     // TODO: add engagement correction repository
 
@@ -40,6 +40,7 @@ DI::DI()
     serviceGunStream = new GunStream(nullptr, config->getTcpMessageConfig(), repoGun);
     // TODO: add weapon track engagement stream service
     serviceFireTriangle = new FireTriangleStream(nullptr, config->getTcpMessageConfig(), repoFireTriangle);
+    serviceEngagement = new EngagementStream(nullptr, config->getTcpMessageConfig(), repoEngagement);
 }
 
 WeaponTrackAssignmentRepository *DI::getRepoTrackWeaponAssign() const
@@ -55,6 +56,11 @@ WeaponTrackAssignService *DI::getServiceWeaponTrackAssign() const
 WeaponAssignService *DI::getServiceWeaponAssign() const
 {
     return serviceWeaponAssign;
+}
+
+EngagementStream *DI::getServiceEngagement() const
+{
+    return serviceEngagement;
 }
 
 GunManagerService *DI::getServiceGunManager() const
