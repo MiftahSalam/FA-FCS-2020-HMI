@@ -18,6 +18,9 @@ EngagementDataRepository *EngagementDataRepositoryInMemImpl::GetInstance()
 
 bool EngagementDataRepositoryInMemImpl::AddEngagement(const EngagementDataEntity &data)
 {
+    _entityEngagementData->setWeaponTrackAssignEntity(data.getWeaponTrackAssignEntity());
+    _entityEngagementData->setCurrentBarrelPosition(data.getCurrentBarrelPosition());
+    _entityEngagementData->setCurrentEngageableStatus(data.getCurrentEngageableStatus());
 }
 
 bool EngagementDataRepositoryInMemImpl::RemoveEngagement(const WeaponTrackAssignEntity &wta)
