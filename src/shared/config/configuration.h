@@ -8,6 +8,7 @@
 #include "src/shared/config/messaging_tcp_config.h"
 #include "src/shared/config/osd_cms_config.h"
 #include "src/shared/config/tda_config.h"
+#include "src/shared/config/track_weapon_assign_config.h"
 
 class Configuration
 {
@@ -26,19 +27,16 @@ public:
 
     GunCmsConfig *getGunCmsConfig() const;
 
+    TrackWeaponAssignConfig *getTrackWeaponAssignCmsConfig() const;
+
 private:
     OSDCmsConfig *osdCmsConfig;
     ArpaConfig *arpaConfig;
     GunCmsConfig *gunCmsConfig;
-
-    // TODO: track assignment cms config
-
-    // TODO: engagement correction cms config
+    TrackWeaponAssignConfig *trackWeaponAssignCmsConfig;
 
     //    AMQPConfig *amqpConfig;
     MessagingTcpConfig *tcpMessageConfig;
-
-    // TODO: gun messaging config
 
     // TODO: track assigned messaging config
 

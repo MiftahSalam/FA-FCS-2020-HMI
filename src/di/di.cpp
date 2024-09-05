@@ -1,5 +1,6 @@
 #include "di.h"
 #include "src/infra/store/weapon_assign/inmemory/weapon_assignment_repository_inmem_impl.h"
+#include "src/infra/store/weapon_track_assign/weapon_track_assignment_repository_inmem_impl.h"
 
 DI* DI::di = nullptr;
 
@@ -12,6 +13,7 @@ DI::DI()
     repoTrack = new TrackRepository(nullptr);
     repoFireTriangle = new FireTriangleRepository(nullptr);
     repoWeaponAssign = WeaponAssignmentRepositoryInMemImpl::GetInstance();
+    repoTrackWeaponAssign = WeaponTrackAssignmentRepositoryInMemImpl::GetInstance();
 
     // TODO: add weapon track engagement repository
     // TODO: add engagement correction repository
@@ -19,7 +21,16 @@ DI::DI()
     serviceOSDCMS = new OSDCMS(nullptr, config->getOsdCmsConfig(), repoOSD);
     serviceGunManager = GunManagerService::getInstance(nullptr, config->getGunCmsConfig(), repoGun->getRepoGunFeedback(), repoGun->getRepoGunCmd());
     serviceWeaponAssign = WeaponAssignService::getInstance(nullptr, repoWeaponAssign);
-    // TODO: add weapon assignment service
+    serviceWeaponTrackAssign = WeaponTrackAssignService::getInstance(
+                nullptr,
+                config->getTrackWeaponAssignCmsConfig(),
+                repoGun->getRepoGunCoverage(),
+                repoTrack->getRepoTrackArpa(),
+                repoOSD->getRepoOSDInertia(),
+                nullptr,
+                repoWeaponAssign,
+                repoTrackWeaponAssign
+                );
 
     // TODO: add weapon track engagement service
     serviceTrackStream = new TrackStream(nullptr, config->getTcpMessageConfig(), config->getArpaConfig(), repoTrack);
@@ -29,6 +40,16 @@ DI::DI()
     serviceGunStream = new GunStream(nullptr, config->getTcpMessageConfig(), repoGun);
     // TODO: add weapon track engagement stream service
     serviceFireTriangle = new FireTriangleStream(nullptr, config->getTcpMessageConfig(), repoFireTriangle);
+}
+
+WeaponTrackAssignmentRepository *DI::getRepoTrackWeaponAssign() const
+{
+    return repoTrackWeaponAssign;
+}
+
+WeaponTrackAssignService *DI::getServiceWeaponTrackAssign() const
+{
+    return serviceWeaponTrackAssign;
 }
 
 WeaponAssignService *DI::getServiceWeaponAssign() const

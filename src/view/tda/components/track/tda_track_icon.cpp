@@ -14,7 +14,6 @@ const QString TRACK_INFO_TEMPLATE = "Track Information\n\n"
 TdaTrackIcon::TdaTrackIcon(QWidget *parent, TrackParam* param)
     : QLabel(parent), currentParam(param)
 {
-    // TODO: real image load
     currentIconImagePath = fileImageLocation(currentParam->getCur_identity(), currentParam->getCur_env()); //get image from file
     qDebug()<<Q_FUNC_INFO<<currentIconImagePath;
     QImage image(currentIconImagePath);

@@ -66,7 +66,6 @@ void OSDStreamWaterSpeed::onDataReceived(QByteArray data)
 
         auto waterspeedMode = serviceMode->getDataMode().getWaterSpeed();
         if (!waterspeedMode) {
-            //TODO: update repo
             _repoWP->SetWaterSpeed(OSDWaterSpeedEntity(
                                       model.getSpeed(),
                                       model.getCourse(),

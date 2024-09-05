@@ -68,7 +68,6 @@ void OSDCMSGyroData::onReplyFinished()
 
     resp = toResponse(respRaw);
 
-    //TODO: update repo
     repoInertia->SetInertia(OSDInertiaEntity(
                              resp.getData().getHeading(),
                              resp.getData().getPicth(),

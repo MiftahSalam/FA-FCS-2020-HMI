@@ -64,7 +64,6 @@ void OSDCMSWaterSpeedData::onReplyFinished()
 
     resp = toResponse(respRaw);
 
-    //TODO: update repo
     repoWS->SetWaterSpeed(OSDWaterSpeedEntity(
                              resp.getData().getSpeed(),
                              resp.getData().getCourse(),

@@ -1,0 +1,27 @@
+#ifndef TRACKASSIGNREQUEST_H
+#define TRACKASSIGNREQUEST_H
+
+#include "src/model/base_request.h"
+
+class TrackAssignRequest: public BaseModel<TrackAssignRequest>
+{
+public:
+    TrackAssignRequest();
+    TrackAssignRequest(int trackId, const std::string &weapon);
+
+    // BaseModel interface
+public:
+    QByteArray toJSON() override;
+
+    int getTrackId() const;
+    void setTrackId(int newTrackId);
+
+    std::string getWeapon() const;
+    void setWeapon(const std::string &newWeapon);
+
+private:
+    int trackId;
+    std::string weapon;
+};
+
+#endif // TRACKASSIGNREQUEST_H

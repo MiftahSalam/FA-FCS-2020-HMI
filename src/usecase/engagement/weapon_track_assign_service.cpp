@@ -1,41 +1,41 @@
 #include "weapon_track_assign_service.h"
+#include "src/shared/common/errors/err_engagement.h"
 #include "src/shared/common/errors/err_object_creation.h"
 
 WeaponTrackAssignService* WeaponTrackAssignService::instance = nullptr;
 
-WeaponTrackAssignService::WeaponTrackAssignService(
-        HttpClientWrapper *parent,
-        // TODO: add track engage cms config
-//            TrackEngageCmsConfig *cmsConfig = nullptr,
-        WeaponAssignmentRepository *repoWA,
-        WeaponTrackAssignmentRepository *repoWTA
-        ): QObject{parent}, _repoWA(repoWA), _repoWTA(repoWTA)
+WeaponTrackAssignService::WeaponTrackAssignService(QObject *parent,
+                                                   TrackWeaponAssignConfig *cmsConfig,
+                                                   GunCoverageRepository* repoGunCov,
+                                                   TrackBaseRepository *repoTrack,
+                                                   OSDInertiaRepository* repoInertia,
+                                                   TrackWeaponEngageService *cmsEngageService,
+                                                   WeaponAssignmentRepository *repoWA,
+                                                   WeaponTrackAssignmentRepository *repoWTA
+                                                   ):
+    QObject{parent},
+    _cmsConfig(cmsConfig),
+    _cmsEngageService(cmsEngageService),
+    _repoGunCov(repoGunCov),
+    _repoTrack(repoTrack),
+    _repoInertia(repoInertia),
+    _repoWA(repoWA),
+    _repoWTA(repoWTA)
 {
-    if(parent == nullptr) {
-        throw ErrObjectCreation();
-    }
 }
 
-void WeaponTrackAssignService::onReplyFinished()
-{
-
-}
-
-WeaponTrackAssignService *WeaponTrackAssignService::getInstance(
-        HttpClientWrapper *httpClient,
-        // TODO: add track engage cms config
-//            TrackEngageCmsConfig *cmsConfig = nullptr,
-        WeaponAssignmentRepository *repoWA,
-        WeaponTrackAssignmentRepository *repoWTA
-        )
+WeaponTrackAssignService *WeaponTrackAssignService::getInstance(QObject *parent,
+                                                                TrackWeaponAssignConfig *cmsConfig,
+                                                                GunCoverageRepository *repoGunCov,
+                                                                TrackBaseRepository *repoTrack,
+                                                                OSDInertiaRepository* repoInertia,
+                                                                TrackWeaponEngageService *cmsEngageService,
+                                                                WeaponAssignmentRepository *repoWA,
+                                                                WeaponTrackAssignmentRepository *repoWTA
+                                                                )
 {
     if (instance == nullptr) {
-        // TODO: add track assign cms config
-//        if(cmsConfig == nullptr) {
-//            throw ErrObjectCreation();
-//        }
-
-        if(httpClient == nullptr) {
+        if(cmsConfig == nullptr) {
             throw ErrObjectCreation();
         }
 
@@ -47,20 +47,158 @@ WeaponTrackAssignService *WeaponTrackAssignService::getInstance(
             throw ErrObjectCreation();
         }
 
-        instance = new WeaponTrackAssignService(httpClient/*, cmsConfig*/, repoWA, repoWTA);
+        if(repoGunCov == nullptr) {
+            throw ErrObjectCreation();
+        }
+
+        if(repoTrack == nullptr) {
+            throw ErrObjectCreation();
+        }
+
+        if(repoInertia == nullptr) {
+            throw ErrObjectCreation();
+        }
+
+        TrackWeaponEngageService *engageCmsService = TrackWeaponEngageService::getInstance(
+                    new HttpClientWrapper(),
+                    cmsConfig);
+
+        instance = new WeaponTrackAssignService(
+                    parent,
+                    cmsConfig,
+                    repoGunCov,
+                    repoTrack,
+                    repoInertia,
+                    engageCmsService,
+                    repoWA,
+                    repoWTA);
+
+        connect(engageCmsService, &TrackWeaponEngageService::signal_trackAssignmentResponse,
+                instance, &WeaponTrackAssignService::onTrackAssignmentResponse);
     }
 
     return instance;
 }
 
-bool WeaponTrackAssignService::SetEngagement(const QString &weapon, const int &trackId)
+void WeaponTrackAssignService::onTrackAssignmentResponse(BaseResponse<TrackAssignResponse> resp, bool assign)
 {
+    if (resp.getHttpCode() == 0)
+    {
+        if (assign) {
+            _repoWTA->AddEngagement(WeaponTrackAssignEntity(resp.getData().getWeapon(), resp.getData().getTrackId()));
+        } else {
+            _repoWTA->BreakEngagement(WeaponTrackAssignEntity(resp.getData().getWeapon(), resp.getData().getTrackId()));
+        }
+    }
 
+    emit signal_assignmentResponseData(resp, assign);
 }
 
-bool WeaponTrackAssignService::BreakEngagement(const QString &weapon, const int &trackId)
+bool WeaponTrackAssignService::isEngageable(const int trackId)
 {
+    const TrackBaseEntity* track = _repoTrack->FindOne(trackId);
+    if (track) {
+        float max_range = _repoGunCov->GetGunCoverage()->getMax_range()/1852.;
+        float orientation = _repoGunCov->GetGunCoverage()->getGunOrientation();
+        float blind_arc = _repoGunCov->GetGunCoverage()->getBlindArc();
+        if (track->getRange() <= max_range) {
+            float shipHeading = _repoInertia->GetInertia()->heading();
+            float minBArc = 180.0 + orientation + shipHeading - (blind_arc / 2);
+            float maxBArc = 180.0 + orientation + shipHeading + (blind_arc / 2);
 
+            while (minBArc > 360 || minBArc < 0) {
+                if (minBArc > 360) {
+                    minBArc = minBArc - 360;
+                }
+                if (minBArc < 0) {
+                    minBArc = minBArc + 360;
+                }
+            }
+
+            while (maxBArc > 360 || maxBArc < 0) {
+                if (maxBArc > 360) {
+                    maxBArc = maxBArc - 360;
+                }
+                if (maxBArc < 0) {
+                    maxBArc = maxBArc + 360;
+                }
+            }
+
+            if (minBArc > maxBArc) {
+                if ((track->getBearing() > maxBArc) && (track->getBearing() < minBArc)) {
+                    return true;
+                }
+            } else {
+                if ((track->getBearing() > maxBArc) || (track->getBearing() < minBArc)) {
+                    return true;
+                }
+            }
+        }
+    }
+
+    return false;
+}
+
+bool WeaponTrackAssignService::IsWeaponEngaged(const QString &weapon)
+{
+    auto wta = _repoWTA->GetAllEngagement();
+    QList<WeaponTrackAssignEntity*> wta_list(wta.begin(), wta.end());
+    foreach (auto wta, wta_list) {
+        if (wta->getWeapon() == weapon.toStdString()) {
+            return true;
+        }
+    }
+
+    return false;
+}
+
+bool WeaponTrackAssignService::IsEngage(const QString &weapon, const int &trackId)
+{
+    return _repoWTA->GetEngagement(WeaponTrackAssignEntity(weapon.toStdString(), trackId)) != nullptr;
+}
+
+void WeaponTrackAssignService::SetEngagement(const QString &weapon, const int &trackId)
+{
+    if(isEngageable(trackId)) {
+        _cmsEngageService->sendAssignment(TrackAssignRequest(
+                                              trackId,
+                                              weapon.toStdString()
+                                              ), true);
+    } else {
+        throw ErrEngagementTrackNotEngageable();
+    }
+}
+
+void WeaponTrackAssignService::BreakEngagement(const QString &weapon, const int &trackId)
+{
+    _cmsEngageService->sendAssignment(TrackAssignRequest(
+                                          trackId,
+                                          weapon.toStdString()
+                                          ), false);
+}
+
+void WeaponTrackAssignService::BreakEngagementTrack(const int &trackId)
+{
+    auto wta = _repoWTA->GetAllEngagement();
+    QList<WeaponTrackAssignEntity*> wta_list(wta.begin(), wta.end());
+    foreach (auto wta, wta_list) {
+        if (wta->getTrackId() == trackId) {
+//            _repoWTA->BreakEngagement(WeaponTrackAssignEntity(wta->getWeapon(), trackId));
+            BreakEngagement(QString::fromStdString(wta->getWeapon()), trackId);
+        }
+    }
+}
+
+void WeaponTrackAssignService::BreakEngagementWeapon(const QString &weapon)
+{
+    auto wta = _repoWTA->GetAllEngagement();
+    QList<WeaponTrackAssignEntity*> wta_list(wta.begin(), wta.end());
+    foreach (auto wta, wta_list) {
+        if (wta->getWeapon() == weapon.toStdString()) {
+//            _repoWTA->BreakEngagement(WeaponTrackAssignEntity(weapon.toStdString(), wta->getTrackId()));
+            BreakEngagement(weapon, wta->getTrackId());
+        }
+    }
 }
 
 const WeaponTrackAssignEntity *WeaponTrackAssignService::GetEngagementTrack(const QString &weapon) const
@@ -68,7 +206,7 @@ const WeaponTrackAssignEntity *WeaponTrackAssignService::GetEngagementTrack(cons
 
 }
 
-QList<WeaponTrackAssignEntity *> WeaponTrackAssignService::GetEngagementWeapons(const int &trackId) const
+const QStringList WeaponTrackAssignService::GetEngagementWeapons(const int &trackId) const
 {
 
 }
