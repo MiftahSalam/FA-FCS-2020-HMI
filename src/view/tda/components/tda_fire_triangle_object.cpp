@@ -5,8 +5,19 @@
 #include <QDebug>
 #include "qmath.h"
 
-TDAFireTriangleObject::TDAFireTriangleObject(QObject *parent, FireTriangleBaseRepository *repoFireTriangle, TDAConfig *configTDA):
-    TDAObjectBase (parent), fireTriangleRepo(repoFireTriangle), tdaConfig(configTDA)
+TDAFireTriangleObject::TDAFireTriangleObject(
+        QObject *parent,
+        FireTriangleBaseRepository *repoFireTriangle,
+        TrackBaseRepository *repoArpa,
+        WeaponTrackAssignService *serviceWTA,
+        TDAConfig *configTDA
+        ):
+    TDAObjectBase (parent),
+    fireTriangleRepo(repoFireTriangle),
+    arpaRepo(repoArpa),
+    wtaSercie(serviceWTA),
+    tdaConfig(configTDA)
+
 {
     fireTriangleRepo->SetFireTriangle(FireTriangleEntity(60,6820.2734375,7313.2666015625));
 }
