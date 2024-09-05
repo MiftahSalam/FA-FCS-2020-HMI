@@ -22,7 +22,7 @@ TrackUtils::Identity TrackUtils::int2Identity(int identity)
 
 int TrackUtils::identity2Int(Identity identity)
 {
-
+    return (int)identity;
 }
 
 TrackUtils::Environment TrackUtils::int2Environment(int env)

@@ -8,6 +8,7 @@
 #include "src/infra/store/track/track_repository.h"
 #include "src/shared/config/configuration.h"
 #include "src/usecase/gun/gun_firing_service.h"
+#include "src/usecase/engagement/weapon_track_assign_service.h"
 #include "src/usecase/gun/gun_manager_service.h"
 #include "src/usecase/osd/cms/osd_cms.h"
 #include "src/usecase/osd/stream/osd_stream.h"
@@ -30,15 +31,15 @@ public:
     GunRepository *getRepoGun() const;
     TrackRepository *getRepoTrack() const;
     FireTriangleRepository *getRepoFireTriangle() const;
+    WeaponTrackAssignmentRepository *getRepoTrackWeaponAssign() const;
 
     TrackStream *getServiceTrackStream() const;
     GunStream *getServiceGunStream() const;
     FireTriangleStream *getServiceFireTriangle() const;
 
     GunManagerService *getServiceGunManager() const;
-
     WeaponAssignService *getServiceWeaponAssign() const;
-
+    WeaponTrackAssignService *getServiceWeaponTrackAssign() const;
     GunFiringService *getServiceWeaponFiring() const;
 
 protected:
@@ -53,7 +54,8 @@ private:
     GunRepository *repoGun;
     TrackRepository *repoTrack;
     FireTriangleRepository *repoFireTriangle;
-    WeaponAssignmentRepository  *repoWeaponAssign;
+    WeaponAssignmentRepository *repoWeaponAssign;
+    WeaponTrackAssignmentRepository *repoTrackWeaponAssign;
 
     // TODO: add weapon track engagement repository
 
@@ -63,9 +65,8 @@ private:
     GunManagerService *serviceGunManager;
     WeaponAssignService *serviceWeaponAssign;
     GunFiringService *serviceWeaponFiring;
+    WeaponTrackAssignService *serviceWeaponTrackAssign;
 
-
-    // TODO: add weapon track engagement service
     // TODO: add engagement correction service
 
     TrackStream *serviceTrackStream;
@@ -73,7 +74,6 @@ private:
     GunStream *serviceGunStream;
     // TODO: add weapon track engagement stream service
     FireTriangleStream *serviceFireTriangle;
-
 };
 
 #endif // DI_H

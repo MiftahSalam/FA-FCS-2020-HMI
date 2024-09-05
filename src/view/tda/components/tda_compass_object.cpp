@@ -13,9 +13,6 @@ void TdaCompassObject::Draw(QPainter *painter, const int &side, const int &width
 {
     QPoint center_point = QPoint(width/2,height/2);
 
-    //TODO: get from config
-    // const bool show_compass = true;
-    // bool show_compass;
     if (tdaConfig->getCompassStatus() == true)
     {
         painter->translate(center_point);

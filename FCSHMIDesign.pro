@@ -38,6 +38,7 @@ SOURCES += \
     src/infra/http/http_client_wrapper.cpp \
     src/infra/messaging/serial/serial_messaging_wrapper.cpp \
     src/infra/messaging/tcp/tcp_messaging_wrapper.cpp \
+    src/infra/store/engagement/engagement_repository.cpp \
     src/infra/store/engagement/inmemory/engagement_data_correction_repository_inmem_impl.cpp \
     src/infra/store/engagement/inmemory/engagement_data_repository_inmem_impl.cpp \
     src/infra/store/fire_triangle/fire_triangle_repository.cpp \
@@ -59,6 +60,8 @@ SOURCES += \
     src/infra/store/weapon_track_assign/weapon_track_assignment_repository_inmem_impl.cpp \
     src/main.cpp \
     src/model/engagement/cms/engagement_correction_set_request.cpp \
+    src/model/engagement/cms/track_assign_request.cpp \
+    src/model/engagement/cms/track_assign_response.cpp \
     src/model/engagement/engagement_data_model.cpp \
     src/model/fire_triangle/fire_triangle_model.cpp \
     src/model/gun/cms/gun_command_barrel_request.cpp \
@@ -87,6 +90,7 @@ SOURCES += \
     src/model/track/arpa/track_arpa_model.cpp \
     src/shared/common/errors/err_amqp.cpp \
     src/shared/common/errors/err_base.cpp \
+    src/shared/common/errors/err_engagement.cpp \
     src/shared/common/errors/err_http.cpp \
     src/shared/common/errors/err_json_parse.cpp \
     src/shared/common/errors/err_messaging.cpp \
@@ -102,9 +106,11 @@ SOURCES += \
     src/shared/config/messaging_tcp_config.cpp \
     src/shared/config/osd_cms_config.cpp \
     src/shared/config/tda_config.cpp \
+    src/shared/config/track_weapon_assign_config.cpp \
     src/shared/utils/track/track_utils.cpp \
     src/shared/utils/utils.cpp \
     src/usecase/engagement/cms/engagement_data_correction_40mm_service.cpp \
+    src/usecase/engagement/cms/track_weapon_engage_service.cpp \
     src/usecase/engagement/stream/engagement_data_40mm_stream.cpp \
     src/usecase/engagement/weapon_track_assign_service.cpp \
     src/usecase/fire_triangle/stream/fire_triangle_service.cpp \
@@ -158,6 +164,7 @@ SOURCES += \
     src/view/panel/wap/frame_weapon_assign.cpp \
     src/view/shared/frame_text_input.cpp \
     src/view/tda/components/tda_compass_object.cpp \
+    src/view/tda/components/tda_fire_triangle_object.cpp \
     src/view/tda/components/tda_gun_barrel_object.cpp \
     src/view/tda/components/tda_gun_coverage_object.cpp \
     src/view/tda/components/tda_heading_marker_object.cpp \
@@ -218,6 +225,7 @@ HEADERS += \
     src/infra/http/http_client_wrapper.h \
     src/infra/messaging/serial/serial_messaging_wrapper.h \
     src/infra/messaging/tcp/tcp_messaging_wrapper.h \
+    src/infra/store/engagement/engagement_repository.h \
     src/infra/store/engagement/inmemory/engagement_data_correction_repository_inmem_impl.h \
     src/infra/store/engagement/inmemory/engagement_data_repository_inmem_impl.h \
     src/infra/store/fire_triangle/fire_triangle_repository.h \
@@ -242,6 +250,8 @@ HEADERS += \
     src/model/base_request.h \
     src/model/base_response.h \
     src/model/engagement/cms/engagement_correction_set_request.h \
+    src/model/engagement/cms/track_assign_request.h \
+    src/model/engagement/cms/track_assign_response.h \
     src/model/engagement/engagement_data_model.h \
     src/model/fire_triangle/fire_triangle_model.h \
     src/model/gun/cms/gun_command_barrel_request.h \
@@ -273,6 +283,7 @@ HEADERS += \
     src/model/track/arpa/track_arpa_model.h \
     src/shared/common/errors/err_amqp.h \
     src/shared/common/errors/err_base.h \
+    src/shared/common/errors/err_engagement.h \
     src/shared/common/errors/err_http.h \
     src/shared/common/errors/err_json_parse.h \
     src/shared/common/errors/err_messaging.h \
@@ -290,9 +301,11 @@ HEADERS += \
     src/shared/config/messaging_tcp_config.h \
     src/shared/config/osd_cms_config.h \
     src/shared/config/tda_config.h \
+    src/shared/config/track_weapon_assign_config.h \
     src/shared/utils/track/track_utils.h \
     src/shared/utils/utils.h \
     src/usecase/engagement/cms/engagement_data_correction_40mm_service.h \
+    src/usecase/engagement/cms/track_weapon_engage_service.h \
     src/usecase/engagement/stream/engagement_data_40mm_stream.h \
     src/usecase/engagement/stream/engagement_data_base_stream.h \
     src/usecase/engagement/weapon_track_assign_service.h \
@@ -354,6 +367,7 @@ HEADERS += \
     src/view/shared/constant_ui.h \
     src/view/shared/frame_text_input.h \
     src/view/tda/components/tda_compass_object.h \
+    src/view/tda/components/tda_fire_triangle_object.h \
     src/view/tda/components/tda_gun_barrel_object.h \
     src/view/tda/components/tda_gun_coverage_object.h \
     src/view/tda/components/tda_heading_marker_object.h \

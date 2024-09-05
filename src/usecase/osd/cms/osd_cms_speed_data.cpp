@@ -67,7 +67,6 @@ void OSDCMSSpeedData::onReplyFinished()
 
     resp = toResponse(respRaw);
 
-    //TODO: update repo
     repoSpeed->SetSpeed(OSDSpeedEntity(
                              resp.getData().getSpeed(),
                              resp.getData().getCourse(),

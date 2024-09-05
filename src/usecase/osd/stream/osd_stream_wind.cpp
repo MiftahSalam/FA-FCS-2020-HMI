@@ -66,7 +66,6 @@ void OSDStreamWind::onDataReceived(QByteArray data)
 
         auto windMode = serviceMode->getDataMode().getWind();
         if (!windMode) {
-            //TODO: update repo
             _repoWind->SetWind(OSDWindEntity(
                                    model.getSpeed(),
                                    model.getDirection(),

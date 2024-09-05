@@ -32,7 +32,6 @@ void GunCommandBarrelService::onReplyFinished()
 
     resp = toResponse(respRaw);
 
-    //TODO: update repo
     _repoGunCmd->SetBarrel(resp.getData().getAzimuth(), resp.getData().getElevation());
 
     emit signal_setBarrelResponse(resp);

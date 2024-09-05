@@ -2,17 +2,18 @@
 
 #include <QDir>
 
-const QString COMMON_CONFIG_PATH = QDir::homePath()+QDir::separator()+".fa-hmi.conf";
+const QString COMMON_CONFIG_PATH = QDir::homePath() + QDir::separator() + ".fa-hmi.conf";
 
 Configuration::Configuration()
 {
     osdCmsConfig = OSDCmsConfig::getInstance(COMMON_CONFIG_PATH);
     arpaConfig = ArpaConfig::getInstance(COMMON_CONFIG_PATH);
     gunCmsConfig = GunCmsConfig::getInstance(COMMON_CONFIG_PATH);
-//    amqpConfig = AMQPConfig::getInstance(COMMON_CONFIG_PATH);
+    //    amqpConfig = AMQPConfig::getInstance(COMMON_CONFIG_PATH);
     tcpMessageConfig = MessagingTcpConfig::getInstance(COMMON_CONFIG_PATH);
     serialMessageConfig = MessagingSerialConfig::getInstance(COMMON_CONFIG_PATH);
     tdaConfig = TDAConfig::getInstance(COMMON_CONFIG_PATH);
+    trackWeaponAssignCmsConfig = TrackWeaponAssignConfig::getInstance(COMMON_CONFIG_PATH);
 }
 
 OSDCmsConfig *Configuration::getOsdCmsConfig() const
@@ -45,7 +46,12 @@ MessagingSerialConfig *Configuration::getSerialMessageConfig() const
     return serialMessageConfig;
 }
 
-//AMQPConfig *Configuration::getAmqpConfig() const
+TrackWeaponAssignConfig *Configuration::getTrackWeaponAssignCmsConfig() const
+{
+    return trackWeaponAssignCmsConfig;
+}
+
+// AMQPConfig *Configuration::getAmqpConfig() const
 //{
-//    return amqpConfig;
-//}
+//     return amqpConfig;
+// }

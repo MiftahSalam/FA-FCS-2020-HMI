@@ -23,6 +23,9 @@ public:
     const WeaponAssign* GetAssignment(const QString &weapon);
     QList<WeaponAssign*> GetAllAssignment() const;
 
+signals:
+    void OnAssignModeChange(const QString &weapon, const WeaponAssign::WeaponAssignMode &mode);
+
 protected:
     WeaponAssignService(
             QObject *parent = nullptr,

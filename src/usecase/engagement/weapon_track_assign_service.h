@@ -2,8 +2,12 @@
 #define WEAPONTRACKASSIGNSERVICE_H
 
 #include "src/domain/engagement/repository/weapon_track_assign_repository.h"
+#include "src/domain/gun/repository/gun_coverage_repository.h"
+#include "src/domain/osd/repository/osd_inertia_repository.h"
+#include "src/domain/track/repository/track_base_repository.h"
 #include "src/domain/weapon_assign/repository/weapon_assignment_repository.h"
-#include "src/infra/http/http_client_wrapper.h"
+#include "src/shared/config/track_weapon_assign_config.h"
+#include "src/usecase/engagement/cms/track_weapon_engage_service.h"
 #include <QObject>
 
 class WeaponTrackAssignService : public QObject
@@ -13,41 +17,57 @@ public:
     WeaponTrackAssignService(WeaponTrackAssignService &other) = delete;
     void operator=(const WeaponTrackAssignService&) = delete;
     static WeaponTrackAssignService* getInstance(
-            HttpClientWrapper *httpClient,
-            // TODO: add track engage cms config
-//            TrackEngageCmsConfig *cmsConfig = nullptr,
+            QObject *parent = nullptr,
+            TrackWeaponAssignConfig *cmsConfig = nullptr,
+            GunCoverageRepository* repoGunCov = nullptr,
+            TrackBaseRepository* repoTrack = nullptr,
+            OSDInertiaRepository* repoInertia = nullptr,
+            TrackWeaponEngageService *cmsEngageService = nullptr,
             WeaponAssignmentRepository *repoWA = nullptr,
             WeaponTrackAssignmentRepository *repoWTA = nullptr
             );
 
-    // TODO: implementation
-    bool SetEngagement(const QString &weapon, const int &trackId);
-    bool BreakEngagement(const QString &weapon, const int &trackId);
+    bool IsWeaponEngaged(const QString &weapon);
+    bool IsEngage(const QString &weapon, const int &trackId);
+    void SetEngagement(const QString &weapon, const int &trackId);
+    void BreakEngagement(const QString &weapon, const int &trackId);
+    void BreakEngagementTrack(const int &trackId);
+    void BreakEngagementWeapon(const QString &weapon);
     const WeaponTrackAssignEntity* GetEngagementTrack(const QString &weapon) const;
-    QList<WeaponTrackAssignEntity*> GetEngagementWeapons(const int &trackId) const;
+    const QStringList GetEngagementWeapons(const int &trackId) const;
     QList<WeaponTrackAssignEntity*> GetAllEngagement() const;
 
 signals:
 //    void signal_setTrackAssignResponse(BaseResponse<TrackAssignModel> response);
+    void signal_assignmentResponseData(BaseResponse<TrackAssignResponse> response, bool assign);
 
 protected:
     WeaponTrackAssignService(
-            HttpClientWrapper *parent = nullptr,
+            QObject *parent = nullptr,
+            TrackWeaponAssignConfig *cmsConfig = nullptr,
+            GunCoverageRepository* repoGunCov = nullptr,
+            TrackBaseRepository* repoTrack = nullptr,
+            OSDInertiaRepository* repoInertia = nullptr,
+            TrackWeaponEngageService *cmsEngageService = nullptr,
             WeaponAssignmentRepository *repoWA = nullptr,
             WeaponTrackAssignmentRepository *repoWTA = nullptr
             );
 
 private slots:
-    void onReplyFinished();
+    void onTrackAssignmentResponse(BaseResponse<TrackAssignResponse> resp, bool assign);
 
 private:
     static WeaponTrackAssignService *instance;
 
+    TrackWeaponAssignConfig *_cmsConfig = nullptr;
+    TrackWeaponEngageService *_cmsEngageService;
+    GunCoverageRepository* _repoGunCov;
+    TrackBaseRepository* _repoTrack;
+    OSDInertiaRepository* _repoInertia;
     WeaponAssignmentRepository *_repoWA;
     WeaponTrackAssignmentRepository *_repoWTA;
 
-    //    BaseResponse<TrackAssignModel> toResponse(QByteArray raw) override;
-    //    BaseResponse<TrackAssignModel> errorResponse(QNetworkReply::NetworkError err) override;
+    bool isEngageable(const int trackId);
 };
 
 #endif // WEAPONTRACKASSIGNSERVICE_H

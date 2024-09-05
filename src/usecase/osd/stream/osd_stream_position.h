@@ -50,7 +50,6 @@ private:
     TcpMessagingOpts *cfg;
     OSDPositionRepository* _repoPos;
     OSDCMSInputMode *serviceMode;
-    // TODO: add input mode repo
 //    AMQPConfig *cfg;
 
     BaseError currentErr;

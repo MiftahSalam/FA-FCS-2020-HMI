@@ -57,6 +57,10 @@ void WeaponAssignService::resetAllAssignment()
 
 bool WeaponAssignService::SetAssignment(const std::string &weapon, const WeaponAssign::WeaponAssignMode &mode)
 {
+    auto curMode = GetAssignment(QString::fromStdString(weapon))->getMode();
+    if (curMode != mode) {
+        emit OnAssignModeChange(QString::fromStdString(weapon), mode);
+    }
     return _repoWA->SetAssignment(weapon, mode);
 }
 
