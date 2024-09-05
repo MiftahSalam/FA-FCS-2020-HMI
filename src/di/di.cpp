@@ -19,7 +19,7 @@ DI::DI()
     serviceOSDCMS = new OSDCMS(nullptr, config->getOsdCmsConfig(), repoOSD);
     serviceGunManager = GunManagerService::getInstance(nullptr, config->getGunCmsConfig(), repoGun->getRepoGunFeedback(), repoGun->getRepoGunCmd());
     serviceWeaponAssign = WeaponAssignService::getInstance(nullptr, repoWeaponAssign);
-    // TODO: add weapon assignment service
+    serviceWeaponFiring = GunFiringService::getInstance(nullptr, config->getSerialMessageConfig(), repoGun->getRepoGunFeedback());
 
     // TODO: add weapon track engagement service
     serviceTrackStream = new TrackStream(nullptr, config->getTcpMessageConfig(), config->getArpaConfig(), repoTrack);
@@ -29,6 +29,11 @@ DI::DI()
     serviceGunStream = new GunStream(nullptr, config->getTcpMessageConfig(), repoGun);
     // TODO: add weapon track engagement stream service
     serviceFireTriangle = new FireTriangleStream(nullptr, config->getTcpMessageConfig(), repoFireTriangle);
+}
+
+GunFiringService *DI::getServiceWeaponFiring() const
+{
+    return serviceWeaponFiring;
 }
 
 WeaponAssignService *DI::getServiceWeaponAssign() const

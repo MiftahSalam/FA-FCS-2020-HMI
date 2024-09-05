@@ -67,7 +67,7 @@ void GunFiringService::setOpenFire(const QString &weapon, bool open)
 
 GunFiringService *GunFiringService::getInstance(
         QObject *parent,
-        SerialMessagingOpts *serialConfig,
+        MessagingSerialConfig *serialConfig,
         GunFeedbackRepository *gunStatusREpo,
         WeaponTrackAssignService *wtaService
     )
@@ -87,7 +87,9 @@ GunFiringService *GunFiringService::getInstance(
             throw ErrObjectCreation();
         }
 
-        instance = new GunFiringService(parent, serialConfig, gunStatusREpo, wtaService);
+        SerialMessagingOpts *gunFiringStreamVal = serialConfig->getInstance("")->getContent().value("fire_button");
+
+        instance = new GunFiringService(parent, gunFiringStreamVal, gunStatusREpo, wtaService);
     }
 
     return instance;

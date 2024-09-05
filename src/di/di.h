@@ -7,6 +7,7 @@
 #include "src/infra/store/osd/osd_repository.h"
 #include "src/infra/store/track/track_repository.h"
 #include "src/shared/config/configuration.h"
+#include "src/usecase/gun/gun_firing_service.h"
 #include "src/usecase/gun/gun_manager_service.h"
 #include "src/usecase/osd/cms/osd_cms.h"
 #include "src/usecase/osd/stream/osd_stream.h"
@@ -38,6 +39,8 @@ public:
 
     WeaponAssignService *getServiceWeaponAssign() const;
 
+    GunFiringService *getServiceWeaponFiring() const;
+
 protected:
     DI();
 
@@ -59,6 +62,7 @@ private:
     OSDCMS *serviceOSDCMS;
     GunManagerService *serviceGunManager;
     WeaponAssignService *serviceWeaponAssign;
+    GunFiringService *serviceWeaponFiring;
 
 
     // TODO: add weapon track engagement service

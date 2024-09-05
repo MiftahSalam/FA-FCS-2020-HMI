@@ -18,7 +18,7 @@ public:
     void operator=(const GunFiringService &) = delete;
     static GunFiringService *getInstance(
             QObject *parent = nullptr,
-            SerialMessagingOpts *serialConfig = nullptr,
+            MessagingSerialConfig *serialConfig = nullptr,
             GunFeedbackRepository *gunStatusREpo = nullptr,
             WeaponTrackAssignService *wtaService = nullptr);
 
