@@ -1,5 +1,4 @@
 #include "gun_firing_service.h"
-#include "src/di/di.h"
 #include "src/shared/common/errors/err_object_creation.h"
 
 GunFiringService *GunFiringService::instance = nullptr;
@@ -8,15 +7,17 @@ GunFiringService::GunFiringService(
         QObject *parent,
         SerialMessagingOpts *serialConfig,
         GunFeedbackRepository *gunStatusREpo,
+        WeaponAssignService *waService,
         WeaponTrackAssignService *wtaService
         )
     :
       QObject{parent},
       _feedbackStatusRepository(gunStatusREpo),
+      _waService(waService),
       _wtaService(wtaService),
       _openFire(true)
 {
-    auto weapons = DI::getInstance()->getServiceWeaponAssign()->getAvailableWeapons();
+    auto weapons = waService->getAvailableWeapons();
     foreach (auto weapon, weapons) {
         firingPorts.insert(weapon, nullptr);
     }
@@ -65,12 +66,12 @@ void GunFiringService::setOpenFire(const QString &weapon, bool open)
     }
 }
 
-GunFiringService *GunFiringService::getInstance(
-        QObject *parent,
-        MessagingSerialConfig *serialConfig,
-        GunFeedbackRepository *gunStatusREpo,
-        WeaponTrackAssignService *wtaService
-    )
+GunFiringService *GunFiringService::getInstance(QObject *parent,
+                                                MessagingSerialConfig *serialConfig,
+                                                GunFeedbackRepository *gunStatusREpo,
+                                                WeaponAssignService *waService,
+                                                WeaponTrackAssignService *wtaService
+                                                )
 {
     if(instance == nullptr)
     {
@@ -83,13 +84,17 @@ GunFiringService *GunFiringService::getInstance(
             throw ErrObjectCreation();
         }
 
-        if(wtaService == nullptr) {
+        if(waService == nullptr) {
             throw ErrObjectCreation();
         }
 
+        if(wtaService == nullptr) {
+            throw ErrObjectCreation();
+        }
         SerialMessagingOpts *gunFiringStreamVal = serialConfig->getInstance("")->getContent().value("fire_button");
 
-        instance = new GunFiringService(parent, gunFiringStreamVal, gunStatusREpo, wtaService);
+
+        instance = new GunFiringService(parent, gunFiringStreamVal, gunStatusREpo, waService, wtaService);
     }
 
     return instance;

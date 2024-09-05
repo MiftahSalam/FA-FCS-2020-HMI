@@ -6,6 +6,7 @@
 #include "src/infra/messaging/serial/serial_messaging_wrapper.h"
 #include "src/shared/config/messaging_serial_config.h"
 #include "src/usecase/engagement/weapon_track_assign_service.h"
+#include "src/usecase/weapon_assign/weapon_assign_service.h"
 #include <QObject>
 
 class GunFiringService : public QObject
@@ -20,6 +21,7 @@ public:
             QObject *parent = nullptr,
             MessagingSerialConfig *serialConfig = nullptr,
             GunFeedbackRepository *gunStatusREpo = nullptr,
+            WeaponAssignService *waService = nullptr,
             WeaponTrackAssignService *wtaService = nullptr);
 
 
@@ -30,6 +32,7 @@ protected:
             QObject *parent = nullptr,
             SerialMessagingOpts *serialConfig = nullptr,
             GunFeedbackRepository *gunStatusREpo = nullptr,
+            WeaponAssignService *waService = nullptr,
             WeaponTrackAssignService *wtaService = nullptr
             );
 
@@ -43,6 +46,7 @@ private:
     QTimer* timer;
     SerialMessagingOpts *_cmsConfig;
     GunFeedbackRepository *_feedbackStatusRepository;
+    WeaponAssignService *_waService;
     WeaponTrackAssignService *_wtaService;
     QMap<QString, SerialMessagingWrapper*> firingPorts;
 
