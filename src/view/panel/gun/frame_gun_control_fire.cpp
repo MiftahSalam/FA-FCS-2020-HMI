@@ -42,7 +42,7 @@ void FrameGunControlFire::OnPushButtonFireClick()
         setupUIOpenFire();
     }
 
-    _fireService->setOpenFire("40mm", !_openFire);
+    _fireService->setOpenFire("40mm", _openFire);
 }
 
 void FrameGunControlFire::setupDI()

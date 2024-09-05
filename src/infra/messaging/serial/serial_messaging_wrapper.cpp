@@ -66,7 +66,7 @@ void SerialMessagingWrapper::onReadyRead()
 void SerialMessagingWrapper::setupSerial()
 {
     serialPort->setPortName(config->portname);
-    if (!serialPort->open(QIODevice::ReadOnly)) {
+    if (!serialPort->open(QIODevice::ReadWrite)) {
         qDebug()<<Q_FUNC_INFO<<"error open serial port"<<config->portname<<"with error"<<serialPort->errorString();
         return;
     }
