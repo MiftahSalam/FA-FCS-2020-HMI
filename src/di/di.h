@@ -14,6 +14,8 @@
 #include "src/usecase/gun/stream/gun_stream.h"
 #include "src/usecase/fire_triangle/stream/fire_triangle_stream.h"
 #include "src/usecase/weapon_assign/weapon_assign_service.h"
+#include "src/infra/store/engagement/engagement_repository.h"
+#include "src/usecase/engagement/stream/engagement_stream.h"
 
 class DI
 {
@@ -29,6 +31,7 @@ public:
     GunRepository *getRepoGun() const;
     TrackRepository *getRepoTrack() const;
     FireTriangleRepository *getRepoFireTriangle() const;
+    EngagementRepository *getRepoEngagementData() const;
 
     TrackStream *getServiceTrackStream() const;
     GunStream *getServiceGunStream() const;
@@ -37,6 +40,8 @@ public:
     GunManagerService *getServiceGunManager() const;
 
     WeaponAssignService *getServiceWeaponAssign() const;
+
+    EngagementStream *getServiceEngagement() const;
 
 protected:
     DI();
@@ -51,6 +56,7 @@ private:
     TrackRepository *repoTrack;
     FireTriangleRepository *repoFireTriangle;
     WeaponAssignmentRepository  *repoWeaponAssign;
+    EngagementRepository *repoEngagement;
 
     // TODO: add weapon track engagement repository
 
@@ -69,6 +75,7 @@ private:
     GunStream *serviceGunStream;
     // TODO: add weapon track engagement stream service
     FireTriangleStream *serviceFireTriangle;
+    EngagementStream *serviceEngagement;
 
 };
 
