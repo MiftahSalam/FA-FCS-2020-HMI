@@ -14,7 +14,7 @@ TDAGunCoverageObject::TDAGunCoverageObject(QObject *parent, OSDInertiaRepository
     tdaConfig(configTDA)
 {
     repoInertia->SetInertia(OSDInertiaEntity(0,0,0,"","",OSD_MODE::AUTO));
-    repoGunCov->SetGunCoverage(GunCoverageEntity(2000,90,0));
+    repoGunCov->SetGunCoverage(GunCoverageEntity(10000,120,0));
 }
 
 void TDAGunCoverageObject::Draw(QPainter *painter, const int &side, const int &width, const int &height, const QPoint &off_center)

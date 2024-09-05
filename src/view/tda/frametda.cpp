@@ -6,6 +6,7 @@
 #include "src/view/tda/components/tda_heading_marker_object.h"
 #include "src/view/tda/components/tda_gun_barrel_object.h"
 #include "src/view/tda/components/track/tda_tracks_object.h"
+#include "src/view/tda/components/tda_fire_triangle_object.h"
 
 #include "ui_frametda.h"
 
@@ -340,8 +341,9 @@ void FrameTDA::setupTdaObjects()
     TDAHeadingMarkerObject *headingMarker = new TDAHeadingMarkerObject(this, osdRepo->getRepoOSDInertia(), tdaConfig);
     TDAGunBarrelObject *gunBarrel = new TDAGunBarrelObject(this, osdRepo->getRepoOSDInertia(), gunRepo->getRepoGunFeedback(), tdaConfig);
     TDATracksObject *tracksObject = new TDATracksObject(this, trackRepo->getRepoTrackArpa(), tdaScale);
+    TDAFireTriangleObject *fireTriangle = new TDAFireTriangleObject(this, fireTriangleRepo->getRepoFT40mm(), tdaConfig);
 
-    objectItems << compass << tracksObject << headingMarker << gunBarrel << gunCoverage;
+    objectItems << compass << tracksObject << headingMarker << gunBarrel << gunCoverage << fireTriangle;
 }
 
 void FrameTDA::setupDI()
@@ -350,6 +352,7 @@ void FrameTDA::setupDI()
     gunRepo = DI::getInstance()->getRepoGun();
     tdaConfig = DI::getInstance()->getConfig()->getTDAConfig();
     trackRepo = DI::getInstance()->getRepoTrack();
+    fireTriangleRepo = DI::getInstance()->getRepoFireTriangle();
 
     tdaScale = tdaConfig->getZoomScale();
 }
