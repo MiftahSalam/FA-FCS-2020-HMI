@@ -30,35 +30,37 @@ TDAFireTriangleObject::TDAFireTriangleObject(
 void TDAFireTriangleObject::Draw(QPainter *painter, const int &side, const int &width, const int &height, const QPoint &off_center)
 {
     if (currAssignedTrack > 0) {
-        tdaScale = tdaConfig->getZoomScale();
-
-        QPoint center_point = QPoint(width/2,height/2);
-//        float ttlf = fireTriangleRepo->GetFireTriangle()->getTTLF();
-        float ttlf_x = fireTriangleRepo->GetFireTriangle()->getTTLFX();
-        float ttlf_y = fireTriangleRepo->GetFireTriangle()->getTTLFY();
-        //konversi ke NM
-        float ttlf_x_NM = ttlf_x/1852;
-        float ttlf_y_NM = ttlf_y/1852;
-
-        int ttlf_x_Pixel = Utils::range2Pixel(ttlf_x_NM, tdaScale, width, height);
-        int ttlf_y_Pixel = Utils::range2Pixel(ttlf_y_NM, tdaScale, width, height);
-//        int ttlf_x_Pixel =  (int)(ttlf_x_NM*(side/tdaScale));
-//        int ttlf_y_Pixel = (int)(ttlf_y_NM*(side/tdaScale));
-
         auto track = arpaRepo->FindOne(currAssignedTrack);
         if (track) {
+
+            tdaScale = tdaConfig->getZoomScale();
+
+            QPoint center_point = QPoint(width/2,height/2);
+            //        float ttlf = fireTriangleRepo->GetFireTriangle()->getTTLF();
+            float ttlf_x = fireTriangleRepo->GetFireTriangle()->getTTLFX();
+            float ttlf_y = fireTriangleRepo->GetFireTriangle()->getTTLFY();
+            //konversi ke NM
+            float ttlf_x_NM = ttlf_x/1852;
+            float ttlf_y_NM = ttlf_y/1852;
+
+            int ttlf_x_Pixel = Utils::range2Pixel(ttlf_x_NM, tdaScale, width, height);
+            int ttlf_y_Pixel = Utils::range2Pixel(ttlf_y_NM, tdaScale, width, height);
+            //        int ttlf_x_Pixel =  (int)(ttlf_x_NM*(side/tdaScale));
+            //        int ttlf_y_Pixel = (int)(ttlf_y_NM*(side/tdaScale));
+
             //posisi track
-//            float range = 3704/1852; // konversi m to NM
-//            int rangePixel = (int)(range*(side/tdaScale));
-//            float bearing = 23;
+            //            float range = 3704/1852; // konversi m to NM
+            //            int rangePixel = (int)(range*(side/tdaScale));
+            //            float bearing = 23;
 
             float range = track->getRange();
             int rangePixel = (int)(range*(side/tdaScale));
             float bearing = track->getBearing();
 
+            QSize trackIconSize(15,10);
             const double rad2deg = (bearing - 90) * M_PI / 180;
-            int track_x_Pixel = rangePixel * qCos(rad2deg);
-            int track_y_Pixel = rangePixel * qSin(rad2deg);
+            int track_x_Pixel = (rangePixel * qCos(rad2deg)) + trackIconSize.width();
+            int track_y_Pixel = (rangePixel * qSin(rad2deg)) + trackIconSize.height();
 
             // qDebug()<<"range"<<rangePixel<<"track X"<<track_x_Pixel<<"track Y"<<track_y_Pixel;
 
