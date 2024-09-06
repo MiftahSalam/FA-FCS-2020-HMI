@@ -27,6 +27,7 @@ public:
             WeaponTrackAssignmentRepository *repoWTA = nullptr
             );
 
+    void CheckUpdateEngagement(const QString &weapon);
     bool IsWeaponEngaged(const QString &weapon);
     bool IsEngage(const QString &weapon, const int &trackId);
     void SetEngagement(const QString &weapon, const int &trackId);

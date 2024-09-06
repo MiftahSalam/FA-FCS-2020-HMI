@@ -195,6 +195,8 @@ void FrameTrackEngage::onGunCheck()
 
         currentGunMode = curMode;
     }
+
+    _wtaService->CheckUpdateEngagement(ui->comboBoxTrackEngWeapon->currentText());
 }
 
 void FrameTrackEngage::onAssignModeChange(const QString &weapon, const WeaponAssign::WeaponAssignMode &mode)

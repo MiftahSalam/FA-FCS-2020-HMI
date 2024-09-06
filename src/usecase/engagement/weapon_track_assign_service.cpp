@@ -80,6 +80,18 @@ WeaponTrackAssignService *WeaponTrackAssignService::getInstance(QObject *parent,
     return instance;
 }
 
+void WeaponTrackAssignService::CheckUpdateEngagement(const QString &weapon)
+{
+    if(IsWeaponEngaged(weapon)) {
+        auto curEngage = GetEngagementTrack(weapon);
+        if (curEngage) {
+            if (!isEngageable(curEngage->getTrackId())) {
+                BreakEngagement(weapon, curEngage->getTrackId());
+            }
+        }
+    }
+}
+
 void WeaponTrackAssignService::onTrackAssignmentResponse(BaseResponse<TrackAssignResponse> resp, bool assign)
 {
     if (resp.getHttpCode() == 0)
@@ -203,7 +215,15 @@ void WeaponTrackAssignService::BreakEngagementWeapon(const QString &weapon)
 
 const WeaponTrackAssignEntity *WeaponTrackAssignService::GetEngagementTrack(const QString &weapon) const
 {
+    auto wta = _repoWTA->GetAllEngagement();
+    QList<WeaponTrackAssignEntity*> wta_list(wta.begin(), wta.end());
+    foreach (auto wta, wta_list) {
+        if (wta->getWeapon() == weapon.toStdString()) {
+            return wta;
+        }
+    }
 
+    return nullptr;
 }
 
 const QStringList WeaponTrackAssignService::GetEngagementWeapons(const int &trackId) const
