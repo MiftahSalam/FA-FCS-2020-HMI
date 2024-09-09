@@ -18,10 +18,16 @@ public:
     explicit FrameGunCorrection(QWidget *parent = nullptr);
     ~FrameGunCorrection();
 
+private slots:
+    void on_pushButtonCorrectionApply_clicked();
+
 private:
     Ui::FrameGunCorrection *ui;
 
     EngagementDataCorrection40mmService *engageCorrService;
+
+    bool validateInput();
+    void setupDI();
 
 
 };
