@@ -3,12 +3,11 @@
 
 EngagementDataCorrection40mmService* EngagementDataCorrection40mmService::instance = nullptr;
 
-EngagementDataCorrection40mmService::EngagementDataCorrection40mmService(
-        HttpClientWrapper *parent,
-        // TODO: add engagement correction cms config
-//            GunCmsConfig *cmsConfig = nullptr,
-        EngagementDataCorrectionRepository *repoEngCorr
-        ): QObject{parent}, _repoEngCorr(repoEngCorr)
+EngagementDataCorrection40mmService::EngagementDataCorrection40mmService(HttpClientWrapper *parent, TrackWeaponAssignConfig *cmsConfig,
+                                                                         // TODO: add engagement correction cms config
+                                                                         //            GunCmsConfig *cmsConfig = nullptr,
+                                                                         EngagementDataCorrectionRepository *repoEngCorr
+                                                                         ): QObject{parent}, _repoEngCorr(repoEngCorr)
 {
     if(parent == nullptr) {
         throw ErrObjectCreation();
@@ -20,12 +19,11 @@ void EngagementDataCorrection40mmService::onReplyFinished()
 
 }
 
-EngagementDataCorrection40mmService *EngagementDataCorrection40mmService::getInstance(
-        HttpClientWrapper *httpClient = nullptr,
-        // TODO: add gun cms config
-//        OSDCmsConfig *cmsConfig = nullptr,
-        EngagementDataCorrectionRepository *repoEngCorr
-        )
+EngagementDataCorrection40mmService *EngagementDataCorrection40mmService::getInstance(HttpClientWrapper *httpClient = nullptr, TrackWeaponAssignConfig *cmsConfig,
+                                                                                      // TODO: add gun cms config
+                                                                                      //        OSDCmsConfig *cmsConfig = nullptr,
+                                                                                      EngagementDataCorrectionRepository *repoEngCorr
+                                                                                      )
 {
     if (instance == nullptr) {
         // TODO: add engagement correction cms config
