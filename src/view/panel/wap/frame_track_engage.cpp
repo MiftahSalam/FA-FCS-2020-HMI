@@ -40,8 +40,8 @@ void FrameTrackEngage::OnTracksAdded(std::list<TrackBaseEntity *> tnList)
 
     if (!trIds.isEmpty()) {
         ui->comboBoxTrackEngTN->insertItems(ui->comboBoxTrackEngTN->count(), trIds);
-        ui->comboBoxTrackEngTN->model()->sort(0);
     }
+    ui->comboBoxTrackEngTN->model()->sort(0);
 }
 
 void FrameTrackEngage::OnTracksRemoved(std::list<int> tnIdList)
