@@ -7,6 +7,7 @@
 #include "src/shared/config/messaging_tcp_config.h"
 #include "src/usecase/engagement/stream/engagement_data_base_stream.h"
 #include <QObject>
+#include <QTimer>
 
 class EngagementData40mmStream : public QObject, public EngagementStreamBase<EngagementDataModel>
 {
@@ -18,6 +19,9 @@ public:
             TcpMessagingOpts *config,
             EngagementDataRepository* repoEngagemenData);
 
+    void CreateEngage(const int &trackId);
+    void DeleteEngage();
+
     // EngagementStreamBase interface
     BaseError check() override;
 
@@ -28,6 +32,7 @@ signals:
     // EngagementStreamBase interface
 private slots:
     void onDataReceived(QByteArray data) override;
+    void periodeUpdate();
 
 protected:
     EngagementData40mmStream(
@@ -35,12 +40,17 @@ protected:
             EngagementDataRepository* _repoEngagemenData
             );
 
+    QTimer *timer;
+
 private:
     static EngagementData40mmStream *instance;
 
     TcpMessagingWrapper *consumer;
     TcpMessagingOpts *cfg;
     EngagementDataRepository* _repoEngagemenData;
+
+    BaseError currentErr;
+    int currentTrack;
 
 };
 

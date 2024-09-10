@@ -12,6 +12,7 @@ public:
     static EngagementDataRepository *GetInstance();
 
     // EngagementDataRepository interface
+    void UpdateEngagementBarrel(const EngagementDataEntity &data) override;
     bool AddEngagement(const EngagementDataEntity &data) override;
     bool RemoveEngagement(const WeaponTrackAssignEntity &wta) override;
     bool ClearAllEngagement() override;
