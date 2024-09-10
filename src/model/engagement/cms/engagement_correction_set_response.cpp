@@ -10,8 +10,8 @@ EngagementCorrectionSetResponse::EngagementCorrectionSetResponse(float azimuthCo
 EngagementCorrectionSetResponse EngagementCorrectionSetResponse::FromJsonObject(QJsonObject obj)
 {
     EngagementCorrectionSetResponse model(
-        obj.value("azimuth_correction").toDouble(),
-        obj.value("elevation_correction").toDouble()
+        obj.value("azimuth").toDouble(),
+        obj.value("elevation").toDouble()
         );
 
     return model;
