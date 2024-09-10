@@ -1,11 +1,14 @@
 #ifndef ENGAGEMENTDATACORRECTION40MMSERVICE_H
 #define ENGAGEMENTDATACORRECTION40MMSERVICE_H
 
-#include "src/domain/engagement/repository/engagement_data_correction_repository.h"
 #include "src/infra/http/http_client_wrapper.h"
+#include "src/model/base_response.h"
+#include "src/model/engagement/cms/engagement_correction_set_request.h"
+#include "src/model/engagement/cms/engagement_correction_set_response.h"
+#include "src/shared/config/track_weapon_assign_config.h"
 #include <QObject>
 
-class EngagementDataCorrection40mmService : public QObject
+class EngagementDataCorrection40mmService : public HttpClientWrapper
 {
     Q_OBJECT
 public:
@@ -13,23 +16,19 @@ public:
     void operator=(const EngagementDataCorrection40mmService&) = delete;
     static EngagementDataCorrection40mmService* getInstance(
             HttpClientWrapper *httpClient,
-            // TODO: add engagement correction cms config
-//            GunCmsConfig *cmsConfig = nullptr,
-            EngagementDataCorrectionRepository *repoEngCorr = nullptr
+            TrackWeaponAssignConfig *cmsConfig = nullptr
             );
 
     // TODO: add request methods implementation
-//    void setCorrection(EngagementCorrectionSetRequest request);
+   void setCorrection(EngagementCorrectionSetRequest request);
 
 signals:
-//    void signal_setCorrectionResponse(BaseResponse<EngagementCorrectionSetRequest> response);
+   void signal_setCorrectionResponse(BaseResponse<EngagementCorrectionSetResponse> response);
 
 protected:
     EngagementDataCorrection40mmService(
             HttpClientWrapper *parent = nullptr,
-            // TODO: add engagement correction cms config
-//            GunCmsConfig *cmsConfig = nullptr,
-            EngagementDataCorrectionRepository *repoEngCorr = nullptr
+            TrackWeaponAssignConfig *cmsConfig = nullptr
             );
 
 private slots:
@@ -37,12 +36,10 @@ private slots:
 
 private:
     static EngagementDataCorrection40mmService *instance;
-    // TODO: add engagement correction cms config
-    EngagementDataCorrectionRepository* _repoEngCorr;
+    TrackWeaponAssignConfig *cfgCms;
 
-//    BaseResponse<PositionModel> toResponse(QByteArray raw) override;
-//    BaseResponse<PositionModel> errorResponse(QNetworkReply::NetworkError err) override;
-
+    BaseResponse<EngagementCorrectionSetResponse> toResponse(QByteArray raw);
+    BaseResponse<EngagementCorrectionSetResponse> errorResponse(QNetworkReply::NetworkError err);
 };
 
 #endif // ENGAGEMENTDATACORRECTION40MMSERVICE_H

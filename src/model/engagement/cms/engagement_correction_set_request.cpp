@@ -1,4 +1,6 @@
 #include "engagement_correction_set_request.h"
+#include <QJsonObject>
+#include <QJsonDocument>
 
 EngagementCorrectionSetRequest::EngagementCorrectionSetRequest()
 {
@@ -8,6 +10,11 @@ EngagementCorrectionSetRequest::EngagementCorrectionSetRequest()
 
 QByteArray EngagementCorrectionSetRequest::toJSON()
 {
+    QJsonObject obj;
+    obj["azimuth_correction"] = azimuthCorrection;
+    obj["elevation_correction"] = elevationCorrection;
+
+    return QJsonDocument(obj).toJson();
 }
 
 float EngagementCorrectionSetRequest::getAzimuthCorrection() const

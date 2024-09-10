@@ -8,6 +8,7 @@
 #include "src/domain/weapon_assign/repository/weapon_assignment_repository.h"
 #include "src/shared/config/track_weapon_assign_config.h"
 #include "src/usecase/engagement/cms/track_weapon_engage_service.h"
+#include "src/usecase/engagement/cms/engagement_data_correction_40mm_service.h"
 #include <QObject>
 
 class WeaponTrackAssignService : public QObject
@@ -23,6 +24,7 @@ public:
             TrackBaseRepository* repoTrack = nullptr,
             OSDInertiaRepository* repoInertia = nullptr,
             TrackWeaponEngageService *cmsEngageService = nullptr,
+            EngagementDataCorrection40mmService *cmsEngageCorrService = nullptr,
             WeaponAssignmentRepository *repoWA = nullptr,
             WeaponTrackAssignmentRepository *repoWTA = nullptr
             );
@@ -31,6 +33,7 @@ public:
     bool IsWeaponEngaged(const QString &weapon);
     bool IsEngage(const QString &weapon, const int &trackId);
     void SetEngagement(const QString &weapon, const int &trackId);
+    void SetCorrection(float azimuth, float elevation);
     void BreakEngagement(const QString &weapon, const int &trackId);
     void BreakEngagementTrack(const int &trackId);
     void BreakEngagementWeapon(const QString &weapon);
@@ -41,6 +44,7 @@ public:
 signals:
 //    void signal_setTrackAssignResponse(BaseResponse<TrackAssignModel> response);
     void signal_assignmentResponseData(BaseResponse<TrackAssignResponse> response, bool assign);
+    void signal_engagementCorrResponse(BaseResponse<EngagementCorrectionSetResponse> response);
 
 protected:
     WeaponTrackAssignService(
@@ -50,6 +54,7 @@ protected:
             TrackBaseRepository* repoTrack = nullptr,
             OSDInertiaRepository* repoInertia = nullptr,
             TrackWeaponEngageService *cmsEngageService = nullptr,
+            EngagementDataCorrection40mmService *cmsEngageCorrService = nullptr,
             WeaponAssignmentRepository *repoWA = nullptr,
             WeaponTrackAssignmentRepository *repoWTA = nullptr
             );
@@ -62,6 +67,7 @@ private:
 
     TrackWeaponAssignConfig *_cmsConfig = nullptr;
     TrackWeaponEngageService *_cmsEngageService;
+    EngagementDataCorrection40mmService *_cmsEngageCorrService;
     GunCoverageRepository* _repoGunCov;
     TrackBaseRepository* _repoTrack;
     OSDInertiaRepository* _repoInertia;

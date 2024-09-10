@@ -60,6 +60,7 @@ SOURCES += \
     src/infra/store/weapon_track_assign/weapon_track_assignment_repository_inmem_impl.cpp \
     src/main.cpp \
     src/model/engagement/cms/engagement_correction_set_request.cpp \
+    src/model/engagement/cms/engagement_correction_set_response.cpp \
     src/model/engagement/cms/track_assign_request.cpp \
     src/model/engagement/cms/track_assign_response.cpp \
     src/model/engagement/engagement_data_model.cpp \
@@ -251,6 +252,7 @@ HEADERS += \
     src/model/base_request.h \
     src/model/base_response.h \
     src/model/engagement/cms/engagement_correction_set_request.h \
+    src/model/engagement/cms/engagement_correction_set_response.h \
     src/model/engagement/cms/track_assign_request.h \
     src/model/engagement/cms/track_assign_response.h \
     src/model/engagement/engagement_data_model.h \
