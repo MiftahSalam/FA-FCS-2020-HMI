@@ -8,6 +8,7 @@
 class EngagementDataRepository
 {
 public:
+    virtual void UpdateEngagementBarrel(const EngagementDataEntity &data) = 0;
     virtual bool AddEngagement(const EngagementDataEntity &data) = 0;
     virtual bool RemoveEngagement(const WeaponTrackAssignEntity &wta) = 0;
     virtual bool ClearAllEngagement() = 0;

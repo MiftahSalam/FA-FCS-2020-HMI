@@ -19,6 +19,9 @@ public:
             TcpMessagingOpts *config,
             EngagementDataRepository* repoEngagemenData);
 
+    void CreateEngage(const int &trackId);
+    void DeleteEngage();
+
     // EngagementStreamBase interface
     BaseError check() override;
 
@@ -47,6 +50,7 @@ private:
     EngagementDataRepository* _repoEngagemenData;
 
     BaseError currentErr;
+    int currentTrack;
 
 };
 

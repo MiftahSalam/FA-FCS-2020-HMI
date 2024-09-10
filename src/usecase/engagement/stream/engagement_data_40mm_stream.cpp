@@ -1,7 +1,6 @@
 #include "engagement_data_40mm_stream.h"
 #include "src/shared/common/errors/err_json_parse.h"
 #include "src/shared/common/errors/err_object_creation.h"
-#include "src/shared/common/errors/err_osd_data.h"
 #include "src/shared/utils/utils.h"
 
 EngagementData40mmStream* EngagementData40mmStream::instance = nullptr;
@@ -9,7 +8,7 @@ EngagementData40mmStream* EngagementData40mmStream::instance = nullptr;
 EngagementData40mmStream::EngagementData40mmStream(
         TcpMessagingOpts *config,
         EngagementDataRepository *repoEngagemenData)
-    : cfg(config), _repoEngagemenData(repoEngagemenData), currentErr(NoError())
+    : cfg(config), _repoEngagemenData(repoEngagemenData), currentErr(NoError()), currentTrack(-1)
 {
     consumer = new TcpMessagingWrapper(this, config);
     connect(consumer, &TcpMessagingWrapper::signalForwardMessage, this, &EngagementData40mmStream::onDataReceived);
@@ -40,16 +39,35 @@ EngagementData40mmStream *EngagementData40mmStream::getInstance(
     return instance;
 }
 
+void EngagementData40mmStream::CreateEngage(const int &trackId)
+{
+    if (_repoEngagemenData->AddEngagement(EngagementDataEntity(
+                                              WeaponTrackAssignEntity ("40mm", trackId),
+                                              GunBarrelEntity (0, 0),
+                                              EngagementDataEntity::EngagementStatus()
+                                              ))) {
+        currentTrack = trackId;
+    }
+
+}
+
+void EngagementData40mmStream::DeleteEngage()
+{
+    if(_repoEngagemenData->RemoveEngagement(WeaponTrackAssignEntity ("40mm", currentTrack))) {
+        currentTrack = -1;
+    }
+}
+
 void EngagementData40mmStream::onDataReceived(QByteArray data)
 {
     try {
         QJsonObject respObj = Utils::byteArrayToJsonObject(data);
-        EngagementDataModel model ("", respObj["azimuth"].toDouble(), respObj["elevation"].toDouble(), respObj["status"].toInt());
+        EngagementDataModel model ("40mm", respObj["azimuth"].toDouble(), respObj["elevation"].toDouble(), respObj["status"].toInt());
 
         qDebug()<<Q_FUNC_INFO<<"Engagement Data Azimuth"<<model.azimuth()<<"Elevation"<<model.elevation();
 
-        _repoEngagemenData->AddEngagement(EngagementDataEntity(
-            WeaponTrackAssignEntity ("",0),
+        _repoEngagemenData->UpdateEngagementBarrel(EngagementDataEntity(
+            WeaponTrackAssignEntity ("40mm", currentTrack),
             GunBarrelEntity (model.azimuth(), model.elevation()),
             EngagementDataEntity::EngagementStatus(model.getStatus())
             ));

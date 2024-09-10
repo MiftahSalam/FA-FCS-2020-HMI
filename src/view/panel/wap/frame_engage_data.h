@@ -25,10 +25,13 @@ protected:
 
 private slots:
     void onTimeOut();
+    void onAssignmentResponseData(BaseResponse<TrackAssignResponse> resp, bool assign);
 
 private:
     Ui::FrameEngageData *ui;
+
     EngagementData40mmStream *engagementDataStream;
+    WeaponTrackAssignService *wtaService;
 
 };
 

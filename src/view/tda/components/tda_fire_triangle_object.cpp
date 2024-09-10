@@ -3,6 +3,7 @@
 #include <QTextStream>
 #include <cmath>
 #include <QDebug>
+#include "qmath.h"
 #include "src/shared/utils/utils.h"
 
 TDAFireTriangleObject::TDAFireTriangleObject(QObject *parent, FireTriangleBaseRepository *repoFireTriangle, TDAConfig *configTDA):

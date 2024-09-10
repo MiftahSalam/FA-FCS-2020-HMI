@@ -17,7 +17,7 @@ EngagementDataEntity::EngagementDataEntity(
 
 WeaponTrackAssignEntity EngagementDataEntity::getWeaponTrackAssignEntity() const
 {
-
+    return weaponTrackAssignEntity;
 }
 
 void EngagementDataEntity::setWeaponTrackAssignEntity(WeaponTrackAssignEntity newWTA)
