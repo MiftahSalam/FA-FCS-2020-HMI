@@ -5,7 +5,7 @@
 FrameEngageData::FrameEngageData(QWidget *parent) :
     QWidget(parent),
     ui(new Ui::FrameEngageData),
-    engagementDataStream(DI::getInstance()->getServiceEngagement()->getServiceEngagement40mm()),
+    engagementDataStream(DI::getInstance()->getServiceEngagementStream()->getServiceEngagement40mm()),
     wtaService(DI::getInstance()->getServiceWeaponTrackAssign())
 {
     ui->setupUi(this);

@@ -38,15 +38,12 @@ public:
     TrackStream *getServiceTrackStream() const;
     GunStream *getServiceGunStream() const;
     FireTriangleStream *getServiceFireTriangle() const;
+    EngagementStream *getServiceEngagementStream() const;
 
     GunManagerService *getServiceGunManager() const;
     WeaponAssignService *getServiceWeaponAssign() const;
     WeaponTrackAssignService *getServiceWeaponTrackAssign() const;
     GunFiringService *getServiceWeaponFiring() const;
-
-    EngagementStream *getServiceEngagement() const;
-
-    EngagementStream *getServiceEngagement() const;
 
 protected:
     DI();
@@ -64,8 +61,6 @@ private:
     WeaponTrackAssignmentRepository *repoTrackWeaponAssign;
     EngagementRepository *repoEngagement;
 
-    // TODO: add weapon track engagement repository
-
     // TODO: add engagement correction repository
 
     OSDCMS *serviceOSDCMS;
@@ -79,8 +74,8 @@ private:
     TrackStream *serviceTrackStream;
     OSDStream *serviceOSDStream;
     GunStream *serviceGunStream;
-    // TODO: add weapon track engagement stream service
     FireTriangleStream *serviceFireTriangle;
+    EngagementStream *serviceEngagementStream;
 };
 
 #endif // DI_H
