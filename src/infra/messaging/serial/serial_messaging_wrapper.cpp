@@ -105,7 +105,11 @@ QSerialPort::BaudRate SerialMessagingWrapper::cfgToBaudrate()
 
     qDebug()<<Q_FUNC_INFO<<"invalid baudrate"<<config->baudrate;
 
+#if QT_VERSION_MAJOR < 6
     return QSerialPort::UnknownBaud;
+#else
+    return (QSerialPort::BaudRate)-1;
+#endif
 }
 
 QSerialPort::DataBits SerialMessagingWrapper::cfgToDatabits()
@@ -122,7 +126,11 @@ QSerialPort::DataBits SerialMessagingWrapper::cfgToDatabits()
 
     qDebug()<<Q_FUNC_INFO<<"invalid databit"<<config->databits;
 
+#if QT_VERSION_MAJOR < 6
     return QSerialPort::UnknownDataBits;
+#else
+    return (QSerialPort::DataBits)-1;
+#endif
 }
 
 QSerialPort::StopBits SerialMessagingWrapper::cfgToStopbits()
@@ -137,7 +145,11 @@ QSerialPort::StopBits SerialMessagingWrapper::cfgToStopbits()
 
     qDebug()<<Q_FUNC_INFO<<"invalid stopbits"<<config->stopbits;
 
+#if QT_VERSION_MAJOR < 6
     return QSerialPort::UnknownStopBits;
+#else
+    return (QSerialPort::StopBits)-1;
+#endif
 }
 
 QSerialPort::Parity SerialMessagingWrapper::cfgToParity()
@@ -156,7 +168,11 @@ QSerialPort::Parity SerialMessagingWrapper::cfgToParity()
 
     qDebug()<<Q_FUNC_INFO<<"invalid parity"<<config->parity;
 
+#if QT_VERSION_MAJOR < 6
     return QSerialPort::UnknownParity;
+#else
+    return (QSerialPort::Parity)-1;
+#endif
 }
 
 QSerialPort::FlowControl SerialMessagingWrapper::cfgToFlowControl()
@@ -171,5 +187,9 @@ QSerialPort::FlowControl SerialMessagingWrapper::cfgToFlowControl()
 
     qDebug()<<Q_FUNC_INFO<<"invalid flowControls"<<config->flowControls;
 
+#if QT_VERSION_MAJOR < 6
     return QSerialPort::UnknownFlowControl;
+#else
+    return (QSerialPort::FlowControl)-1;
+#endif
 }
