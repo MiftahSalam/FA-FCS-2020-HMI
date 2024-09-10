@@ -9,11 +9,17 @@ FrameGunCorrection::FrameGunCorrection(QWidget *parent) :
     ui(new Ui::FrameGunCorrection)
 {
     ui->setupUi(this);
+    setupDI();
 }
 
 FrameGunCorrection::~FrameGunCorrection()
 {
     delete ui;
+}
+
+void FrameGunCorrection::setup()
+{
+
 }
 
 void FrameGunCorrection::on_pushButtonCorrectionApply_clicked()
@@ -28,7 +34,7 @@ void FrameGunCorrection::on_pushButtonCorrectionApply_clicked()
         float azimuth = (ui->tableWidgetCorrection->item(0,1)->text()).toFloat();
         float elevation = (ui->tableWidgetCorrection->item(0,2)->text()).toFloat();
 
-        engageCorrService->setCorrection(EngagementCorrectionSetRequest(azimuth, elevation));
+        engageService->SetCorrection(azimuth, elevation);
 
     }
     catch (...)
@@ -36,6 +42,21 @@ void FrameGunCorrection::on_pushButtonCorrectionApply_clicked()
         QMessageBox::critical(this, "Fatal Error Barrel Correction", "Request barrel");
     }
 
+}
+
+void FrameGunCorrection::on_engageCorrResponse(BaseResponse<EngagementCorrectionSetResponse> resp)
+{
+    qDebug() << Q_FUNC_INFO << "resp code:" << resp.getHttpCode() << "resp msg:" << resp.getMessage();
+
+    if (resp.getHttpCode() != 0)
+    {
+        QMessageBox::critical(this, "Fatal Error Barrel Correction", QString("Failed to change with error: %1").arg(resp.getMessage()));
+        return;
+    }
+
+    qDebug() << Q_FUNC_INFO
+             << "resp data getAzimuthCorr: " << resp.getData().getAzimuthCorrection()
+             << "resp data getElevationCorr: " << resp.getData().getElevationCorrection();
 }
 
 bool FrameGunCorrection::validateInput()
@@ -61,5 +82,12 @@ bool FrameGunCorrection::validateInput()
     }
 
     return true;
+}
+
+void FrameGunCorrection::setupDI()
+{
+    engageService = DI::getInstance()->getServiceWeaponTrackAssign();
+
+    connect(engageService, &WeaponTrackAssignService::signal_engagementCorrResponse, this, &FrameGunCorrection::on_engageCorrResponse);
 }
 

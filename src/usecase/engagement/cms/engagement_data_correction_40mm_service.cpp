@@ -9,9 +9,8 @@ EngagementDataCorrection40mmService* EngagementDataCorrection40mmService::instan
 
 EngagementDataCorrection40mmService::EngagementDataCorrection40mmService(
     HttpClientWrapper *parent,
-    TrackWeaponAssignConfig *cmsConfig,
-    EngagementDataCorrectionRepository *repoEngCorr
-    ): HttpClientWrapper{parent}, cfgCms(cmsConfig), _repoEngCorr(repoEngCorr)
+    TrackWeaponAssignConfig *cmsConfig
+    ): HttpClientWrapper{parent}, cfgCms(cmsConfig)
 {
     if(parent == nullptr) {
         throw ErrObjectCreation();
@@ -32,10 +31,6 @@ void EngagementDataCorrection40mmService::onReplyFinished()
     }
 
     resp = toResponse(respRaw);
-
-    _repoEngCorr->SetCorrection("",
-                                GunBarrelEntity((resp.getData().getAzimuthCorrection()),(resp.getData().getElevationCorrection()))
-                                );
 
     emit signal_setCorrectionResponse(resp);
 }
@@ -84,8 +79,7 @@ BaseResponse<EngagementCorrectionSetResponse> EngagementDataCorrection40mmServic
 
 EngagementDataCorrection40mmService *EngagementDataCorrection40mmService::getInstance(
     HttpClientWrapper *httpClient = nullptr,
-    TrackWeaponAssignConfig *cmsConfig,
-    EngagementDataCorrectionRepository *repoEngCorr
+    TrackWeaponAssignConfig *cmsConfig
     )
 {
     if (instance == nullptr) {
@@ -97,11 +91,11 @@ EngagementDataCorrection40mmService *EngagementDataCorrection40mmService::getIns
             throw ErrObjectCreation();
         }
 
-        if(repoEngCorr == nullptr) {
-            throw ErrObjectCreation();
-        }
+        // if(repoEngCorr == nullptr) {
+        //     throw ErrObjectCreation();
+        // }
 
-        instance = new EngagementDataCorrection40mmService(httpClient, cmsConfig, repoEngCorr);
+        instance = new EngagementDataCorrection40mmService(httpClient, cmsConfig);
     }
     return instance;
 }

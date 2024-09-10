@@ -28,6 +28,7 @@ DI::DI()
         repoTrack->getRepoTrackArpa(),
         repoOSD->getRepoOSDInertia(),
         nullptr,
+        nullptr,
         repoWeaponAssign,
         repoTrackWeaponAssign);
     serviceWeaponFiring = GunFiringService::getInstance(nullptr, config->getSerialMessageConfig(), repoGun->getRepoGunFeedback(), serviceWeaponAssign, serviceWeaponTrackAssign);

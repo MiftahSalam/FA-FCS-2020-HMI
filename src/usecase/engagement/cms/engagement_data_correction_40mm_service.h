@@ -1,7 +1,6 @@
 #ifndef ENGAGEMENTDATACORRECTION40MMSERVICE_H
 #define ENGAGEMENTDATACORRECTION40MMSERVICE_H
 
-#include "src/domain/engagement/repository/engagement_data_correction_repository.h"
 #include "src/infra/http/http_client_wrapper.h"
 #include "src/model/base_response.h"
 #include "src/model/engagement/cms/engagement_correction_set_request.h"
@@ -17,8 +16,7 @@ public:
     void operator=(const EngagementDataCorrection40mmService&) = delete;
     static EngagementDataCorrection40mmService* getInstance(
             HttpClientWrapper *httpClient,
-            TrackWeaponAssignConfig *cmsConfig = nullptr,
-            EngagementDataCorrectionRepository *repoEngCorr = nullptr
+            TrackWeaponAssignConfig *cmsConfig = nullptr
             );
 
     // TODO: add request methods implementation
@@ -30,8 +28,7 @@ signals:
 protected:
     EngagementDataCorrection40mmService(
             HttpClientWrapper *parent = nullptr,
-            TrackWeaponAssignConfig *cmsConfig = nullptr,
-            EngagementDataCorrectionRepository *repoEngCorr = nullptr
+            TrackWeaponAssignConfig *cmsConfig = nullptr
             );
 
 private slots:
@@ -39,9 +36,7 @@ private slots:
 
 private:
     static EngagementDataCorrection40mmService *instance;
-    // TODO: add engagement correction cms config
     TrackWeaponAssignConfig *cfgCms;
-    EngagementDataCorrectionRepository* _repoEngCorr;
 
     BaseResponse<EngagementCorrectionSetResponse> toResponse(QByteArray raw);
     BaseResponse<EngagementCorrectionSetResponse> errorResponse(QNetworkReply::NetworkError err);
