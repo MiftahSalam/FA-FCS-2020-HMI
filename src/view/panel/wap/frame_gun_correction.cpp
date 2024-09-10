@@ -22,6 +22,20 @@ void FrameGunCorrection::on_pushButtonCorrectionApply_clicked()
     {
         return;
     }
+
+    try
+    {
+        float azimuth = (ui->tableWidgetCorrection->item(0,1)->text()).toFloat();
+        float elevation = (ui->tableWidgetCorrection->item(0,2)->text()).toFloat();
+
+        engageCorrService->setCorrection(EngagementCorrectionSetRequest(azimuth, elevation));
+
+    }
+    catch (...)
+    {
+        QMessageBox::critical(this, "Fatal Error Barrel Correction", "Request barrel");
+    }
+
 }
 
 bool FrameGunCorrection::validateInput()
