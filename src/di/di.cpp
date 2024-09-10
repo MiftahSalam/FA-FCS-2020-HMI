@@ -2,7 +2,7 @@
 #include "src/infra/store/weapon_assign/inmemory/weapon_assignment_repository_inmem_impl.h"
 #include "src/infra/store/weapon_track_assign/weapon_track_assignment_repository_inmem_impl.h"
 
-DI* DI::di = nullptr;
+DI *DI::di = nullptr;
 
 DI::DI()
 {
@@ -22,15 +22,15 @@ DI::DI()
     serviceGunManager = GunManagerService::getInstance(nullptr, config->getGunCmsConfig(), repoGun->getRepoGunFeedback(), repoGun->getRepoGunCmd());
     serviceWeaponAssign = WeaponAssignService::getInstance(nullptr, repoWeaponAssign);
     serviceWeaponTrackAssign = WeaponTrackAssignService::getInstance(
-                nullptr,
-                config->getTrackWeaponAssignCmsConfig(),
-                repoGun->getRepoGunCoverage(),
-                repoTrack->getRepoTrackArpa(),
-                repoOSD->getRepoOSDInertia(),
-                nullptr,
-                repoWeaponAssign,
-                repoTrackWeaponAssign
-                );
+        nullptr,
+        config->getTrackWeaponAssignCmsConfig(),
+        repoGun->getRepoGunCoverage(),
+        repoTrack->getRepoTrackArpa(),
+        repoOSD->getRepoOSDInertia(),
+        nullptr,
+        repoWeaponAssign,
+        repoTrackWeaponAssign);
+    serviceWeaponFiring = GunFiringService::getInstance(nullptr, config->getSerialMessageConfig(), repoGun->getRepoGunFeedback(), serviceWeaponAssign, serviceWeaponTrackAssign);
 
     // TODO: add weapon track engagement service
     serviceTrackStream = new TrackStream(nullptr, config->getTcpMessageConfig(), config->getArpaConfig(), repoTrack);
@@ -41,6 +41,11 @@ DI::DI()
     // TODO: add weapon track engagement stream service
     serviceFireTriangle = new FireTriangleStream(nullptr, config->getTcpMessageConfig(), repoFireTriangle);
     serviceEngagement = new EngagementStream(nullptr, config->getTcpMessageConfig(), repoEngagement);
+}
+
+GunFiringService *DI::getServiceWeaponFiring() const
+{
+    return serviceWeaponFiring;
 }
 
 WeaponTrackAssignmentRepository *DI::getRepoTrackWeaponAssign() const
@@ -110,7 +115,8 @@ OSDStream *DI::getServiceOSDStream() const
 
 DI *DI::getInstance()
 {
-    if (di == nullptr) {
+    if (di == nullptr)
+    {
         di = new DI();
     }
 

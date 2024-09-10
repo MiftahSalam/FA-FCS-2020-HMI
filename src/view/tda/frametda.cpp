@@ -337,11 +337,30 @@ void FrameTDA::setupStatusBar()
 void FrameTDA::setupTdaObjects()
 {
     TdaCompassObject *compass = new TdaCompassObject(this, tdaConfig);
-    TDAGunCoverageObject *gunCoverage = new TDAGunCoverageObject(this, osdRepo->getRepoOSDInertia(), gunRepo->getRepoGunCoverage(), tdaConfig);
-    TDAHeadingMarkerObject *headingMarker = new TDAHeadingMarkerObject(this, osdRepo->getRepoOSDInertia(), tdaConfig);
-    TDAGunBarrelObject *gunBarrel = new TDAGunBarrelObject(this, osdRepo->getRepoOSDInertia(), gunRepo->getRepoGunFeedback(), tdaConfig);
-    TDATracksObject *tracksObject = new TDATracksObject(this, trackRepo->getRepoTrackArpa(), tdaScale);
-    TDAFireTriangleObject *fireTriangle = new TDAFireTriangleObject(this, fireTriangleRepo->getRepoFT40mm(), tdaConfig);
+    TDAGunCoverageObject *gunCoverage = new TDAGunCoverageObject(
+                this,
+                osdRepo->getRepoOSDInertia(),
+                gunRepo->getRepoGunCoverage(),
+                tdaConfig);
+    TDAHeadingMarkerObject *headingMarker = new TDAHeadingMarkerObject(
+                this,
+                osdRepo->getRepoOSDInertia(),
+                tdaConfig);
+    TDAGunBarrelObject *gunBarrel = new TDAGunBarrelObject(
+                this,
+                osdRepo->getRepoOSDInertia(),
+                gunRepo->getRepoGunFeedback(),
+                tdaConfig);
+    TDATracksObject *tracksObject = new TDATracksObject(
+                this,
+                trackRepo->getRepoTrackArpa(),
+                tdaScale);
+    TDAFireTriangleObject *fireTriangle = new TDAFireTriangleObject(
+                this,
+                fireTriangleRepo->getRepoFT40mm(),
+                trackRepo->getRepoTrackArpa(),
+                wtaService,
+                tdaConfig);
 
     objectItems << compass << tracksObject << headingMarker << gunBarrel << gunCoverage << fireTriangle;
 }
@@ -353,6 +372,7 @@ void FrameTDA::setupDI()
     tdaConfig = DI::getInstance()->getConfig()->getTDAConfig();
     trackRepo = DI::getInstance()->getRepoTrack();
     fireTriangleRepo = DI::getInstance()->getRepoFireTriangle();
+    wtaService = DI::getInstance()->getServiceWeaponTrackAssign();
 
     tdaScale = tdaConfig->getZoomScale();
 }
