@@ -1,8 +1,7 @@
 #include "engagement_data_correction_40mm_service.h"
-#include "src/shared/common/errors/err_object_creation.h"
-#include "src/shared/common/errors/err_http.h"
 #include "src/shared/common/errors/helper_err.h"
 #include "src/shared/common/errors/err_json_parse.h"
+#include "src/shared/common/errors/err_object_creation.h"
 #include "src/shared/utils/utils.h"
 
 EngagementDataCorrection40mmService* EngagementDataCorrection40mmService::instance = nullptr;
@@ -45,7 +44,7 @@ BaseResponse<EngagementCorrectionSetResponse> EngagementDataCorrection40mmServic
         EngagementCorrectionSetResponse model(respData["azimuth_correction"].toDouble(),respData["elevation_correction"].toDouble());
         BaseResponse<EngagementCorrectionSetResponse> resp(respCode, respMsg, model);
 
-        qDebug()<<Q_FUNC_INFO<<"resp"<<resp.getHttpCode()<<resp.getMessage()<<resp.getData().getAzimuthCorrection()<<resp.getData().getElevationCorrection();
+        qDebug()<<Q_FUNC_INFO<<"resp Correction-------->>>"<<resp.getHttpCode()<<resp.getMessage()<<resp.getData().getAzimuthCorrection()<<resp.getData().getElevationCorrection();
 
         return resp;
     } catch (ErrJsonParse &e) {
@@ -106,5 +105,6 @@ void EngagementDataCorrection40mmService::setCorrection(EngagementCorrectionSetR
     httpReq.setHeader(QNetworkRequest::ContentTypeHeader, "application/json");
 
     httpResponse = httpClient.post(httpReq, request.toJSON());
+    // qDebug()<<"engagement corr POST"<<httpResponse;
     connect(httpResponse, &QNetworkReply::finished, this, &EngagementDataCorrection40mmService::onReplyFinished);
 }
