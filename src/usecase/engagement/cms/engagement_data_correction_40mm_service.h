@@ -19,7 +19,6 @@ public:
             TrackWeaponAssignConfig *cmsConfig = nullptr
             );
 
-    // TODO: add request methods implementation
    void setCorrection(EngagementCorrectionSetRequest request);
 
 signals:

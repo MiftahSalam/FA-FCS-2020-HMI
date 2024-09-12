@@ -126,7 +126,6 @@ QSerialPort::DataBits SerialMessagingWrapper::cfgToDatabits()
 
     qDebug()<<Q_FUNC_INFO<<"invalid databit"<<config->databits;
 
-
 #if QT_VERSION_MAJOR < 6
     return QSerialPort::UnknownDataBits;
 #else
@@ -145,7 +144,6 @@ QSerialPort::StopBits SerialMessagingWrapper::cfgToStopbits()
     }
 
     qDebug()<<Q_FUNC_INFO<<"invalid stopbits"<<config->stopbits;
-
 
 #if QT_VERSION_MAJOR < 6
     return QSerialPort::UnknownStopBits;
@@ -170,7 +168,6 @@ QSerialPort::Parity SerialMessagingWrapper::cfgToParity()
 
     qDebug()<<Q_FUNC_INFO<<"invalid parity"<<config->parity;
 
-
 #if QT_VERSION_MAJOR < 6
     return QSerialPort::UnknownParity;
 #else
@@ -189,7 +186,6 @@ QSerialPort::FlowControl SerialMessagingWrapper::cfgToFlowControl()
     }
 
     qDebug()<<Q_FUNC_INFO<<"invalid flowControls"<<config->flowControls;
-
 
 #if QT_VERSION_MAJOR < 6
     return QSerialPort::UnknownFlowControl;

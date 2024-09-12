@@ -90,10 +90,6 @@ EngagementDataCorrection40mmService *EngagementDataCorrection40mmService::getIns
             throw ErrObjectCreation();
         }
 
-        // if(repoEngCorr == nullptr) {
-        //     throw ErrObjectCreation();
-        // }
-
         instance = new EngagementDataCorrection40mmService(httpClient, cmsConfig);
     }
     return instance;
@@ -105,6 +101,5 @@ void EngagementDataCorrection40mmService::setCorrection(EngagementCorrectionSetR
     httpReq.setHeader(QNetworkRequest::ContentTypeHeader, "application/json");
 
     httpResponse = httpClient.post(httpReq, request.toJSON());
-    // qDebug()<<"engagement corr POST"<<httpResponse;
     connect(httpResponse, &QNetworkReply::finished, this, &EngagementDataCorrection40mmService::onReplyFinished);
 }

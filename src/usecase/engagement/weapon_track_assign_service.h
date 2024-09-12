@@ -42,7 +42,6 @@ public:
     QList<WeaponTrackAssignEntity*> GetAllEngagement() const;
 
 signals:
-//    void signal_setTrackAssignResponse(BaseResponse<TrackAssignModel> response);
     void signal_assignmentResponseData(BaseResponse<TrackAssignResponse> response, bool assign);
     void signal_engagementCorrResponse(BaseResponse<EngagementCorrectionSetResponse> response);
 
