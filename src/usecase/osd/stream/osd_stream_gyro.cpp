@@ -70,16 +70,20 @@ void OSDStreamGyro::onDataReceived(QByteArray data)
             }
         }
 
+
         auto inertiaMode = serviceMode->getDataMode().getInersia();
         if (!inertiaMode) {
-            _repoInertia->SetInertia(OSDInertiaEntity(
-                                      model.getHeading(),
-                                      model.getPicth(),
-                                      model.getRoll(),
-                                      respObj["source"].toString().toStdString(),
-                                      respObj["status"].toString().toStdString(),
-                                      OSD_MODE::AUTO
-                                  ));
+            if(check().getCode() == ERROR_NO.first || check().getCode() == ERROR_CODE_OSD_DATA_PARTIALLY_INVALID.first)
+            {
+                _repoInertia->SetInertia(OSDInertiaEntity(
+                    model.getHeading(),
+                    model.getPicth(),
+                    model.getRoll(),
+                    respObj["source"].toString().toStdString(),
+                    respObj["status"].toString().toStdString(),
+                    OSD_MODE::AUTO
+                    ));
+            }
         }
 
         handleError(respObj["status"].toString());

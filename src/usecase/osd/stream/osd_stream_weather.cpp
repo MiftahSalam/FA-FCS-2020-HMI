@@ -68,7 +68,7 @@ void OSDStreamWeather::onDataReceived(QByteArray data)
         }
 
         auto weatherMode = serviceMode->getDataMode().getWeather();
-        if (!weatherMode) {
+        if (!weatherMode && check().getCode() == ERROR_NO.first) {
             _repoWeather->SetWeather(OSDWeatherEntity(
                 model.getTemperature(),
                 model.getPressure(),

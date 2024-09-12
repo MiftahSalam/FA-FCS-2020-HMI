@@ -70,7 +70,7 @@ void OSDStreamSpeed::onDataReceived(QByteArray data)
         }
 
         auto speedMode = serviceMode->getDataMode().getSpeed();
-        if (!speedMode) {
+        if (!speedMode && check().getCode() == ERROR_NO.first) {
             _repoSpeed->SetSpeed(OSDSpeedEntity(
                                       model.getSpeed(),
                                       model.getCourse(),
