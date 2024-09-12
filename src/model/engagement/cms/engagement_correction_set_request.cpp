@@ -11,8 +11,8 @@ EngagementCorrectionSetRequest::EngagementCorrectionSetRequest()
 QByteArray EngagementCorrectionSetRequest::toJSON()
 {
     QJsonObject obj;
-    obj["azimuth_correction"] = azimuthCorrection;
-    obj["elevation_correction"] = elevationCorrection;
+    obj["azimuth"] = azimuthCorrection;
+    obj["elevation"] = elevationCorrection;
 
     return QJsonDocument(obj).toJson();
 }
