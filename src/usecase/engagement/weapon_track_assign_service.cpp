@@ -10,12 +10,14 @@ WeaponTrackAssignService::WeaponTrackAssignService(QObject *parent,
                                                    TrackBaseRepository *repoTrack,
                                                    OSDInertiaRepository* repoInertia,
                                                    TrackWeaponEngageService *cmsEngageService,
+                                                   EngagementDataCorrection40mmService *cmsEngageCorrService,
                                                    WeaponAssignmentRepository *repoWA,
                                                    WeaponTrackAssignmentRepository *repoWTA
                                                    ):
     QObject{parent},
     _cmsConfig(cmsConfig),
     _cmsEngageService(cmsEngageService),
+    _cmsEngageCorrService(cmsEngageCorrService),
     _repoGunCov(repoGunCov),
     _repoTrack(repoTrack),
     _repoInertia(repoInertia),
@@ -30,6 +32,7 @@ WeaponTrackAssignService *WeaponTrackAssignService::getInstance(QObject *parent,
                                                                 TrackBaseRepository *repoTrack,
                                                                 OSDInertiaRepository* repoInertia,
                                                                 TrackWeaponEngageService *cmsEngageService,
+                                                                EngagementDataCorrection40mmService *cmsEngageCorrService,
                                                                 WeaponAssignmentRepository *repoWA,
                                                                 WeaponTrackAssignmentRepository *repoWTA
                                                                 )
@@ -63,6 +66,10 @@ WeaponTrackAssignService *WeaponTrackAssignService::getInstance(QObject *parent,
                     new HttpClientWrapper(),
                     cmsConfig);
 
+        cmsEngageCorrService = EngagementDataCorrection40mmService::getInstance(
+            new HttpClientWrapper(),
+            cmsConfig);
+
         instance = new WeaponTrackAssignService(
                     parent,
                     cmsConfig,
@@ -70,11 +77,15 @@ WeaponTrackAssignService *WeaponTrackAssignService::getInstance(QObject *parent,
                     repoTrack,
                     repoInertia,
                     engageCmsService,
+                    cmsEngageCorrService,
                     repoWA,
                     repoWTA);
 
         connect(engageCmsService, &TrackWeaponEngageService::signal_trackAssignmentResponse,
                 instance, &WeaponTrackAssignService::onTrackAssignmentResponse);
+
+        connect(cmsEngageCorrService, &EngagementDataCorrection40mmService::signal_setCorrectionResponse,
+                instance, &WeaponTrackAssignService::signal_engagementCorrResponse);
     }
 
     return instance;
@@ -179,6 +190,11 @@ void WeaponTrackAssignService::SetEngagement(const QString &weapon, const int &t
     } else {
         throw ErrEngagementTrackNotEngageable();
     }
+}
+
+void WeaponTrackAssignService::SetCorrection(float azimuth, float elevation)
+{
+    _cmsEngageCorrService->setCorrection(EngagementCorrectionSetRequest(azimuth, elevation));
 }
 
 void WeaponTrackAssignService::BreakEngagement(const QString &weapon, const int &trackId)
