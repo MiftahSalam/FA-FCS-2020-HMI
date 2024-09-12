@@ -159,6 +159,7 @@ void FrameOSDPosition::onModeChange(int index)
     }
 
     _cmsMode->setDataMode("position", manual_mode);
+    on_pushButton_clicked();
 }
 
 void FrameOSDPosition::onAfterModeReset()

@@ -134,6 +134,7 @@ void FrameOSDWind::onModeChange(int index)
     }
 
     _cmsMode->setDataMode("wind", manual_mode);
+    on_pushButton_clicked();
 }
 
 void FrameOSDWind::onAfterModeReset()

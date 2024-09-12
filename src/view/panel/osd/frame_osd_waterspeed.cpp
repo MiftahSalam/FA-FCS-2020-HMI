@@ -134,6 +134,7 @@ void FrameOSDWaterSpeed::onModeChange(int index)
     }
 
     _cmsMode->setDataMode("water_speed", manual_mode);
+    on_pushButton_clicked();
 }
 
 void FrameOSDWaterSpeed::onAfterModeReset()

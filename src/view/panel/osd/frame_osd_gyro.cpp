@@ -62,6 +62,7 @@ void FrameOSDGyro::onModeChange(int index)
     }
 
     _cmsMode->setDataMode("inertia", manual_mode);
+    on_pushButton_clicked();
 }
 
 void FrameOSDGyro::onAfterModeReset()

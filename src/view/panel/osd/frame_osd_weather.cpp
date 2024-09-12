@@ -60,6 +60,7 @@ void FrameOSDWeather::onModeChange(int index)
         break;
     }
     _cmsMode->setDataMode("weather", manual_mode);
+    on_pushButton_clicked();
 }
 
 void FrameOSDWeather::onAfterModeReset()

@@ -59,6 +59,7 @@ void FrameOSDSpeed::onModeChange(int index)
     }
 
     _cmsMode->setDataMode("speed", manual_mode);
+    on_pushButton_clicked();
 }
 
 void FrameOSDSpeed::onAfterModeReset()
