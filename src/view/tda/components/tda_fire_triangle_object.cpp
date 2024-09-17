@@ -5,6 +5,7 @@
 #include <QDebug>
 #include "qmath.h"
 #include "src/shared/utils/utils.h"
+#include "src/view/tda/components/track/track_param.h"
 
 TDAFireTriangleObject::TDAFireTriangleObject(
         QObject *parent,
@@ -36,31 +37,31 @@ void TDAFireTriangleObject::Draw(QPainter *painter, const int &side, const int &
             tdaScale = tdaConfig->getZoomScale();
 
             QPoint center_point = QPoint(width/2,height/2);
-            //        float ttlf = fireTriangleRepo->GetFireTriangle()->getTTLF();
             float ttlf_x = fireTriangleRepo->GetFireTriangle()->getTTLFX();
             float ttlf_y = fireTriangleRepo->GetFireTriangle()->getTTLFY();
             //konversi ke NM
             float ttlf_x_NM = ttlf_x/1852;
             float ttlf_y_NM = ttlf_y/1852;
-
             int ttlf_x_Pixel = Utils::range2Pixel(ttlf_x_NM, tdaScale, width, height);
             int ttlf_y_Pixel = Utils::range2Pixel(ttlf_y_NM, tdaScale, width, height);
-            //        int ttlf_x_Pixel =  (int)(ttlf_x_NM*(side/tdaScale));
-            //        int ttlf_y_Pixel = (int)(ttlf_y_NM*(side/tdaScale));
+            QPoint track_cartesian = Utils::polar2Cartesian(
+                        track->getRange(),
+                        track->getBearing(),
+                        tdaScale,
+                        QPoint(width,height),
+                        QPoint(0,0)
+                        );
+            QPoint track_from_center = track_cartesian - center_point;
+            int track_x_Pixel = track_from_center.x();
+            int track_y_Pixel = track_from_center.y();
 
-            //posisi track
-            //            float range = 3704/1852; // konversi m to NM
-            //            int rangePixel = (int)(range*(side/tdaScale));
-            //            float bearing = 23;
+//            float range = track->getRange();
+//            int rangePixel = (int)(range*(side/tdaScale));
+//            float bearing = track->getBearing();
 
-            float range = track->getRange();
-            int rangePixel = (int)(range*(side/tdaScale));
-            float bearing = track->getBearing();
-
-            QSize trackIconSize(15,10);
-            const double rad2deg = (bearing - 90) * M_PI / 180;
-            int track_x_Pixel = (rangePixel * qCos(rad2deg)) + trackIconSize.width();
-            int track_y_Pixel = (rangePixel * qSin(rad2deg)) + trackIconSize.height();
+//            const double rad2deg = (bearing - 90) * M_PI / 180;
+//            int track_x_Pixel = (rangePixel * qCos(rad2deg)) - TRACK_ICON_MARGIN.width();
+//            int track_y_Pixel = (rangePixel * qSin(rad2deg)) - TRACK_ICON_MARGIN.height();
 
             // qDebug()<<"range"<<rangePixel<<"track X"<<track_x_Pixel<<"track Y"<<track_y_Pixel;
 
