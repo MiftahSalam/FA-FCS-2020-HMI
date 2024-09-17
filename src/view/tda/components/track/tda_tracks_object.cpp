@@ -96,7 +96,7 @@ void TDATracksObject::OnTrackPropertyChanged(int tn, TrackBaseEntity *track)
 }
 void TDATracksObject::generateTrackUI(TrackBaseEntity *newTrack)
 {
-    TdaTrack *tr = new TdaTrack(parentWidget, QSize(60, 20));
+    TdaTrack *tr = new TdaTrack(parentWidget, TRACK_WIDGET_SIZE);
     connect(tr, &TdaTrack::identityChange_Signal, this, &TDATracksObject::OnIdentityChange);
 
     tr->buildUI(entityToTrackParam(newTrack));
@@ -133,5 +133,5 @@ QPoint TDATracksObject::polar2Cartesian(double range, double bearing)
 
     //    qDebug()<<Q_FUNC_INFO<<"os_pos"<<os_pos<<"rangePixel"<<rangePixel<<"bearing"<<bearing<<"rad2deg"<<rad2deg<<"range_pixel_x"<<range_pixel_x<<"range_pixel_y"<<range_pixel_y;
 
-    return QPoint(range_pixel_x, range_pixel_y);
+    return QPoint(range_pixel_x-TRACK_ICON_MARGIN.width(), range_pixel_y-TRACK_ICON_MARGIN.height());
 }

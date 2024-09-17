@@ -55,8 +55,16 @@ void TdaTrack::buildUI(TrackParam *param)
     */
 \
     /*create QLabel for holding track number and source display*/
+    const QPoint TRACK_ID_LABEL_OFFSET(5,0);
+    const QPoint TRACK_ID_LABEL_MARGIN(width()*2/3,0);
+
     trackIdLabel = new TdaTrackId(this, param->getTn(), param->getCur_source());
-    trackIdLabel->setGeometry(QRect(trackIconLabel->width()+5,0,width()*2/3,height()));
+    trackIdLabel->setGeometry(QRect(
+                                  trackIconLabel->width()+TRACK_ID_LABEL_OFFSET.x(),
+                                  0+TRACK_ID_LABEL_OFFSET.x(),
+                                  TRACK_ID_LABEL_MARGIN.x(),
+                                  height()
+                                  ));
 }
 
 void TdaTrack::setSelected(bool select)
