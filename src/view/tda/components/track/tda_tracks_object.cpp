@@ -1,5 +1,4 @@
 #include "tda_tracks_object.h"
-#include "qmath.h"
 #include "src/infra/store/track/track_repository_publisher.h"
 #include "src/shared/common/errors/err_object_creation.h"
 #include "src/shared/utils/utils.h"
@@ -41,7 +40,14 @@ void TDATracksObject::OnZoom(float range)
     tdaScale = range;
     foreach (auto tr, trackObjListMap)
     {
-        tr->move(polar2Cartesian(tr->getTrackData()->getRange(), tr->getTrackData()->getBearing()));
+        QPoint cartesian = Utils::polar2Cartesian(
+                    tr->getTrackData()->getRange(),
+                    tr->getTrackData()->getBearing(),
+                    tdaScale,
+                    QPoint(parentWidget->width(),parentWidget->height()),
+                    QPoint(TRACK_ICON_MARGIN.width(),TRACK_ICON_MARGIN.height())
+                    );
+        tr->move(cartesian);
     }
 }
 
@@ -91,7 +97,14 @@ void TDATracksObject::OnTrackPropertyChanged(int tn, TrackBaseEntity *track)
     if (findTrack)
     {
         findTrack->updateTrackData(*entityToTrackParam(track));
-        findTrack->move(polar2Cartesian(findTrack->getTrackData()->getRange(), findTrack->getTrackData()->getBearing()));
+        QPoint cartesian = Utils::polar2Cartesian(
+                    findTrack->getTrackData()->getRange(),
+                    findTrack->getTrackData()->getBearing(),
+                    tdaScale,
+                    QPoint(parentWidget->width(),parentWidget->height()),
+                    QPoint(TRACK_ICON_MARGIN.width(),TRACK_ICON_MARGIN.height())
+                    );
+        findTrack->move(cartesian);
     }
 }
 void TDATracksObject::generateTrackUI(TrackBaseEntity *newTrack)
@@ -100,7 +113,14 @@ void TDATracksObject::generateTrackUI(TrackBaseEntity *newTrack)
     connect(tr, &TdaTrack::identityChange_Signal, this, &TDATracksObject::OnIdentityChange);
 
     tr->buildUI(entityToTrackParam(newTrack));
-    tr->move(polar2Cartesian(newTrack->getRange(), newTrack->getBearing()));
+    QPoint cartesian = Utils::polar2Cartesian(
+                tr->getTrackData()->getRange(),
+                tr->getTrackData()->getBearing(),
+                tdaScale,
+                QPoint(parentWidget->width(),parentWidget->height()),
+                QPoint(TRACK_ICON_MARGIN.width(),TRACK_ICON_MARGIN.height())
+                );
+    tr->move(cartesian);
     tr->adjustSize();
     tr->show();
     trackObjListMap.insert(newTrack->getId(), tr);
@@ -121,17 +141,4 @@ TrackParam *TDATracksObject::entityToTrackParam(TrackBaseEntity *track)
         QString::fromStdString(track->getWeaponAssign()));
 
     return param;
-}
-
-QPoint TDATracksObject::polar2Cartesian(double range, double bearing)
-{
-    QPoint os_pos(parentWidget->width() / 2, parentWidget->height() / 2);
-    int rangePixel = Utils::range2Pixel(range, tdaScale, parentWidget->width(), parentWidget->height());
-    const double rad2deg = (bearing - 90) * M_PI / 180.;
-    int range_pixel_x = rangePixel * qCos(rad2deg) + os_pos.x();
-    int range_pixel_y = rangePixel * qSin(rad2deg) + os_pos.y();
-
-    //    qDebug()<<Q_FUNC_INFO<<"os_pos"<<os_pos<<"rangePixel"<<rangePixel<<"bearing"<<bearing<<"rad2deg"<<rad2deg<<"range_pixel_x"<<range_pixel_x<<"range_pixel_y"<<range_pixel_y;
-
-    return QPoint(range_pixel_x-TRACK_ICON_MARGIN.width(), range_pixel_y-TRACK_ICON_MARGIN.height());
 }

@@ -1,6 +1,8 @@
 #include "utils.h"
 #include "qjsondocument.h"
 
+#include "qmath.h"
+#include "qpoint.h"
 #include "src/shared/common/errors/err_json_parse.h"
 #include "src/shared/common/errors/err_osd_data.h"
 #include <math.h>
@@ -129,6 +131,19 @@ double Utils::pixel2Range(int pixel, double max_range, int vp_width, int vp_heig
     int side = qMin(vp_width, vp_height) / 2;
 //    qDebug()<<pixel<<tdaScale<<width();
     return max_range*pixel/side;
+}
+
+QPoint Utils::polar2Cartesian(const double range, const double bearing, const double scale, const QPoint vp, const QPoint offset)
+{
+    QPoint os_pos(vp.x() / 2, vp.y() / 2);
+    int rangePixel = Utils::range2Pixel(range, scale, vp.x(), vp.y());
+    const double rad2deg = (bearing - 90) * M_PI / 180.;
+    int range_pixel_x = rangePixel * qCos(rad2deg) + os_pos.x();
+    int range_pixel_y = rangePixel * qSin(rad2deg) + os_pos.y();
+
+    //    qDebug()<<Q_FUNC_INFO<<"os_pos"<<os_pos<<"rangePixel"<<rangePixel<<"bearing"<<bearing<<"rad2deg"<<rad2deg<<"range_pixel_x"<<range_pixel_x<<"range_pixel_y"<<range_pixel_y;
+
+    return QPoint(range_pixel_x, range_pixel_y) - offset;
 }
 
 QString Utils::latDecToStringDegree(const float lat)

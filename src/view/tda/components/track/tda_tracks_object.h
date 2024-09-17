@@ -42,7 +42,6 @@ private:
 
     void generateTrackUI(TrackBaseEntity *newTrack);
     TrackParam *entityToTrackParam(TrackBaseEntity *track);
-    QPoint polar2Cartesian(double range, double bearing);
 };
 
 #endif // TDATRACKSOBJECT_H
