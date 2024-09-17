@@ -14,6 +14,7 @@ FrameGunCorrection::FrameGunCorrection(QWidget *parent) :
     for (int var = 0; var < rowCount; var++) {
         ui->tableWidgetCorrection->removeRow(var);
     }
+    ui->pushButtonCorrectionApply->setDisabled(true);
 
     setupDI();
 }
