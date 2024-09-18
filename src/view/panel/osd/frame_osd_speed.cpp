@@ -59,7 +59,7 @@ void FrameOSDSpeed::onModeChange(int index)
     }
 
     _cmsMode->setDataMode("speed", manual_mode);
-    on_pushButton_clicked();
+    // on_pushButton_clicked();
 }
 
 void FrameOSDSpeed::onAfterModeReset()
@@ -149,6 +149,7 @@ void FrameOSDSpeed::onModeChangeResponse(const QString datafisis, BaseResponse<I
         break;
     case OSD_MODE::MANUAL:
         manualUiSetup();
+        on_pushButton_clicked();
         break;
     default:
         break;

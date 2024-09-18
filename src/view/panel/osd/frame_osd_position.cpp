@@ -127,7 +127,7 @@ void FrameOSDPosition::onModeChangeResponse(const QString datafisis, BaseRespons
         break;
     case OSD_MODE::MANUAL:
         manualUiSetup();
-        // TODO: get manual data from server
+        on_pushButton_clicked();
         break;
     default:
         break;
@@ -159,7 +159,6 @@ void FrameOSDPosition::onModeChange(int index)
     }
 
     _cmsMode->setDataMode("position", manual_mode);
-    on_pushButton_clicked();
 }
 
 void FrameOSDPosition::onAfterModeReset()

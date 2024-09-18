@@ -108,7 +108,7 @@ void FrameOSDWaterSpeed::onModeChangeResponse(const QString datafisis, BaseRespo
         break;
     case OSD_MODE::MANUAL:
         manualUiSetup();
-        // TODO: get manual data from server
+        on_pushButton_clicked();
         break;
     default:
         break;
@@ -134,7 +134,6 @@ void FrameOSDWaterSpeed::onModeChange(int index)
     }
 
     _cmsMode->setDataMode("water_speed", manual_mode);
-    on_pushButton_clicked();
 }
 
 void FrameOSDWaterSpeed::onAfterModeReset()

@@ -60,7 +60,6 @@ void FrameOSDWeather::onModeChange(int index)
         break;
     }
     _cmsMode->setDataMode("weather", manual_mode);
-    on_pushButton_clicked();
 }
 
 void FrameOSDWeather::onAfterModeReset()
@@ -154,6 +153,7 @@ void FrameOSDWeather::onModeChangeResponse(const QString datafisis, BaseResponse
         break;
     case OSD_MODE::MANUAL:
         manualUiSetup();
+        on_pushButton_clicked();
         break;
     default:
         break;

@@ -62,7 +62,6 @@ void FrameOSDGyro::onModeChange(int index)
     }
 
     _cmsMode->setDataMode("inertia", manual_mode);
-    on_pushButton_clicked();
 }
 
 void FrameOSDGyro::onAfterModeReset()
@@ -171,10 +170,12 @@ void FrameOSDGyro::onModeChangeResponse(const QString datafisis, BaseResponse<In
         break;
     case OSD_MODE::MANUAL:
         manualUiSetup();
+        on_pushButton_clicked();
         break;
     default:
         break;
     }
+
 }
 
 void FrameOSDGyro::onDataResponse(BaseResponse<GyroModel> resp)
@@ -192,6 +193,7 @@ void FrameOSDGyro::onDataResponse(BaseResponse<GyroModel> resp)
              << "resp data getHeading: " << resp.getData().getHeading()
              << "resp data getPicth: " << resp.getData().getPicth()
              << "resp data getRoll: " << resp.getData().getRoll();
+
 }
 
 void FrameOSDGyro::onStreamReceive(GyroModel model)
