@@ -7,6 +7,7 @@
 #include "src/shared/common/errors/err_open_file.h"
 
 const QString CONFIG_ENGAGE_CMS_ASSIGN_URL = "engagement/cms/assign/url";
+const QString CONFIG_ENGAGE_CMS_RESET_ASSIGN_URL = "engagement/cms/reset-assign/url";
 const QString CONFIG_ENGAGE_CMS_CORRECTION_URL = "engagement/cms/correction/url";
 
 TrackWeaponAssignConfig* TrackWeaponAssignConfig::config = nullptr;
@@ -37,6 +38,11 @@ QString TrackWeaponAssignConfig::getAssignUrl() const
     return assignUrl;
 }
 
+QString TrackWeaponAssignConfig::getResetAssignUrl() const
+{
+    return resetAssignUrl;
+}
+
 QString TrackWeaponAssignConfig::getEngageCorrectionUrl() const
 {
     return engageCorrectionUrl;
@@ -47,8 +53,10 @@ void TrackWeaponAssignConfig::setup(const QString path)
     QSettings configFile(path,QSettings::IniFormat);
 
     assignUrl = configFile.value(CONFIG_ENGAGE_CMS_ASSIGN_URL, "").toString();
+    resetAssignUrl = configFile.value(CONFIG_ENGAGE_CMS_RESET_ASSIGN_URL, "").toString();
     engageCorrectionUrl = configFile.value(CONFIG_ENGAGE_CMS_CORRECTION_URL, "").toString();
 
     qDebug()<<Q_FUNC_INFO<<"assignUrl"<<assignUrl;
+    qDebug()<<Q_FUNC_INFO<<"resetAssignUrl"<<resetAssignUrl;
     qDebug()<<Q_FUNC_INFO<<"engageCorrectionUrl"<<engageCorrectionUrl;
 }

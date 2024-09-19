@@ -20,29 +20,25 @@ public:
             );
 
     void sendAssignment(TrackAssignRequest request, bool assign);
+    void sendResetAssignment(const QString weapon);
 
 signals:
-//    void signal_setCorrectionResponse(BaseResponse<EngagementCorrectionSetRequest> response);
     void signal_trackAssignmentResponse(BaseResponse<TrackAssignResponse> response, bool assign);
 
 protected:
     TrackWeaponEngageService(
             HttpClientWrapper *parent = nullptr,
-            // TODO: add engagement correction cms config
             TrackWeaponAssignConfig *cmsConfig = nullptr
-//            EngagementDataCorrectionRepository *repoEngCorr = nullptr
             );
 
 private slots:
     void onReplyFinished() override;
+    void onResetAssignReplyFinished();
 
 private:
     static TrackWeaponEngageService *instance;
 
     TrackWeaponAssignConfig *_cmsConfig;
-
-    // TODO: add engagement correction cms config
-//    EngagementDataCorrectionRepository* _repoEngCorr;
 
     BaseResponse<TrackAssignResponse> toResponse(QByteArray raw);
     BaseResponse<TrackAssignResponse> errorHttpResponse(QNetworkReply::NetworkError err);
