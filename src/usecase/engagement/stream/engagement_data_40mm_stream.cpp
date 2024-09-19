@@ -51,9 +51,9 @@ void EngagementData40mmStream::CreateEngage(const int &trackId)
 
 }
 
-void EngagementData40mmStream::DeleteEngage()
+void EngagementData40mmStream::DeleteEngage(const QString weapon)
 {
-    if(_repoEngagemenData->RemoveEngagement(WeaponTrackAssignEntity ("40mm", currentTrack))) {
+    if(_repoEngagemenData->RemoveEngagement(WeaponTrackAssignEntity (weapon.toStdString(), currentTrack))) {
         currentTrack = -1;
     }
 }

@@ -6,7 +6,8 @@ FrameEngageData::FrameEngageData(QWidget *parent) :
     QWidget(parent),
     ui(new Ui::FrameEngageData),
     engagementDataStream(DI::getInstance()->getServiceEngagementStream()->getServiceEngagement40mm()),
-    wtaService(DI::getInstance()->getServiceWeaponTrackAssign())
+    wtaService(DI::getInstance()->getServiceWeaponTrackAssign()),
+    waService(DI::getInstance()->getServiceWeaponAssign())
 {
     ui->setupUi(this);
 
@@ -15,6 +16,7 @@ FrameEngageData::FrameEngageData(QWidget *parent) :
         ui->tableWidgetEngData->removeRow(var);
     }
 
+    connect(waService, &WeaponAssignService::OnAssignModeChange, this, &FrameEngageData::onAssignModeChange);
     connect(engagementDataStream, &EngagementData40mmStream::signalDataProcessed, this, &FrameEngageData::OnStreamEngegementDataReceived);
     connect(wtaService, &WeaponTrackAssignService::signal_assignmentResponseData, this, &FrameEngageData::onAssignmentResponseData);
 }
@@ -22,6 +24,24 @@ FrameEngageData::FrameEngageData(QWidget *parent) :
 FrameEngageData::~FrameEngageData()
 {
     delete ui;
+}
+
+void FrameEngageData::onAssignModeChange(const QString &weapon, const WeaponAssign::WeaponAssignMode &mode)
+{
+    if (mode == WeaponAssign::NONE) {
+        resetEngage(weapon);
+    }
+}
+
+void FrameEngageData::resetEngage(const QString weapon)
+{
+    engagementDataStream->DeleteEngage(weapon);
+
+    auto curritems = ui->tableWidgetEngData->findItems(weapon,Qt::MatchCaseSensitive);
+    if(!curritems.isEmpty()) {
+        auto curItemRow = curritems.first()->row();
+        ui->tableWidgetEngData->removeRow(curItemRow);
+    }
 }
 
 void FrameEngageData::OnStreamEngegementDataReceived(EngagementDataModel model)
@@ -53,8 +73,8 @@ void FrameEngageData::onAssignmentResponseData(BaseResponse<TrackAssignResponse>
 
     if (resp.getHttpCode() == 0)
     {
+        auto curr40mmitem = ui->tableWidgetEngData->findItems(QString::fromStdString(resp.getData().getWeapon()), Qt::MatchCaseSensitive);
         if (assign) {
-            auto curr40mmitem = ui->tableWidgetEngData->findItems(QString::fromStdString(resp.getData().getWeapon()), Qt::MatchCaseSensitive);
             if(curr40mmitem.isEmpty()) {
                 engagementDataStream->CreateEngage(resp.getData().getTrackId());
 
@@ -75,11 +95,7 @@ void FrameEngageData::onAssignmentResponseData(BaseResponse<TrackAssignResponse>
                 }
             }
         } else {
-            engagementDataStream->DeleteEngage();
-
-            if(ui->tableWidgetEngData->rowCount() == 1) {
-                ui->tableWidgetEngData->removeRow(0);
-            }
+            resetEngage(QString::fromStdString(resp.getData().getWeapon()));
         }
     }
 }

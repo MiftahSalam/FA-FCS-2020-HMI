@@ -359,6 +359,7 @@ void FrameTDA::setupTdaObjects()
                 this,
                 fireTriangleRepo->getRepoFT40mm(),
                 trackRepo->getRepoTrackArpa(),
+                waService,
                 wtaService,
                 tdaConfig);
 
@@ -372,6 +373,7 @@ void FrameTDA::setupDI()
     tdaConfig = DI::getInstance()->getConfig()->getTDAConfig();
     trackRepo = DI::getInstance()->getRepoTrack();
     fireTriangleRepo = DI::getInstance()->getRepoFireTriangle();
+    waService = DI::getInstance()->getServiceWeaponAssign();
     wtaService = DI::getInstance()->getServiceWeaponTrackAssign();
 
     tdaScale = tdaConfig->getZoomScale();

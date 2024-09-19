@@ -223,10 +223,11 @@ void WeaponTrackAssignService::BreakEngagementWeapon(const QString &weapon)
     QList<WeaponTrackAssignEntity*> wta_list(wta.begin(), wta.end());
     foreach (auto wta, wta_list) {
         if (wta->getWeapon() == weapon.toStdString()) {
-//            _repoWTA->BreakEngagement(WeaponTrackAssignEntity(weapon.toStdString(), wta->getTrackId()));
-            BreakEngagement(weapon, wta->getTrackId());
+            _repoWTA->BreakEngagement(WeaponTrackAssignEntity(weapon.toStdString(), wta->getTrackId()));
+//            BreakEngagement(weapon, wta->getTrackId());
         }
     }
+    _cmsEngageService->sendResetAssignment(weapon);
 }
 
 const WeaponTrackAssignEntity *WeaponTrackAssignService::GetEngagementTrack(const QString &weapon) const

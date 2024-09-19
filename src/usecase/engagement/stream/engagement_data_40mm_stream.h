@@ -20,7 +20,7 @@ public:
             EngagementDataRepository* repoEngagemenData);
 
     void CreateEngage(const int &trackId);
-    void DeleteEngage();
+    void DeleteEngage(const QString weapon);
 
     // EngagementStreamBase interface
     BaseError check() override;

@@ -48,7 +48,16 @@ void TrackWeaponEngageService::sendAssignment(TrackAssignRequest request, bool a
         httpResponse = httpClient.sendCustomRequest(httpReq, "DELETE", request.toJSON());
     }
     connect(httpResponse, &QNetworkReply::finished, this, &TrackWeaponEngageService::onReplyFinished);
+}
 
+void TrackWeaponEngageService::sendResetAssignment(const QString weapon)
+{
+    QNetworkRequest httpReq = QNetworkRequest(_cmsConfig->getInstance("")->getResetAssignUrl()+"/"+weapon);
+
+    httpResponse = httpClient.sendCustomRequest(httpReq, "DELETE", "{}");
+    connect(httpResponse, &QNetworkReply::finished, this, &TrackWeaponEngageService::onResetAssignReplyFinished);
+
+    qDebug()<<Q_FUNC_INFO<<"url: "<<_cmsConfig->getInstance("")->getResetAssignUrl()+"/"+weapon;
 }
 
 void TrackWeaponEngageService::onReplyFinished()
@@ -69,6 +78,14 @@ void TrackWeaponEngageService::onReplyFinished()
     resp = toResponse(respRaw);
 
     emit signal_trackAssignmentResponse(resp, assign);
+}
+
+void TrackWeaponEngageService::onResetAssignReplyFinished()
+{
+    QByteArray respRaw = httpResponse->readAll();
+
+    qDebug()<<Q_FUNC_INFO<<"respRaw: "<<respRaw;
+    qDebug()<<Q_FUNC_INFO<<"err: "<<httpResponse->error();
 }
 
 BaseResponse<TrackAssignResponse> TrackWeaponEngageService::toResponse(QByteArray raw)
