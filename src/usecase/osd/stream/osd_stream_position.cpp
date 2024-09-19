@@ -84,7 +84,7 @@ void OSDStreamPosition::onDataReceived(QByteArray data)
         }
 
         auto positionMode = serviceMode->getDataMode().getPosition();
-        if (!positionMode) {
+        if (!positionMode && check().getCode() == ERROR_NO.first) {
             _repoPos->SetPosition(OSDPositionEntity(
                                       model.getLatitude(),
                                       model.getLongitude(),

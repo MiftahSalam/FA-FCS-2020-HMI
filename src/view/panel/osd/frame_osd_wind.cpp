@@ -108,7 +108,7 @@ void FrameOSDWind::onModeChangeResponse(const QString datafisis, BaseResponse<In
         break;
     case OSD_MODE::MANUAL:
         manualUiSetup();
-        // TODO: get manual data from server
+        on_pushButton_clicked();
         break;
     default:
         break;
