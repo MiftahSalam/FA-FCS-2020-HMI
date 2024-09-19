@@ -21,9 +21,6 @@ public:
 public slots:
     void OnStreamEngegementDataReceived(EngagementDataModel model);
 
-protected:
-    QTimer *timer;
-
 private slots:
     void onTimeOut();
     void onAssignmentResponseData(BaseResponse<TrackAssignResponse> resp, bool assign);
@@ -31,10 +28,12 @@ private slots:
 
 private:
     Ui::FrameEngageData *ui;
+    QTimer *timer;
 
     EngagementData40mmStream *engagementDataStream;
     WeaponTrackAssignService *wtaService;
     WeaponAssignService *waService;
+    BaseError currError;
 
     void resetEngage(const QString weapon);
 };

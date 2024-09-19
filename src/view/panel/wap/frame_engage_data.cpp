@@ -1,4 +1,5 @@
 #include "frame_engage_data.h"
+#include "src/shared/common/errors/err_messaging.h"
 #include "ui_frame_engage_data.h"
 #include "src/di/di.h"
 
@@ -7,18 +8,25 @@ FrameEngageData::FrameEngageData(QWidget *parent) :
     ui(new Ui::FrameEngageData),
     engagementDataStream(DI::getInstance()->getServiceEngagementStream()->getServiceEngagement40mm()),
     wtaService(DI::getInstance()->getServiceWeaponTrackAssign()),
-    waService(DI::getInstance()->getServiceWeaponAssign())
+    waService(DI::getInstance()->getServiceWeaponAssign()),
+    currError(ErrMessagingDataInvalidFormat())
 {
     ui->setupUi(this);
+
+    timer = new QTimer(this);
 
     int rowCount = ui->tableWidgetEngData->rowCount();
     for (int var = 0; var < rowCount; var++) {
         ui->tableWidgetEngData->removeRow(var);
     }
 
+    connect(timer, &QTimer::timeout, this, &FrameEngageData::onTimeOut);
+
     connect(waService, &WeaponAssignService::OnAssignModeChange, this, &FrameEngageData::onAssignModeChange);
     connect(engagementDataStream, &EngagementData40mmStream::signalDataProcessed, this, &FrameEngageData::OnStreamEngegementDataReceived);
     connect(wtaService, &WeaponTrackAssignService::signal_assignmentResponseData, this, &FrameEngageData::onAssignmentResponseData);
+
+    timer->start(1000);
 }
 
 FrameEngageData::~FrameEngageData()
@@ -64,7 +72,30 @@ void FrameEngageData::OnStreamEngegementDataReceived(EngagementDataModel model)
 
 void FrameEngageData::onTimeOut()
 {
+    auto curr40mmitems = ui->tableWidgetEngData->findItems(
+                "40mm",
+                Qt::MatchCaseSensitive);
 
+    if(!curr40mmitems.isEmpty()) {
+        auto curr_error = engagementDataStream->check();
+        auto cur40mmItemRow = curr40mmitems.first();
+
+        if (curr_error.getCode() != currError.getCode()) {
+            currError = curr_error;
+
+            if (currError.getCode() != ERROR_NO.first)
+            {
+                for (int var = 0; var < 5; var++) {
+                    ui->tableWidgetEngData->item(cur40mmItemRow->row(), var)->setForeground(QBrush(QColor(255,0,0)));
+                }
+
+            } else {
+                for (int var = 0; var < 5; var++) {
+                    ui->tableWidgetEngData->item(cur40mmItemRow->row(), var)->setForeground(QBrush(QColor(0,255,0)));
+                }
+            }
+        }
+    }
 }
 
 void FrameEngageData::onAssignmentResponseData(BaseResponse<TrackAssignResponse> resp, bool assign)

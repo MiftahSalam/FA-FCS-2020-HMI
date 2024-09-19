@@ -72,6 +72,8 @@ void EngagementData40mmStream::onDataReceived(QByteArray data)
             EngagementDataEntity::EngagementStatus(model.getStatus())
             ));
 
+        currentErr = NoError();
+
         emit signalDataProcessed(model);
 
     }catch(ErrJsonParse &e) {
