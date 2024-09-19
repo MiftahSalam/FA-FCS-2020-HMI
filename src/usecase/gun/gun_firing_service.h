@@ -54,6 +54,7 @@ private:
     QMap<QString, SerialMessagingWrapper*> firingPorts;
 
     QStringList _weaponsReady;
+    QStringList _weapons;
     QStringList _weaponsOpenFire;
     bool _openFire;
     bool _isFiringAvailable;

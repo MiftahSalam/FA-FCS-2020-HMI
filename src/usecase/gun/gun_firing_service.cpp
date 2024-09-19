@@ -1,6 +1,8 @@
 #include "gun_firing_service.h"
 #include "src/shared/common/errors/err_object_creation.h"
 
+const QString FIRE_CMD_TEMPLATE = "$FIRE,%1*HH\r\n";
+
 GunFiringService *GunFiringService::instance = nullptr;
 
 GunFiringService::GunFiringService(
@@ -17,14 +19,16 @@ GunFiringService::GunFiringService(
       _wtaService(wtaService),
       _openFire(true)
 {
-    auto weapons = waService->getAvailableWeapons();
-    foreach (auto weapon, weapons) {
+    _weapons = waService->getAvailableWeapons();
+    foreach (auto weapon, _weapons) {
         firingPorts.insert(weapon, nullptr);
     }
     firingPorts.insert("40mm", new SerialMessagingWrapper(this, serialConfig));
 
     timer = new QTimer(this);
     connect(timer, &QTimer::timeout, this, &GunFiringService::OnTimeout);
+
+    timer->start(1000);
 }
 
 void GunFiringService::OnWeaponAssign(BaseResponse<TrackAssignResponse> resp, bool assign)
@@ -47,20 +51,18 @@ void GunFiringService::OnWeaponAssign(BaseResponse<TrackAssignResponse> resp, bo
         _weaponsReady.removeAll(weapon);
     }
 
-    if (_weaponsReady.size() > 0) {
-        timer->start(1000);
-    } else {
-        timer->stop();
-    }
-
     emit signal_FiringChange(weapon, _weaponsReady.contains(weapon));
 }
 
 void GunFiringService::OnTimeout()
 {
-    foreach (auto wOpenFire, _weaponsOpenFire) {
-        auto port_serial = firingPorts.value(wOpenFire);
-        port_serial->sendActivateButtonMessage("activate");
+    foreach (auto w, _weapons) {
+        auto port_serial = firingPorts.value(w);
+        if (_weaponsOpenFire.contains(w)) {
+            port_serial->sendActivateButtonMessage(FIRE_CMD_TEMPLATE.arg("1").toUtf8());
+        } else {
+            port_serial->sendActivateButtonMessage(FIRE_CMD_TEMPLATE.arg("0").toUtf8());
+        }
     }
 }
 
