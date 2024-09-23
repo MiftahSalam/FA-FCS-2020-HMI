@@ -10,7 +10,7 @@ FireTriangleRepositoryInMemImpl::FireTriangleRepositoryInMemImpl(FireTriangleEnt
 FireTriangleBaseRepository *FireTriangleRepositoryInMemImpl::GetInstance()
 {
     if (instance == nullptr) {
-        FireTriangleEntity* entity = new FireTriangleEntity(0, 0, 0);
+        FireTriangleEntity* entity = new FireTriangleEntity(-1, 0, 0);
         instance = new FireTriangleRepositoryInMemImpl (entity);
     }
     return instance;
