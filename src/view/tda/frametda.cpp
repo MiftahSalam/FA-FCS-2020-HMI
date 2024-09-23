@@ -80,6 +80,7 @@ void FrameTDA::mousePressEvent(QMouseEvent *event)
 void FrameTDA::timeOut()
 {
     update();
+    setupDateTime();
 
     //    auto pos = osdRepo->getRepoOSDPosition()->GetPosition(); //temp test
     //    auto inertia = osdRepo->getRepoOSDInertia()->GetInertia(); //temp test
@@ -375,6 +376,13 @@ void FrameTDA::setupDI()
     wtaService = DI::getInstance()->getServiceWeaponTrackAssign();
 
     tdaScale = tdaConfig->getZoomScale();
+}
+
+void FrameTDA::setupDateTime()
+{
+    currentDateTime = QDateTime::currentDateTime();
+    QString dateTime = currentDateTime.toString("dd/MM/yyyy hh:mm:ss");
+    ui->label_date_time->setText(dateTime);
 }
 
 void FrameTDA::handleMouseTrackingPolar(QMouseEvent *event)

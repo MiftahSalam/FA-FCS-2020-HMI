@@ -92,11 +92,13 @@ private:
    int zoomScale2Int(zoomScale scale);
    zoomScale zoomInt2Scale(int scale);
    int cur_checked_zoom_scale;
+   QDateTime currentDateTime;
 
    void setupContextMenu();
    void setupStatusBar();
    void setupTdaObjects();
    void setupDI();
+   void setupDateTime();
 
    void handleMouseTrackingPolar(QMouseEvent *event);
    void handleMouseTrackinglatLon(QMouseEvent *event);
