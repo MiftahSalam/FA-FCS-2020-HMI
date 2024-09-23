@@ -12,7 +12,7 @@ OSDPositionRepositoryInMemImpl::OSDPositionRepositoryInMemImpl(OSDPositionEntity
 OSDPositionRepository *OSDPositionRepositoryInMemImpl::GetInstance()
 {
     if (instance == nullptr) {
-        OSDPositionEntity* entity = new OSDPositionEntity(-91.0, -181.0, "", "", OSD_MODE::AUTO);
+        OSDPositionEntity* entity = new OSDPositionEntity(0.0, 0.0, "", "", OSD_MODE::AUTO);
         instance = new OSDPositionRepositoryInMemImpl(entity);
     }
 

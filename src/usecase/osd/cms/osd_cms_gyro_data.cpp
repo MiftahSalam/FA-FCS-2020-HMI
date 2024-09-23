@@ -74,7 +74,7 @@ void OSDCMSGyroData::onReplyFinished()
                              resp.getData().getRoll(),
                              "manual",
                              "",
-                             OSD_MODE::MANUAL //temp
+                             OSD_MODE::MANUAL
                              ));
 
     emit signal_setGyroResponse(resp);

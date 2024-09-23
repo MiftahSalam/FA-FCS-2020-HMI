@@ -69,7 +69,7 @@ void OSDCMSWaterSpeedData::onReplyFinished()
                              resp.getData().getCourse(),
                              "manual",
                              "",
-                             OSD_MODE::MANUAL //temp
+                             OSD_MODE::MANUAL
                              ));
 
     emit signal_setWaterSpeedResponse(resp);

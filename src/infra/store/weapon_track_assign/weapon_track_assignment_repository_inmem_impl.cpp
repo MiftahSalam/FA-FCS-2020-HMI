@@ -1,5 +1,5 @@
 #include "weapon_track_assignment_repository_inmem_impl.h"
-#include "qlist.h"
+#include <QList>
 
 WeaponTrackAssignmentRepositoryInMemImpl* WeaponTrackAssignmentRepositoryInMemImpl::instance{nullptr};
 

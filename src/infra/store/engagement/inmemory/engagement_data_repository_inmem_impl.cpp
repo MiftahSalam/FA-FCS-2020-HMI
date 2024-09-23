@@ -1,5 +1,5 @@
 #include "engagement_data_repository_inmem_impl.h"
-#include "qlist.h"
+#include <QList>
 
 EngagementDataRepositoryInMemImpl* EngagementDataRepositoryInMemImpl::instance{nullptr};
 
@@ -42,7 +42,6 @@ bool EngagementDataRepositoryInMemImpl::AddEngagement(const EngagementDataEntity
     }
 
     return false;
-
 }
 
 bool EngagementDataRepositoryInMemImpl::RemoveEngagement(const WeaponTrackAssignEntity &wta)
