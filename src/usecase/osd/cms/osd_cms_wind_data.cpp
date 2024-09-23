@@ -69,7 +69,7 @@ void OSDCMSWindData::onReplyFinished()
                              resp.getData().getDirection(),
                              "manual",
                              "",
-                             OSD_MODE::MANUAL //temp
+                             OSD_MODE::MANUAL
                              ));
 
     emit signal_setWindResponse(resp);
