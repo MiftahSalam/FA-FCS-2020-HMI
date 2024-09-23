@@ -1,10 +1,7 @@
 #include "tda_gun_coverage_object.h"
 
-#include "qmath.h"
 #include <QTextStream>
 #include <cmath>
-
-
 
 TDAGunCoverageObject::TDAGunCoverageObject(QObject *parent, OSDInertiaRepository *repoInertia,
                                            GunCoverageRepository *repoGunCov, TDAConfig *configTDA):
@@ -13,7 +10,6 @@ TDAGunCoverageObject::TDAGunCoverageObject(QObject *parent, OSDInertiaRepository
     repoGunCov(repoGunCov),
     tdaConfig(configTDA)
 {
-    repoInertia->SetInertia(OSDInertiaEntity(0,0,0,"","",OSD_MODE::AUTO));
     repoGunCov->SetGunCoverage(GunCoverageEntity(10000,120,0));
 }
 
