@@ -52,8 +52,7 @@ void TDAGunCoverageObject::Draw(QPainter *painter, const int &side, const int &w
     }
 }
 
-
-
 void TDAGunCoverageObject::OnZoom(float range)
 {
+    Q_UNUSED(range);
 }
