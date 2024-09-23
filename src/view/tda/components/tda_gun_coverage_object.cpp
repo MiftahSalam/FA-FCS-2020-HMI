@@ -10,19 +10,20 @@ TDAGunCoverageObject::TDAGunCoverageObject(QObject *parent, OSDInertiaRepository
     repoGunCov(repoGunCov),
     tdaConfig(configTDA)
 {
-    repoGunCov->SetGunCoverage(GunCoverageEntity(10000,120,0));
 }
 
 void TDAGunCoverageObject::Draw(QPainter *painter, const int &side, const int &width, const int &height, const QPoint &off_center)
 {
-    QPoint center_point = QPoint(width/2,height/2);
+    Q_UNUSED(off_center);
 
-    if(tdaConfig->getGunCoverageStatus() == true)
+    QPoint center_point = QPoint(width/2,height/2);
+    float max_range = repoGunCov->GetGunCoverage()->getMax_range();
+
+    if(tdaConfig->getGunCoverageStatus() == true && max_range > 0)
     {
         tdaScale = tdaConfig->getZoomScale();
         float gun_orientation = repoGunCov->GetGunCoverage()->getGunOrientation();
         float blind_arc = repoGunCov->GetGunCoverage()->getBlindArc();
-        float max_range = repoGunCov->GetGunCoverage()->getMax_range();
         // konversi ke NM
         float max_range_NM = max_range/1852;
         float currHeading = repoInertia->GetInertia()->heading();
