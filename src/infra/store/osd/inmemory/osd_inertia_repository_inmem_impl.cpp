@@ -11,7 +11,7 @@ OSDInertiaRepositoryInMemImpl::OSDInertiaRepositoryInMemImpl(OSDInertiaEntity *e
 OSDInertiaRepository *OSDInertiaRepositoryInMemImpl::GetInstance()
 {
     if (instance == nullptr) {
-        OSDInertiaEntity* entity = new OSDInertiaEntity(0, 90.0, 90., "", "", OSD_MODE::AUTO);
+        OSDInertiaEntity* entity = new OSDInertiaEntity(0, 0.0, 0., "", "", OSD_MODE::AUTO);
         instance = new OSDInertiaRepositoryInMemImpl(entity);
     }
 

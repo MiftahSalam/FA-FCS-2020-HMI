@@ -1,7 +1,6 @@
 #include "fire_triangle_service.h"
 #include "src/shared/common/errors/err_json_parse.h"
 #include "src/shared/common/errors/err_object_creation.h"
-#include "src/shared/common/errors/err_osd_data.h"
 #include "src/shared/utils/utils.h"
 
 FireTriangleService *FireTriangleService::fireTriangleService = nullptr;
@@ -24,9 +23,6 @@ void FireTriangleService::onDataReceived(QByteArray data)
     try {
         QJsonObject respObj = Utils::byteArrayToJsonObject(data);
         FireTriangleModel model(respObj["ttlf"].toDouble(),respObj["ttlf_x"].toDouble(),respObj["ttlf_y"].toDouble());
-
-        qDebug()<<Q_FUNC_INFO<<"data fire triangle: ttlf ->"<<model.getTtlf()<<"ttlf X->"<<model.getTtlfX()
-                 <<"ttlf y ->"<<model.getTtlfY();
 
         repoFireTriangle->SetFireTriangle(FireTriangleEntity(
             model.getTtlf(),

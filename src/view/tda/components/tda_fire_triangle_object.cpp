@@ -3,29 +3,29 @@
 #include <QTextStream>
 #include <cmath>
 #include <QDebug>
-#include "qmath.h"
 #include "src/shared/utils/utils.h"
-#include "src/view/tda/components/track/track_param.h"
 
 TDAFireTriangleObject::TDAFireTriangleObject(
         QObject *parent,
         FireTriangleBaseRepository *repoFireTriangle,
         TrackBaseRepository *repoArpa,
+        WeaponAssignService *serviceWA,
         WeaponTrackAssignService *serviceWTA,
         TDAConfig *configTDA
         ):
     TDAObjectBase (parent),
     fireTriangleRepo(repoFireTriangle),
     arpaRepo(repoArpa),
+    waService(serviceWA),
     wtaSercie(serviceWTA),
     tdaConfig(configTDA),
     currAssignedTrack(0)
 
 {
+    connect(waService, &WeaponAssignService::OnAssignModeChange,
+            this, &TDAFireTriangleObject::onAssignModeChange);
     connect(wtaSercie, &WeaponTrackAssignService::signal_assignmentResponseData,
             this, &TDAFireTriangleObject::OnWeaponAssignment);
-
-    fireTriangleRepo->SetFireTriangle(FireTriangleEntity(60,6820.2734375,7313.2666015625));
 }
 
 void TDAFireTriangleObject::Draw(QPainter *painter, const int &side, const int &width, const int &height, const QPoint &off_center)
@@ -84,6 +84,13 @@ void TDAFireTriangleObject::OnWeaponAssignment(BaseResponse<TrackAssignResponse>
         } else {
             currAssignedTrack = 0;
         }
+    }
+}
+
+void TDAFireTriangleObject::onAssignModeChange(const QString &weapon, const WeaponAssign::WeaponAssignMode &mode)
+{
+    if (mode == WeaponAssign::NONE) {
+        currAssignedTrack = 0;
     }
 }
 

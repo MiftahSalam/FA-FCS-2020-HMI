@@ -1,10 +1,7 @@
 #include "tda_gun_coverage_object.h"
 
-#include "qmath.h"
 #include <QTextStream>
 #include <cmath>
-
-
 
 TDAGunCoverageObject::TDAGunCoverageObject(QObject *parent, OSDInertiaRepository *repoInertia,
                                            GunCoverageRepository *repoGunCov, TDAConfig *configTDA):
@@ -13,20 +10,20 @@ TDAGunCoverageObject::TDAGunCoverageObject(QObject *parent, OSDInertiaRepository
     repoGunCov(repoGunCov),
     tdaConfig(configTDA)
 {
-    repoInertia->SetInertia(OSDInertiaEntity(0,0,0,"","",OSD_MODE::AUTO));
-    repoGunCov->SetGunCoverage(GunCoverageEntity(10000,120,0));
 }
 
 void TDAGunCoverageObject::Draw(QPainter *painter, const int &side, const int &width, const int &height, const QPoint &off_center)
 {
-    QPoint center_point = QPoint(width/2,height/2);
+    Q_UNUSED(off_center);
 
-    if(tdaConfig->getGunCoverageStatus() == true)
+    QPoint center_point = QPoint(width/2,height/2);
+    float max_range = repoGunCov->GetGunCoverage()->getMax_range();
+
+    if(tdaConfig->getGunCoverageStatus() == true && max_range > 0)
     {
         tdaScale = tdaConfig->getZoomScale();
         float gun_orientation = repoGunCov->GetGunCoverage()->getGunOrientation();
         float blind_arc = repoGunCov->GetGunCoverage()->getBlindArc();
-        float max_range = repoGunCov->GetGunCoverage()->getMax_range();
         // konversi ke NM
         float max_range_NM = max_range/1852;
         float currHeading = repoInertia->GetInertia()->heading();
@@ -55,8 +52,7 @@ void TDAGunCoverageObject::Draw(QPainter *painter, const int &side, const int &w
     }
 }
 
-
-
 void TDAGunCoverageObject::OnZoom(float range)
 {
+    Q_UNUSED(range);
 }

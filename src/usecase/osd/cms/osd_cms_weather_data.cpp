@@ -72,7 +72,7 @@ void OSDCMSWeatherData::onReplyFinished()
         resp.getData().getHumidity(),
         "manual",
         "",
-        OSD_MODE::MANUAL //temp
+        OSD_MODE::MANUAL
         ));
 
     emit signal_setWeatherResponse(resp);

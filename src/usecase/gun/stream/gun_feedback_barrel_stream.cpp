@@ -26,8 +26,6 @@ void GunFeedbackBarrelStream::onDataReceived(QByteArray data)
                              respObj["elevation"].toDouble()
                              );
 
-        qDebug()<<Q_FUNC_INFO<<"data gun barrel: azimuth->"<<model.getAzimuth()<<"elevation->"<<model.getElevation();
-
         repoGunFback->SetBarrel(
             model.getAzimuth(),
             model.getElevation()

@@ -16,6 +16,7 @@
 #include "src/infra/store/track/track_repository.h"
 #include "src/shared/config/tda_config.h"
 #include "src/usecase/engagement/weapon_track_assign_service.h"
+#include "src/usecase/weapon_assign/weapon_assign_service.h"
 #include "src/view/tda/components/tda_object_base.h"
 #include "src/infra/store/gun/gun_repository.h"
 #include "src/infra/store/fire_triangle/fire_triangle_repository.h"
@@ -75,6 +76,7 @@ private:
    GunRepository *gunRepo;
    TrackRepository *trackRepo;
    FireTriangleRepository *fireTriangleRepo;
+   WeaponAssignService *waService;
    WeaponTrackAssignService *wtaService;
 
    TDAConfig *tdaConfig;

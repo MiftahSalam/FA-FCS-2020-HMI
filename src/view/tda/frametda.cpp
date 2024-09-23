@@ -31,9 +31,6 @@ FrameTDA::FrameTDA(QWidget *parent) : QFrame(parent),
     // setup status bar (mouse & track selected)
     setupStatusBar();
 
-    // temporary
-    osdRepo->getRepoOSDPosition()->SetPosition(OSDPositionEntity(0, 0, "", "", OSD_MODE::AUTO));
-
     // setup popup menu
     setupContextMenu();
 
@@ -72,7 +69,6 @@ void FrameTDA::mousePressEvent(QMouseEvent *event)
 {
     if (event->button() == Qt::RightButton)
     {
-        //        this->setContextMenuPolicy(Qt::CustomContextMenu);
         emit signalOnCostumContextMenuRequest(event->pos());
     }
 }
@@ -80,11 +76,8 @@ void FrameTDA::mousePressEvent(QMouseEvent *event)
 void FrameTDA::timeOut()
 {
     update();
-    setupDateTime();
 
-    //    auto pos = osdRepo->getRepoOSDPosition()->GetPosition(); //temp test
-    //    auto inertia = osdRepo->getRepoOSDInertia()->GetInertia(); //temp test
-    //    qDebug()<<Q_FUNC_INFO<<pos->latitude()<<inertia->heading();
+    setupDateTime();
 }
 
 void FrameTDA::on_FrameTDA_customContextMenuRequested(const QPoint &pos)
@@ -360,6 +353,7 @@ void FrameTDA::setupTdaObjects()
                 this,
                 fireTriangleRepo->getRepoFT40mm(),
                 trackRepo->getRepoTrackArpa(),
+                waService,
                 wtaService,
                 tdaConfig);
 
@@ -373,6 +367,7 @@ void FrameTDA::setupDI()
     tdaConfig = DI::getInstance()->getConfig()->getTDAConfig();
     trackRepo = DI::getInstance()->getRepoTrack();
     fireTriangleRepo = DI::getInstance()->getRepoFireTriangle();
+    waService = DI::getInstance()->getServiceWeaponAssign();
     wtaService = DI::getInstance()->getServiceWeaponTrackAssign();
 
     tdaScale = tdaConfig->getZoomScale();

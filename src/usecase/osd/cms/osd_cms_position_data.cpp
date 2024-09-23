@@ -71,7 +71,7 @@ void OSDCMSPositionData::onReplyFinished()
                              resp.getData().getLongitude(),
                              "manual",
                              "",
-                             OSD_MODE::MANUAL //temp
+                             OSD_MODE::MANUAL
                              ));
 
     emit signal_setPositionResponse(resp);

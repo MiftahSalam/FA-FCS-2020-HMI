@@ -153,6 +153,7 @@ void FrameOSDWeather::onModeChangeResponse(const QString datafisis, BaseResponse
         break;
     case OSD_MODE::MANUAL:
         manualUiSetup();
+        on_pushButton_clicked();
         break;
     default:
         break;
