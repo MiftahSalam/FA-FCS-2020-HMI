@@ -84,6 +84,7 @@ void TDAFireTriangleObject::OnWeaponAssignment(BaseResponse<TrackAssignResponse>
         if (assign) {
             currAssignedTrack = resp.getData().getTrackId();
         } else {
+            fireTriangleRepo->SetFireTriangle(FireTriangleEntity(-1, 0, 0));
             currAssignedTrack = 0;
         }
     }
@@ -92,6 +93,7 @@ void TDAFireTriangleObject::OnWeaponAssignment(BaseResponse<TrackAssignResponse>
 void TDAFireTriangleObject::onAssignModeChange(const QString &weapon, const WeaponAssign::WeaponAssignMode &mode)
 {
     if (mode == WeaponAssign::NONE) {
+        fireTriangleRepo->SetFireTriangle(FireTriangleEntity(-1, 0, 0));
         currAssignedTrack = 0;
     }
 }
