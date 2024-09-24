@@ -44,6 +44,7 @@ signals:
 
 private slots:
     void OnWeaponAssign(BaseResponse<TrackAssignResponse> resp, bool assign);
+    void onAssignModeChange(const QString &weapon, const WeaponAssign::WeaponAssignMode &mode);
     void OnTimeout();
 
 private:
