@@ -63,8 +63,8 @@ void FrameEngageData::OnStreamEngegementDataReceived(EngagementDataModel model)
     if(!curr40mmitems.isEmpty()) {
         // update table
         auto cur40mmItemRow = curr40mmitems.first();
-        QString _azimuth = QString::number(model.azimuth());
-        QString _elevation = QString::number(model.elevation());
+        QString _azimuth = QString::number(model.azimuth(),'f',2);
+        QString _elevation = QString::number(model.elevation(),'f',2);
         ui->tableWidgetEngData->item(cur40mmItemRow->row(),3)->setText(_azimuth);
         ui->tableWidgetEngData->item(cur40mmItemRow->row(),4)->setText(_elevation);
     }
