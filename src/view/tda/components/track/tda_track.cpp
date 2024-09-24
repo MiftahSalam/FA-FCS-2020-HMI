@@ -69,6 +69,7 @@ void TdaTrack::buildUI(TrackParam *param)
 
 void TdaTrack::setSelected(bool select)
 {
+    trackIconLabel->setLineWidth(2);
     if(select)
         trackIconLabel->setFrameShape(QFrame::Box);
     else

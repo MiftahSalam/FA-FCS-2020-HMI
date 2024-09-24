@@ -346,6 +346,8 @@ void FrameTDA::setupTdaObjects()
     TDATracksObject *tracksObject = new TDATracksObject(
                 this,
                 trackRepo->getRepoTrackArpa(),
+                waService,
+                wtaService,
                 tdaScale);
     TDAFireTriangleObject *fireTriangle = new TDAFireTriangleObject(
                 this,
