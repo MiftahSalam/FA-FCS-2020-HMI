@@ -7,7 +7,8 @@ GunFiringService *GunFiringService::instance = nullptr;
 
 GunFiringService::GunFiringService(
         QObject *parent,
-        SerialMessagingOpts *serialConfig,
+//        SerialMessagingOpts *serialConfig,
+        TcpMessagingOpts *tcpConfig,
         GunFeedbackRepository *gunStatusREpo,
         WeaponAssignService *waService,
         WeaponTrackAssignService *wtaService
@@ -23,7 +24,8 @@ GunFiringService::GunFiringService(
     foreach (auto weapon, _weapons) {
         firingPorts.insert(weapon, nullptr);
     }
-    firingPorts.insert("40mm", new SerialMessagingWrapper(this, serialConfig));
+//    firingPorts.insert("40mm", new SerialMessagingWrapper(this, serialConfig));
+    firingPorts.insert("40mm", new TcpMessagingWrapper(this, tcpConfig));
 
     timer = new QTimer(this);
     connect(timer, &QTimer::timeout, this, &GunFiringService::OnTimeout);
@@ -57,11 +59,16 @@ void GunFiringService::OnWeaponAssign(BaseResponse<TrackAssignResponse> resp, bo
 void GunFiringService::OnTimeout()
 {
     foreach (auto w, _weapons) {
-        auto port_serial = firingPorts.value(w);
+        auto port = firingPorts.value(w);
+
+        port->checkConnection();
+
         if (_weaponsOpenFire.contains(w)) {
-            port_serial->sendActivateButtonMessage(FIRE_CMD_TEMPLATE.arg("1").toUtf8());
+            port->sendMessage(FIRE_CMD_TEMPLATE.arg("1").toUtf8());
+//            port->sendActivateButtonMessage(FIRE_CMD_TEMPLATE.arg("1").toUtf8());
         } else {
-            port_serial->sendActivateButtonMessage(FIRE_CMD_TEMPLATE.arg("0").toUtf8());
+//            port->sendActivateButtonMessage(FIRE_CMD_TEMPLATE.arg("0").toUtf8());
+            port->sendMessage(FIRE_CMD_TEMPLATE.arg("0").toUtf8());
         }
     }
 }
@@ -79,7 +86,7 @@ void GunFiringService::setOpenFire(const QString &weapon, bool open)
 }
 
 GunFiringService *GunFiringService::getInstance(QObject *parent,
-                                                MessagingSerialConfig *serialConfig,
+                                                MessagingTcpConfig *msgConfig,
                                                 GunFeedbackRepository *gunStatusREpo,
                                                 WeaponAssignService *waService,
                                                 WeaponTrackAssignService *wtaService
@@ -87,7 +94,7 @@ GunFiringService *GunFiringService::getInstance(QObject *parent,
 {
     if(instance == nullptr)
     {
-        if(serialConfig == nullptr)
+        if(msgConfig == nullptr)
         {
             throw ErrObjectCreation();
         }
@@ -104,8 +111,8 @@ GunFiringService *GunFiringService::getInstance(QObject *parent,
             throw ErrObjectCreation();
         }
 
-        SerialMessagingOpts *gunFiringStreamVal = serialConfig->getInstance("")->getContent().value("fire_button");
-
+        TcpMessagingOpts *gunFiringStreamVal = msgConfig->getInstance("")->getContent().value("fire_button");
+//        SerialMessagingOpts *gunFiringStreamVal = msgConfig->getInstance("")->getContent().value("fire_button");
 
         instance = new GunFiringService(parent, gunFiringStreamVal, gunStatusREpo, waService, wtaService);
 
