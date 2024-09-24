@@ -35,12 +35,15 @@ private:
     GunFeedbackBarrelStream* gunBarrelStream;
     GunManagerService* gunManagerService;
 
-     void notConnectedUiSetupBarrel();
-     void noDataUiSetupBarrel();
-     void noDataUiSetupStatus();
-     void invalidDataUiSetupBarrel();
-     void offlineUiSetup();
-     void updateOperationalUiSetup();
+    void updateTechStatus();
+    void updateBarrelStatus();
+
+    void notConnectedUiSetupBarrel();
+    void noDataUiSetupBarrel();
+    void noDataUiSetupStatus();
+    void invalidDataUiSetupBarrel();
+    void offlineUiSetup();
+    void updateOperationalUiSetup();
 };
 
 #endif // FRAME_GUN_DATA_MONITORING_H
