@@ -43,6 +43,11 @@ BaseError TcpMessagingWrapper::checkConnection()
     }
 }
 
+void TcpMessagingWrapper::sendMessage(QByteArray data)
+{
+    consumer->write(data);
+}
+
 void TcpMessagingWrapper::onConnected()
 {
     connect(consumer, &QTcpSocket::readyRead, this, &TcpMessagingWrapper::onReadyRead);

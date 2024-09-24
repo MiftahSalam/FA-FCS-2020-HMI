@@ -3,7 +3,8 @@
 
 #include "qtimer.h"
 #include "src/domain/gun/repository/gun_feedback_repository.h"
-#include "src/infra/messaging/serial/serial_messaging_wrapper.h"
+//#include "src/infra/messaging/serial/serial_messaging_wrapper.h"
+#include "src/infra/messaging/tcp/tcp_messaging_wrapper.h"
 #include "src/shared/config/messaging_serial_config.h"
 #include "src/usecase/engagement/weapon_track_assign_service.h"
 #include "src/usecase/weapon_assign/weapon_assign_service.h"
@@ -19,7 +20,8 @@ public:
     void operator=(const GunFiringService &) = delete;
     static GunFiringService *getInstance(
             QObject *parent = nullptr,
-            MessagingSerialConfig *serialConfig = nullptr,
+//            MessagingSerialConfig *serialConfig = nullptr,
+            MessagingTcpConfig *msgConfig = nullptr,
             GunFeedbackRepository *gunStatusREpo = nullptr,
             WeaponAssignService *waService = nullptr,
             WeaponTrackAssignService *wtaService = nullptr);
@@ -30,7 +32,8 @@ public:
 protected:
     GunFiringService(
             QObject *parent = nullptr,
-            SerialMessagingOpts *serialConfig = nullptr,
+//            SerialMessagingOpts *serialConfig = nullptr,
+            TcpMessagingOpts *tcpConfig = nullptr,
             GunFeedbackRepository *gunStatusREpo = nullptr,
             WeaponAssignService *waService = nullptr,
             WeaponTrackAssignService *wtaService = nullptr
@@ -51,7 +54,8 @@ private:
     GunFeedbackRepository *_feedbackStatusRepository;
     WeaponAssignService *_waService;
     WeaponTrackAssignService *_wtaService;
-    QMap<QString, SerialMessagingWrapper*> firingPorts;
+    QMap<QString, TcpMessagingWrapper*> firingPorts;
+//    QMap<QString, SerialMessagingWrapper*> firingPorts;
 
     QStringList _weaponsReady;
     QStringList _weapons;

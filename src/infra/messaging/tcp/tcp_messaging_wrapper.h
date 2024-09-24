@@ -16,6 +16,8 @@ public:
 
     BaseError checkConnection();
 
+    void sendMessage(QByteArray data);
+
 signals:
     void signalForwardMessage(QByteArray msg);
 

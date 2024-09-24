@@ -31,7 +31,13 @@ DI::DI()
         nullptr,
         repoWeaponAssign,
         repoTrackWeaponAssign);
-    serviceWeaponFiring = GunFiringService::getInstance(nullptr, config->getSerialMessageConfig(), repoGun->getRepoGunFeedback(), serviceWeaponAssign, serviceWeaponTrackAssign);
+//    serviceWeaponFiring = GunFiringService::getInstance(nullptr, config->getSerialMessageConfig(), repoGun->getRepoGunFeedback(), serviceWeaponAssign, serviceWeaponTrackAssign);
+    serviceWeaponFiring = GunFiringService::getInstance(
+                nullptr,
+                config->getTcpMessageConfig(),
+                repoGun->getRepoGunFeedback(),
+                serviceWeaponAssign,
+                serviceWeaponTrackAssign);
 
     serviceTrackStream = new TrackStream(nullptr, config->getTcpMessageConfig(), config->getArpaConfig(), repoTrack);
     // TODO: add engagement correction service
