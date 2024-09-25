@@ -6,8 +6,17 @@
 #include <QDebug>
 #include <cmath>
 
-TDATracksObject::TDATracksObject(QObject *parent, TrackBaseRepository *repoTrack, double scale)
-    : TDAZoomableObjectBase{parent}, arpaRepo(repoTrack), tdaScale(scale)
+TDATracksObject::TDATracksObject(QObject *parent,
+                                 TrackBaseRepository *repoTrack,
+                                 WeaponAssignService *serviceWA,
+                                 WeaponTrackAssignService *serviceWTA,
+                                 double scale)
+    : TDAZoomableObjectBase{parent},
+      arpaRepo(repoTrack),
+      waService(serviceWA),
+      wtaService(serviceWTA),
+      tdaScale(scale),
+      currAssignedTrack(0)
 {
     parentWidget = dynamic_cast<QWidget *>(parent);
     if (parentWidget == nullptr)
@@ -18,6 +27,11 @@ TDATracksObject::TDATracksObject(QObject *parent, TrackBaseRepository *repoTrack
     // add this to listener
     TrackRepositoryPublisher *publisher = dynamic_cast<TrackRepositoryPublisher *>(arpaRepo);
     publisher->AddListener(this);
+
+    connect(wtaService, &WeaponTrackAssignService::signal_assignmentResponseData,
+            this, &TDATracksObject::OnWeaponAssignment);
+    connect(waService, &WeaponAssignService::OnAssignModeChange,
+            this, &TDATracksObject::onAssignModeChange);
 }
 
 TDATracksObject::~TDATracksObject()
@@ -57,20 +71,51 @@ void TDATracksObject::OnIdentityChange(int tn, TrackUtils::Identity newIdentity)
     if (findTrack)
     {
         TrackBaseEntity updateTrack(
-            findTrack->getId(),
-            findTrack->getRange(),
-            findTrack->getBearing(),
-            findTrack->getSpeed(),
-            findTrack->getCourse(),
-            findTrack->source(),
-            findTrack->status(),
-            findTrack->getTimeStamp());
+                    findTrack->getId(),
+                    findTrack->getRange(),
+                    findTrack->getBearing(),
+                    findTrack->getSpeed(),
+                    findTrack->getCourse(),
+                    findTrack->source(),
+                    findTrack->status(),
+                    findTrack->getTimeStamp());
         updateTrack.setCurrIdentity(newIdentity);
         updateTrack.setCurrEnv(findTrack->getCurrEnv());
         updateTrack.setCurrSource(findTrack->getCurrSource());
 
         arpaRepo->Update(updateTrack);
     }
+}
+
+void TDATracksObject::OnWeaponAssignment(BaseResponse<TrackAssignResponse> resp, bool assign)
+{
+    if (resp.getHttpCode() == 0)
+    {
+        TdaTrack *findTrack = trackObjListMap.value(resp.getData().getTrackId(), nullptr);
+        if (findTrack)
+        {
+            if (assign) {
+                currAssignedTrack = resp.getData().getTrackId();
+            } else {
+                currAssignedTrack = 0;
+            }
+
+            findTrack->setSelected(assign);
+        }
+    }
+}
+
+void TDATracksObject::onAssignModeChange(const QString &weapon, const WeaponAssign::WeaponAssignMode &mode)
+{
+    if (mode == WeaponAssign::NONE) {
+        TdaTrack *findTrack = trackObjListMap.value(currAssignedTrack, nullptr);
+        if (findTrack)
+        {
+            currAssignedTrack = 0;
+            findTrack->setSelected(false);
+        }
+    }
+
 }
 
 void TDATracksObject::OnTracksAdded(std::list<TrackBaseEntity *> tnList)
@@ -129,16 +174,16 @@ void TDATracksObject::generateTrackUI(TrackBaseEntity *newTrack)
 TrackParam *TDATracksObject::entityToTrackParam(TrackBaseEntity *track)
 {
     TrackParam *param = new TrackParam(
-        track->getId(),
-        track->getRange(),
-        track->getBearing(),
-        0,
-        track->getSpeed(),
-        track->getCourse(),
-        track->getCurrIdentity(),
-        track->getCurrSource(),
-        track->getCurrEnv(),
-        QString::fromStdString(track->getWeaponAssign()));
+                track->getId(),
+                track->getRange(),
+                track->getBearing(),
+                0,
+                track->getSpeed(),
+                track->getCourse(),
+                track->getCurrIdentity(),
+                track->getCurrSource(),
+                track->getCurrEnv(),
+                QString::fromStdString(track->getWeaponAssign()));
 
     return param;
 }

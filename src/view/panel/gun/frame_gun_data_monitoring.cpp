@@ -27,6 +27,10 @@ FrameGunDataMonitoring::~FrameGunDataMonitoring()
 
 void FrameGunDataMonitoring::onStreamStatusReceive(GunFeedbackStatusModel model)
 {
+    if (gunManagerService->getCurrentTechStat() != GunManagerService::ONLINE) {
+        return;
+    }
+
     if (model.getRemote() == true){
         ui->labelGunStatAccess->setText("Remote");
         ui->labelGunStatAccess->setStyleSheet(COLOR_OK_STYLESHEET);
@@ -112,6 +116,10 @@ void FrameGunDataMonitoring::onStreamStatusReceive(GunFeedbackStatusModel model)
 
 void FrameGunDataMonitoring::onStreamBarrelReceive(GunFeedbackBarrelModel model)
 {
+    if (gunManagerService->getCurrentTechStat() != GunManagerService::ONLINE) {
+        return;
+    }
+
     ui->labelGunStatAz->setText(QString::number(model.getAzimuth()));
     ui->labelGunStatEl->setText(QString::number(model.getElevation()));
 
@@ -126,32 +134,40 @@ void FrameGunDataMonitoring::onStreamBarrelReceive(GunFeedbackBarrelModel model)
 
 void FrameGunDataMonitoring::onTimeout()
 {
+    updateTechStatus();
+    updateOperationalUiSetup();
+    updateBarrelStatus();
+}
+
+void FrameGunDataMonitoring::updateTechStatus()
+{
     auto gunStatusError = gunStatusStream->check();
-    if (gunStatusError.getCode() == ERROR_CODE_MESSAGING_NOT_CONNECTED.first) {
+    auto gunBarrelError = gunBarrelStream->check();
+
+    if (gunStatusError.getCode() == ERROR_NO.first && gunBarrelError.getCode() == ERROR_NO.first) {
+        ui->labelGunStatTech->setText("Online");
+        ui->labelGunStatTech->setStyleSheet(COLOR_OK_STYLESHEET);
+
+        gunManagerService->setTechStatus(GunManagerService::ONLINE);
+    } else {
         offlineUiSetup();
         gunManagerService->setTechStatus(GunManagerService::OFFLINE);
         gunStatusStream->resetStatus();
-    }else if (gunStatusError.getCode() == ERROR_CODE_MESSAGING_NO_DATA.first){
-        noDataUiSetupStatus();
-        gunManagerService->setTechStatus(GunManagerService::ONLINE);
-    }else{
-        ui->labelGunStatTech->setText("Online");
-        ui->labelGunStatTech->setStyleSheet(COLOR_OK_STYLESHEET);
-        gunManagerService->setTechStatus(GunManagerService::ONLINE);
     }
+}
 
-    updateOperationalUiSetup();
-
+void FrameGunDataMonitoring::updateBarrelStatus()
+{
+    auto gunStatusError = gunStatusStream->check();
     auto gunBarrelError = gunBarrelStream->check();
-    if (gunBarrelError.getCode() == ERROR_CODE_MESSAGING_NOT_CONNECTED.first){
+
+    if (gunStatusError.getCode() != ERROR_NO.first && gunBarrelError.getCode() != ERROR_NO.first) {
         notConnectedUiSetupBarrel();
+
         gunBarrelStream->resetBarrel();
+
         ui->labelGunStatAz->setText(QString::number(gunManagerService->getCurrentBarrel()->azimuth()));
         ui->labelGunStatEl->setText(QString::number(gunManagerService->getCurrentBarrel()->elevation()));
-    }else if (gunBarrelError.getCode() == ERROR_CODE_MESSAGING_NO_DATA.first){
-        noDataUiSetupBarrel();
-    }else if (gunBarrelError.getCode() == ERROR_CODE_MESSAGING_DATA_INVALID_FORMAT.first){
-        invalidDataUiSetupBarrel();
     }
 }
 

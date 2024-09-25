@@ -58,8 +58,17 @@ MainWindow::~MainWindow()
 
 void MainWindow::on_pushButtonExit_clicked()
 {
+    auto gun_mode = _di->getServiceGunManager()->getBarrelMode();
+    if (gun_mode != GunBarrelModeEntity::NONE) {
+        QMessageBox::critical(this, "Application", "Cannot exit in gun mode assigned.\n"
+                                                     "Please release gun assigned mode first",
+                                                   QMessageBox::Ok);
+
+        return;
+    }
+
     QMessageBox::StandardButton clickedButton;
-    clickedButton = QMessageBox::question( this, "Shutdown", "Shutdown System?",
+    clickedButton = QMessageBox::question( this, "Application", "Do you really want to exit?",
                                            QMessageBox::Yes|QMessageBox::No );
 
     if( clickedButton != QMessageBox::Yes )

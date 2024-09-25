@@ -56,6 +56,16 @@ void GunFiringService::OnWeaponAssign(BaseResponse<TrackAssignResponse> resp, bo
     emit signal_FiringChange(weapon, _weaponsReady.contains(weapon));
 }
 
+void GunFiringService::onAssignModeChange(const QString &weapon, const WeaponAssign::WeaponAssignMode &mode)
+{
+    if (mode == WeaponAssign::NONE) {
+        _weaponsOpenFire.removeAll(weapon);
+        _weaponsReady.removeAll(weapon);
+
+        emit signal_FiringChange(weapon, _weaponsReady.contains(weapon));
+    }
+}
+
 void GunFiringService::OnTimeout()
 {
     foreach (auto w, _weapons) {
@@ -116,6 +126,8 @@ GunFiringService *GunFiringService::getInstance(QObject *parent,
 
         instance = new GunFiringService(parent, gunFiringStreamVal, gunStatusREpo, waService, wtaService);
 
+        connect(waService, &WeaponAssignService::OnAssignModeChange,
+                instance, &GunFiringService::onAssignModeChange);
         connect(wtaService, &WeaponTrackAssignService::signal_assignmentResponseData, instance, &GunFiringService::OnWeaponAssign);
     }
 

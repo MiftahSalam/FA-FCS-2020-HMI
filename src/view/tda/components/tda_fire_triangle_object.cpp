@@ -5,14 +5,13 @@
 #include <QDebug>
 #include "src/shared/utils/utils.h"
 
-TDAFireTriangleObject::TDAFireTriangleObject(
-        QObject *parent,
-        FireTriangleBaseRepository *repoFireTriangle,
-        TrackBaseRepository *repoArpa,
-        WeaponAssignService *serviceWA,
-        WeaponTrackAssignService *serviceWTA,
-        TDAConfig *configTDA
-        ):
+TDAFireTriangleObject::TDAFireTriangleObject(QObject *parent,
+                                             FireTriangleBaseRepository *repoFireTriangle,
+                                             TrackBaseRepository *repoArpa,
+                                             WeaponAssignService *serviceWA,
+                                             WeaponTrackAssignService *serviceWTA,
+                                             TDAConfig *configTDA
+                                             ):
     TDAObjectBase (parent),
     fireTriangleRepo(repoFireTriangle),
     arpaRepo(repoArpa),
@@ -30,6 +29,9 @@ TDAFireTriangleObject::TDAFireTriangleObject(
 
 void TDAFireTriangleObject::Draw(QPainter *painter, const int &side, const int &width, const int &height, const QPoint &off_center)
 {
+    Q_UNUSED(side);
+    Q_UNUSED(off_center);
+
     if (currAssignedTrack > 0) {
         auto track = arpaRepo->FindOne(currAssignedTrack);
         if (track) {
@@ -55,13 +57,13 @@ void TDAFireTriangleObject::Draw(QPainter *painter, const int &side, const int &
             int track_x_Pixel = track_from_center.x();
             int track_y_Pixel = track_from_center.y();
 
-//            float range = track->getRange();
-//            int rangePixel = (int)(range*(side/tdaScale));
-//            float bearing = track->getBearing();
+            //            float range = track->getRange();
+            //            int rangePixel = (int)(range*(side/tdaScale));
+            //            float bearing = track->getBearing();
 
-//            const double rad2deg = (bearing - 90) * M_PI / 180;
-//            int track_x_Pixel = (rangePixel * qCos(rad2deg)) - TRACK_ICON_MARGIN.width();
-//            int track_y_Pixel = (rangePixel * qSin(rad2deg)) - TRACK_ICON_MARGIN.height();
+            //            const double rad2deg = (bearing - 90) * M_PI / 180;
+            //            int track_x_Pixel = (rangePixel * qCos(rad2deg)) - TRACK_ICON_MARGIN.width();
+            //            int track_y_Pixel = (rangePixel * qSin(rad2deg)) - TRACK_ICON_MARGIN.height();
 
             // qDebug()<<"range"<<rangePixel<<"track X"<<track_x_Pixel<<"track Y"<<track_y_Pixel;
 
@@ -82,6 +84,7 @@ void TDAFireTriangleObject::OnWeaponAssignment(BaseResponse<TrackAssignResponse>
         if (assign) {
             currAssignedTrack = resp.getData().getTrackId();
         } else {
+            fireTriangleRepo->SetFireTriangle(FireTriangleEntity(-1, 0, 0));
             currAssignedTrack = 0;
         }
     }
@@ -90,7 +93,7 @@ void TDAFireTriangleObject::OnWeaponAssignment(BaseResponse<TrackAssignResponse>
 void TDAFireTriangleObject::onAssignModeChange(const QString &weapon, const WeaponAssign::WeaponAssignMode &mode)
 {
     if (mode == WeaponAssign::NONE) {
+        fireTriangleRepo->SetFireTriangle(FireTriangleEntity(-1, 0, 0));
         currAssignedTrack = 0;
     }
 }
-

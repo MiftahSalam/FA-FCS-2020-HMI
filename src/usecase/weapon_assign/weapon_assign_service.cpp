@@ -51,6 +51,7 @@ void WeaponAssignService::resetAllAssignment()
         QList<WeaponAssign*> weapon_assign_list(weapon_assigns.begin(), weapon_assigns.end());
         foreach (auto wa, weapon_assign_list) {
             wa->setMode(WeaponAssign::NONE);
+            emit OnAssignModeChange(QString::fromStdString(wa->getWeapon()), WeaponAssign::NONE);
         }
     }
 }
