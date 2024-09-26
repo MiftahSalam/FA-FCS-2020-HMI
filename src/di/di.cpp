@@ -22,15 +22,16 @@ DI::DI()
     serviceGunManager = GunManagerService::getInstance(nullptr, config->getGunCmsConfig(), repoGun->getRepoGunFeedback(), repoGun->getRepoGunCmd());
     serviceWeaponAssign = WeaponAssignService::getInstance(nullptr, repoWeaponAssign);
     serviceWeaponTrackAssign = WeaponTrackAssignService::getInstance(
-        nullptr,
-        config->getTrackWeaponAssignCmsConfig(),
-        repoGun->getRepoGunCoverage(),
-        repoTrack->getRepoTrackArpa(),
-        repoOSD,
-        serviceOSDStream,
-        repoWeaponAssign,
-        repoTrackWeaponAssign);
-//    serviceWeaponFiring = GunFiringService::getInstance(nullptr, config->getSerialMessageConfig(), repoGun->getRepoGunFeedback(), serviceWeaponAssign, serviceWeaponTrackAssign);
+                nullptr,
+                config->getTrackWeaponAssignCmsConfig(),
+                repoGun->getRepoGunCoverage(),
+                repoTrack->getRepoTrackArpa(),
+                repoOSD,
+                serviceOSDCMS,
+                serviceOSDStream,
+                repoWeaponAssign,
+                repoTrackWeaponAssign);
+    //    serviceWeaponFiring = GunFiringService::getInstance(nullptr, config->getSerialMessageConfig(), repoGun->getRepoGunFeedback(), serviceWeaponAssign, serviceWeaponTrackAssign);
     serviceWeaponFiring = GunFiringService::getInstance(
                 nullptr,
                 config->getTcpMessageConfig(),

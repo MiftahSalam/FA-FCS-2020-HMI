@@ -19,13 +19,14 @@ public:
     WeaponTrackAssignService(WeaponTrackAssignService &other) = delete;
     void operator=(const WeaponTrackAssignService&) = delete;
     static WeaponTrackAssignService* getInstance(QObject *parent = nullptr,
-            TrackWeaponAssignConfig *cmsConfig = nullptr,
-            GunCoverageRepository* repoGunCov = nullptr,
-            TrackBaseRepository* repoTrack = nullptr,
-            OSDRepository* _repoOSD = nullptr,
-            OSDStream* streamOSD = nullptr,
-            WeaponAssignmentRepository *repoWA = nullptr,
-            WeaponTrackAssignmentRepository *repoWTA = nullptr
+                                                 TrackWeaponAssignConfig *cmsConfig = nullptr,
+                                                 GunCoverageRepository* repoGunCov = nullptr,
+                                                 TrackBaseRepository* repoTrack = nullptr,
+                                                 OSDRepository* _repoOSD = nullptr,
+                                                 OSDCMS* cmsOSD = nullptr,
+                                                 OSDStream* streamOSD = nullptr,
+                                                 WeaponAssignmentRepository *repoWA = nullptr,
+                                                 WeaponTrackAssignmentRepository *repoWTA = nullptr
             );
 
     void CheckUpdateEngagement(const QString &weapon);
@@ -52,6 +53,7 @@ protected:
             TrackBaseRepository* repoTrack = nullptr,
             OSDInertiaRepository* repoInertia = nullptr,
             OSDSpeedRepository* _repoSpeed = nullptr,
+            OSDCMSInputMode* cmsOSDInputMode = nullptr,
             OSDStreamGyro* _streamInertia = nullptr,
             OSDStreamSpeed* _streamSpeed = nullptr,
             TrackWeaponEngageService *cmsEngageService = nullptr,
@@ -71,6 +73,7 @@ private:
     EngagementDataCorrection40mmService *_cmsEngageCorrService;
     GunCoverageRepository* _repoGunCov;
     TrackBaseRepository* _repoTrack;
+    OSDCMSInputMode* _cmsOSDInputMode;
     OSDInertiaRepository* _repoInertia;
     OSDSpeedRepository* _repoSpeed;
     OSDStreamGyro* _streamInertia;
