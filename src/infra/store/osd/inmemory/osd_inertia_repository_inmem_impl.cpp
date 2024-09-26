@@ -38,7 +38,10 @@ void OSDInertiaRepositoryInMemImpl::SetInertia(const OSDInertiaEntity &inertia)
     _entity->setHeading(inertia.heading());
     _entity->setPitch(inertia.pitch());
     _entity->setRoll(inertia.roll());
-}
+    _entity->setMode(inertia.mode());
+    _entity->setSource(inertia.source());
+    _entity->setStatus(inertia.status())
+;}
 
 const OSDInertiaEntity *OSDInertiaRepositoryInMemImpl::GetInertia() const
 {

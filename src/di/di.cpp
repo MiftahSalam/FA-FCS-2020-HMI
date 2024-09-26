@@ -15,10 +15,10 @@ DI::DI()
     repoWeaponAssign = WeaponAssignmentRepositoryInMemImpl::GetInstance();
     repoTrackWeaponAssign = WeaponTrackAssignmentRepositoryInMemImpl::GetInstance();
     repoEngagement = new EngagementRepository(nullptr);
-    // TODO: add weapon track engagement repository
-    // TODO: add engagement correction repository
 
     serviceOSDCMS = new OSDCMS(nullptr, config->getOsdCmsConfig(), repoOSD);
+    serviceOSDStream = new OSDStream(nullptr, config->getTcpMessageConfig(), repoOSD, serviceOSDCMS);
+
     serviceGunManager = GunManagerService::getInstance(nullptr, config->getGunCmsConfig(), repoGun->getRepoGunFeedback(), repoGun->getRepoGunCmd());
     serviceWeaponAssign = WeaponAssignService::getInstance(nullptr, repoWeaponAssign);
     serviceWeaponTrackAssign = WeaponTrackAssignService::getInstance(
@@ -26,9 +26,8 @@ DI::DI()
         config->getTrackWeaponAssignCmsConfig(),
         repoGun->getRepoGunCoverage(),
         repoTrack->getRepoTrackArpa(),
-        repoOSD->getRepoOSDInertia(),
-        nullptr,
-        nullptr,
+        repoOSD,
+        serviceOSDStream,
         repoWeaponAssign,
         repoTrackWeaponAssign);
 //    serviceWeaponFiring = GunFiringService::getInstance(nullptr, config->getSerialMessageConfig(), repoGun->getRepoGunFeedback(), serviceWeaponAssign, serviceWeaponTrackAssign);
@@ -40,9 +39,7 @@ DI::DI()
                 serviceWeaponTrackAssign);
 
     serviceTrackStream = new TrackStream(nullptr, config->getTcpMessageConfig(), config->getArpaConfig(), repoTrack);
-    // TODO: add engagement correction service
 
-    serviceOSDStream = new OSDStream(nullptr, config->getTcpMessageConfig(), repoOSD, serviceOSDCMS);
     serviceGunStream = new GunStream(nullptr, config->getTcpMessageConfig(), repoGun);
     serviceFireTriangle = new FireTriangleStream(nullptr, config->getTcpMessageConfig(), repoFireTriangle);
     serviceEngagementStream = new EngagementStream(nullptr, config->getTcpMessageConfig(), repoEngagement);

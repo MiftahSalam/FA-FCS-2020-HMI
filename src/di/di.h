@@ -61,15 +61,11 @@ private:
     WeaponTrackAssignmentRepository *repoTrackWeaponAssign;
     EngagementRepository *repoEngagement;
 
-    // TODO: add engagement correction repository
-
     OSDCMS *serviceOSDCMS;
     GunManagerService *serviceGunManager;
     WeaponAssignService *serviceWeaponAssign;
     GunFiringService *serviceWeaponFiring;
     WeaponTrackAssignService *serviceWeaponTrackAssign;
-
-    // TODO: add engagement correction service
 
     TrackStream *serviceTrackStream;
     OSDStream *serviceOSDStream;

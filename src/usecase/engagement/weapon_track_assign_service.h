@@ -9,6 +9,7 @@
 #include "src/shared/config/track_weapon_assign_config.h"
 #include "src/usecase/engagement/cms/track_weapon_engage_service.h"
 #include "src/usecase/engagement/cms/engagement_data_correction_40mm_service.h"
+#include "src/usecase/osd/stream/osd_stream.h"
 #include <QObject>
 
 class WeaponTrackAssignService : public QObject
@@ -17,14 +18,12 @@ class WeaponTrackAssignService : public QObject
 public:
     WeaponTrackAssignService(WeaponTrackAssignService &other) = delete;
     void operator=(const WeaponTrackAssignService&) = delete;
-    static WeaponTrackAssignService* getInstance(
-            QObject *parent = nullptr,
+    static WeaponTrackAssignService* getInstance(QObject *parent = nullptr,
             TrackWeaponAssignConfig *cmsConfig = nullptr,
             GunCoverageRepository* repoGunCov = nullptr,
             TrackBaseRepository* repoTrack = nullptr,
-            OSDInertiaRepository* repoInertia = nullptr,
-            TrackWeaponEngageService *cmsEngageService = nullptr,
-            EngagementDataCorrection40mmService *cmsEngageCorrService = nullptr,
+            OSDRepository* _repoOSD = nullptr,
+            OSDStream* streamOSD = nullptr,
             WeaponAssignmentRepository *repoWA = nullptr,
             WeaponTrackAssignmentRepository *repoWTA = nullptr
             );
@@ -52,6 +51,9 @@ protected:
             GunCoverageRepository* repoGunCov = nullptr,
             TrackBaseRepository* repoTrack = nullptr,
             OSDInertiaRepository* repoInertia = nullptr,
+            OSDSpeedRepository* _repoSpeed = nullptr,
+            OSDStreamGyro* _streamInertia = nullptr,
+            OSDStreamSpeed* _streamSpeed = nullptr,
             TrackWeaponEngageService *cmsEngageService = nullptr,
             EngagementDataCorrection40mmService *cmsEngageCorrService = nullptr,
             WeaponAssignmentRepository *repoWA = nullptr,
@@ -70,10 +72,14 @@ private:
     GunCoverageRepository* _repoGunCov;
     TrackBaseRepository* _repoTrack;
     OSDInertiaRepository* _repoInertia;
+    OSDSpeedRepository* _repoSpeed;
+    OSDStreamGyro* _streamInertia;
+    OSDStreamSpeed* _streamSpeed;
     WeaponAssignmentRepository *_repoWA;
     WeaponTrackAssignmentRepository *_repoWTA;
 
     bool isEngageable(const int trackId);
+    bool isHeadingSpeedValid();
 };
 
 #endif // WEAPONTRACKASSIGNSERVICE_H

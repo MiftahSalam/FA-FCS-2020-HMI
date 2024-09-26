@@ -9,6 +9,9 @@ WeaponTrackAssignService::WeaponTrackAssignService(QObject *parent,
                                                    GunCoverageRepository* repoGunCov,
                                                    TrackBaseRepository *repoTrack,
                                                    OSDInertiaRepository* repoInertia,
+                                                   OSDSpeedRepository* repoSpeed,
+                                                   OSDStreamGyro* streamInertia,
+                                                   OSDStreamSpeed* streamSpeed,
                                                    TrackWeaponEngageService *cmsEngageService,
                                                    EngagementDataCorrection40mmService *cmsEngageCorrService,
                                                    WeaponAssignmentRepository *repoWA,
@@ -21,6 +24,9 @@ WeaponTrackAssignService::WeaponTrackAssignService(QObject *parent,
     _repoGunCov(repoGunCov),
     _repoTrack(repoTrack),
     _repoInertia(repoInertia),
+    _repoSpeed(repoSpeed),
+    _streamInertia(streamInertia),
+    _streamSpeed(streamSpeed),
     _repoWA(repoWA),
     _repoWTA(repoWTA)
 {
@@ -30,9 +36,8 @@ WeaponTrackAssignService *WeaponTrackAssignService::getInstance(QObject *parent,
                                                                 TrackWeaponAssignConfig *cmsConfig,
                                                                 GunCoverageRepository *repoGunCov,
                                                                 TrackBaseRepository *repoTrack,
-                                                                OSDInertiaRepository* repoInertia,
-                                                                TrackWeaponEngageService *cmsEngageService,
-                                                                EngagementDataCorrection40mmService *cmsEngageCorrService,
+                                                                OSDRepository* repoOSD,
+                                                                OSDStream* streamOSD,
                                                                 WeaponAssignmentRepository *repoWA,
                                                                 WeaponTrackAssignmentRepository *repoWTA
                                                                 )
@@ -58,15 +63,28 @@ WeaponTrackAssignService *WeaponTrackAssignService::getInstance(QObject *parent,
             throw ErrObjectCreation();
         }
 
-        if(repoInertia == nullptr) {
+        if(repoOSD->getRepoOSDInertia() == nullptr) {
             throw ErrObjectCreation();
         }
+
+        if(repoOSD->getRepoOSDSpeed() == nullptr) {
+            throw ErrObjectCreation();
+        }
+
+        if(streamOSD->getServiceOSDStreamGyro() == nullptr) {
+            throw ErrObjectCreation();
+        }
+
+        if(streamOSD->getServiceOSDStreamSpeed() == nullptr) {
+            throw ErrObjectCreation();
+        }
+
 
         TrackWeaponEngageService *engageCmsService = TrackWeaponEngageService::getInstance(
                     new HttpClientWrapper(),
                     cmsConfig);
 
-        cmsEngageCorrService = EngagementDataCorrection40mmService::getInstance(
+        EngagementDataCorrection40mmService* cmsEngageCorrService = EngagementDataCorrection40mmService::getInstance(
             new HttpClientWrapper(),
             cmsConfig);
 
@@ -75,7 +93,10 @@ WeaponTrackAssignService *WeaponTrackAssignService::getInstance(QObject *parent,
                     cmsConfig,
                     repoGunCov,
                     repoTrack,
-                    repoInertia,
+                    repoOSD->getRepoOSDInertia(),
+                    repoOSD->getRepoOSDSpeed(),
+                    streamOSD->getServiceOSDStreamGyro(),
+                    streamOSD->getServiceOSDStreamSpeed(),
                     engageCmsService,
                     cmsEngageCorrService,
                     repoWA,
@@ -162,6 +183,19 @@ bool WeaponTrackAssignService::isEngageable(const int trackId)
     return false;
 }
 
+bool WeaponTrackAssignService::isHeadingSpeedValid()
+{
+    if (_repoInertia->GetInertia()->mode() == OSD_MODE::AUTO && _streamInertia->check().getCode() != 0) {
+        return false;
+    }
+
+    if (_repoSpeed->GetSpeed()->mode() == OSD_MODE::AUTO && _streamSpeed->check().getCode() != 0) {
+        return false;
+    }
+
+    return true;
+}
+
 bool WeaponTrackAssignService::IsWeaponEngaged(const QString &weapon)
 {
     auto wta = _repoWTA->GetAllEngagement();
@@ -182,13 +216,17 @@ bool WeaponTrackAssignService::IsEngage(const QString &weapon, const int &trackI
 
 void WeaponTrackAssignService::SetEngagement(const QString &weapon, const int &trackId)
 {
-    if(isEngageable(trackId)) {
-        _cmsEngageService->sendAssignment(TrackAssignRequest(
-                                              trackId,
-                                              weapon.toStdString()
-                                              ), true);
+    if (isHeadingSpeedValid()) {
+        if(isEngageable(trackId)) {
+            _cmsEngageService->sendAssignment(TrackAssignRequest(
+                                                  trackId,
+                                                  weapon.toStdString()
+                                                  ), true);
+        } else {
+            throw ErrEngagementTrackNotEngageable();
+        }
     } else {
-        throw ErrEngagementTrackNotEngageable();
+        throw ErrEngagementInvalidOSD();
     }
 }
 
