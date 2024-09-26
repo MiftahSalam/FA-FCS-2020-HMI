@@ -122,7 +122,7 @@ void FrameEngageData::onAssignmentResponseData(BaseResponse<TrackAssignResponse>
 
                 for (int var = 0; var < 5; var++) {
                     ui->tableWidgetEngData->item(newRow, var)->setTextAlignment(Qt::AlignCenter);
-                    ui->tableWidgetEngData->item(newRow, var)->setForeground(QBrush(QColor(0,255,0)));
+                    ui->tableWidgetEngData->item(newRow, var)->setForeground(QBrush(QColor(255,0,0)));
                 }
             }
         } else {

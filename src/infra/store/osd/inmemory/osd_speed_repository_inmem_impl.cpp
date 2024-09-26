@@ -36,6 +36,9 @@ void OSDSpeedRepositoryInMemImpl::SetSpeed(const OSDSpeedEntity &speed)
 {
     _entity->setSpeed(speed.speed());
     _entity->setCourse(speed.course());
+    _entity->setMode(speed.mode());
+    _entity->setSource(speed.source());
+    _entity->setStatus(speed.status());
 }
 
 const OSDSpeedEntity *OSDSpeedRepositoryInMemImpl::GetSpeed() const

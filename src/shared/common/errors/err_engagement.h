@@ -9,6 +9,12 @@ public:
     ErrEngagementTrackNotFound();
 };
 
+class ErrEngagementInvalidOSD: public BaseError
+{
+public:
+    ErrEngagementInvalidOSD();
+};
+
 class ErrEngagementTrackNotEngageable: public BaseError
 {
 public:
