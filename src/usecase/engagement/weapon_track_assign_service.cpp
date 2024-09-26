@@ -125,7 +125,7 @@ void WeaponTrackAssignService::CheckUpdateEngagement(const QString &weapon)
     if(IsWeaponEngaged(weapon)) {
         auto curEngage = GetEngagementTrack(weapon);
         if (curEngage) {
-            if (!isEngageable(curEngage->getTrackId())) {
+            if (!isEngageable(curEngage->getTrackId()) || !isHeadingSpeedValid()) {
                 BreakEngagement(weapon, curEngage->getTrackId());
             }
         }
