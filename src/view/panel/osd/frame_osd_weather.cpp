@@ -80,6 +80,8 @@ void FrameOSDWeather::onTimeout()
         invalidDataUiSetup();
     }
 
+    setErrorInput(currError);
+
     auto curMode = _cmsMode->getDataMode();
     bool weatherMode = curMode.getWeather();
     if ((OSD_MODE)weatherMode != currentMode) {
@@ -194,18 +196,7 @@ void FrameOSDWeather::onStreamReceive(WeatherModel model)
     ui->inputPress->setValue(QString::number(model.getPressure()));
     ui->inputHum->setValue(QString::number(model.getHumidity()));
 
-    if (currStreamErr.getCode() == ERROR_NO.first)
-    {
-        ui->inputTemp->setStatusOk();
-        ui->inputPress->setStatusOk();
-        ui->inputHum->setStatusOk();
-    }
-    else
-    {
-        ui->inputTemp->setStatusFailed();
-        ui->inputPress->setStatusFailed();
-        ui->inputHum->setStatusFailed();
-    }
+    setErrorInput(currStreamErr);
 }
 
 void FrameOSDWeather::on_pushButton_clicked()
@@ -311,6 +302,30 @@ bool FrameOSDWeather::validateInput()
         return false;
     }
     return true;
+}
+
+void FrameOSDWeather::setErrorInput(BaseError error)
+{
+    if (error.getCode() == ERROR_NO.first)
+    {
+        ui->inputTemp->setStatusOk();
+        ui->inputPress->setStatusOk();
+        ui->inputHum->setStatusOk();
+
+        ui->inputTemp->setToolTip("");
+        ui->inputPress->setToolTip("");
+        ui->inputHum->setToolTip("");
+    }
+    else
+    {
+        ui->inputTemp->setStatusFailed();
+        ui->inputPress->setStatusFailed();
+        ui->inputHum->setStatusFailed();
+
+        ui->inputTemp->setToolTip(error.getMessage());
+        ui->inputPress->setToolTip(error.getMessage());
+        ui->inputHum->setToolTip(error.getMessage());
+    }
 }
 
 FrameOSDWeather::~FrameOSDWeather()

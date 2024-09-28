@@ -177,6 +177,8 @@ void FrameOSDWind::onTimeout()
         invalidDataUiSetup();
     }
 
+    setErrorInput(currError);
+
     auto curMode = _cmsMode->getDataMode();
     bool WindMode = curMode.getWind();
     if ((OSD_MODE)WindMode != currentMode) {
@@ -212,17 +214,7 @@ void FrameOSDWind::onStreamReceive(WindModel model)
     ui->inputSpeed->setValue(QString::number(model.getSpeed()));
     ui->inputDirection->setValue(QString::number(model.getDirection()));
 
-    if (currStreamErr.getCode() == ERROR_NO.first)
-    {
-        ui->inputSpeed->setStatusOk();
-        ui->inputDirection->setStatusOk();
-    }
-    else
-    {
-        ui->inputSpeed->setStatusFailed();
-        ui->inputDirection->setStatusFailed();
-    }
-
+    setErrorInput(currStreamErr);
 }
 
 void FrameOSDWind::onUpdateWindAutoUi()
@@ -295,6 +287,28 @@ bool FrameOSDWind::validateInput()
     }
 
     return true;
+}
+
+void FrameOSDWind::setErrorInput(BaseError error)
+{
+    if (error.getCode() == ERROR_NO.first)
+    {
+        ui->inputSpeed->setStatusOk();
+        ui->inputDirection->setStatusOk();
+
+        ui->inputSpeed->setToolTip("");
+        ui->inputDirection->setToolTip("");
+    }
+    else
+    {
+        ui->inputSpeed->setStatusFailed();
+        ui->inputDirection->setStatusFailed();
+
+        ui->inputSpeed->setToolTip(error.getMessage());
+        ui->inputDirection->setToolTip(error.getMessage());
+    }
+
+
 }
 
 FrameOSDWind::~FrameOSDWind()
