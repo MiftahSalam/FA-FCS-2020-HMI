@@ -80,6 +80,8 @@ void FrameOSDSpeed::onTimeout()
         invalidDataUiSetup();
     }
 
+    setErrorInput(currError);
+
     auto curMode = _cmsMode->getDataMode();
     bool speedMode = curMode.getSpeed();
     if ((OSD_MODE)speedMode != currentMode) {
@@ -188,16 +190,8 @@ void FrameOSDSpeed::onStreamReceive(SpeedModel model)
     ui->inputSpeed->setValue(QString::number(model.getSpeed()));
     ui->inputCourse->setValue(QString::number(model.getCourse()));
 
-    if (currStreamErr.getCode() == ERROR_NO.first)
-    {
-        ui->inputSpeed->setStatusOk();
-        ui->inputCourse->setStatusOk();
-    }
-    else
-    {
-        ui->inputSpeed->setStatusFailed();
-        ui->inputCourse->setStatusFailed();
-    }
+    setErrorInput(currStreamErr);
+
 }
 
 void FrameOSDSpeed::onUpdateSpeedAutoUi()
@@ -294,6 +288,27 @@ bool FrameOSDSpeed::validateInput()
     }
 
     return true;
+}
+
+void FrameOSDSpeed::setErrorInput(BaseError error)
+{
+
+    if (error.getCode() == ERROR_NO.first)
+    {
+        ui->inputSpeed->setStatusOk();
+        ui->inputCourse->setStatusOk();
+
+        ui->inputSpeed->setToolTip("");
+        ui->inputCourse->setToolTip("");
+    }
+    else
+    {
+        ui->inputSpeed->setStatusFailed();
+        ui->inputCourse->setStatusFailed();
+
+        ui->inputSpeed->setToolTip(error.getMessage());
+        ui->inputCourse->setToolTip(error.getMessage());
+    }
 }
 
 FrameOSDSpeed::~FrameOSDSpeed()
