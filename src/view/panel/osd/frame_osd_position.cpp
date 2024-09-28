@@ -207,6 +207,8 @@ void FrameOSDPosition::onTimeout()
         invalidDataUiSetup();
     }
 
+    setErrorInput(currError);
+
     auto curMode = _cmsMode->getDataMode();
     bool posMode = curMode.getPosition();
     if ((OSD_MODE)posMode != currentMode)
@@ -251,16 +253,7 @@ void FrameOSDPosition::onStreamReceive(PositionModel model)
     ui->inputLatitude->setValue(Utils::latDecToStringDegree(model.getLatitude()));
     ui->inputLongitude->setValue(Utils::lonDecToStringDegree(model.getLongitude()));
 
-    if (currStreamErr.getCode() == ERROR_NO.first)
-    {
-        ui->inputLatitude->setStatusOk();
-        ui->inputLongitude->setStatusOk();
-    }
-    else
-    {
-        ui->inputLatitude->setStatusFailed();
-        ui->inputLongitude->setStatusFailed();
-    }
+    setErrorInput(currStreamErr);
 }
 
 void FrameOSDPosition::onUpdatePositionAutoUi()
@@ -479,4 +472,25 @@ bool FrameOSDPosition::validateInput()
     //    qDebug() << Q_FUNC_INFO<<valuedegg << valueminn <<valuesecc <<valueLong;
 
     return true;
+}
+
+void FrameOSDPosition::setErrorInput(BaseError error)
+{
+    if (error.getCode() == ERROR_NO.first)
+    {
+        ui->inputLatitude->setStatusOk();
+        ui->inputLongitude->setStatusOk();
+
+        ui->inputLatitude->setToolTip("");
+        ui->inputLongitude->setToolTip("");
+    }
+    else
+    {
+        ui->inputLatitude->setStatusFailed();
+        ui->inputLongitude->setStatusFailed();
+
+        ui->inputLatitude->setToolTip(error.getMessage());
+        ui->inputLongitude->setToolTip(error.getMessage());
+    }
+
 }
