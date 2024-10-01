@@ -50,7 +50,12 @@ void FrameGunControlBarrel::onModeChangeResponse(BaseResponse<GunModeBarrelRespo
             QMessageBox::warning(this, "Request Error", QString("Failed to input gun mode with error: %1").arg(resp.getMessage()));
         }
 
-        return;
+        //        return;
+        currentMode = gunService->getBarrelMode();
+
+        disconnect(ui->comboBoxGunBarControlMode, QOverload<int>::of(&QComboBox::currentIndexChanged), this, &FrameGunControlBarrel::onModeChange);
+        ui->comboBoxGunBarControlMode->setCurrentIndex(0);
+        connect(ui->comboBoxGunBarControlMode, QOverload<int>::of(&QComboBox::currentIndexChanged), this, &FrameGunControlBarrel::onModeChange);
     }
 
     qDebug() << Q_FUNC_INFO << "resp code:" << "resp barrel mode manual: " << resp.getData().getManualMode();
@@ -70,16 +75,19 @@ void FrameGunControlBarrel::onModeChangeResponse(BaseResponse<GunModeBarrelRespo
         break;
     }
 
-    resetBarrel();
+    resetBarrel(needConfirm);
 }
 
-void FrameGunControlBarrel::onBarrelDataResponse(BaseResponse<GunCommandBarrelResponse> resp)
+void FrameGunControlBarrel::onBarrelDataResponse(BaseResponse<GunCommandBarrelResponse> resp, bool needConfirm)
 {
     qDebug() << Q_FUNC_INFO << "resp code:" << resp.getHttpCode() << "resp msg:" << resp.getMessage();
 
     if (resp.getHttpCode() != 0)
     {
-        QMessageBox::critical(this, "Fatal Error Barrel Control", QString("Failed to change manual data with error: %1").arg(resp.getMessage()));
+        if (needConfirm) {
+            QMessageBox::critical(this, "Fatal Error Barrel Control", QString("Failed to change manual data with error: %1").arg(resp.getMessage()));
+        }
+
         return;
     }
 
@@ -125,7 +133,7 @@ void FrameGunControlBarrel::onModeCheck()
             break;
         }
 
-        resetBarrel();
+        resetBarrel(false);
 
         connect(ui->comboBoxGunBarControlMode, QOverload<int>::of(&QComboBox::currentIndexChanged), this, &FrameGunControlBarrel::onModeChange);
 
@@ -217,9 +225,9 @@ void FrameGunControlBarrel::updateMode()
     }
 }
 
-void FrameGunControlBarrel::resetBarrel()
+void FrameGunControlBarrel::resetBarrel(bool needConfirm)
 {
-    gunService->resetBarrel();
+    gunService->resetBarrel(needConfirm);
     ui->inputAzimuth->setValue("0.0");
     ui->inputElevation->setValue("0.0");
 }
