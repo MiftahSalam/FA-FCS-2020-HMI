@@ -21,14 +21,10 @@ public:
             GunCommandRepository *repoGunCmd = nullptr
             );
 
-    void setBarrel(GunCommandBarrelRequest request);
-    //    void setStatus(OSDSetPositionRequest request);
-    //    void setMode(OSDSetPositionRequest request);
+    void setBarrelWithConfirm(GunCommandBarrelRequest request, bool confirm);
 
 signals:
-    void signal_setBarrelResponse(BaseResponse<GunCommandBarrelResponse> response);
-    //    void signal_setStatusResponse(BaseResponse<PositionModel> response);
-    //    void signal_setModeResponse(BaseResponse<PositionModel> response);
+    void signal_setBarrelResponse(BaseResponse<GunCommandBarrelResponse> response, bool confirm);
 
 protected:
     GunCommandBarrelService(
@@ -44,6 +40,7 @@ private:
     static GunCommandBarrelService *instance;
     GunCmsConfig *cfgCms;
     GunCommandRepository* _repoGunCmd;
+    bool latestConfirm;
 
     BaseResponse<GunCommandBarrelResponse> toResponse(QByteArray raw);
     BaseResponse<GunCommandBarrelResponse> errorResponse(QNetworkReply::NetworkError err);

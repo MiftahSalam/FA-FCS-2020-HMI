@@ -30,7 +30,7 @@ public:
 
 public slots:
     void onModeChangeResponse(BaseResponse<GunModeBarrelResponse> resp, bool needConfirm);
-    void onBarrelDataResponse(BaseResponse<GunCommandBarrelResponse> resp);
+    void onBarrelDataResponse(BaseResponse<GunCommandBarrelResponse> resp, bool needConfirm);
 
 signals:
     void signalChangeControlMode(bool manual_mode);
@@ -57,7 +57,7 @@ private:
     void autoModeUiSetup();
     bool validateInput();
     void updateMode();
-    void resetBarrel();
+    void resetBarrel(bool needConfirm);
 
     void setupDI();
 };

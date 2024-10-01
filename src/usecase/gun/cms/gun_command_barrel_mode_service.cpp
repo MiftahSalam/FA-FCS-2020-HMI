@@ -35,7 +35,8 @@ void GunCommandBarrelModeService::onReplyFinished()
 
     BaseResponse<GunModeBarrelResponse> resp = errorResponse(httpResponse->error());
     if(resp.getHttpCode() != 0 || respRaw.isEmpty()) {
-        _repoGunCmd->SetBarrelMode(previousMode);
+        _repoGunCmd->SetBarrelMode(GunBarrelModeEntity::NONE);
+        previousMode = _repoGunCmd->GetBarrelMode()->getMode();
         synced = false;
 
         emit signal_setModeResponse(resp, !requestSync);

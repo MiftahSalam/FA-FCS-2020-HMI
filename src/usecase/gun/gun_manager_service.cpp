@@ -72,14 +72,14 @@ void GunManagerService::setBarrelMode(GunBarrelModeEntity::MODE mode)
     _modeService->setModeWithConfirm(mode, true);
 }
 
-void GunManagerService::resetBarrel()
+void GunManagerService::resetBarrel(bool latestConfirm)
 {
-    _barrelService->setBarrel(GunCommandBarrelRequest(0., 0.));
+    _barrelService->setBarrelWithConfirm(GunCommandBarrelRequest(0., 0.), latestConfirm);
 }
 
 void GunManagerService::setBarrel(float az, float el)
 {
-    _barrelService->setBarrel(GunCommandBarrelRequest(az, el));
+    _barrelService->setBarrelWithConfirm(GunCommandBarrelRequest(az, el), true);
 }
 
 void GunManagerService::resetOpStatus()
@@ -87,7 +87,7 @@ void GunManagerService::resetOpStatus()
     if (currentOpStat != OPERATIONAL_STATUS::NOT_AVAIL) {
         currentOpStat = OPERATIONAL_STATUS::NOT_AVAIL;
         _modeService->setModeWithConfirm(GunBarrelModeEntity::NONE, false);
-        resetBarrel();
+        resetBarrel(false);
     }
 }
 

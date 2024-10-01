@@ -41,7 +41,7 @@ public:
     GunBarrelModeEntity::MODE getBarrelMode() const;
     const GunBarrelEntity *getCurrentBarrel() const;
     void setBarrel(float az, float el);
-    void resetBarrel();
+    void resetBarrel(bool latestConfirm);
     void resetOpStatus();
     const GunStatusCommandEntity* getCurrentStatus() const;
     void resetStatus();
@@ -53,7 +53,7 @@ public:
 
 signals:
     void OnBarrelModeResponse(BaseResponse<GunModeBarrelResponse> response, bool needConfirm);
-    void OnBarrelPositionResponse(BaseResponse<GunCommandBarrelResponse> response);
+    void OnBarrelPositionResponse(BaseResponse<GunCommandBarrelResponse> response, bool needConfirm);
     void OnStatusResponse(BaseResponse<GunCommandStatusResponse> response);
     void OnBarrelModeCheck();
 

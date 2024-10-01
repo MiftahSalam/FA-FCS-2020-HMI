@@ -10,7 +10,11 @@ GunCommandBarrelService::GunCommandBarrelService(
         HttpClientWrapper *parent,
         GunCmsConfig *cmsConfig,
         GunCommandRepository *repoGunCmd
-        ): HttpClientWrapper{parent}, cfgCms(cmsConfig), _repoGunCmd(repoGunCmd)
+        ):
+    HttpClientWrapper{parent},
+    cfgCms(cmsConfig),
+    _repoGunCmd(repoGunCmd),
+    latestConfirm(false)
 {
     if(parent == nullptr) {
         throw ErrObjectCreation();
@@ -26,7 +30,7 @@ void GunCommandBarrelService::onReplyFinished()
 
     BaseResponse<GunCommandBarrelResponse> resp = errorResponse(httpResponse->error());
     if(resp.getHttpCode() != 0 || respRaw.isEmpty()) {
-        emit signal_setBarrelResponse(resp);
+        emit signal_setBarrelResponse(resp, latestConfirm);
         return;
     }
 
@@ -34,7 +38,7 @@ void GunCommandBarrelService::onReplyFinished()
 
     _repoGunCmd->SetBarrel(resp.getData().getAzimuth(), resp.getData().getElevation());
 
-    emit signal_setBarrelResponse(resp);
+    emit signal_setBarrelResponse(resp, latestConfirm);
 }
 
 GunCommandBarrelService *GunCommandBarrelService::getInstance(
@@ -62,8 +66,10 @@ GunCommandBarrelService *GunCommandBarrelService::getInstance(
     return instance;
 }
 
-void GunCommandBarrelService::setBarrel(GunCommandBarrelRequest request)
+void GunCommandBarrelService::setBarrelWithConfirm(GunCommandBarrelRequest request, bool confirm)
 {
+    latestConfirm = confirm;
+
     QNetworkRequest httpReq = QNetworkRequest(cfgCms->getInstance("")->getManualBarrelUrl());
     httpReq.setHeader(QNetworkRequest::ContentTypeHeader, "application/json");
 
