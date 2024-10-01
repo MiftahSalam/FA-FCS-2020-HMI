@@ -292,6 +292,8 @@ bool FrameOSDWaterSpeed::validateInput()
 
 void FrameOSDWaterSpeed::setErrorInput(BaseError error)
 {
+    if (currentMode == OSD_MODE::MANUAL)
+        return;
 
     if (error.getCode() == ERROR_NO.first)
     {

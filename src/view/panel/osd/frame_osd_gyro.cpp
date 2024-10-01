@@ -369,6 +369,9 @@ bool FrameOSDGyro::validateInput()
 
 void FrameOSDGyro::setErrorInput(BaseError error)
 {
+    if (currentMode == OSD_MODE::MANUAL)
+        return;
+
     if (error.getCode() == ERROR_NO.first)
     {
         ui->inputHeading->setStatusOk();

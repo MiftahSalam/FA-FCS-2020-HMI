@@ -476,6 +476,9 @@ bool FrameOSDPosition::validateInput()
 
 void FrameOSDPosition::setErrorInput(BaseError error)
 {
+    if (currentMode == OSD_MODE::MANUAL)
+        return;
+
     if (error.getCode() == ERROR_NO.first)
     {
         ui->inputLatitude->setStatusOk();

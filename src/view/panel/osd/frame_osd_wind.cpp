@@ -291,6 +291,9 @@ bool FrameOSDWind::validateInput()
 
 void FrameOSDWind::setErrorInput(BaseError error)
 {
+    if (currentMode == OSD_MODE::MANUAL)
+        return;
+
     if (error.getCode() == ERROR_NO.first)
     {
         ui->inputSpeed->setStatusOk();
