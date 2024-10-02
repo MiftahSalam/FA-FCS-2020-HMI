@@ -73,6 +73,11 @@ OSDStream::OSDStream(
         repoOSD->getRepoOSDWeather(),
         osdService->getServiceOSDCMSMode()
         );
+
+    TcpMessagingOpts *datetimeStreamVal = config->getInstance("")->getContent().value("date_time");
+    serviceStreamDateTime = StreamDateTime::getInstance(
+        datetimeStreamVal
+        );
 }
 
 OSDStreamPosition *OSDStream::getServiceOSDStreamPosition() const
@@ -103,4 +108,9 @@ OSDStreamWind *OSDStream::getServiceOSDStreamWind() const
 OSDStreamWeather *OSDStream::getServiceOSDStreamWeather() const
 {
     return serviceOSDStreamWeather;
+}
+
+StreamDateTime *OSDStream::getServiceStreamDateTime() const
+{
+    return serviceStreamDateTime;
 }
