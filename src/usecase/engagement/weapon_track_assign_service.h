@@ -82,6 +82,7 @@ private:
     WeaponTrackAssignmentRepository *_repoWTA;
 
     bool isEngageable(const int trackId);
+    bool isIdentityEngageable(const int trackId);
     bool isHeadingSpeedValid();
 };
 

@@ -31,10 +31,11 @@ const QPair<int, QString> ERROR_CODE_OSD_DATA_OUT_OF_RANGE(73, "osd data out of 
 const QPair<int, QString> ERROR_CODE_OSD_DATA_PARTIALLY_INVALID(74, "osd data some data are invalid");
 const QPair<int, QString> ERROR_CODE_OSD_DATA_INVALID(75, "osd data invalid");
 
-const QPair<int, QString> ERROR_CODE_ENGAGEMENT_TRACK_NOT_FOUND(81, "Engagement track not found");
-const QPair<int, QString> ERROR_CODE_ENGAGEMENT_TRACK_NOT_ENGAGEABLE(82, "Engagement track not engageable");
-const QPair<int, QString> ERROR_CODE_ENGAGEMENT_TRACK_ALREADY_ENGAGED(83, "Engagement track already engaged");
-const QPair<int, QString> ERROR_CODE_ENGAGEMENT_OSD_NOT_VALID(84, "Engagement ship heading or speed invalid");
+const QPair<int, QString> ERROR_CODE_ENGAGEMENT_TRACK_NOT_FOUND(81, "Engagement. Track not found");
+const QPair<int, QString> ERROR_CODE_ENGAGEMENT_TRACK_NOT_ENGAGEABLE(82, "Engagement. Track not engageable");
+const QPair<int, QString> ERROR_CODE_ENGAGEMENT_TRACK_ALREADY_ENGAGED(83, "Engagement. Track already engaged");
+const QPair<int, QString> ERROR_CODE_ENGAGEMENT_OSD_NOT_VALID(84, "Engagement. Ship heading or speed invalid");
+const QPair<int, QString> ERROR_CODE_ENGAGEMENT_IDENTITY_NOT_VALID(84, "Engagement. Cannot engage non hostile track");
 
 class BaseError: public QException
 {
