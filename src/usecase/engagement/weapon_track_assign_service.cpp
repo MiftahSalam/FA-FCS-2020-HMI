@@ -125,7 +125,10 @@ void WeaponTrackAssignService::CheckUpdateEngagement(const QString &weapon)
     if(IsWeaponEngaged(weapon)) {
         auto curEngage = GetEngagementTrack(weapon);
         if (curEngage) {
-            if (!isEngageable(curEngage->getTrackId()) || !isHeadingSpeedValid()) {
+            if (!isEngageable(curEngage->getTrackId())
+                    || !isHeadingSpeedValid()
+                    || !isIdentityEngageable(curEngage->getTrackId())
+                    ) {
                 BreakEngagement(weapon, curEngage->getTrackId());
             }
         }
@@ -191,6 +194,16 @@ bool WeaponTrackAssignService::isEngageable(const int trackId)
     return false;
 }
 
+bool WeaponTrackAssignService::isIdentityEngageable(const int trackId)
+{
+    const TrackBaseEntity* track = _repoTrack->FindOne(trackId);
+    if (track) {
+        return track->getCurrIdentity() == TrackUtils::HOSTILE;
+    }
+
+    return false;
+}
+
 bool WeaponTrackAssignService::isHeadingSpeedValid()
 {
     bool is_inertia_auto_mode = !_cmsOSDInputMode->getDataMode().getInersia();
@@ -228,13 +241,17 @@ bool WeaponTrackAssignService::IsEngage(const QString &weapon, const int &trackI
 void WeaponTrackAssignService::SetEngagement(const QString &weapon, const int &trackId)
 {
     if (isHeadingSpeedValid()) {
-        if(isEngageable(trackId)) {
-            _cmsEngageService->sendAssignment(TrackAssignRequest(
-                                                  trackId,
-                                                  weapon.toStdString()
-                                                  ), true);
+        if(isIdentityEngageable(trackId)) {
+            if(isEngageable(trackId)) {
+                _cmsEngageService->sendAssignment(TrackAssignRequest(
+                                                      trackId,
+                                                      weapon.toStdString()
+                                                      ), true);
+            } else {
+                throw ErrEngagementTrackNotEngageable();
+            }
         } else {
-            throw ErrEngagementTrackNotEngageable();
+            throw ErrEngagementInvalidIdentity();
         }
     } else {
         throw ErrEngagementInvalidOSD();

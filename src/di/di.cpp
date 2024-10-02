@@ -35,7 +35,7 @@ DI::DI()
     serviceWeaponFiring = GunFiringService::getInstance(
                 nullptr,
                 config->getTcpMessageConfig(),
-                repoGun->getRepoGunFeedback(),
+                serviceGunManager,
                 serviceWeaponAssign,
                 serviceWeaponTrackAssign);
 

@@ -5,17 +5,16 @@ const QString FIRE_CMD_TEMPLATE = "$FIRE,%1*HH\r\n";
 
 GunFiringService *GunFiringService::instance = nullptr;
 
-GunFiringService::GunFiringService(
-        QObject *parent,
+GunFiringService::GunFiringService(QObject *parent,
 //        SerialMessagingOpts *serialConfig,
         TcpMessagingOpts *tcpConfig,
-        GunFeedbackRepository *gunStatusREpo,
+        GunManagerService *gunService,
         WeaponAssignService *waService,
         WeaponTrackAssignService *wtaService
         )
     :
       QObject{parent},
-      _feedbackStatusRepository(gunStatusREpo),
+      _gunService(gunService),
       _waService(waService),
       _wtaService(wtaService),
       _openFire(true)
@@ -58,11 +57,44 @@ void GunFiringService::OnWeaponAssign(BaseResponse<TrackAssignResponse> resp, bo
 
 void GunFiringService::onAssignModeChange(const QString &weapon, const WeaponAssign::WeaponAssignMode &mode)
 {
-    if (mode == WeaponAssign::NONE) {
+    auto gun_mode = _gunService->getBarrelMode();
+
+    if (mode == WeaponAssign::NONE && gun_mode == GunBarrelModeEntity::AUTO) {
         _weaponsOpenFire.removeAll(weapon);
         _weaponsReady.removeAll(weapon);
 
         emit signal_FiringChange(weapon, _weaponsReady.contains(weapon));
+    }
+}
+
+void GunFiringService::onGunModeChange(BaseResponse<GunModeBarrelResponse> resp, bool needConfirm)
+{
+    Q_UNUSED(resp);
+    Q_UNUSED(needConfirm);
+
+    auto gun_mode = _gunService->getBarrelMode();
+    bool state_change = false;
+
+    switch (gun_mode) {
+    case GunBarrelModeEntity::NONE:
+    case GunBarrelModeEntity::AUTO:
+        state_change = true;
+        _weaponsOpenFire.removeAll("40mm");
+        _weaponsReady.removeAll("40mm");
+        break;
+    case GunBarrelModeEntity::MANUAL:
+        if (!_weaponsReady.contains("40mm")) {
+            state_change = true;
+            _weaponsOpenFire.removeAll("40mm");
+            _weaponsReady.append("40mm");
+        }
+        break;
+    default:
+        break;
+    }
+
+    if (state_change) {
+        emit signal_FiringChange("40mm", _weaponsReady.contains("40mm"));
     }
 }
 
@@ -97,7 +129,7 @@ void GunFiringService::setOpenFire(const QString &weapon, bool open)
 
 GunFiringService *GunFiringService::getInstance(QObject *parent,
                                                 MessagingTcpConfig *msgConfig,
-                                                GunFeedbackRepository *gunStatusREpo,
+                                                GunManagerService *gunService,
                                                 WeaponAssignService *waService,
                                                 WeaponTrackAssignService *wtaService
                                                 )
@@ -109,7 +141,7 @@ GunFiringService *GunFiringService::getInstance(QObject *parent,
             throw ErrObjectCreation();
         }
 
-        if(gunStatusREpo == nullptr) {
+        if(gunService == nullptr) {
             throw ErrObjectCreation();
         }
 
@@ -124,8 +156,10 @@ GunFiringService *GunFiringService::getInstance(QObject *parent,
         TcpMessagingOpts *gunFiringStreamVal = msgConfig->getInstance("")->getContent().value("fire_button");
 //        SerialMessagingOpts *gunFiringStreamVal = msgConfig->getInstance("")->getContent().value("fire_button");
 
-        instance = new GunFiringService(parent, gunFiringStreamVal, gunStatusREpo, waService, wtaService);
+        instance = new GunFiringService(parent, gunFiringStreamVal, gunService, waService, wtaService);
 
+        connect(gunService, &GunManagerService::OnBarrelModeResponse,
+                instance, &GunFiringService::onGunModeChange);
         connect(waService, &WeaponAssignService::OnAssignModeChange,
                 instance, &GunFiringService::onAssignModeChange);
         connect(wtaService, &WeaponTrackAssignService::signal_assignmentResponseData, instance, &GunFiringService::OnWeaponAssign);

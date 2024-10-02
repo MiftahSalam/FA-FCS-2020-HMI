@@ -15,6 +15,12 @@ public:
     ErrEngagementInvalidOSD();
 };
 
+class ErrEngagementInvalidIdentity: public BaseError
+{
+public:
+    ErrEngagementInvalidIdentity();
+};
+
 class ErrEngagementTrackNotEngageable: public BaseError
 {
 public:
