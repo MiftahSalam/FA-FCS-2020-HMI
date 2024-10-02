@@ -4,6 +4,13 @@
 #include "src/shared/common/errors/err_object_creation.h"
 #include "src/shared/utils/utils.h"
 
+#ifdef USE_LOG4QT
+#include <log4qt/logger.h>
+LOG4QT_DECLARE_STATIC_LOGGER(logger, GunCommandBarrelModeService)
+#else
+#include <QDebug>
+#endif
+
 GunCommandBarrelModeService* GunCommandBarrelModeService::instance = nullptr;
 
 GunCommandBarrelModeService::GunCommandBarrelModeService(
@@ -30,8 +37,13 @@ void GunCommandBarrelModeService::onReplyFinished()
 {
     QByteArray respRaw = httpResponse->readAll();
 
+#ifdef USE_LOG4QT
+    logger()->debug()<<Q_FUNC_INFO<<" -> respRaw: "<<respRaw;
+    logger()->debug()<<Q_FUNC_INFO<<" -> err: "<<httpResponse->error();
+#else
     qDebug()<<Q_FUNC_INFO<<"respRaw: "<<respRaw;
     qDebug()<<Q_FUNC_INFO<<"err: "<<httpResponse->error();
+#endif
 
     BaseResponse<GunModeBarrelResponse> resp = errorResponse(httpResponse->error());
     if(resp.getHttpCode() != 0 || respRaw.isEmpty()) {
@@ -101,7 +113,11 @@ GunBarrelModeEntity::MODE GunCommandBarrelModeService::getMode() const
 
 void GunCommandBarrelModeService::sendMode(GunModeBarrelRequest request)
 {
+#ifdef USE_LOG4QT
+    logger()->debug()<<Q_FUNC_INFO<<" -> gun barrel mode url: "<<cfgCms->getInstance("")->getModeUrl();
+#else
     qDebug()<<Q_FUNC_INFO<<"gun barrel mode url: "<<cfgCms->getInstance("")->getModeUrl();
+#endif
 
     QNetworkRequest httpReq = QNetworkRequest(cfgCms->getInstance("")->getModeUrl());
     httpReq.setHeader(QNetworkRequest::ContentTypeHeader, "application/json");
@@ -130,13 +146,27 @@ BaseResponse<GunModeBarrelResponse> GunCommandBarrelModeService::toResponse(QByt
         GunModeBarrelResponse model(respData["manual_mode"].toBool());
         BaseResponse<GunModeBarrelResponse> resp(respCode, respMsg, model);
 
+#ifdef USE_LOG4QT
+        logger()->debug()<<Q_FUNC_INFO<<" -> resp. http code: "<<resp.getHttpCode()
+                        <<", message: "<<resp.getMessage()
+                       <<", mode: "<<resp.getData().getManualMode();
+#else
         qDebug()<<Q_FUNC_INFO<<"resp"<<resp.getHttpCode()<<resp.getMessage()<<resp.getData().getManualMode();
+#endif
 
         return resp;
     } catch (ErrJsonParse &e) {
-        qDebug()<<Q_FUNC_INFO<<"caught error: "<<e.getMessage();
+#ifdef USE_LOG4QT
+        logger()->error()<<Q_FUNC_INFO<<" -> caught error: "<<e.getMessage();
+#else
+        qWarning()<<Q_FUNC_INFO<<"caught error: "<<e.getMessage();
+#endif
     }  catch (...) {
-        qDebug()<<Q_FUNC_INFO<<"caught unkbnown error";
+#ifdef USE_LOG4QT
+        logger()->error()<<Q_FUNC_INFO<<" -> caught unkbnown error";
+#else
+        qWarning()<<Q_FUNC_INFO<<"caught unkbnown error";
+#endif
     }
 
     ErrUnknown status;
@@ -151,10 +181,18 @@ BaseResponse<GunModeBarrelResponse> GunCommandBarrelModeService::errorResponse(Q
     try {
         ErrHelper::throwHttpError(err);
     } catch (BaseError &e) {
-        qDebug()<<Q_FUNC_INFO<<"caught error: "<<e.getMessage();
+#ifdef USE_LOG4QT
+        logger()->error()<<Q_FUNC_INFO<<" -> caught error: "<<e.getMessage();
+#else
+        qWarning()<<Q_FUNC_INFO<<"caught error: "<<e.getMessage();
+#endif
         return BaseResponse<GunModeBarrelResponse>(e.getCode(), e.getMessage(), model);
     }  catch (...) {
-        qDebug()<<Q_FUNC_INFO<<"caught unkbnown error";
+#ifdef USE_LOG4QT
+        logger()->error()<<Q_FUNC_INFO<<" -> caught unkbnown error";
+#else
+        qWarning()<<Q_FUNC_INFO<<"caught unkbnown error";
+#endif
         ErrUnknown status;
         return BaseResponse<GunModeBarrelResponse>(status.getCode(), status.getMessage(), model);
     }
@@ -167,7 +205,11 @@ BaseResponse<GunModeBarrelResponse> GunCommandBarrelModeService::errorResponse(Q
 void GunCommandBarrelModeService::sync()
 {
     if(!synced) {
+#ifdef USE_LOG4QT
+        logger()->trace()<<Q_FUNC_INFO<<" -> syncing";
+#else
         qDebug()<<Q_FUNC_INFO<<"syncing";
+#endif
 
         requestSync = true;
         bool modeToSend = gunBarrelModeEntityToBool(_repoGunCmd->GetBarrelMode()->getMode());

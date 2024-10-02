@@ -1,10 +1,16 @@
 #include "tda_config.h"
 #include "src/shared/common/errors/err_open_file.h"
 
-#include <QDebug>
 #include <QFile>
 #include <QSettings>
 #include <QDir>
+
+#ifdef USE_LOG4QT
+#include <log4qt/logger.h>
+LOG4QT_DECLARE_STATIC_LOGGER(logger, TDAConfig)
+#else
+#include <QDebug>
+#endif
 
 const QString CONFIG_COMPASS_STATUS = "tda/show_compass";
 const QString CONFIG_HEADING_MARKER_STATUS = "tda/show_heading_marker";
@@ -26,7 +32,11 @@ TDAConfig::~TDAConfig()
 
 TDAConfig *TDAConfig::getInstance(const QString path)
 {
+#ifdef USE_LOG4QT
+        logger()->trace()<<Q_FUNC_INFO<<" -> path; "<<path;
+#else
     qDebug()<<Q_FUNC_INFO<<"path"<<path;
+#endif
 
     if(config == nullptr) {
         if (!QFile::exists(path)) {
@@ -113,6 +123,4 @@ void TDAConfig::saveTDAConfig()
     configFile.setValue("show_gun_barrel", gunBarrelStatus);
     configFile.setValue("zoom_scale", zoomScale);
     configFile.endGroup();
-
-    // qDebug()<<"Save TDA Config";
 }

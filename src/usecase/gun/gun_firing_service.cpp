@@ -1,6 +1,13 @@
 #include "gun_firing_service.h"
 #include "src/shared/common/errors/err_object_creation.h"
 
+#ifdef USE_LOG4QT
+#include <log4qt/logger.h>
+LOG4QT_DECLARE_STATIC_LOGGER(logger, GunFiringService)
+#else
+#include <QDebug>
+#endif
+
 const QString FIRE_CMD_TEMPLATE = "$FIRE,%1*HH\r\n";
 
 GunFiringService *GunFiringService::instance = nullptr;
@@ -36,7 +43,11 @@ void GunFiringService::OnWeaponAssign(BaseResponse<TrackAssignResponse> resp, bo
 {
     if (resp.getHttpCode() != 0)
     {
+#ifdef USE_LOG4QT
+        logger()->debug() << Q_FUNC_INFO << " -> error resp code: " << resp.getHttpCode() << ", resp msg: " << resp.getMessage();
+#else
         qDebug() << Q_FUNC_INFO << "error resp code:" << resp.getHttpCode() << "resp msg:" << resp.getMessage();
+#endif
         return;
     }
 

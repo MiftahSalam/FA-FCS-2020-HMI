@@ -4,6 +4,13 @@
 #include "src/shared/common/errors/err_object_creation.h"
 #include "src/shared/utils/utils.h"
 
+#ifdef USE_LOG4QT
+#include <log4qt/logger.h>
+LOG4QT_DECLARE_STATIC_LOGGER(logger, GunCommandStatusService)
+#else
+#include <QDebug>
+#endif
+
 GunCommandStatusService* GunCommandStatusService::instance = nullptr;
 
 GunCommandStatusService::GunCommandStatusService(
@@ -21,8 +28,13 @@ void GunCommandStatusService::onReplyFinished()
 {
     QByteArray respRaw = httpResponse->readAll();
 
+#ifdef USE_LOG4QT
+    logger()->debug()<<Q_FUNC_INFO<<" -> respRaw: "<<respRaw;
+    logger()->debug()<<Q_FUNC_INFO<<" -> err: "<<httpResponse->error();
+#else
     qDebug()<<Q_FUNC_INFO<<"respRaw: "<<respRaw;
     qDebug()<<Q_FUNC_INFO<<"err: "<<httpResponse->error();
+#endif
 
     BaseResponse<GunCommandStatusResponse> resp = errorResponse(httpResponse->error());
     if(resp.getHttpCode() != 0 || respRaw.isEmpty()) {
@@ -178,6 +190,16 @@ BaseResponse<GunCommandStatusResponse> GunCommandStatusService::toResponse(QByte
                 );
         BaseResponse<GunCommandStatusResponse> resp(respCode, respMsg, model);
 
+#ifdef USE_LOG4QT
+        logger()->debug()<<Q_FUNC_INFO<<" -> resp. http code: "<<resp.getHttpCode()
+                        <<", message: "<<resp.getMessage()
+                       <<", mount: "<<resp.getData().getMount()
+                      <<", getSingleShot: "<<resp.getData().getSingleShot()
+                     <<", getFireOrder: "<<resp.getData().getFireOrder()
+                    <<", getProxFuze: "<<resp.getData().getProxFuze()
+                   <<", getSiren: "<<resp.getData().getSiren()
+                         ;
+#else
         qDebug()<<Q_FUNC_INFO<<"resp"<<resp.getHttpCode()<<resp.getMessage()
                <<resp.getData().getMount()
               <<resp.getData().getSingleShot()
@@ -185,12 +207,21 @@ BaseResponse<GunCommandStatusResponse> GunCommandStatusService::toResponse(QByte
             <<resp.getData().getProxFuze()
            <<resp.getData().getSiren()
              ;
+#endif
 
         return resp;
     } catch (ErrJsonParse &e) {
-        qDebug()<<Q_FUNC_INFO<<"caught error: "<<e.getMessage();
+#ifdef USE_LOG4QT
+        logger()->error()<<Q_FUNC_INFO<<" -> caught error: "<<e.getMessage();
+#else
+        qWarning()<<Q_FUNC_INFO<<"caught error: "<<e.getMessage();
+#endif
     }  catch (...) {
-        qDebug()<<Q_FUNC_INFO<<"caught unkbnown error";
+#ifdef USE_LOG4QT
+        logger()->error()<<Q_FUNC_INFO<<" -> caught unkbnown error";
+#else
+        qWarning()<<Q_FUNC_INFO<<"caught unkbnown error";
+#endif
     }
 
     ErrUnknown status;
@@ -205,10 +236,18 @@ BaseResponse<GunCommandStatusResponse> GunCommandStatusService::errorResponse(QN
     try {
         ErrHelper::throwHttpError(err);
     } catch (BaseError &e) {
-        qDebug()<<Q_FUNC_INFO<<"caught error: "<<e.getMessage();
+#ifdef USE_LOG4QT
+        logger()->error()<<Q_FUNC_INFO<<" -> caught error: "<<e.getMessage();
+#else
+        qWarning()<<Q_FUNC_INFO<<"caught error: "<<e.getMessage();
+#endif
         return BaseResponse<GunCommandStatusResponse>(e.getCode(), e.getMessage(), model);
     }  catch (...) {
-        qDebug()<<Q_FUNC_INFO<<"caught unkbnown error";
+#ifdef USE_LOG4QT
+        logger()->error()<<Q_FUNC_INFO<<" -> caught unkbnown error";
+#else
+        qWarning()<<Q_FUNC_INFO<<"caught unkbnown error";
+#endif
         ErrUnknown status;
         return BaseResponse<GunCommandStatusResponse>(status.getCode(), status.getMessage(), model);
     }
