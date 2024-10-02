@@ -11,6 +11,7 @@ QT       += core gui network testlib serialport
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
 #DEFINES += USE_AMQP
+DEFINES += USE_LOG4QT
 
 TARGET = fa_fcs_hmi
 TEMPLATE = app
@@ -423,6 +424,15 @@ contains(DEFINES, USE_AMQP) {
         src/infra/messaging/amqp/amqp_options.cpp
 
     unix:!macx: LIBS += -lqamqp
+}
+
+contains(DEFINES, USE_LOG4QT) {
+        message(Using log4qt...)
+        unix: {
+        LIBS += -L/usr/local/log4qt/lib/ -llog4qt
+        INCLUDEPATH += /usr/local/log4qt/include
+        DEPENDPATH += /usr/local/log4qt/include
+    }
 }
 
 RESOURCES += \
