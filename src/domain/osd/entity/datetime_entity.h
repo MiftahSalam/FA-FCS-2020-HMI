@@ -8,7 +8,7 @@ public:
 
     float date() const;
     void setDate(float newDate);
-    void time() const;
+    float time() const;
     void setTime(float newTime);
 
 private:

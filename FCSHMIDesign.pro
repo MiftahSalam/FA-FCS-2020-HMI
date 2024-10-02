@@ -82,6 +82,7 @@ SOURCES += \
     src/model/osd/cms/osd_set_speed_request.cpp \
     src/model/osd/cms/osd_set_weather_request.cpp \
     src/model/osd/cms/osd_set_wind_request.cpp \
+    src/model/osd/datetime_model.cpp \
     src/model/osd/gyro_model.cpp \
     src/model/osd/input_mode_model.cpp \
     src/model/osd/position_model.cpp \
@@ -274,6 +275,7 @@ HEADERS += \
     src/model/osd/cms/osd_set_waterspeed_request.h \
     src/model/osd/cms/osd_set_weather_request.h \
     src/model/osd/cms/osd_set_wind_request.h \
+    src/model/osd/datetime_model.h \
     src/model/osd/gyro_model.h \
     src/model/osd/input_mode_model.h \
     src/model/osd/position_model.h \
