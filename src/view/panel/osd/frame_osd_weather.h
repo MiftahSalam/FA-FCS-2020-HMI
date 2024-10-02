@@ -61,6 +61,8 @@ private:
     void invalidDataUiSetup() override;
 
     bool validateInput() override;
+
+    void setErrorInput(BaseError error);
 };
 
 #endif // FRAME_OSD_WEATHER_H

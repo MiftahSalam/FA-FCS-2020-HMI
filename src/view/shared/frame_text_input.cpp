@@ -7,6 +7,7 @@ FrameTextInput::FrameTextInput(QWidget *parent) :
     ui(new Ui::FrameTextInput)
 {
     ui->setupUi(this);
+    setStyleSheet("QToolTip{background-color: black; border: none;}");
 }
 
 void FrameTextInput::setup(const TextInputProp &props)

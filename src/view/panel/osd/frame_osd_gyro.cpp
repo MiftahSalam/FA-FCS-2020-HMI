@@ -87,6 +87,8 @@ void FrameOSDGyro::onTimeout()
         invalidDataUiSetup();
     }
 
+    setErrorInput(currError);
+
     auto curMode = _cmsMode->getDataMode();
     bool inertiaMode = curMode.getInersia();
     if ((OSD_MODE)inertiaMode != currentMode)
@@ -214,24 +216,7 @@ void FrameOSDGyro::onStreamReceive(GyroModel model)
     ui->inputPitch->setValue(QString::number(model.getPicth()));
     ui->inputRoll->setValue(QString::number(model.getRoll()));
 
-    if (currStreamErr.getCode() == ERROR_NO.first)
-    {
-        ui->inputHeading->setStatusOk();
-        ui->inputPitch->setStatusOk();
-        ui->inputRoll->setStatusOk();
-    }
-    else if (currStreamErr.getCode() == ERROR_CODE_OSD_DATA_PARTIALLY_INVALID.first)
-    {
-        ui->inputHeading->setStatusOk();
-        ui->inputPitch->setStatusFailed();
-        ui->inputRoll->setStatusFailed();
-    }
-    else
-    {
-        ui->inputHeading->setStatusFailed();
-        ui->inputPitch->setStatusFailed();
-        ui->inputRoll->setStatusFailed();
-    }
+    setErrorInput(currStreamErr);
 }
 
 void FrameOSDGyro::onUpdateGyroAutoUi()
@@ -380,4 +365,46 @@ bool FrameOSDGyro::validateInput()
     }
 
     return true;
+}
+
+void FrameOSDGyro::setErrorInput(BaseError error)
+{
+    if (currentMode == OSD_MODE::MANUAL)
+    {
+        ui->inputHeading->setToolTip("");
+        ui->inputPitch->setToolTip("");
+        ui->inputRoll->setToolTip("");
+        return;
+    }
+
+    if (error.getCode() == ERROR_NO.first)
+    {
+        ui->inputHeading->setStatusOk();
+        ui->inputPitch->setStatusOk();
+        ui->inputRoll->setStatusOk();
+
+        ui->inputHeading->setToolTip("");
+        ui->inputPitch->setToolTip("");
+        ui->inputRoll->setToolTip("");
+    }
+    else if (error.getCode() == ERROR_CODE_OSD_DATA_PARTIALLY_INVALID.first)
+    {
+        ui->inputHeading->setStatusOk();
+        ui->inputPitch->setStatusFailed();
+        ui->inputRoll->setStatusFailed();
+
+        ui->inputHeading->setToolTip("");
+        ui->inputPitch->setToolTip(error.getMessage());
+        ui->inputRoll->setToolTip(error.getMessage());
+    }
+    else
+    {
+        ui->inputHeading->setStatusFailed();
+        ui->inputPitch->setStatusFailed();
+        ui->inputRoll->setStatusFailed();
+
+        ui->inputHeading->setToolTip(error.getMessage());
+        ui->inputPitch->setToolTip(error.getMessage());
+        ui->inputRoll->setToolTip(error.getMessage());
+    }
 }

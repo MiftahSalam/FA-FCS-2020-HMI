@@ -177,6 +177,8 @@ void FrameOSDWaterSpeed::onTimeout()
         invalidDataUiSetup();
     }
 
+    setErrorInput(currError);
+
     auto curMode = _cmsMode->getDataMode();
     bool WSMode = curMode.getWaterSpeed();
     if ((OSD_MODE)WSMode != currentMode) {
@@ -212,16 +214,7 @@ void FrameOSDWaterSpeed::onStreamReceive(WaterSpeedModel model)
     ui->inputWaterSpeed->setValue(QString::number(model.getSpeed()));
     ui->inputWaterCourse->setValue(QString::number(model.getCourse()));
 
-    if (currStreamErr.getCode() == ERROR_NO.first)
-    {
-        ui->inputWaterSpeed->setStatusOk();
-        ui->inputWaterCourse->setStatusOk();
-    }
-    else
-    {
-        ui->inputWaterSpeed->setStatusFailed();
-        ui->inputWaterCourse->setStatusFailed();
-    }
+    setErrorInput(currStreamErr);
 }
 
 void FrameOSDWaterSpeed::onUpdateWaterSpeedAutoUi()
@@ -295,6 +288,33 @@ bool FrameOSDWaterSpeed::validateInput()
     }
 
     return true;
+}
+
+void FrameOSDWaterSpeed::setErrorInput(BaseError error)
+{
+    if (currentMode == OSD_MODE::MANUAL)
+    {
+        ui->inputWaterSpeed->setToolTip("");
+        ui->inputWaterCourse->setToolTip("");
+        return;
+    }
+
+    if (error.getCode() == ERROR_NO.first)
+    {
+        ui->inputWaterSpeed->setStatusOk();
+        ui->inputWaterCourse->setStatusOk();
+
+        ui->inputWaterSpeed->setToolTip("");
+        ui->inputWaterCourse->setToolTip("");
+    }
+    else
+    {
+        ui->inputWaterSpeed->setStatusFailed();
+        ui->inputWaterCourse->setStatusFailed();
+
+        ui->inputWaterSpeed->setToolTip(error.getMessage());
+        ui->inputWaterCourse->setToolTip(error.getMessage());
+    }
 }
 
 FrameOSDWaterSpeed::~FrameOSDWaterSpeed()
