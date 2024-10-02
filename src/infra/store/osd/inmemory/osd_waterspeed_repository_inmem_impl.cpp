@@ -1,7 +1,5 @@
 #include "osd_waterspeed_repository_inmem_impl.h"
 
-#include <QDebug>
-
 OSDWaterSpeedRepositoryInMemImpl* OSDWaterSpeedRepositoryInMemImpl::instance{nullptr};
 
 OSDWaterSpeedRepositoryInMemImpl::OSDWaterSpeedRepositoryInMemImpl(OSDWaterSpeedEntity *entity)

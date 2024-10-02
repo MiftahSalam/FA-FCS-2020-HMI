@@ -3,6 +3,13 @@
 #include "src/shared/common/errors/err_object_creation.h"
 #include "src/shared/common/errors/err_messaging.h"
 
+#ifdef USE_LOG4QT
+#include <log4qt/logger.h>
+LOG4QT_DECLARE_STATIC_LOGGER(logger, TcpMessagingWrapper)
+#else
+#include <QDebug>
+#endif
+
 TcpMessagingWrapper::TcpMessagingWrapper(QObject *parent, TcpMessagingOpts *cfg)
     : QObject{parent}, config(cfg), currentError(0, "")
 {
@@ -23,8 +30,6 @@ TcpMessagingWrapper::TcpMessagingWrapper(QObject *parent, TcpMessagingOpts *cfg)
 
 BaseError TcpMessagingWrapper::checkConnection()
 {
-//    qDebug()<<Q_FUNC_INFO<<"state"<<consumer->state();
-
     if (consumer->state() != QTcpSocket::ConnectedState && consumer->state() != QTcpSocket::ConnectingState) {
         consumer->connectToHost(config->ip, config->port);
     }
@@ -66,12 +71,20 @@ void TcpMessagingWrapper::onReadyRead()
     QByteArray data = consumer->readAll();
     if (data.startsWith("{") && data.endsWith("}")) {
         auto delta = timestampDelay.msecsTo(now);
+#ifdef USE_LOG4QT
+        logger()->trace()<<Q_FUNC_INFO<<" -> delta; "<<delta<<", delay: "<<config->delay;
+#else
         qDebug()<<Q_FUNC_INFO<<"delta"<<delta<<"delay"<<config->delay;
+#endif
         if ( delta > config->delay) {
             timestampDelay = now;
             emit signalForwardMessage(data);
         }
     }
 
+#ifdef USE_LOG4QT
+    logger()->trace()<<Q_FUNC_INFO<<" -> data; "<<data;
+#else
     qDebug()<<Q_FUNC_INFO<<"data"<<data;
+#endif
 }

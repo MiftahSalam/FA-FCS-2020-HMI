@@ -1,7 +1,5 @@
 #include "osd_position_repository_inmem_impl.h"
 
-#include <QDebug>
-
 OSDPositionRepositoryInMemImpl* OSDPositionRepositoryInMemImpl::instance{nullptr};
 
 OSDPositionRepositoryInMemImpl::OSDPositionRepositoryInMemImpl(OSDPositionEntity *entity)
