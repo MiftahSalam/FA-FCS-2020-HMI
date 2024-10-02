@@ -2,11 +2,12 @@
 #define GUNFIRINGSERVICE_H
 
 #include "qtimer.h"
-#include "src/domain/gun/repository/gun_feedback_repository.h"
 //#include "src/infra/messaging/serial/serial_messaging_wrapper.h"
 #include "src/infra/messaging/tcp/tcp_messaging_wrapper.h"
+#include "src/model/gun/cms/gun_mode_barrel_response.h"
 #include "src/shared/config/messaging_serial_config.h"
 #include "src/usecase/engagement/weapon_track_assign_service.h"
+#include "src/usecase/gun/gun_manager_service.h"
 #include "src/usecase/weapon_assign/weapon_assign_service.h"
 #include <QObject>
 
@@ -22,7 +23,7 @@ public:
             QObject *parent = nullptr,
 //            MessagingSerialConfig *serialConfig = nullptr,
             MessagingTcpConfig *msgConfig = nullptr,
-            GunFeedbackRepository *gunStatusREpo = nullptr,
+            GunManagerService *gunService = nullptr,
             WeaponAssignService *waService = nullptr,
             WeaponTrackAssignService *wtaService = nullptr);
 
@@ -34,7 +35,7 @@ protected:
             QObject *parent = nullptr,
 //            SerialMessagingOpts *serialConfig = nullptr,
             TcpMessagingOpts *tcpConfig = nullptr,
-            GunFeedbackRepository *gunStatusREpo = nullptr,
+            GunManagerService *gunService = nullptr,
             WeaponAssignService *waService = nullptr,
             WeaponTrackAssignService *wtaService = nullptr
             );
@@ -45,6 +46,7 @@ signals:
 private slots:
     void OnWeaponAssign(BaseResponse<TrackAssignResponse> resp, bool assign);
     void onAssignModeChange(const QString &weapon, const WeaponAssign::WeaponAssignMode &mode);
+    void onGunModeChange(BaseResponse<GunModeBarrelResponse> resp, bool needConfirm);
     void OnTimeout();
 
 private:
@@ -52,7 +54,7 @@ private:
 
     QTimer* timer;
     SerialMessagingOpts *_cmsConfig;
-    GunFeedbackRepository *_feedbackStatusRepository;
+    GunManagerService *_gunService;
     WeaponAssignService *_waService;
     WeaponTrackAssignService *_wtaService;
     QMap<QString, TcpMessagingWrapper*> firingPorts;
