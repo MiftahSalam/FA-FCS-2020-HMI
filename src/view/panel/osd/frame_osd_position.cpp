@@ -477,7 +477,11 @@ bool FrameOSDPosition::validateInput()
 void FrameOSDPosition::setErrorInput(BaseError error)
 {
     if (currentMode == OSD_MODE::MANUAL)
+    {
+        ui->inputLatitude->setToolTip("");
+        ui->inputLongitude->setToolTip("");
         return;
+    }
 
     if (error.getCode() == ERROR_NO.first)
     {

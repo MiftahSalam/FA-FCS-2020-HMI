@@ -307,7 +307,12 @@ bool FrameOSDWeather::validateInput()
 void FrameOSDWeather::setErrorInput(BaseError error)
 {
     if (currentMode == OSD_MODE::MANUAL)
+    {
+        ui->inputTemp->setToolTip("");
+        ui->inputPress->setToolTip("");
+        ui->inputHum->setToolTip("");
         return;
+    }
 
     if (error.getCode() == ERROR_NO.first)
     {

@@ -370,7 +370,12 @@ bool FrameOSDGyro::validateInput()
 void FrameOSDGyro::setErrorInput(BaseError error)
 {
     if (currentMode == OSD_MODE::MANUAL)
+    {
+        ui->inputHeading->setToolTip("");
+        ui->inputPitch->setToolTip("");
+        ui->inputRoll->setToolTip("");
         return;
+    }
 
     if (error.getCode() == ERROR_NO.first)
     {

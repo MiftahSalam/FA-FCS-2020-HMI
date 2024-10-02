@@ -293,7 +293,11 @@ bool FrameOSDWaterSpeed::validateInput()
 void FrameOSDWaterSpeed::setErrorInput(BaseError error)
 {
     if (currentMode == OSD_MODE::MANUAL)
+    {
+        ui->inputWaterSpeed->setToolTip("");
+        ui->inputWaterCourse->setToolTip("");
         return;
+    }
 
     if (error.getCode() == ERROR_NO.first)
     {

@@ -292,7 +292,11 @@ bool FrameOSDWind::validateInput()
 void FrameOSDWind::setErrorInput(BaseError error)
 {
     if (currentMode == OSD_MODE::MANUAL)
+    {
+        ui->inputSpeed->setToolTip("");
+        ui->inputDirection->setToolTip("");
         return;
+    }
 
     if (error.getCode() == ERROR_NO.first)
     {
