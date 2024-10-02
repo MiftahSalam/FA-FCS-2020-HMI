@@ -26,6 +26,7 @@ SOURCES += \
     src/domain/gun/entity/gun_coverage_entity.cpp \
     src/domain/gun/entity/gun_status_command_entity.cpp \
     src/domain/gun/entity/gun_status_feedback_entity.cpp \
+    src/domain/osd/entity/datetime_entity.cpp \
     src/domain/osd/entity/osd_base_entity.cpp \
     src/domain/osd/entity/osd_inertia_entity.cpp \
     src/domain/osd/entity/osd_position_entity.cpp \
@@ -203,6 +204,7 @@ HEADERS += \
     src/domain/gun/repository/gun_command_repository.h \
     src/domain/gun/repository/gun_coverage_repository.h \
     src/domain/gun/repository/gun_feedback_repository.h \
+    src/domain/osd/entity/datetime_entity.h \
     src/domain/osd/entity/osd_base_entity.h \
     src/domain/osd/entity/osd_inertia_entity.h \
     src/domain/osd/entity/osd_position_entity.h \
