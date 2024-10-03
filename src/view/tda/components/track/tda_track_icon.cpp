@@ -3,13 +3,13 @@
 #include <QDebug>
 
 const QString TRACK_INFO_TEMPLATE = "Track Information\n\n"
-                                    "TN : %1\n"
-                                    "Range : %2 NM\n"
-                                    "Bearing : %3 deg\n"
-                                    "Speed : %4 kts\n"
-                                    "Course : %5 deg\n"
-                                    "Height : %6 feet\n"
-                                    "Identity : %7\n";
+                                    "TN : %{TN}\n"
+                                    "Range : %{RNG} NM\n"
+                                    "Bearing : %{BRN} deg\n"
+                                    "Speed : %{SPD} kts\n"
+                                    "Course : %{CRS} deg\n"
+                                    "Height : %{HGT} feet\n"
+                                    "Identity : %{IDNT}\n";
 
 TdaTrackIcon::TdaTrackIcon(QWidget *parent, TrackParam* param)
     : QLabel(parent), currentParam(param)
@@ -24,15 +24,17 @@ TdaTrackIcon::TdaTrackIcon(QWidget *parent, TrackParam* param)
     setPixmap(QPixmap::fromImage(image));
     setStyleSheet(QString::fromUtf8("color: rgb(255, 255, 255);background-color: rgba(0,0,0,0);"));
     setScaledContents(true);
-    setToolTip(QString(TRACK_INFO_TEMPLATE)
-                       .arg(QString::number(param->getTn()))
-                       .arg(QString::number(param->getRange(),'f',2))
-                       .arg(QString::number(param->getBearing(),'f',2))
-                       .arg(QString::number(param->getSpeed(),'f',2))
-                       .arg(QString::number(param->getCourse(),'f',2))
-                       .arg(QString::number(0,'f',2))
-                       .arg(TrackUtils::identity2String(param->getCur_identity()))
-                       );
+
+    QString tp = TRACK_INFO_TEMPLATE;
+    tp.replace("%{TN}", QString::number(param->getTn()));
+    tp.replace("%{RNG}", QString::number(param->getRange(),'f',2));
+    tp.replace("%{BRN}", QString::number(param->getBearing(),'f',2));
+    tp.replace("%{SPD}", QString::number(param->getSpeed(),'f',2));
+    tp.replace("%{CRS}", QString::number(param->getCourse(),'f',2));
+    tp.replace("%{HGT}", QString::number(0,'f',2));
+    tp.replace("%{IDNT}", TrackUtils::identity2String(param->getCur_identity()));
+
+    setToolTip(tp);
 }
 
 void TdaTrackIcon::updateProps(TrackParam param)
@@ -48,16 +50,16 @@ void TdaTrackIcon::updateProps(TrackParam param)
     *currentParam = param;
 
     /*update track information*/
-    setToolTip(TRACK_INFO_TEMPLATE
-               .arg(QString::number(currentParam->getTn()))
-               .arg(QString::number(currentParam->getRange(),'f',2))
-               .arg(QString::number(currentParam->getBearing(),'f',2))
-               .arg(QString::number(currentParam->getSpeed(),'f',2))
-               .arg(QString::number(currentParam->getCourse(),'f',2))
-               .arg(QString::number(0,'f',2))
-               .arg(TrackUtils::identity2String(currentParam->getCur_identity()))
-               .arg(currentParam->getWeapon_assign())
-               );
+    QString tp = TRACK_INFO_TEMPLATE;
+    tp.replace("%{TN}", QString::number(currentParam->getTn()));
+    tp.replace("%{RNG}", QString::number(currentParam->getRange(),'f',2));
+    tp.replace("%{BRN}", QString::number(currentParam->getBearing(),'f',2));
+    tp.replace("%{SPD}", QString::number(currentParam->getSpeed(),'f',2));
+    tp.replace("%{CRS}", QString::number(currentParam->getCourse(),'f',2));
+    tp.replace("%{HGT}", QString::number(0,'f',2));
+    tp.replace("%{IDNT}", TrackUtils::identity2String(currentParam->getCur_identity()));
+
+    setToolTip(tp);
 }
 
 QString TdaTrackIcon::fileImageLocation(TrackUtils::Identity identity,TrackUtils::Environment env)
