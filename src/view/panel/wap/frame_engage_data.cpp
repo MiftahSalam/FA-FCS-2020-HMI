@@ -80,6 +80,14 @@ void FrameEngageData::OnStreamEngegementDataReceived(EngagementDataModel model)
         QString _elevation = QString::number(model.elevation(),'f',2);
         ui->tableWidgetEngData->item(cur40mmItemRow->row(),3)->setText(_azimuth);
         ui->tableWidgetEngData->item(cur40mmItemRow->row(),4)->setText(_elevation);
+
+        if (ui->tableWidgetEngData->item(cur40mmItemRow->row(),3)->foreground().color().green() != 255) {
+            for (int var = 0; var < 5; var++) {
+                ui->tableWidgetEngData->item(cur40mmItemRow->row(), var)->setForeground(QBrush(QColor(0,255,0)));
+            }
+
+            currError = engagementDataStream->check();
+        }
     }
 }
 
