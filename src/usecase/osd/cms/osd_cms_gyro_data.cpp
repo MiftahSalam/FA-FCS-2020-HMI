@@ -81,13 +81,13 @@ void OSDCMSGyroData::onReplyFinished()
     resp = toResponse(respRaw);
 
     repoInertia->SetInertia(OSDInertiaEntity(
-                             resp.getData().getHeading(),
-                             resp.getData().getPicth(),
-                             resp.getData().getRoll(),
-                             "manual",
-                             "",
-                             OSD_MODE::MANUAL
-                             ));
+                                resp.getData().getHeading(),
+                                resp.getData().getPicth(),
+                                resp.getData().getRoll(),
+                                "manual",
+                                "",
+                                OSD_MODE::MANUAL
+                                ));
 
     emit signal_setGyroResponse(resp);
 
@@ -107,9 +107,9 @@ BaseResponse<GyroModel> OSDCMSGyroData::toResponse(QByteArray raw)
         logger()->debug()<<Q_FUNC_INFO<<" -> resp. http code: "<<resp.getHttpCode()
                         <<", message: "<<resp.getMessage()
                        <<", heading: "<<resp.getData().getHeading()
-                       <<", pitch: "<<resp.getData().getPicth()
-                      <<", roll: "<<resp.getData().getRoll()
-                         ;
+                      <<", pitch: "<<resp.getData().getPicth()
+                     <<", roll: "<<resp.getData().getRoll()
+                       ;
 #else
         qDebug()<<Q_FUNC_INFO<<"resp"<<resp.getHttpCode()<<resp.getMessage()<<resp.getData().getHeading()<<resp.getData().getPicth()<<resp.getData().getRoll();
 #endif

@@ -70,9 +70,9 @@ void OSDStreamGyro::onDataReceived(QByteArray data)
 
 #ifdef USE_LOG4QT
         logger()->trace()<<Q_FUNC_INFO<<" -> Heading: "<<model.getHeading()
-                       <<", pitch: "<<model.getPicth()
-                      <<", roll: "<<model.getRoll()
-                          ;
+                        <<", pitch: "<<model.getPicth()
+                       <<", roll: "<<model.getRoll()
+                         ;
 #else
         qDebug()<<Q_FUNC_INFO<<"data gyro: heading ->"<<model.getHeading()<<"pitch ->"<<model.getPicth()<<"roll ->"<<model.getRoll();
 #endif
@@ -90,13 +90,13 @@ void OSDStreamGyro::onDataReceived(QByteArray data)
             if(check().getCode() == ERROR_NO.first || check().getCode() == ERROR_CODE_OSD_DATA_PARTIALLY_INVALID.first)
             {
                 _repoInertia->SetInertia(OSDInertiaEntity(
-                    model.getHeading(),
-                    model.getPicth(),
-                    model.getRoll(),
-                    respObj["source"].toString().toStdString(),
-                    respObj["status"].toString().toStdString(),
-                    OSD_MODE::AUTO
-                    ));
+                                             model.getHeading(),
+                                             model.getPicth(),
+                                             model.getRoll(),
+                                             respObj["source"].toString().toStdString(),
+                                         respObj["status"].toString().toStdString(),
+                        OSD_MODE::AUTO
+                        ));
             }
         }
 

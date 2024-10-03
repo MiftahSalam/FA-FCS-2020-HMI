@@ -14,9 +14,9 @@ LOG4QT_DECLARE_STATIC_LOGGER(logger, EngagementDataCorrection40mmService)
 EngagementDataCorrection40mmService* EngagementDataCorrection40mmService::instance = nullptr;
 
 EngagementDataCorrection40mmService::EngagementDataCorrection40mmService(
-    HttpClientWrapper *parent,
-    TrackWeaponAssignConfig *cmsConfig
-    ): HttpClientWrapper{parent}, cfgCms(cmsConfig)
+        HttpClientWrapper *parent,
+        TrackWeaponAssignConfig *cmsConfig
+        ): HttpClientWrapper{parent}, cfgCms(cmsConfig)
 {
     if(parent == nullptr) {
         throw ErrObjectCreation();
@@ -28,8 +28,8 @@ void EngagementDataCorrection40mmService::onReplyFinished()
     QByteArray respRaw = httpResponse->readAll();
 
 #ifdef USE_LOG4QT
-    logger()->trace()<<Q_FUNC_INFO<<" -> respRaw: "<<respRaw;
-    logger()->trace()<<Q_FUNC_INFO<<" -> err: "<<httpResponse->error();
+    logger()->debug()<<Q_FUNC_INFO<<" -> respRaw: "<<respRaw;
+    logger()->debug()<<Q_FUNC_INFO<<" -> err: "<<httpResponse->error();
 #else
     qDebug()<<Q_FUNC_INFO<<"respRaw:"<<respRaw;
     qDebug()<<Q_FUNC_INFO<<"err:"<<httpResponse->error();
@@ -57,10 +57,10 @@ BaseResponse<EngagementCorrectionSetResponse> EngagementDataCorrection40mmServic
         BaseResponse<EngagementCorrectionSetResponse> resp(respCode, respMsg, model);
 
 #ifdef USE_LOG4QT
-        logger()->trace()<<Q_FUNC_INFO<<" -> resp Correction. http code: "<<resp.getHttpCode()
+        logger()->debug()<<Q_FUNC_INFO<<" -> resp Correction. http code: "<<resp.getHttpCode()
                         <<", message: "<<resp.getMessage()
-                           <<", azimuth: "<<resp.getData().getAzimuthCorrection()
-                          <<", elevation: "<<resp.getData().getAzimuthCorrection();
+                       <<", azimuth: "<<resp.getData().getAzimuthCorrection()
+                      <<", elevation: "<<resp.getData().getAzimuthCorrection();
 #else
         qDebug()<<Q_FUNC_INFO<<"resp Correction-------->>>"<<resp.getHttpCode()<<resp.getMessage()<<resp.getData().getAzimuthCorrection()<<resp.getData().getElevationCorrection();
 #endif
@@ -112,9 +112,9 @@ BaseResponse<EngagementCorrectionSetResponse> EngagementDataCorrection40mmServic
 }
 
 EngagementDataCorrection40mmService *EngagementDataCorrection40mmService::getInstance(
-    HttpClientWrapper *httpClient = nullptr,
-    TrackWeaponAssignConfig *cmsConfig
-    )
+        HttpClientWrapper *httpClient = nullptr,
+        TrackWeaponAssignConfig *cmsConfig
+        )
 {
     if (instance == nullptr) {
         if(cmsConfig == nullptr){

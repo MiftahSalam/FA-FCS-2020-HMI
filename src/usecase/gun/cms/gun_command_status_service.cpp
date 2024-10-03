@@ -110,7 +110,7 @@ void GunCommandStatusService::sendStatus(GunCommandStatusRequest request)
 
 void GunCommandStatusService::setStatusMount(bool on)
 {
-//    _repoGunCmd->SetMount(on);
+    //    _repoGunCmd->SetMount(on);
     auto curStatus = _repoGunCmd->GetStatus();
     sendStatus(GunCommandStatusRequest(
                    on,
@@ -123,7 +123,7 @@ void GunCommandStatusService::setStatusMount(bool on)
 
 void GunCommandStatusService::setStatusSingleShot(bool on)
 {
-//    _repoGunCmd->SetSingleShot(on);
+    //    _repoGunCmd->SetSingleShot(on);
     auto curStatus = _repoGunCmd->GetStatus();
     sendStatus(GunCommandStatusRequest(
                    curStatus->mount(),
@@ -136,7 +136,7 @@ void GunCommandStatusService::setStatusSingleShot(bool on)
 
 void GunCommandStatusService::setStatusFire(bool on)
 {
-//    _repoGunCmd->SetFire(on);
+    //    _repoGunCmd->SetFire(on);
     auto curStatus = _repoGunCmd->GetStatus();
     sendStatus(GunCommandStatusRequest(
                    curStatus->mount(),
@@ -149,7 +149,7 @@ void GunCommandStatusService::setStatusFire(bool on)
 
 void GunCommandStatusService::setStatusProxFuze(bool on)
 {
-//    _repoGunCmd->SetProximity(on);
+    //    _repoGunCmd->SetProximity(on);
     auto curStatus = _repoGunCmd->GetStatus();
     sendStatus(GunCommandStatusRequest(
                    curStatus->mount(),
@@ -162,7 +162,7 @@ void GunCommandStatusService::setStatusProxFuze(bool on)
 
 void GunCommandStatusService::setStatusSiren(bool on)
 {
-//    _repoGunCmd->SetSiren(on);
+    //    _repoGunCmd->SetSiren(on);
     auto curStatus = _repoGunCmd->GetStatus();
     sendStatus(GunCommandStatusRequest(
                    curStatus->mount(),
@@ -198,7 +198,7 @@ BaseResponse<GunCommandStatusResponse> GunCommandStatusService::toResponse(QByte
                      <<", getFireOrder: "<<resp.getData().getFireOrder()
                     <<", getProxFuze: "<<resp.getData().getProxFuze()
                    <<", getSiren: "<<resp.getData().getSiren()
-                         ;
+                     ;
 #else
         qDebug()<<Q_FUNC_INFO<<"resp"<<resp.getHttpCode()<<resp.getMessage()
                <<resp.getData().getMount()

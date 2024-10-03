@@ -36,14 +36,14 @@ TdaTrackIcon::TdaTrackIcon(QWidget *parent, TrackParam* param)
     setStyleSheet(QString::fromUtf8("color: rgb(255, 255, 255);background-color: rgba(0,0,0,0);"));
     setScaledContents(true);
     setToolTip(QString(TRACK_INFO_TEMPLATE)
-                       .arg(QString::number(param->getTn()))
-                       .arg(QString::number(param->getRange(),'f',2))
-                       .arg(QString::number(param->getBearing(),'f',2))
-                       .arg(QString::number(param->getSpeed(),'f',2))
-                       .arg(QString::number(param->getCourse(),'f',2))
-                       .arg(QString::number(0,'f',2))
-                       .arg(TrackUtils::identity2String(param->getCur_identity()))
-                       );
+               .arg(QString::number(param->getTn()))
+               .arg(QString::number(param->getRange(),'f',2))
+               .arg(QString::number(param->getBearing(),'f',2))
+               .arg(QString::number(param->getSpeed(),'f',2))
+               .arg(QString::number(param->getCourse(),'f',2))
+               .arg(QString::number(0,'f',2))
+               .arg(TrackUtils::identity2String(param->getCur_identity()))
+               );
 }
 
 void TdaTrackIcon::updateProps(TrackParam param)

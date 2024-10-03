@@ -100,9 +100,9 @@ void FrameOSDPosition::onDataResponse(BaseResponse<PositionModel> resp)
         return;
 
 #ifdef USE_LOG4QT
-    logger()->debug() << Q_FUNC_INFO
-             << " -> getLatitude: " << resp.getData().getLatitude()
-             << ", getLongitude: " << resp.getData().getLongitude();
+        logger()->debug() << Q_FUNC_INFO
+                          << " -> getLatitude: " << resp.getData().getLatitude()
+                          << ", getLongitude: " << resp.getData().getLongitude();
 #else
         qDebug() << Q_FUNC_INFO << "resp data getLatitude: " << resp.getData().getLatitude()
                  << "resp data getLongitude: " << resp.getData().getLongitude();
@@ -219,7 +219,7 @@ void FrameOSDPosition::manualUiSetup()
 void FrameOSDPosition::onTimeout()
 {
     // update ui
-//    qDebug() << Q_FUNC_INFO;
+    //    qDebug() << Q_FUNC_INFO;
 
     auto currError = _streamPos->check();
     if (currError.getCode() == ERROR_CODE_MESSAGING_NOT_CONNECTED.first)
@@ -265,7 +265,7 @@ void FrameOSDPosition::onTimeout()
 
 void FrameOSDPosition::onStreamReceive(PositionModel model)
 {
-//    qDebug() << Q_FUNC_INFO << "position: lat ->" << model.getLatitude() << ", lon ->" << model.getLongitude();
+    //    qDebug() << Q_FUNC_INFO << "position: lat ->" << model.getLatitude() << ", lon ->" << model.getLongitude();
     auto currentMode = (OSD_MODE)_cmsMode->getDataMode().getPosition();
     if (currentMode == OSD_MODE::MANUAL)
     {

@@ -26,7 +26,7 @@ TrackWeaponAssignConfig::TrackWeaponAssignConfig()
 TrackWeaponAssignConfig *TrackWeaponAssignConfig::getInstance(const QString path)
 {
 #ifdef USE_LOG4QT
-        logger()->trace()<<Q_FUNC_INFO<<" -> path; "<<path;
+    logger()->trace()<<Q_FUNC_INFO<<" -> path; "<<path;
 #else
     qDebug()<<Q_FUNC_INFO<<"path"<<path;
 #endif
@@ -75,4 +75,4 @@ void TrackWeaponAssignConfig::setup(const QString path)
     qDebug()<<Q_FUNC_INFO<<"resetAssignUrl"<<resetAssignUrl;
     qDebug()<<Q_FUNC_INFO<<"engageCorrectionUrl"<<engageCorrectionUrl;
 #endif
-    }
+}

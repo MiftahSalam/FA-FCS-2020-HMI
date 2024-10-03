@@ -77,12 +77,12 @@ void OSDCMSWindData::onReplyFinished()
     resp = toResponse(respRaw);
 
     repoWind->SetWind(OSDWindEntity(
-                             resp.getData().getSpeed(),
-                             resp.getData().getDirection(),
-                             "manual",
-                             "",
-                             OSD_MODE::MANUAL
-                             ));
+                          resp.getData().getSpeed(),
+                          resp.getData().getDirection(),
+                          "manual",
+                          "",
+                          OSD_MODE::MANUAL
+                          ));
 
     emit signal_setWindResponse(resp);
 }
@@ -101,8 +101,8 @@ BaseResponse<WindModel> OSDCMSWindData::toResponse(QByteArray raw)
         logger()->debug()<<Q_FUNC_INFO<<" -> resp. http code: "<<resp.getHttpCode()
                         <<", message: "<<resp.getMessage()
                        <<", speed: "<<resp.getData().getSpeed()
-                       <<", dir: "<<resp.getData().getDirection()
-                         ;
+                      <<", dir: "<<resp.getData().getDirection()
+                        ;
 #else
         qDebug()<<Q_FUNC_INFO<<"resp"<<resp.getHttpCode()<<resp.getMessage()<<resp.getData().getSpeed()<<resp.getData().getDirection();
 #endif

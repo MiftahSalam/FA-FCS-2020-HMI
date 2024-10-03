@@ -13,9 +13,9 @@ LOG4QT_DECLARE_STATIC_LOGGER(logger, GunFeedbackStatusStream)
 GunFeedbackStatusStream *GunFeedbackStatusStream::gunFeedbackStream = nullptr;
 
 GunFeedbackStatusStream::GunFeedbackStatusStream(
-    TcpMessagingOpts *config,
-    GunFeedbackRepository *repoGunFback
-    ): cfg(config), repoGunFback(repoGunFback), currentErr(NoError())
+        TcpMessagingOpts *config,
+        GunFeedbackRepository *repoGunFback
+        ): cfg(config), repoGunFback(repoGunFback), currentErr(NoError())
 {
     consumer = new TcpMessagingWrapper(this, config);
     connect(consumer, &TcpMessagingWrapper::signalForwardMessage, this, &GunFeedbackStatusStream::onDataReceived);
@@ -33,16 +33,16 @@ void GunFeedbackStatusStream::onDataReceived(QByteArray data)
          */
         QJsonObject respObj = Utils::byteArrayToJsonObject(data);
         GunFeedbackStatusModel model(respObj["op_mode"].toBool(),
-                               respObj["remote"].toBool(),
-                               respObj["mount"].toBool(),
-                               respObj["btemp"].toBool(),
-                               respObj["grtst"].toBool(),
-                               respObj["grtfr"].toBool(),
-                               respObj["fire_mode"].toBool(),
-                               respObj["blarc"].toBool(),
-                               respObj["misalgn"].toBool(),
-                               respObj["magazine"].toBool()
-                               );
+                respObj["remote"].toBool(),
+                respObj["mount"].toBool(),
+                respObj["btemp"].toBool(),
+                respObj["grtst"].toBool(),
+                respObj["grtfr"].toBool(),
+                respObj["fire_mode"].toBool(),
+                respObj["blarc"].toBool(),
+                respObj["misalgn"].toBool(),
+                respObj["magazine"].toBool()
+                );
 
 #ifdef USE_LOG4QT
         logger()->trace()<<Q_FUNC_INFO<<" -> Gun Stats Data."
@@ -56,32 +56,32 @@ void GunFeedbackStatusStream::onDataReceived(QByteArray data)
                  <<", blarc: "<<model.getBlindArc()
                 <<", misalrgn: "<<model.getMissAlignment()
                <<", mag: "<<model.getMagazine()
-                         ;
+                 ;
 #else
         qDebug()<<Q_FUNC_INFO<<"data gun status: op mode ->"<<model.getOpMode()
-                 <<"remote ->"<<model.getRemote()
-                 <<"mount ->"<<model.getMount()
-                 <<"btemp ->"<<model.getBarrelTemperature()
-                 <<"grtst ->"<<model.getGunReadyToStart()
-                 <<"grtfr ->"<<model.getGunReadyToFire()
-                 <<"fire mode ->"<<model.getFireMode()
-                 <<"blarc ->"<<model.getBlindArc()
-                 <<"misalrgn ->"<<model.getMissAlignment()
-                 <<"mag ->"<<model.getMagazine();
+               <<"remote ->"<<model.getRemote()
+              <<"mount ->"<<model.getMount()
+             <<"btemp ->"<<model.getBarrelTemperature()
+            <<"grtst ->"<<model.getGunReadyToStart()
+           <<"grtfr ->"<<model.getGunReadyToFire()
+          <<"fire mode ->"<<model.getFireMode()
+         <<"blarc ->"<<model.getBlindArc()
+        <<"misalrgn ->"<<model.getMissAlignment()
+        <<"mag ->"<<model.getMagazine();
 #endif
 
         repoGunFback->SetStatus(GunStatusFeedbackEntity(
-            model.getOpMode(),
-            model.getRemote(),
-            model.getMount(),
-            model.getBarrelTemperature(),
-            model.getGunReadyToStart(),
-            model.getGunReadyToFire(),
-            model.getFireMode(),
-            model.getBlindArc(),
-            model.getMissAlignment(),
-            model.getMagazine()
-            ));
+                                    model.getOpMode(),
+                                    model.getRemote(),
+                                    model.getMount(),
+                                    model.getBarrelTemperature(),
+                                    model.getGunReadyToStart(),
+                                    model.getGunReadyToFire(),
+                                    model.getFireMode(),
+                                    model.getBlindArc(),
+                                    model.getMissAlignment(),
+                                    model.getMagazine()
+                                    ));
 
         currentErr = NoError();
 
@@ -112,9 +112,9 @@ void GunFeedbackStatusStream::handleError(const QString &err)
 }
 
 GunFeedbackStatusStream *GunFeedbackStatusStream::getInstance(
-    TcpMessagingOpts *config = nullptr,
-    GunFeedbackRepository *repoGunFback = nullptr
-    )
+        TcpMessagingOpts *config = nullptr,
+        GunFeedbackRepository *repoGunFback = nullptr
+        )
 {
     if(gunFeedbackStream == nullptr)
     {

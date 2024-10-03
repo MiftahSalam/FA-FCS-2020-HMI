@@ -14,8 +14,8 @@ LOG4QT_DECLARE_STATIC_LOGGER(logger, OSDStreamPosition)
 OSDStreamPosition* OSDStreamPosition::positionStream = nullptr;
 
 OSDStreamPosition::OSDStreamPosition(TcpMessagingOpts *config,
-        OSDPositionRepository *repoPos,
-        OSDCMSInputMode *modeService)
+                                     OSDPositionRepository *repoPos,
+                                     OSDCMSInputMode *modeService)
 //OSDStreamPosition::OSDStreamPosition(AMQPConfig *config)
     : cfg(config), _repoPos(repoPos), serviceMode(modeService), currentErr(NoError())
 {
@@ -83,7 +83,7 @@ void OSDStreamPosition::onDataReceived(QByteArray data)
 
 #ifdef USE_LOG4QT
         logger()->trace()<<Q_FUNC_INFO<<" -> latitude: "<<model.getLatitude()
-                       <<", longitude: "<<model.getLongitude()
+                        <<", longitude: "<<model.getLongitude()
                           ;
 #else
         qDebug()<<Q_FUNC_INFO<<"data position: lat ->"<<model.getLatitude()<<"lon ->"<<model.getLongitude();
@@ -102,9 +102,9 @@ void OSDStreamPosition::onDataReceived(QByteArray data)
                                       model.getLatitude(),
                                       model.getLongitude(),
                                       respObj["source"].toString().toStdString(),
-                                      respObj["status"].toString().toStdString(),
-                                      OSD_MODE::AUTO
-                                  ));
+                                  respObj["status"].toString().toStdString(),
+                    OSD_MODE::AUTO
+                    ));
         }
 
         handleError(respObj["status"].toString());

@@ -88,7 +88,7 @@ void TrackArpaStream::onDataReceived(QByteArray data)
 
                 if (model.getId() <= 0) {
 #ifdef USE_LOG4QT
-                    logger()->warn()<<Q_FUNC_INFO<<" -> invalid track";
+                    logger()->error()<<Q_FUNC_INFO<<" -> invalid track";
 #else
                     qWarning()<<Q_FUNC_INFO<<"invalid track";
 #endif
@@ -118,7 +118,7 @@ void TrackArpaStream::onDataReceived(QByteArray data)
             }
         } else {
 #ifdef USE_LOG4QT
-            logger()->error()<<Q_FUNC_INFO<<" -> empty track array parser";
+            logger()->warn()<<Q_FUNC_INFO<<" -> empty track array parser";
 #else
             qWarning()<<Q_FUNC_INFO<<"empty track array parser";
 #endif

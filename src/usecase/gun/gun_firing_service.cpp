@@ -13,12 +13,12 @@ const QString FIRE_CMD_TEMPLATE = "$FIRE,%1*HH\r\n";
 GunFiringService *GunFiringService::instance = nullptr;
 
 GunFiringService::GunFiringService(QObject *parent,
-//        SerialMessagingOpts *serialConfig,
-        TcpMessagingOpts *tcpConfig,
-        GunManagerService *gunService,
-        WeaponAssignService *waService,
-        WeaponTrackAssignService *wtaService
-        )
+                                   //        SerialMessagingOpts *serialConfig,
+                                   TcpMessagingOpts *tcpConfig,
+                                   GunManagerService *gunService,
+                                   WeaponAssignService *waService,
+                                   WeaponTrackAssignService *wtaService
+                                   )
     :
       QObject{parent},
       _gunService(gunService),
@@ -30,7 +30,7 @@ GunFiringService::GunFiringService(QObject *parent,
     foreach (auto weapon, _weapons) {
         firingPorts.insert(weapon, nullptr);
     }
-//    firingPorts.insert("40mm", new SerialMessagingWrapper(this, serialConfig));
+    //    firingPorts.insert("40mm", new SerialMessagingWrapper(this, serialConfig));
     firingPorts.insert("40mm", new TcpMessagingWrapper(this, tcpConfig));
 
     timer = new QTimer(this);
@@ -118,9 +118,9 @@ void GunFiringService::OnTimeout()
 
         if (_weaponsOpenFire.contains(w)) {
             port->sendMessage(FIRE_CMD_TEMPLATE.arg("1").toUtf8());
-//            port->sendActivateButtonMessage(FIRE_CMD_TEMPLATE.arg("1").toUtf8());
+            //            port->sendActivateButtonMessage(FIRE_CMD_TEMPLATE.arg("1").toUtf8());
         } else {
-//            port->sendActivateButtonMessage(FIRE_CMD_TEMPLATE.arg("0").toUtf8());
+            //            port->sendActivateButtonMessage(FIRE_CMD_TEMPLATE.arg("0").toUtf8());
             port->sendMessage(FIRE_CMD_TEMPLATE.arg("0").toUtf8());
         }
     }
@@ -165,7 +165,7 @@ GunFiringService *GunFiringService::getInstance(QObject *parent,
         }
 
         TcpMessagingOpts *gunFiringStreamVal = msgConfig->getInstance("")->getContent().value("fire_button");
-//        SerialMessagingOpts *gunFiringStreamVal = msgConfig->getInstance("")->getContent().value("fire_button");
+        //        SerialMessagingOpts *gunFiringStreamVal = msgConfig->getInstance("")->getContent().value("fire_button");
 
         instance = new GunFiringService(parent, gunFiringStreamVal, gunService, waService, wtaService);
 

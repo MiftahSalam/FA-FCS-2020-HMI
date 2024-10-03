@@ -77,12 +77,12 @@ void OSDCMSWaterSpeedData::onReplyFinished()
     resp = toResponse(respRaw);
 
     repoWS->SetWaterSpeed(OSDWaterSpeedEntity(
-                             resp.getData().getSpeed(),
-                             resp.getData().getCourse(),
-                             "manual",
-                             "",
-                             OSD_MODE::MANUAL
-                             ));
+                              resp.getData().getSpeed(),
+                              resp.getData().getCourse(),
+                              "manual",
+                              "",
+                              OSD_MODE::MANUAL
+                              ));
 
     emit signal_setWaterSpeedResponse(resp);
 }
@@ -101,8 +101,8 @@ BaseResponse<WaterSpeedModel> OSDCMSWaterSpeedData::toResponse(QByteArray raw)
         logger()->debug()<<Q_FUNC_INFO<<" -> resp. http code: "<<resp.getHttpCode()
                         <<", message: "<<resp.getMessage()
                        <<", speed: "<<resp.getData().getSpeed()
-                       <<", direction: "<<resp.getData().getCourse()
-                         ;
+                      <<", direction: "<<resp.getData().getCourse()
+                        ;
 #else
         qDebug()<<Q_FUNC_INFO<<"resp"<<resp.getHttpCode()<<resp.getMessage()<<resp.getData().getSpeed()<<resp.getData().getCourse();
 #endif

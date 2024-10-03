@@ -78,10 +78,10 @@ void EngagementData40mmStream::onDataReceived(QByteArray data)
 #endif
 
         _repoEngagemenData->UpdateEngagementBarrel(EngagementDataEntity(
-            WeaponTrackAssignEntity ("40mm", currentTrack),
-            GunBarrelEntity (model.azimuth(), model.elevation()),
-            EngagementDataEntity::EngagementStatus(model.getStatus())
-            ));
+                                                       WeaponTrackAssignEntity ("40mm", currentTrack),
+                                                       GunBarrelEntity (model.azimuth(), model.elevation()),
+                                                       EngagementDataEntity::EngagementStatus(model.getStatus())
+                                                       ));
 
         currentErr = NoError();
 
@@ -106,7 +106,7 @@ void EngagementData40mmStream::periodeUpdate()
 {
     check();
 #ifdef USE_LOG4QT
-        logger()->trace()<<Q_FUNC_INFO;
+    logger()->trace()<<Q_FUNC_INFO;
 #else
     qDebug()<<Q_FUNC_INFO;
 #endif

@@ -14,10 +14,10 @@ LOG4QT_DECLARE_STATIC_LOGGER(logger, OSDCMSWeatherData)
 OSDCMSWeatherData* OSDCMSWeatherData::weatherData = nullptr;
 
 OSDCMSWeatherData::OSDCMSWeatherData(
-    HttpClientWrapper *parent,
-    OSDCmsConfig *cmsConfig,
-    OSDWeatherRepository *repoWeather
-    ): HttpClientWrapper(parent), cfgCms(cmsConfig), repoWeather(repoWeather)
+        HttpClientWrapper *parent,
+        OSDCmsConfig *cmsConfig,
+        OSDWeatherRepository *repoWeather
+        ): HttpClientWrapper(parent), cfgCms(cmsConfig), repoWeather(repoWeather)
 {
     if(parent == nullptr) {
         throw ErrObjectCreation();
@@ -25,10 +25,10 @@ OSDCMSWeatherData::OSDCMSWeatherData(
 }
 
 OSDCMSWeatherData *OSDCMSWeatherData::getInstance(
-    HttpClientWrapper *httpClient = nullptr,
-    OSDCmsConfig *cmsConfig = nullptr,
-    OSDWeatherRepository *repoWeather
-    )
+        HttpClientWrapper *httpClient = nullptr,
+        OSDCmsConfig *cmsConfig = nullptr,
+        OSDWeatherRepository *repoWeather
+        )
 {
     if (weatherData == nullptr) {
         if(cmsConfig == nullptr) {
@@ -79,13 +79,13 @@ void OSDCMSWeatherData::onReplyFinished()
     resp = toResponse(respRaw);
 
     repoWeather->SetWeather(OSDWeatherEntity(
-        resp.getData().getTemperature(),
-        resp.getData().getPressure(),
-        resp.getData().getHumidity(),
-        "manual",
-        "",
-        OSD_MODE::MANUAL
-        ));
+                                resp.getData().getTemperature(),
+                                resp.getData().getPressure(),
+                                resp.getData().getHumidity(),
+                                "manual",
+                                "",
+                                OSD_MODE::MANUAL
+                                ));
 
     emit signal_setWeatherResponse(resp);
 
@@ -105,9 +105,9 @@ BaseResponse<WeatherModel> OSDCMSWeatherData::toResponse(QByteArray raw)
         logger()->debug()<<Q_FUNC_INFO<<" -> resp. http code: "<<resp.getHttpCode()
                         <<", message: "<<resp.getMessage()
                        <<", temp: "<<resp.getData().getTemperature()
-                       <<", hum: "<<resp.getData().getHumidity()
-                      <<", press: "<<resp.getData().getPressure()
-                         ;
+                      <<", hum: "<<resp.getData().getHumidity()
+                     <<", press: "<<resp.getData().getPressure()
+                       ;
 #else
         qDebug()<<Q_FUNC_INFO<<"resp"<<resp.getHttpCode()<<resp.getMessage()<<resp.getData().getTemperature()<<resp.getData().getHumidity()<<resp.getData().getPressure();
 #endif

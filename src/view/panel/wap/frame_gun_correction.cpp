@@ -69,8 +69,8 @@ void FrameGunCorrection::on_engageCorrResponse(BaseResponse<EngagementCorrection
 
 #ifdef USE_LOG4QT
     logger()->debug() << Q_FUNC_INFO
-             << " -> getAzimuthCorr: " << resp.getData().getAzimuthCorrection()
-             << ", getElevationCorr: " << resp.getData().getElevationCorrection();
+                      << " -> getAzimuthCorr: " << resp.getData().getAzimuthCorrection()
+                      << ", getElevationCorr: " << resp.getData().getElevationCorrection();
 #else
     qDebug() << Q_FUNC_INFO
              << "resp data getAzimuthCorr: " << resp.getData().getAzimuthCorrection()

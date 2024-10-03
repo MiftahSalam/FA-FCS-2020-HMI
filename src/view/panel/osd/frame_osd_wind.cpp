@@ -86,12 +86,12 @@ void FrameOSDWind::onDataResponse(BaseResponse<WindModel> resp)
 
 #ifdef USE_LOG4QT
     logger()->debug() << Q_FUNC_INFO
-             << " -> getSpeed: " << resp.getData().getSpeed()
-             << ", getDirection: " << resp.getData().getDirection();
+                      << " -> getSpeed: " << resp.getData().getSpeed()
+                      << ", getDirection: " << resp.getData().getDirection();
 #else
     qDebug()<<Q_FUNC_INFO<<"resp data get Speed: "<<resp.getData().getSpeed()
-         <<"resp data get Direction: "<<resp.getData().getDirection()
-          ;
+           <<"resp data get Direction: "<<resp.getData().getDirection()
+             ;
 #endif
 }
 
@@ -145,12 +145,12 @@ void FrameOSDWind::onModeChange(int index)
     case OSD_MODE::AUTO:
         manual_mode = false;
         currentMode = OSD_MODE::AUTO;
-//        autoUiSetup();
+        //        autoUiSetup();
         break;
     case OSD_MODE::MANUAL:
         manual_mode = true;
         currentMode = OSD_MODE::MANUAL;
-//        manualUiSetup();
+        //        manualUiSetup();
         break;
     default:
         break;
@@ -207,9 +207,9 @@ void FrameOSDWind::onTimeout()
             ui->mode->setCurrentModeIndex(1);
             manualUiSetup();
             _cmsWind->set(OSDSetWindRequest(
-                            ui->inputSpeed->getCurrentValue().toFloat(),
-                            ui->inputDirection->getCurrentValue().toFloat()
-                            ));
+                              ui->inputSpeed->getCurrentValue().toFloat(),
+                              ui->inputDirection->getCurrentValue().toFloat()
+                              ));
         } else {
             ui->mode->setCurrentModeIndex(0);
             autoUiSetup();

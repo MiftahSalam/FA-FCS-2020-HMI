@@ -76,8 +76,8 @@ void TrackWeaponEngageService::onReplyFinished()
     QByteArray respRaw = httpResponse->readAll();
 
 #ifdef USE_LOG4QT
-    logger()->trace()<<Q_FUNC_INFO<<" -> respRaw: "<<respRaw;
-    logger()->trace()<<Q_FUNC_INFO<<" -> err: "<<httpResponse->error();
+    logger()->debug()<<Q_FUNC_INFO<<" -> respRaw: "<<respRaw;
+    logger()->debug()<<Q_FUNC_INFO<<" -> err: "<<httpResponse->error();
 #else
     qDebug()<<Q_FUNC_INFO<<"respRaw: "<<respRaw;
     qDebug()<<Q_FUNC_INFO<<"err: "<<httpResponse->error();
@@ -101,8 +101,8 @@ void TrackWeaponEngageService::onResetAssignReplyFinished()
     QByteArray respRaw = httpResponse->readAll();
 
 #ifdef USE_LOG4QT
-    logger()->trace()<<Q_FUNC_INFO<<" -> respRaw: "<<respRaw;
-    logger()->trace()<<Q_FUNC_INFO<<" -> err: "<<httpResponse->error();
+    logger()->debug()<<Q_FUNC_INFO<<" -> respRaw: "<<respRaw;
+    logger()->debug()<<Q_FUNC_INFO<<" -> err: "<<httpResponse->error();
 #else
     qDebug()<<Q_FUNC_INFO<<"respRaw: "<<respRaw;
     qDebug()<<Q_FUNC_INFO<<"err: "<<httpResponse->error();
@@ -122,7 +122,7 @@ BaseResponse<TrackAssignResponse> TrackWeaponEngageService::toResponse(QByteArra
         BaseResponse<TrackAssignResponse> resp(respCode, respMsg, model);
 
 #ifdef USE_LOG4QT
-        logger()->trace()<<Q_FUNC_INFO<<" -> resp. http code: "<<resp.getHttpCode()
+        logger()->debug()<<Q_FUNC_INFO<<" -> resp. http code: "<<resp.getHttpCode()
                         <<", message: "<<resp.getMessage()
                        <<", track id: "<<resp.getData().getTrackId()
                       <<", weapon: "<<QString::fromStdString(resp.getData().getWeapon());
@@ -202,7 +202,7 @@ bool TrackWeaponEngageService::isAssignResponse()
 
 #ifdef USE_LOG4QT
     foreach (auto header, headers) {
-        logger()->trace()<<Q_FUNC_INFO<<" -> respHeaderRaw. key: "<<header.first<<", value: "<<header.second;
+        logger()->debug()<<Q_FUNC_INFO<<" -> respHeaderRaw. key: "<<header.first<<", value: "<<header.second;
     }
 #else
     qDebug()<<Q_FUNC_INFO<<"respHeaderRaw: "<<headers;

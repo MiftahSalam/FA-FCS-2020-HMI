@@ -14,8 +14,8 @@ LOG4QT_DECLARE_STATIC_LOGGER(logger, OSDStreamWaterSpeed)
 OSDStreamWaterSpeed* OSDStreamWaterSpeed::waterspeedStream = nullptr;
 
 OSDStreamWaterSpeed::OSDStreamWaterSpeed(TcpMessagingOpts *config,
-        OSDWaterSpeedRepository *repoWP,
-        OSDCMSInputMode *modeService)
+                                         OSDWaterSpeedRepository *repoWP,
+                                         OSDCMSInputMode *modeService)
     : cfg(config), _repoWP(repoWP), serviceMode(modeService), currentErr(NoError())
 {
     consumer = new TcpMessagingWrapper(this, config);
@@ -64,7 +64,7 @@ void OSDStreamWaterSpeed::onDataReceived(QByteArray data)
 
 #ifdef USE_LOG4QT
         logger()->trace()<<Q_FUNC_INFO<<" -> speed: "<<model.getSpeed()
-                       <<", course: "<<model.getCourse()
+                        <<", course: "<<model.getCourse()
                           ;
 #else
         qDebug()<<Q_FUNC_INFO<<"data Water Speed: water speed ->"<<model.getSpeed()<<"water course ->"<<model.getCourse();
@@ -80,12 +80,12 @@ void OSDStreamWaterSpeed::onDataReceived(QByteArray data)
         auto waterspeedMode = serviceMode->getDataMode().getWaterSpeed();
         if (!waterspeedMode && check().getCode() == ERROR_NO.first) {
             _repoWP->SetWaterSpeed(OSDWaterSpeedEntity(
-                                      model.getSpeed(),
-                                      model.getCourse(),
-                                      respObj["source"].toString().toStdString(),
-                                      respObj["status"].toString().toStdString(),
-                                      OSD_MODE::AUTO
-                                  ));
+                                       model.getSpeed(),
+                                       model.getCourse(),
+                                       respObj["source"].toString().toStdString(),
+                                   respObj["status"].toString().toStdString(),
+                    OSD_MODE::AUTO
+                    ));
         }
 
         handleError(respObj["status"].toString());

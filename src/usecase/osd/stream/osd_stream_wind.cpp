@@ -14,8 +14,8 @@ LOG4QT_DECLARE_STATIC_LOGGER(logger, OSDStreamWind)
 OSDStreamWind* OSDStreamWind::windStream = nullptr;
 
 OSDStreamWind::OSDStreamWind(TcpMessagingOpts *config,
-        OSDWindRepository *repoWind,
-        OSDCMSInputMode *modeService)
+                             OSDWindRepository *repoWind,
+                             OSDCMSInputMode *modeService)
     : cfg(config), _repoWind(repoWind), serviceMode(modeService), currentErr(NoError())
 {
     consumer = new TcpMessagingWrapper(this, config);
@@ -64,7 +64,7 @@ void OSDStreamWind::onDataReceived(QByteArray data)
 
 #ifdef USE_LOG4QT
         logger()->trace()<<Q_FUNC_INFO<<" -> speed: "<<model.getSpeed()
-                       <<", dir: "<<model.getDirection()
+                        <<", dir: "<<model.getDirection()
                           ;
 #else
         qDebug()<<Q_FUNC_INFO<<"data Wind: speed ->"<<model.getSpeed()<<"direction ->"<<model.getDirection();
@@ -83,8 +83,8 @@ void OSDStreamWind::onDataReceived(QByteArray data)
                                    model.getSpeed(),
                                    model.getDirection(),
                                    respObj["source"].toString().toStdString(),
-                                   respObj["status"].toString().toStdString(),
-                                   OSD_MODE::AUTO
+                               respObj["status"].toString().toStdString(),
+                    OSD_MODE::AUTO
                     ));
         }
 
@@ -92,9 +92,17 @@ void OSDStreamWind::onDataReceived(QByteArray data)
 
         emit signalDataProcessed(model);
     } catch (ErrJsonParse &e) {
-        qDebug()<<Q_FUNC_INFO<<"caught error: "<<e.getMessage();
+#ifdef USE_LOG4QT
+        logger()->error()<<Q_FUNC_INFO<<" -> caught error: "<<e.getMessage();
+#else
+        qWarning()<<Q_FUNC_INFO<<"caught error: "<<e.getMessage();
+#endif
     }  catch (...) {
-        qDebug()<<Q_FUNC_INFO<<"caught unkbnown error";
+#ifdef USE_LOG4QT
+        logger()->error()<<Q_FUNC_INFO<<" -> caught unkbnown error";
+#else
+        qWarning()<<Q_FUNC_INFO<<"caught unkbnown error";
+#endif
     }
 }
 

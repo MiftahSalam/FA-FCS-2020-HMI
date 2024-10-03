@@ -159,12 +159,12 @@ BaseResponse<InputModeModel> OSDCMSInputMode::toResponse(QByteArray raw)
         QString respMsg = respObj["message"].toString();
         QJsonObject respData = respObj["data"].toObject();
         InputModeModel model(
-            respData["position"].toBool(),
-            respData["speed"].toBool(),
-            respData["inertia"].toBool(),
-            respData["water_speed"].toBool(),
-            respData["wind"].toBool(),
-            respData["weather"].toBool()
+                    respData["position"].toBool(),
+                respData["speed"].toBool(),
+                respData["inertia"].toBool(),
+                respData["water_speed"].toBool(),
+                respData["wind"].toBool(),
+                respData["weather"].toBool()
                 );
         BaseResponse<InputModeModel> resp(respCode, respMsg, model);
 
@@ -172,14 +172,14 @@ BaseResponse<InputModeModel> OSDCMSInputMode::toResponse(QByteArray raw)
         logger()->debug()<<Q_FUNC_INFO<<" -> resp. http code: "<<resp.getHttpCode()
                         <<", message: "<<resp.getMessage()
                        <<", position: "<<resp.getData().getPosition()
-                       <<", speed: "<<resp.getData().getSpeed()
-                       <<", inertia: "<<resp.getData().getInersia()
-                      <<", water_speed: "<<resp.getData().getWaterSpeed()
-                     <<", wind: "<<resp.getData().getWind()
-                    <<", weather: "<<resp.getData().getWeather()
-                         ;
+                      <<", speed: "<<resp.getData().getSpeed()
+                     <<", inertia: "<<resp.getData().getInersia()
+                    <<", water_speed: "<<resp.getData().getWaterSpeed()
+                   <<", wind: "<<resp.getData().getWind()
+                  <<", weather: "<<resp.getData().getWeather()
+                    ;
 #else
-        qDebug()<<Q_FUNC_INFO<<"resp"<<resp.getHttpCode()<<resp.getMessage()<<resp.getData().getHeading()<<resp.getData().getPicth()<<resp.getData().getRoll();
+        qDebug()<<Q_FUNC_INFO<<"resp"<<resp.getHttpCode()<<resp.getMessage()<<resp.getData().getInersia();
 #endif
 
         return resp;
@@ -234,9 +234,9 @@ void OSDCMSInputMode::resetToPrevMode()
     //    repoInputMode->SetEntity(); //temp
 
     currentMode = previousMode;
-//    if (lastUpdateMode == "position") {
-//        currentMode.setPosition(previousMode.getPosition());
-//    } else if (lastUpdateMode == "inertia"){
-//        currentMode.setPosition(previousMode.getInersia());
-//    }
+    //    if (lastUpdateMode == "position") {
+    //        currentMode.setPosition(previousMode.getPosition());
+    //    } else if (lastUpdateMode == "inertia"){
+    //        currentMode.setPosition(previousMode.getInersia());
+    //    }
 }

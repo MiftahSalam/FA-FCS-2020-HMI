@@ -211,9 +211,9 @@ void FrameOSDGyro::onDataResponse(BaseResponse<GyroModel> resp)
 
 #ifdef USE_LOG4QT
     logger()->debug() << Q_FUNC_INFO
-             << " -> getHeading: " << resp.getData().getHeading()
-             << ", getPicth: " << resp.getData().getPicth()
-             << ", getRoll: " << resp.getData().getRoll();
+                      << " -> getHeading: " << resp.getData().getHeading()
+                      << ", getPicth: " << resp.getData().getPicth()
+                      << ", getRoll: " << resp.getData().getRoll();
 #else
     qDebug() << Q_FUNC_INFO
              << "resp data getHeading: " << resp.getData().getHeading()

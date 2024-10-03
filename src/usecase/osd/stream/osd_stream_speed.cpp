@@ -69,7 +69,7 @@ void OSDStreamSpeed::onDataReceived(QByteArray data)
 
 #ifdef USE_LOG4QT
         logger()->trace()<<Q_FUNC_INFO<<" -> speed: "<<model.getSpeed()
-                       <<", course: "<<model.getCourse()
+                        <<", course: "<<model.getCourse()
                           ;
 #else
         qDebug()<<Q_FUNC_INFO<<"data speed: SOG ->"<<model.getSpeed()<<"COG ->"<<model.getCourse();
@@ -85,12 +85,12 @@ void OSDStreamSpeed::onDataReceived(QByteArray data)
         auto speedMode = serviceMode->getDataMode().getSpeed();
         if (!speedMode && check().getCode() == ERROR_NO.first) {
             _repoSpeed->SetSpeed(OSDSpeedEntity(
-                                      model.getSpeed(),
-                                      model.getCourse(),
-                                      respObj["source"].toString().toStdString(),
-                                      respObj["status"].toString().toStdString(),
-                                      OSD_MODE::AUTO
-                                  ));
+                                     model.getSpeed(),
+                                     model.getCourse(),
+                                     respObj["source"].toString().toStdString(),
+                                 respObj["status"].toString().toStdString(),
+                    OSD_MODE::AUTO
+                    ));
         }
 
         handleError(respObj["status"].toString());

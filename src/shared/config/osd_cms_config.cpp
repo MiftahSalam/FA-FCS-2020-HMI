@@ -39,7 +39,7 @@ QString OSDCmsConfig::getModeUrl() const
 
 OSDCmsConfig* OSDCmsConfig::getInstance(const QString path) {
 #ifdef USE_LOG4QT
-        logger()->trace()<<Q_FUNC_INFO<<" -> path; "<<path;
+    logger()->trace()<<Q_FUNC_INFO<<" -> path; "<<path;
 #else
     qDebug()<<Q_FUNC_INFO<<"path"<<path;
 #endif

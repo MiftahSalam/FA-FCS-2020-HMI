@@ -103,8 +103,8 @@ BaseResponse<PositionModel> OSDCMSPositionData::toResponse(QByteArray raw)
         logger()->debug()<<Q_FUNC_INFO<<" -> resp. http code: "<<resp.getHttpCode()
                         <<", message: "<<resp.getMessage()
                        <<", latitude: "<<resp.getData().getLatitude()
-                       <<", longitude: "<<resp.getData().getLongitude()
-                         ;
+                      <<", longitude: "<<resp.getData().getLongitude()
+                        ;
 #else
         qDebug()<<Q_FUNC_INFO<<"resp"<<resp.getHttpCode()<<resp.getMessage()<<resp.getData().getLatitude()<<resp.getData().getLongitude();
 #endif

@@ -59,7 +59,7 @@ void TdaTrack::buildUI(TrackParam *param)
     connect(rc_radarevent,SIGNAL(send_rightButtonClicked(QPoint)),this,SLOT(RC_track(QPoint))); //tombol2 klik kanan track
     trackIconLabel->installEventFilter(rc_radarevent);
     */
-\
+    \
     /*create QLabel for holding track number and source display*/
     const QPoint TRACK_ID_LABEL_OFFSET(5,0);
     const QPoint TRACK_ID_LABEL_MARGIN(width()*2/3,0);
@@ -93,13 +93,13 @@ void TdaTrack::updateTrackData(TrackParam param)
 /*right click menu*/
 void TdaTrack::RC_track(QPoint pos)
 {
-//    qDebug()<<Q_FUNC_INFO<<" point "<<pos;
+    //    qDebug()<<Q_FUNC_INFO<<" point "<<pos;
 
     QMenu *menu = new QMenu(this);
     menu->setStyleSheet("background-color: black;");
     menu->addMenu(identitySubMenu);
-//    menu->addMenu(envSubMenu);
-   // menu->addMenu(desigSubMenu);
+    //    menu->addMenu(envSubMenu);
+    // menu->addMenu(desigSubMenu);
     menu->exec(pos);
 }
 
@@ -109,7 +109,7 @@ void TdaTrack::mousePressEvent(QMouseEvent *event)
     {
 #ifdef USE_LOG4QT
         logger()->trace()<<Q_FUNC_INFO<<" -> point x: "<<event->globalPos().x()
-                           <<", point y: "<<event->globalPos().y();
+                        <<", point y: "<<event->globalPos().y();
 #else
         qDebug()<<Q_FUNC_INFO<<" point "<<event->globalPos();
 #endif
@@ -117,8 +117,8 @@ void TdaTrack::mousePressEvent(QMouseEvent *event)
         QMenu *menu = new QMenu(this);
         menu->setStyleSheet("background-color: black;");
         menu->addMenu(identitySubMenu);
-    //    menu->addMenu(envSubMenu);
-       // menu->addMenu(desigSubMenu);
+        //    menu->addMenu(envSubMenu);
+        // menu->addMenu(desigSubMenu);
         menu->exec(event->globalPos());
     }
 }

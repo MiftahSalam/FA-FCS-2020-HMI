@@ -95,10 +95,10 @@ void FrameOSDWeather::onTimeout()
             ui->mode->setCurrentModeIndex(1);
             manualUiSetup();
             _cmsWeather->set(OSDSetWeatherRequest(
-                ui->inputTemp->getCurrentValue().toFloat(),
-                ui->inputPress->getCurrentValue().toFloat(),
-                ui->inputHum->getCurrentValue().toFloat()
-                ));
+                                 ui->inputTemp->getCurrentValue().toFloat(),
+                                 ui->inputPress->getCurrentValue().toFloat(),
+                                 ui->inputHum->getCurrentValue().toFloat()
+                                 ));
         } else {
             ui->mode->setCurrentModeIndex(0);
             autoUiSetup();
@@ -194,15 +194,15 @@ void FrameOSDWeather::onDataResponse(BaseResponse<WeatherModel> resp)
 
 #ifdef USE_LOG4QT
     logger()->debug() << Q_FUNC_INFO
-             << " -> getHumidity: " << resp.getData().getHumidity()
-             << ", getPressure: " << resp.getData().getPressure()
-             << ", getTemperature: " << resp.getData().getTemperature();
+                      << " -> getHumidity: " << resp.getData().getHumidity()
+                      << ", getPressure: " << resp.getData().getPressure()
+                      << ", getTemperature: " << resp.getData().getTemperature();
 #else
     qDebug()<<Q_FUNC_INFO
-             <<"resp data getTemperature: "<<resp.getData().getTemperature()
-             <<"resp data getPressure: "<<resp.getData().getPressure()
-             <<"resp data getHumidity: "<<resp.getData().getHumidity()
-        ;
+           <<"resp data getTemperature: "<<resp.getData().getTemperature()
+          <<"resp data getPressure: "<<resp.getData().getPressure()
+         <<"resp data getHumidity: "<<resp.getData().getHumidity()
+           ;
 #endif
 }
 

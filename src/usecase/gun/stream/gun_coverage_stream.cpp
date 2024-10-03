@@ -13,9 +13,9 @@ LOG4QT_DECLARE_STATIC_LOGGER(logger, GunCoverageStream)
 GunCoverageStream *GunCoverageStream::gunCoverageStream = nullptr;
 
 GunCoverageStream::GunCoverageStream(
-    TcpMessagingOpts *config,
-    GunCoverageRepository *repoGunCov
-    ): cfg(config), _repoGunCov(repoGunCov), currentErr(NoError())
+        TcpMessagingOpts *config,
+        GunCoverageRepository *repoGunCov
+        ): cfg(config), _repoGunCov(repoGunCov), currentErr(NoError())
 {
     consumer = new TcpMessagingWrapper(this, config);
     connect(consumer, &TcpMessagingWrapper::signalForwardMessage, this, &GunCoverageStream::onDataReceived);
@@ -35,17 +35,17 @@ void GunCoverageStream::onDataReceived(QByteArray data)
         logger()->trace()<<Q_FUNC_INFO<<" -> Gun coverage. max range: "<<model.getMaxRange()
                         <<", blind arc: "<<model.getBlindArc()
                        <<", orientation: "<<model.getOrientation()
-                          ;
+                         ;
 #else
         qDebug()<<Q_FUNC_INFO<<"data gun coverage: max range ->"<<model.getMaxRange()<<"blind arc ->"<<model.getBlindArc()
-                 <<"orientation ->"<<model.getOrientation();
+               <<"orientation ->"<<model.getOrientation();
 #endif
 
         _repoGunCov->SetGunCoverage(GunCoverageEntity(
-            model.getMaxRange(),
-            model.getBlindArc(),
-            model.getOrientation()
-            ));
+                                        model.getMaxRange(),
+                                        model.getBlindArc(),
+                                        model.getOrientation()
+                                        ));
 
         emit signalDataProcessed(model);
 
@@ -75,9 +75,9 @@ void GunCoverageStream::handleError(const QString &err)
 }
 
 GunCoverageStream *GunCoverageStream::getInstance(
-    TcpMessagingOpts *config = nullptr,
-    GunCoverageRepository *repoGunCov = nullptr
-    )
+        TcpMessagingOpts *config = nullptr,
+        GunCoverageRepository *repoGunCov = nullptr
+        )
 {
     if(gunCoverageStream == nullptr)
     {

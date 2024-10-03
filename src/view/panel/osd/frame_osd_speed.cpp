@@ -93,9 +93,9 @@ void FrameOSDSpeed::onTimeout()
             ui->mode->setCurrentModeIndex(1);
             manualUiSetup();
             _cmsSpeed->set(OSDSetSpeedRequest(
-                              ui->inputSpeed->getCurrentValue().toFloat(),
-                              ui->inputCourse->getCurrentValue().toFloat()
-                              ));
+                               ui->inputSpeed->getCurrentValue().toFloat(),
+                               ui->inputCourse->getCurrentValue().toFloat()
+                               ));
         } else {
             ui->mode->setCurrentModeIndex(0);
             autoUiSetup();
@@ -108,18 +108,18 @@ void FrameOSDSpeed::onTimeout()
 
 void FrameOSDSpeed::setup()
 {
-        OSDSpeedProp prop{
-            "Speed",
-            TextInputProp{
-                "SOG:", "kts", "SpeedInput", "0"
-            },
-            TextInputProp{
-                "COG:", "deg", "CourseInput", "0"
-            }
-        };
-        ui->groupBox->setTitle(prop.title);
-        ui->inputSpeed->setup(prop.speed);
-        ui->inputCourse->setup(prop.course);
+    OSDSpeedProp prop{
+        "Speed",
+        TextInputProp{
+            "SOG:", "kts", "SpeedInput", "0"
+        },
+        TextInputProp{
+            "COG:", "deg", "CourseInput", "0"
+        }
+    };
+    ui->groupBox->setTitle(prop.title);
+    ui->inputSpeed->setup(prop.speed);
+    ui->inputCourse->setup(prop.course);
 }
 
 void FrameOSDSpeed::resetModeIndex()
@@ -188,13 +188,13 @@ void FrameOSDSpeed::onDataResponse(BaseResponse<SpeedModel> resp)
 
 #ifdef USE_LOG4QT
     logger()->debug() << Q_FUNC_INFO
-             << " -> getSpeed: " << resp.getData().getSpeed()
-             << ", getCourse: " << resp.getData().getCourse();
+                      << " -> getSpeed: " << resp.getData().getSpeed()
+                      << ", getCourse: " << resp.getData().getCourse();
 #else
     qDebug()<<Q_FUNC_INFO
            <<"resp data getSpeed: "<<resp.getData().getSpeed()
           <<"resp data getCourse: "<<resp.getData().getCourse()
-           ;
+            ;
 #endif
 }
 

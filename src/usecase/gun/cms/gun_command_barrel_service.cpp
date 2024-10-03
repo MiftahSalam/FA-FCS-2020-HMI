@@ -103,8 +103,8 @@ BaseResponse<GunCommandBarrelResponse> GunCommandBarrelService::toResponse(QByte
         logger()->debug()<<Q_FUNC_INFO<<" -> resp. http code: "<<resp.getHttpCode()
                         <<", message: "<<resp.getMessage()
                        <<", az: "<<resp.getData().getAzimuth()
-                       <<", el: "<<resp.getData().getElevation()
-                         ;
+                      <<", el: "<<resp.getData().getElevation()
+                        ;
 #else
         qDebug()<<Q_FUNC_INFO<<"resp"<<resp.getHttpCode()<<resp.getMessage()<<resp.getData().getAzimuth()<<resp.getData().getElevation();
 #endif
