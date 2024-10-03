@@ -1,6 +1,11 @@
 #include "tda_track_icon.h"
 
+#ifdef USE_LOG4QT
+#include <log4qt/logger.h>
+LOG4QT_DECLARE_STATIC_LOGGER(logger, TdaTrackIcon)
+#else
 #include <QDebug>
+#endif
 
 const QString TRACK_INFO_TEMPLATE = "Track Information\n\n"
                                     "TN : %1\n"
@@ -15,7 +20,13 @@ TdaTrackIcon::TdaTrackIcon(QWidget *parent, TrackParam* param)
     : QLabel(parent), currentParam(param)
 {
     currentIconImagePath = fileImageLocation(currentParam->getCur_identity(), currentParam->getCur_env()); //get image from file
+
+#ifdef USE_LOG4QT
+    logger()->trace()<<Q_FUNC_INFO<<" -> currentIconImagePath: "<<currentIconImagePath;
+#else
     qDebug()<<Q_FUNC_INFO<<currentIconImagePath;
+#endif
+
     QImage image(currentIconImagePath);
 
     setObjectName(QString::fromUtf8("trackIcon"));

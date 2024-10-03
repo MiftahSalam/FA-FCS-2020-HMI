@@ -13,9 +13,16 @@
 #include <math.h>
 #include <QContextMenuEvent>
 #include <QMouseEvent>
-#include <QDebug>
 #include <QMessageBox>
 #include <QDateTime>
+
+#ifdef USE_LOG4QT
+#include <log4qt/logger.h>
+LOG4QT_DECLARE_STATIC_LOGGER(logger, FrameTDA)
+#else
+#include <QDebug>
+#endif
+
 
 FrameTDA::FrameTDA(QWidget *parent) : QFrame(parent),
                                       ui(new Ui::FrameTDA)
@@ -43,8 +50,12 @@ FrameTDA::FrameTDA(QWidget *parent) : QFrame(parent),
 
 FrameTDA::~FrameTDA()
 {
-    tdaConfig->saveTDAConfig();
+#ifdef USE_LOG4QT
+    logger()->trace() << Q_FUNC_INFO << " -> Save TDA Config";
+#else
     qDebug() << Q_FUNC_INFO << "Save TDA Config";
+#endif
+    tdaConfig->saveTDAConfig();
     delete ui;
 }
 

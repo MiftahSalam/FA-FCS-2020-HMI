@@ -3,6 +3,13 @@
 #include "ui_frame_engage_data.h"
 #include "src/di/di.h"
 
+#ifdef USE_LOG4QT
+#include <log4qt/logger.h>
+LOG4QT_DECLARE_STATIC_LOGGER(logger, FrameEngageData)
+#else
+#include <QDebug>
+#endif
+
 FrameEngageData::FrameEngageData(QWidget *parent) :
     QWidget(parent),
     ui(new Ui::FrameEngageData),
@@ -58,7 +65,13 @@ void FrameEngageData::OnStreamEngegementDataReceived(EngagementDataModel model)
                 QString::fromStdString(model.weapon()),
                 Qt::MatchCaseSensitive);
 
+#ifdef USE_LOG4QT
+    foreach (auto i, curr40mmitems) {
+        logger()->trace() << Q_FUNC_INFO << " -> curr40mmitems: " << i;
+    }
+#else
     qDebug() << Q_FUNC_INFO << "curr40mmitems:" << curr40mmitems;
+#endif
 
     if(!curr40mmitems.isEmpty()) {
         // update table
@@ -100,7 +113,12 @@ void FrameEngageData::onTimeOut()
 
 void FrameEngageData::onAssignmentResponseData(BaseResponse<TrackAssignResponse> resp, bool assign)
 {
+#ifdef USE_LOG4QT
+    logger()->debug() << Q_FUNC_INFO << " -> resp code: " << resp.getHttpCode()
+                      << ", resp msg: " << resp.getMessage();
+#else
     qDebug() << Q_FUNC_INFO << "resp code:" << resp.getHttpCode() << "resp msg:" << resp.getMessage();
+#endif
 
     if (resp.getHttpCode() == 0)
     {
@@ -112,7 +130,11 @@ void FrameEngageData::onAssignmentResponseData(BaseResponse<TrackAssignResponse>
                 int newRow = ui->tableWidgetEngData->rowCount();
                 ui->tableWidgetEngData->insertRow(newRow);
 
+#ifdef USE_LOG4QT
+                logger()->trace() << Q_FUNC_INFO << " -> newRow: " << ui->tableWidgetEngData->rowCount();
+#else
                 qDebug() << Q_FUNC_INFO << "newRow:" << ui->tableWidgetEngData->rowCount();
+#endif
 
                 ui->tableWidgetEngData->setItem(newRow, 0, new QTableWidgetItem("40mm"));
                 ui->tableWidgetEngData->setItem(newRow, 1, new QTableWidgetItem("Engageable"));

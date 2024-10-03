@@ -2,7 +2,13 @@
 
 #include <QMouseEvent>
 #include <QDir>
+
+#ifdef USE_LOG4QT
+#include <log4qt/logger.h>
+LOG4QT_DECLARE_STATIC_LOGGER(logger, TdaTrack)
+#else
 #include <QDebug>
+#endif
 
 TdaTrack::TdaTrack(QWidget *parent, QSize size) :
     QWidget(parent), trackData(nullptr)
@@ -101,7 +107,12 @@ void TdaTrack::mousePressEvent(QMouseEvent *event)
 {
     if (event->button() == Qt::RightButton)
     {
+#ifdef USE_LOG4QT
+        logger()->trace()<<Q_FUNC_INFO<<" -> point x: "<<event->globalPos().x()
+                           <<", point y: "<<event->globalPos().y();
+#else
         qDebug()<<Q_FUNC_INFO<<" point "<<event->globalPos();
+#endif
 
         QMenu *menu = new QMenu(this);
         menu->setStyleSheet("background-color: black;");

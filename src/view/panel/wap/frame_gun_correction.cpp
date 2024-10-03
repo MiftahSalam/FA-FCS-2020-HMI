@@ -4,6 +4,14 @@
 
 #include <QMessageBox>
 
+#ifdef USE_LOG4QT
+#include <log4qt/logger.h>
+LOG4QT_DECLARE_STATIC_LOGGER(logger, FrameGunCorrection)
+#else
+#include <QDebug>
+#endif
+
+
 FrameGunCorrection::FrameGunCorrection(QWidget *parent) :
     QWidget(parent),
     ui(new Ui::FrameGunCorrection)
@@ -46,7 +54,12 @@ void FrameGunCorrection::on_pushButtonCorrectionApply_clicked()
 
 void FrameGunCorrection::on_engageCorrResponse(BaseResponse<EngagementCorrectionSetResponse> resp)
 {
+#ifdef USE_LOG4QT
+    logger()->debug() << Q_FUNC_INFO << " -> resp code: " << resp.getHttpCode()
+                      << ", resp msg: " << resp.getMessage();
+#else
     qDebug() << Q_FUNC_INFO << "resp code:" << resp.getHttpCode() << "resp msg:" << resp.getMessage();
+#endif
 
     if (resp.getHttpCode() != 0)
     {
@@ -54,9 +67,15 @@ void FrameGunCorrection::on_engageCorrResponse(BaseResponse<EngagementCorrection
         return;
     }
 
+#ifdef USE_LOG4QT
+    logger()->debug() << Q_FUNC_INFO
+             << " -> getAzimuthCorr: " << resp.getData().getAzimuthCorrection()
+             << ", getElevationCorr: " << resp.getData().getElevationCorrection();
+#else
     qDebug() << Q_FUNC_INFO
              << "resp data getAzimuthCorr: " << resp.getData().getAzimuthCorrection()
              << "resp data getElevationCorr: " << resp.getData().getElevationCorrection();
+#endif
 }
 
 void FrameGunCorrection::onAssignmentResponseData(BaseResponse<TrackAssignResponse> resp, bool assign)
@@ -68,7 +87,11 @@ void FrameGunCorrection::onAssignmentResponseData(BaseResponse<TrackAssignRespon
                 int newRow = ui->tableWidgetCorrection->rowCount();
                 ui->tableWidgetCorrection->insertRow(newRow);
 
+#ifdef USE_LOG4QT
+                logger()->trace() << Q_FUNC_INFO << " -> newRow: " << ui->tableWidgetCorrection->rowCount();
+#else
                 qDebug() << Q_FUNC_INFO << "newRow:" << ui->tableWidgetCorrection->rowCount();
+#endif
 
                 ui->tableWidgetCorrection->setItem(newRow, 0, new QTableWidgetItem(QString::fromStdString(resp.getData().getWeapon())));
                 ui->tableWidgetCorrection->setItem(newRow, 1, new QTableWidgetItem("0.0"));
