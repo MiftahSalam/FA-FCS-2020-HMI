@@ -4,6 +4,13 @@
 #include "src/shared/common/errors/err_object_creation.h"
 #include "src/shared/utils/utils.h"
 
+#ifdef USE_LOG4QT
+#include <log4qt/logger.h>
+LOG4QT_DECLARE_STATIC_LOGGER(logger, OSDCMSWindData)
+#else
+#include <QDebug>
+#endif
+
 OSDCMSWindData* OSDCMSWindData::windData = nullptr;
 
 OSDCMSWindData::OSDCMSWindData(
@@ -53,8 +60,13 @@ void OSDCMSWindData::onReplyFinished()
 {
     QByteArray respRaw = httpResponse->readAll();
 
+#ifdef USE_LOG4QT
+    logger()->debug()<<Q_FUNC_INFO<<" -> respRaw: "<<respRaw;
+    logger()->debug()<<Q_FUNC_INFO<<" -> err: "<<httpResponse->error();
+#else
     qDebug()<<Q_FUNC_INFO<<"respRaw: "<<respRaw;
     qDebug()<<Q_FUNC_INFO<<"err: "<<httpResponse->error();
+#endif
 
     BaseResponse<WindModel> resp = errorResponse(httpResponse->error());
     if(resp.getHttpCode() != 0) {
@@ -85,14 +97,30 @@ BaseResponse<WindModel> OSDCMSWindData::toResponse(QByteArray raw)
         WindModel model(respData["speed"].toDouble(),respData["direction"].toDouble());
         BaseResponse<WindModel> resp(respCode, respMsg, model);
 
+#ifdef USE_LOG4QT
+        logger()->debug()<<Q_FUNC_INFO<<" -> resp. http code: "<<resp.getHttpCode()
+                        <<", message: "<<resp.getMessage()
+                       <<", speed: "<<resp.getData().getSpeed()
+                       <<", dir: "<<resp.getData().getDirection()
+                         ;
+#else
         qDebug()<<Q_FUNC_INFO<<"resp"<<resp.getHttpCode()<<resp.getMessage()<<resp.getData().getSpeed()<<resp.getData().getDirection();
+#endif
 
         return resp;
 
     } catch (ErrJsonParse &e) {
-        qDebug()<<Q_FUNC_INFO<<"caught error: "<<e.getMessage();
+#ifdef USE_LOG4QT
+        logger()->error()<<Q_FUNC_INFO<<" -> caught error: "<<e.getMessage();
+#else
+        qWarning()<<Q_FUNC_INFO<<"caught error: "<<e.getMessage();
+#endif
     }  catch (...) {
-        qDebug()<<Q_FUNC_INFO<<"caught unkbnown error";
+#ifdef USE_LOG4QT
+        logger()->error()<<Q_FUNC_INFO<<" -> caught unkbnown error";
+#else
+        qWarning()<<Q_FUNC_INFO<<"caught unkbnown error";
+#endif
     }
 
     ErrUnknown status;
@@ -106,10 +134,18 @@ BaseResponse<WindModel> OSDCMSWindData::errorResponse(QNetworkReply::NetworkErro
     try {
         ErrHelper::throwHttpError(err);
     } catch (BaseError &e) {
-        qDebug()<<Q_FUNC_INFO<<"caught error: "<<e.getMessage();
+#ifdef USE_LOG4QT
+        logger()->error()<<Q_FUNC_INFO<<" -> caught error: "<<e.getMessage();
+#else
+        qWarning()<<Q_FUNC_INFO<<"caught error: "<<e.getMessage();
+#endif
         return BaseResponse<WindModel>(e.getCode(), e.getMessage(), model);
     }  catch (...) {
-        qDebug()<<Q_FUNC_INFO<<"caught unkbnown error";
+#ifdef USE_LOG4QT
+        logger()->error()<<Q_FUNC_INFO<<" -> caught unkbnown error";
+#else
+        qWarning()<<Q_FUNC_INFO<<"caught unkbnown error";
+#endif
         ErrUnknown status;
         return BaseResponse<WindModel>(status.getCode(), status.getMessage(), model);
     }

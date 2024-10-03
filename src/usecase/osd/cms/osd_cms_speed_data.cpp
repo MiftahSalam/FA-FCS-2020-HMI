@@ -4,8 +4,14 @@
 #include "src/shared/common/errors/err_object_creation.h"
 #include "src/shared/utils/utils.h"
 
-OSDCMSSpeedData* OSDCMSSpeedData::speedData = nullptr;
+#ifdef USE_LOG4QT
+#include <log4qt/logger.h>
+LOG4QT_DECLARE_STATIC_LOGGER(logger, OSDCMSSpeedData)
+#else
+#include <QDebug>
+#endif
 
+OSDCMSSpeedData* OSDCMSSpeedData::speedData = nullptr;
 
 OSDCMSSpeedData::OSDCMSSpeedData(
         HttpClientWrapper *parent,
@@ -56,8 +62,13 @@ void OSDCMSSpeedData::onReplyFinished()
 {
     QByteArray respRaw = httpResponse->readAll();
 
+#ifdef USE_LOG4QT
+    logger()->debug()<<Q_FUNC_INFO<<" -> respRaw: "<<respRaw;
+    logger()->debug()<<Q_FUNC_INFO<<" -> err: "<<httpResponse->error();
+#else
     qDebug()<<Q_FUNC_INFO<<"respRaw: "<<respRaw;
     qDebug()<<Q_FUNC_INFO<<"err: "<<httpResponse->error();
+#endif
 
     BaseResponse<SpeedModel> resp = errorResponse(httpResponse->error());
     if(resp.getHttpCode() != 0) {
@@ -68,12 +79,12 @@ void OSDCMSSpeedData::onReplyFinished()
     resp = toResponse(respRaw);
 
     repoSpeed->SetSpeed(OSDSpeedEntity(
-                             resp.getData().getSpeed(),
-                             resp.getData().getCourse(),
-                             "manual",
-                             "",
-                             OSD_MODE::MANUAL
-                             ));
+                            resp.getData().getSpeed(),
+                            resp.getData().getCourse(),
+                            "manual",
+                            "",
+                            OSD_MODE::MANUAL
+                            ));
 
     emit signal_setSpeedResponse(resp);
 }
@@ -88,15 +99,30 @@ BaseResponse<SpeedModel> OSDCMSSpeedData::toResponse(QByteArray raw)
         SpeedModel model(respData["sog"].toDouble(),respData["cog"].toDouble());
         BaseResponse<SpeedModel> resp(respCode, respMsg, model);
 
+#ifdef USE_LOG4QT
+        logger()->debug()<<Q_FUNC_INFO<<" -> resp. http code: "<<resp.getHttpCode()
+                        <<", message: "<<resp.getMessage()
+                       <<", sog: "<<resp.getData().getSpeed()
+                      <<", cog: "<<resp.getData().getCourse()
+                        ;
+#else
         qDebug()<<Q_FUNC_INFO<<"resp"<<resp.getHttpCode()<<resp.getMessage()<<resp.getData().getSpeed()<<resp.getData().getCourse();
+#endif
 
         return resp;
     } catch (ErrJsonParse &e) {
-        qDebug()<<Q_FUNC_INFO<<"caught error: "<<e.getMessage();
+#ifdef USE_LOG4QT
+        logger()->error()<<Q_FUNC_INFO<<" -> caught error: "<<e.getMessage();
+#else
+        qWarning()<<Q_FUNC_INFO<<"caught error: "<<e.getMessage();
+#endif
     }  catch (...) {
-        qDebug()<<Q_FUNC_INFO<<"caught unkbnown error";
+#ifdef USE_LOG4QT
+        logger()->error()<<Q_FUNC_INFO<<" -> caught unkbnown error";
+#else
+        qWarning()<<Q_FUNC_INFO<<"caught unkbnown error";
+#endif
     }
-
     ErrUnknown status;
     SpeedModel model(0, 0);
     return BaseResponse<SpeedModel>(status.getCode(), status.getMessage(), model);
@@ -109,10 +135,18 @@ BaseResponse<SpeedModel> OSDCMSSpeedData::errorResponse(QNetworkReply::NetworkEr
     try {
         ErrHelper::throwHttpError(err);
     } catch (BaseError &e) {
-        qDebug()<<Q_FUNC_INFO<<"caught error: "<<e.getMessage();
+#ifdef USE_LOG4QT
+        logger()->error()<<Q_FUNC_INFO<<" -> caught error: "<<e.getMessage();
+#else
+        qWarning()<<Q_FUNC_INFO<<"caught error: "<<e.getMessage();
+#endif
         return BaseResponse<SpeedModel>(e.getCode(), e.getMessage(), model);
     }  catch (...) {
-        qDebug()<<Q_FUNC_INFO<<"caught unkbnown error";
+#ifdef USE_LOG4QT
+        logger()->error()<<Q_FUNC_INFO<<" -> caught unkbnown error";
+#else
+        qWarning()<<Q_FUNC_INFO<<"caught unkbnown error";
+#endif
         ErrUnknown status;
         return BaseResponse<SpeedModel>(status.getCode(), status.getMessage(), model);
     }

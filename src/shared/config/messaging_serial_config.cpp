@@ -98,15 +98,15 @@ void MessagingSerialConfig::setup(const QString path)
     foreach (auto key, content.keys()) {
         SerialMessagingOpts *val = content.value(key);
 #ifdef USE_LOG4QT
-        logger()->debug()<<Q_FUNC_INFO<<" -> content: ,"<<key
-                        <<"portname: ,"<<val->portname
-                       <<"baudrate: ,"<<val->baudrate
-                      <<"databits: ,"<<val->databits
-                     <<"stopbit: ,"<<val->stopbits
-                    <<"parity: ,"<<val->parity
-                   <<"flow: ,"<<val->flowControls
-                  <<"delay: ,"<<val->delay
-                 <<"timeout: ,"<<val->timeout;
+        logger()->debug()<<Q_FUNC_INFO<<" -> content: "<<key
+                        <<". portname: "<<val->portname
+                       <<", baudrate: "<<val->baudrate
+                      <<", databits: "<<val->databits
+                     <<", stopbit: "<<val->stopbits
+                    <<", parity: "<<val->parity
+                   <<", flow: "<<val->flowControls
+                  <<", delay: "<<val->delay
+                 <<", timeout: "<<val->timeout;
 #else
         qDebug()<<Q_FUNC_INFO<<"content:"<<key
                <<"portname:"<<val->portname

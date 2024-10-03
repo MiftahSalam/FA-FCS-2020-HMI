@@ -3,6 +3,13 @@
 #include "src/shared/common/errors/err_object_creation.h"
 #include "src/shared/utils/utils.h"
 
+#ifdef USE_LOG4QT
+#include <log4qt/logger.h>
+LOG4QT_DECLARE_STATIC_LOGGER(logger, GunFeedbackBarrelStream)
+#else
+#include <QDebug>
+#endif
+
 GunFeedbackBarrelStream *GunFeedbackBarrelStream::gunBarrelStream = nullptr;
 
 GunFeedbackBarrelStream::GunFeedbackBarrelStream(
@@ -26,6 +33,15 @@ void GunFeedbackBarrelStream::onDataReceived(QByteArray data)
                              respObj["elevation"].toDouble()
                              );
 
+#ifdef USE_LOG4QT
+        logger()->trace()<<Q_FUNC_INFO<<" -> Gun barrel."
+                        <<" Azimuth: "<<model.getAzimuth()
+                       <<", Elevation: "<<model.getElevation()
+                          ;
+#else
+    qDebug()<<Q_FUNC_INFO<<"Gun Barrel Data. Azimuth"<<model.azimuth()<<"Elevation"<<model.elevation();
+#endif
+
         repoGunFback->SetBarrel(
             model.getAzimuth(),
             model.getElevation()
@@ -35,9 +51,17 @@ void GunFeedbackBarrelStream::onDataReceived(QByteArray data)
 
         emit signalDataProcessed(model);
     }catch(ErrJsonParse &e) {
-        qDebug()<<Q_FUNC_INFO<<"caught error: "<<e.getMessage();
+#ifdef USE_LOG4QT
+        logger()->error()<<Q_FUNC_INFO<<" -> caught error: "<<e.getMessage();
+#else
+        qWarning()<<Q_FUNC_INFO<<"caught error: "<<e.getMessage();
+#endif
     }  catch (...) {
-        qDebug()<<Q_FUNC_INFO<<"caught unkbnown error";
+#ifdef USE_LOG4QT
+        logger()->error()<<Q_FUNC_INFO<<" -> caught unkbnown error";
+#else
+        qWarning()<<Q_FUNC_INFO<<"caught unkbnown error";
+#endif
     }
 }
 
