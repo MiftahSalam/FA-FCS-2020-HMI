@@ -11,7 +11,7 @@ QT       += core gui network testlib serialport
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
 #DEFINES += USE_AMQP
-DEFINES += USE_LOG4QT
+#DEFINES += USE_LOG4QT
 
 TARGET = fa_fcs_hmi
 TEMPLATE = app
