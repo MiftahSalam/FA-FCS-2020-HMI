@@ -7,6 +7,13 @@
 
 #include <QMessageBox>
 
+#ifdef USE_LOG4QT
+#include <log4qt/logger.h>
+LOG4QT_DECLARE_STATIC_LOGGER(logger, FrameOSDPosition)
+#else
+#include <QDebug>
+#endif
+
 FrameOSDPosition::FrameOSDPosition(QWidget *parent) : QWidget(parent),
     ui(new Ui::FrameOSDPosition),
     _cmsPos(DI::getInstance()->getOSDCMSService()->getServiceOSDCMSPosition()),
@@ -78,7 +85,11 @@ void FrameOSDPosition::resetModeIndex()
 
 void FrameOSDPosition::onDataResponse(BaseResponse<PositionModel> resp)
 {
+#ifdef USE_LOG4QT
+    logger()->debug() << Q_FUNC_INFO << " -> resp code: " << resp.getHttpCode() << ", resp msg: " << resp.getMessage();
+#else
     qDebug() << Q_FUNC_INFO << "resp code:" << resp.getHttpCode() << "resp msg:" << resp.getMessage();
+#endif
 
     if (resp.getHttpCode() != 0)
     {
@@ -88,8 +99,14 @@ void FrameOSDPosition::onDataResponse(BaseResponse<PositionModel> resp)
         //        autoUiSetup();
         return;
 
+#ifdef USE_LOG4QT
+        logger()->debug() << Q_FUNC_INFO
+                          << " -> getLatitude: " << resp.getData().getLatitude()
+                          << ", getLongitude: " << resp.getData().getLongitude();
+#else
         qDebug() << Q_FUNC_INFO << "resp data getLatitude: " << resp.getData().getLatitude()
                  << "resp data getLongitude: " << resp.getData().getLongitude();
+#endif
     }
 }
 
@@ -100,8 +117,15 @@ void FrameOSDPosition::onModeChangeResponse(const QString datafisis, BaseRespons
         return;
     }
 
+#ifdef USE_LOG4QT
+    logger()->debug() << Q_FUNC_INFO << " -> resp code: " << resp.getHttpCode()
+                      << ", resp msg: " << resp.getMessage()
+                      << ", needConfirm: " << needConfirm
+                         ;
+#else
     qDebug() << Q_FUNC_INFO << "resp code:" << resp.getHttpCode() << "resp msg:" << resp.getMessage();
     qDebug() << Q_FUNC_INFO << "needConfirm:" << needConfirm;
+#endif
 
     if (resp.getHttpCode() != 0)
     {
@@ -114,7 +138,11 @@ void FrameOSDPosition::onModeChangeResponse(const QString datafisis, BaseRespons
         return;
     }
 
+#ifdef USE_LOG4QT
+    logger()->trace() << Q_FUNC_INFO << " -> resp data. position mode: " << resp.getData().getPosition();
+#else
     qDebug() << Q_FUNC_INFO << "resp code:" << "resp data position mode: " << resp.getData().getPosition();
+#endif
 
     //    prevMode = currentMode;
     //    prevModeIndx = currentModeIndx;
@@ -191,7 +219,7 @@ void FrameOSDPosition::manualUiSetup()
 void FrameOSDPosition::onTimeout()
 {
     // update ui
-//    qDebug() << Q_FUNC_INFO;
+    //    qDebug() << Q_FUNC_INFO;
 
     auto currError = _streamPos->check();
     if (currError.getCode() == ERROR_CODE_MESSAGING_NOT_CONNECTED.first)
@@ -237,7 +265,7 @@ void FrameOSDPosition::onTimeout()
 
 void FrameOSDPosition::onStreamReceive(PositionModel model)
 {
-//    qDebug() << Q_FUNC_INFO << "position: lat ->" << model.getLatitude() << ", lon ->" << model.getLongitude();
+    //    qDebug() << Q_FUNC_INFO << "position: lat ->" << model.getLatitude() << ", lon ->" << model.getLongitude();
     auto currentMode = (OSD_MODE)_cmsMode->getDataMode().getPosition();
     if (currentMode == OSD_MODE::MANUAL)
     {

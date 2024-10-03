@@ -4,6 +4,13 @@
 #include "src/shared/common/errors/err_osd_data.h"
 #include "src/shared/utils/utils.h"
 
+#ifdef USE_LOG4QT
+#include <log4qt/logger.h>
+LOG4QT_DECLARE_STATIC_LOGGER(logger, OSDStreamGyro)
+#else
+#include <QDebug>
+#endif
+
 OSDStreamGyro* OSDStreamGyro::gyroStream = nullptr;
 
 OSDStreamGyro::OSDStreamGyro(
@@ -61,7 +68,14 @@ void OSDStreamGyro::onDataReceived(QByteArray data)
         QJsonObject respObj = Utils::byteArrayToJsonObject(data);
         GyroModel model(respObj["heading"].toDouble(),respObj["pitch"].toDouble(),respObj["roll"].toDouble());
 
+#ifdef USE_LOG4QT
+        logger()->trace()<<Q_FUNC_INFO<<" -> Heading: "<<model.getHeading()
+                        <<", pitch: "<<model.getPicth()
+                       <<", roll: "<<model.getRoll()
+                         ;
+#else
         qDebug()<<Q_FUNC_INFO<<"data gyro: heading ->"<<model.getHeading()<<"pitch ->"<<model.getPicth()<<"roll ->"<<model.getRoll();
+#endif
 
         //check source mode manual
         if (respObj.contains("source")) {
@@ -76,13 +90,13 @@ void OSDStreamGyro::onDataReceived(QByteArray data)
             if(check().getCode() == ERROR_NO.first || check().getCode() == ERROR_CODE_OSD_DATA_PARTIALLY_INVALID.first)
             {
                 _repoInertia->SetInertia(OSDInertiaEntity(
-                    model.getHeading(),
-                    model.getPicth(),
-                    model.getRoll(),
-                    respObj["source"].toString().toStdString(),
-                    respObj["status"].toString().toStdString(),
-                    OSD_MODE::AUTO
-                    ));
+                                             model.getHeading(),
+                                             model.getPicth(),
+                                             model.getRoll(),
+                                             respObj["source"].toString().toStdString(),
+                                         respObj["status"].toString().toStdString(),
+                        OSD_MODE::AUTO
+                        ));
             }
         }
 
@@ -90,9 +104,17 @@ void OSDStreamGyro::onDataReceived(QByteArray data)
 
         emit signalDataProcessed(model);
     } catch (ErrJsonParse &e) {
-        qDebug()<<Q_FUNC_INFO<<"caught error: "<<e.getMessage();
+#ifdef USE_LOG4QT
+        logger()->error()<<Q_FUNC_INFO<<" -> caught error: "<<e.getMessage();
+#else
+        qWarning()<<Q_FUNC_INFO<<"caught error: "<<e.getMessage();
+#endif
     }  catch (...) {
-        qDebug()<<Q_FUNC_INFO<<"caught unkbnown error";
+#ifdef USE_LOG4QT
+        logger()->error()<<Q_FUNC_INFO<<" -> caught unkbnown error";
+#else
+        qWarning()<<Q_FUNC_INFO<<"caught unkbnown error";
+#endif
     }
 }
 

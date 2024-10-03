@@ -5,6 +5,13 @@
 #include <QMessageBox>
 #include <QComboBox>
 
+#ifdef USE_LOG4QT
+#include <log4qt/logger.h>
+LOG4QT_DECLARE_STATIC_LOGGER(logger, FrameGunControlBarrel)
+#else
+#include <QDebug>
+#endif
+
 FrameGunControlBarrel::FrameGunControlBarrel(QWidget *parent) :
     QFrame(parent),
     ui(new Ui::FrameGunControlBarrel)
@@ -40,8 +47,16 @@ void FrameGunControlBarrel::setup()
 
 void FrameGunControlBarrel::onModeChangeResponse(BaseResponse<GunModeBarrelResponse> resp, bool needConfirm)
 {
+#ifdef USE_LOG4QT
+    logger()->debug() << Q_FUNC_INFO << " -> resp code: " << resp.getHttpCode()
+                      << ", resp msg: " << resp.getMessage()
+                      << ", barrel mode manual: " << resp.getData().getManualMode()
+                      << ", needConfirm: " << needConfirm;
+#else
     qDebug() << Q_FUNC_INFO << "resp code:" << resp.getHttpCode() << "resp msg:" << resp.getMessage();
     qDebug() << Q_FUNC_INFO << "needConfirm:" << needConfirm;
+    qDebug() << Q_FUNC_INFO << "resp code:" << "resp barrel mode manual: " << resp.getData().getManualMode();
+#endif
 
     if (resp.getHttpCode() != 0)
     {
@@ -57,8 +72,6 @@ void FrameGunControlBarrel::onModeChangeResponse(BaseResponse<GunModeBarrelRespo
         ui->comboBoxGunBarControlMode->setCurrentIndex(0);
         connect(ui->comboBoxGunBarControlMode, QOverload<int>::of(&QComboBox::currentIndexChanged), this, &FrameGunControlBarrel::onModeChange);
     }
-
-    qDebug() << Q_FUNC_INFO << "resp code:" << "resp barrel mode manual: " << resp.getData().getManualMode();
 
     switch (currentMode)
     {
@@ -80,7 +93,18 @@ void FrameGunControlBarrel::onModeChangeResponse(BaseResponse<GunModeBarrelRespo
 
 void FrameGunControlBarrel::onBarrelDataResponse(BaseResponse<GunCommandBarrelResponse> resp, bool needConfirm)
 {
+#ifdef USE_LOG4QT
+    logger()->debug() << Q_FUNC_INFO << " -> resp code: " << resp.getHttpCode()
+                      << ", resp msg: " << resp.getMessage()
+                      << ", barrel az: " << resp.getData().getAzimuth()
+                      << ", barrel el: " << resp.getData().getElevation()
+                         ;
+#else
     qDebug() << Q_FUNC_INFO << "resp code:" << resp.getHttpCode() << "resp msg:" << resp.getMessage();
+    qDebug() << Q_FUNC_INFO
+             << "resp data getAzimuth: " << resp.getData().getAzimuth()
+             << "resp data getElevation: " << resp.getData().getElevation();
+#endif
 
     if (resp.getHttpCode() != 0)
     {
@@ -90,10 +114,6 @@ void FrameGunControlBarrel::onBarrelDataResponse(BaseResponse<GunCommandBarrelRe
 
         return;
     }
-
-    qDebug() << Q_FUNC_INFO
-             << "resp data getAzimuth: " << resp.getData().getAzimuth()
-             << "resp data getElevation: " << resp.getData().getElevation();
 }
 
 void FrameGunControlBarrel::onModeChange(int index)

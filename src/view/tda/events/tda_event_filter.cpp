@@ -1,13 +1,11 @@
 #include "tda_event_filter.h"
 #include <QContextMenuEvent>
 #include <QMouseEvent>
-#include <QDebug>
 
 bool TdaEventFilter::eventFilter(QObject *obj, QEvent *event)
 {
     // you may handle multiple objects checking "obj" parameter
      if (event->type() == QEvent::ContextMenu) {
-         qDebug()<<Q_FUNC_INFO<<"contex menu";
         QMouseEvent *mouseEvent = static_cast<QMouseEvent*> (event);
         send_rightButtonClicked(mouseEvent->globalPos());
         return true;

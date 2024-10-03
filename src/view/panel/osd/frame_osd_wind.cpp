@@ -2,9 +2,15 @@
 #include "ui_frame_osd_wind.h"
 #include "qtimer.h"
 #include "src/di/di.h"
-#include "src/shared/utils/utils.h"
 
 #include <QMessageBox>
+
+#ifdef USE_LOG4QT
+#include <log4qt/logger.h>
+LOG4QT_DECLARE_STATIC_LOGGER(logger, FrameOSDWind)
+#else
+#include <QDebug>
+#endif
 
 FrameOSDWind::FrameOSDWind(QWidget *parent) :
     QWidget(parent),
@@ -67,30 +73,43 @@ void FrameOSDWind::resetModeIndex()
 
 void FrameOSDWind::onDataResponse(BaseResponse<WindModel> resp)
 {
-    qDebug()<<Q_FUNC_INFO<<"resp code:"<<resp.getHttpCode()<<"resp msg:"<<resp.getMessage();
+#ifdef USE_LOG4QT
+    logger()->debug() << Q_FUNC_INFO << " -> resp code: " << resp.getHttpCode() << ", resp msg: " << resp.getMessage();
+#else
+    qDebug() << Q_FUNC_INFO << "resp code:" << resp.getHttpCode() << "resp msg:" << resp.getMessage();
+#endif
 
     if (resp.getHttpCode() != 0) {
-//        ui->mode->setCurrentModeIndex((int)OSD_MODE::AUTO);
-
         QMessageBox::warning(this, "Request Error", QString("Failed to change manual data with error: %1").arg(resp.getMessage()));
-//        autoUiSetup();
         return;
-
-        qDebug()<<Q_FUNC_INFO<<"resp data get Speed: "<<resp.getData().getSpeed()
-             <<"resp data get Direction: "<<resp.getData().getDirection()
-              ;
     }
+
+#ifdef USE_LOG4QT
+    logger()->debug() << Q_FUNC_INFO
+                      << " -> getSpeed: " << resp.getData().getSpeed()
+                      << ", getDirection: " << resp.getData().getDirection();
+#else
+    qDebug()<<Q_FUNC_INFO<<"resp data get Speed: "<<resp.getData().getSpeed()
+           <<"resp data get Direction: "<<resp.getData().getDirection()
+             ;
+#endif
 }
 
 void FrameOSDWind::onModeChangeResponse(const QString datafisis, BaseResponse<InputModeModel> resp, bool needConfirm)
 {
-    qDebug()<<"data fisi"<<datafisis;
     if (datafisis != "wind") {
         return;
     }
 
-    qDebug()<<Q_FUNC_INFO<<"resp code:"<<resp.getHttpCode()<<"resp msg:"<<resp.getMessage();
-    qDebug()<<Q_FUNC_INFO<<"needConfirm:"<<needConfirm;
+#ifdef USE_LOG4QT
+    logger()->debug() << Q_FUNC_INFO << " -> resp code: " << resp.getHttpCode()
+                      << ", resp msg: " << resp.getMessage()
+                      << ", needConfirm: " << needConfirm
+                         ;
+#else
+    qDebug() << Q_FUNC_INFO << "resp code:" << resp.getHttpCode() << "resp msg:" << resp.getMessage();
+    qDebug() << Q_FUNC_INFO << "needConfirm:" << needConfirm;
+#endif
 
     if (resp.getHttpCode() != 0) {
         resetModeIndex();
@@ -100,7 +119,11 @@ void FrameOSDWind::onModeChangeResponse(const QString datafisis, BaseResponse<In
         return;
     }
 
+#ifdef USE_LOG4QT
+    logger()->trace() << Q_FUNC_INFO << " -> resp data. wind mode: " << resp.getData().getWind();
+#else
     qDebug()<<Q_FUNC_INFO<<"resp code:"<<"resp data wind mode: "<<resp.getData().getWind();
+#endif
 
     switch (currentMode) {
     case OSD_MODE::AUTO:
@@ -122,12 +145,12 @@ void FrameOSDWind::onModeChange(int index)
     case OSD_MODE::AUTO:
         manual_mode = false;
         currentMode = OSD_MODE::AUTO;
-//        autoUiSetup();
+        //        autoUiSetup();
         break;
     case OSD_MODE::MANUAL:
         manual_mode = true;
         currentMode = OSD_MODE::MANUAL;
-//        manualUiSetup();
+        //        manualUiSetup();
         break;
     default:
         break;
@@ -165,9 +188,6 @@ void FrameOSDWind::manualUiSetup()
 
 void FrameOSDWind::onTimeout()
 {
-    //update ui
-//    qDebug()<<Q_FUNC_INFO;
-
     auto currError = _streamWind->check();
     if (currError.getCode() == ERROR_CODE_MESSAGING_NOT_CONNECTED.first) {
         notConnectedUiSetup();
@@ -187,9 +207,9 @@ void FrameOSDWind::onTimeout()
             ui->mode->setCurrentModeIndex(1);
             manualUiSetup();
             _cmsWind->set(OSDSetWindRequest(
-                            ui->inputSpeed->getCurrentValue().toFloat(),
-                            ui->inputDirection->getCurrentValue().toFloat()
-                            ));
+                              ui->inputSpeed->getCurrentValue().toFloat(),
+                              ui->inputDirection->getCurrentValue().toFloat()
+                              ));
         } else {
             ui->mode->setCurrentModeIndex(0);
             autoUiSetup();
@@ -202,7 +222,6 @@ void FrameOSDWind::onTimeout()
 
 void FrameOSDWind::onStreamReceive(WindModel model)
 {
-//    qDebug()<<Q_FUNC_INFO<<"wind: speed ->"<<model.getSpeed()<<", direction ->"<<model.getDirection();
     auto currentMode = (OSD_MODE)_cmsMode->getDataMode().getWind();
     if (currentMode == OSD_MODE::MANUAL) {
         return;

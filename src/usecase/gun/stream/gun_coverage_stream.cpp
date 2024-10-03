@@ -1,15 +1,21 @@
 #include "gun_coverage_stream.h"
 #include "src/shared/common/errors/err_json_parse.h"
 #include "src/shared/common/errors/err_object_creation.h"
-#include "src/shared/common/errors/err_osd_data.h"
 #include "src/shared/utils/utils.h"
+
+#ifdef USE_LOG4QT
+#include <log4qt/logger.h>
+LOG4QT_DECLARE_STATIC_LOGGER(logger, GunCoverageStream)
+#else
+#include <QDebug>
+#endif
 
 GunCoverageStream *GunCoverageStream::gunCoverageStream = nullptr;
 
 GunCoverageStream::GunCoverageStream(
-    TcpMessagingOpts *config,
-    GunCoverageRepository *repoGunCov
-    ): cfg(config), _repoGunCov(repoGunCov), currentErr(NoError())
+        TcpMessagingOpts *config,
+        GunCoverageRepository *repoGunCov
+        ): cfg(config), _repoGunCov(repoGunCov), currentErr(NoError())
 {
     consumer = new TcpMessagingWrapper(this, config);
     connect(consumer, &TcpMessagingWrapper::signalForwardMessage, this, &GunCoverageStream::onDataReceived);
@@ -25,28 +31,42 @@ void GunCoverageStream::onDataReceived(QByteArray data)
         QJsonObject respObj = Utils::byteArrayToJsonObject(data);
         GunCoverageModel model(respObj["max_range"].toDouble(),respObj["blind_arc"].toDouble(),respObj["orientation"].toDouble());
 
+#ifdef USE_LOG4QT
+        logger()->trace()<<Q_FUNC_INFO<<" -> Gun coverage. max range: "<<model.getMaxRange()
+                        <<", blind arc: "<<model.getBlindArc()
+                       <<", orientation: "<<model.getOrientation()
+                         ;
+#else
         qDebug()<<Q_FUNC_INFO<<"data gun coverage: max range ->"<<model.getMaxRange()<<"blind arc ->"<<model.getBlindArc()
-                 <<"orientation ->"<<model.getOrientation();
+               <<"orientation ->"<<model.getOrientation();
+#endif
 
         _repoGunCov->SetGunCoverage(GunCoverageEntity(
-            model.getMaxRange(),
-            model.getBlindArc(),
-            model.getOrientation()
-            ));
+                                        model.getMaxRange(),
+                                        model.getBlindArc(),
+                                        model.getOrientation()
+                                        ));
 
         emit signalDataProcessed(model);
 
     }catch(ErrJsonParse &e) {
-        qDebug()<<Q_FUNC_INFO<<"caught error: "<<e.getMessage();
+#ifdef USE_LOG4QT
+        logger()->error()<<Q_FUNC_INFO<<" -> caught error: "<<e.getMessage();
+#else
+        qWarning()<<Q_FUNC_INFO<<"caught error: "<<e.getMessage();
+#endif
     }  catch (...) {
-        qDebug()<<Q_FUNC_INFO<<"caught unkbnown error";
+#ifdef USE_LOG4QT
+        logger()->error()<<Q_FUNC_INFO<<" -> caught unkbnown error";
+#else
+        qWarning()<<Q_FUNC_INFO<<"caught unkbnown error";
+#endif
     }
 }
 
 void GunCoverageStream::periodUpdate()
 {
     check();
-    qDebug() << Q_FUNC_INFO;
 }
 
 void GunCoverageStream::handleError(const QString &err)
@@ -55,9 +75,9 @@ void GunCoverageStream::handleError(const QString &err)
 }
 
 GunCoverageStream *GunCoverageStream::getInstance(
-    TcpMessagingOpts *config = nullptr,
-    GunCoverageRepository *repoGunCov = nullptr
-    )
+        TcpMessagingOpts *config = nullptr,
+        GunCoverageRepository *repoGunCov = nullptr
+        )
 {
     if(gunCoverageStream == nullptr)
     {

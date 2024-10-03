@@ -2,7 +2,12 @@
 #include "src/shared/common/errors/err_messaging.h"
 #include "src/shared/common/errors/err_object_creation.h"
 
+#ifdef USE_LOG4QT
+#include <log4qt/logger.h>
+LOG4QT_DECLARE_STATIC_LOGGER(logger, SerialMessagingWrapper)
+#else
 #include <QDebug>
+#endif
 
 SerialMessagingWrapper::SerialMessagingWrapper(QObject *parent, SerialMessagingOpts *cfg)
     : QObject{parent}, config(cfg), currentError(0, "")
@@ -21,7 +26,6 @@ SerialMessagingWrapper::SerialMessagingWrapper(QObject *parent, SerialMessagingO
 
 BaseError SerialMessagingWrapper::checkConnection()
 {
-    //    qDebug()<<Q_FUNC_INFO<<"state"<<consumer->state();
     if (!serialPort->isOpen()) {
         setupSerial();
     }
@@ -53,21 +57,33 @@ void SerialMessagingWrapper::onReadyRead()
     QByteArray data = serialPort->readAll();
     if (data.startsWith("{") && data.endsWith("}")) {
         auto delta = timestampDelay.msecsTo(now);
+#ifdef USE_LOG4QT
+        logger()->trace()<<Q_FUNC_INFO<<" -> delta; "<<delta<<", delay: "<<config->delay;
+#else
         qDebug()<<Q_FUNC_INFO<<"delta"<<delta<<"delay"<<config->delay;
+#endif
         if ( delta > config->delay) {
             timestampDelay = now;
             emit signalForwardMessage(data);
         }
     }
 
+#ifdef USE_LOG4QT
+    logger()->trace()<<Q_FUNC_INFO<<" -> data; "<<data;
+#else
     qDebug()<<Q_FUNC_INFO<<"data"<<data;
+#endif
 }
 
 void SerialMessagingWrapper::setupSerial()
 {
     serialPort->setPortName(config->portname);
     if (!serialPort->open(QIODevice::ReadWrite)) {
-        qDebug()<<Q_FUNC_INFO<<"error open serial port"<<config->portname<<"with error"<<serialPort->errorString();
+#ifdef USE_LOG4QT
+        logger()->warn()<<Q_FUNC_INFO<<" -> error open serial port: "<<config->portname<<" with error: "<<serialPort->errorString();
+#else
+        qWarning()<<Q_FUNC_INFO<<"error open serial port"<<config->portname<<"with error"<<serialPort->errorString();
+#endif
         return;
     }
 
@@ -103,7 +119,11 @@ QSerialPort::BaudRate SerialMessagingWrapper::cfgToBaudrate()
         return QSerialPort::Baud115200;
     }
 
-    qDebug()<<Q_FUNC_INFO<<"invalid baudrate"<<config->baudrate;
+#ifdef USE_LOG4QT
+    logger()->warn()<<Q_FUNC_INFO<<" -> invalid baudrate: "<<config->baudrate;
+#else
+    qWarning()<<Q_FUNC_INFO<<"invalid baudrate"<<config->baudrate;
+#endif
 
 #if QT_VERSION_MAJOR < 6
     return QSerialPort::UnknownBaud;
@@ -124,7 +144,11 @@ QSerialPort::DataBits SerialMessagingWrapper::cfgToDatabits()
         return QSerialPort::Data5;
     }
 
-    qDebug()<<Q_FUNC_INFO<<"invalid databit"<<config->databits;
+#ifdef USE_LOG4QT
+    logger()->warn()<<Q_FUNC_INFO<<" -> invalid databit: "<<config->databits;
+#else
+    qWarning()<<Q_FUNC_INFO<<"invalid databit"<<config->databits;
+#endif
 
 #if QT_VERSION_MAJOR < 6
     return QSerialPort::UnknownDataBits;
@@ -143,7 +167,11 @@ QSerialPort::StopBits SerialMessagingWrapper::cfgToStopbits()
         return QSerialPort::TwoStop;
     }
 
-    qDebug()<<Q_FUNC_INFO<<"invalid stopbits"<<config->stopbits;
+#ifdef USE_LOG4QT
+    logger()->warn()<<Q_FUNC_INFO<<" -> invalid stopbits: "<<config->stopbits;
+#else
+    qWarning()<<Q_FUNC_INFO<<"invalid stopbits"<<config->stopbits;
+#endif
 
 #if QT_VERSION_MAJOR < 6
     return QSerialPort::UnknownStopBits;
@@ -166,7 +194,11 @@ QSerialPort::Parity SerialMessagingWrapper::cfgToParity()
         return QSerialPort::MarkParity;
     }
 
-    qDebug()<<Q_FUNC_INFO<<"invalid parity"<<config->parity;
+#ifdef USE_LOG4QT
+    logger()->warn()<<Q_FUNC_INFO<<" -> invalid parity: "<<config->parity;
+#else
+    qWarning()<<Q_FUNC_INFO<<"invalid parity"<<config->parity;
+#endif
 
 #if QT_VERSION_MAJOR < 6
     return QSerialPort::UnknownParity;
@@ -185,7 +217,11 @@ QSerialPort::FlowControl SerialMessagingWrapper::cfgToFlowControl()
         return QSerialPort::SoftwareControl;
     }
 
-    qDebug()<<Q_FUNC_INFO<<"invalid flowControls"<<config->flowControls;
+#ifdef USE_LOG4QT
+    logger()->warn()<<Q_FUNC_INFO<<" -> invalid flowControls: "<<config->flowControls;
+#else
+    qWarning()<<Q_FUNC_INFO<<"invalid flowControls"<<config->flowControls;
+#endif
 
 #if QT_VERSION_MAJOR < 6
     return QSerialPort::UnknownFlowControl;

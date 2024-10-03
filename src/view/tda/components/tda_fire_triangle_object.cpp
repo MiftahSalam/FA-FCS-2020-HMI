@@ -2,7 +2,6 @@
 
 #include <QTextStream>
 #include <cmath>
-#include <QDebug>
 #include "src/shared/utils/utils.h"
 
 TDAFireTriangleObject::TDAFireTriangleObject(QObject *parent,
@@ -64,8 +63,6 @@ void TDAFireTriangleObject::Draw(QPainter *painter, const int &side, const int &
             //            const double rad2deg = (bearing - 90) * M_PI / 180;
             //            int track_x_Pixel = (rangePixel * qCos(rad2deg)) - TRACK_ICON_MARGIN.width();
             //            int track_y_Pixel = (rangePixel * qSin(rad2deg)) - TRACK_ICON_MARGIN.height();
-
-            // qDebug()<<"range"<<rangePixel<<"track X"<<track_x_Pixel<<"track Y"<<track_y_Pixel;
 
             painter->translate(center_point);
             painter->setPen(QColor(30,144,255,255));

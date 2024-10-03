@@ -4,13 +4,20 @@
 #include "src/shared/common/errors/err_osd_data.h"
 #include "src/shared/utils/utils.h"
 
+#ifdef USE_LOG4QT
+#include <log4qt/logger.h>
+LOG4QT_DECLARE_STATIC_LOGGER(logger, OSDStreamWeather)
+#else
+#include <QDebug>
+#endif
+
 OSDStreamWeather* OSDStreamWeather::weatherStream = nullptr;
 
 OSDStreamWeather::OSDStreamWeather(
-    TcpMessagingOpts *config,
-    OSDWeatherRepository *repoWeather,
-    OSDCMSInputMode *modeService
-    )
+        TcpMessagingOpts *config,
+        OSDWeatherRepository *repoWeather,
+        OSDCMSInputMode *modeService
+        )
     :cfg(config), _repoWeather(repoWeather), serviceMode(modeService), currentErr(NoError())
 {
     consumer = new TcpMessagingWrapper(this, config);
@@ -18,10 +25,10 @@ OSDStreamWeather::OSDStreamWeather(
 }
 
 OSDStreamWeather *OSDStreamWeather::getInstance(
-    TcpMessagingOpts *config,
-    OSDWeatherRepository *repoWeather,
-    OSDCMSInputMode *modeService
-    )
+        TcpMessagingOpts *config,
+        OSDWeatherRepository *repoWeather,
+        OSDCMSInputMode *modeService
+        )
 {
     if (weatherStream == nullptr) {
         if(config == nullptr) {
@@ -58,7 +65,14 @@ void OSDStreamWeather::onDataReceived(QByteArray data)
         QJsonObject respObj = Utils::byteArrayToJsonObject(data);
         WeatherModel model(respObj["temperature"].toDouble(),respObj["pressure"].toDouble(),respObj["humidity"].toDouble());
 
+#ifdef USE_LOG4QT
+        logger()->trace()<<Q_FUNC_INFO<<" -> temp: "<<model.getTemperature()
+                        <<", hum: "<<model.getHumidity()
+                       <<", press: "<<model.getPressure()
+                         ;
+#else
         qDebug()<<Q_FUNC_INFO<<"data weather: temperature ->"<<model.getTemperature()<<"humidity ->"<<model.getHumidity()<<"pressure ->"<<model.getPressure();
+#endif
 
         //check source mode manual
         if (respObj.contains("source")) {
@@ -70,21 +84,29 @@ void OSDStreamWeather::onDataReceived(QByteArray data)
         auto weatherMode = serviceMode->getDataMode().getWeather();
         if (!weatherMode && check().getCode() == ERROR_NO.first) {
             _repoWeather->SetWeather(OSDWeatherEntity(
-                model.getTemperature(),
-                model.getPressure(),
-                model.getHumidity(),
-                respObj["source"].toString().toStdString(),
-                respObj["status"].toString().toStdString(),
-                OSD_MODE::AUTO
-                ));
+                                         model.getTemperature(),
+                                         model.getPressure(),
+                                         model.getHumidity(),
+                                         respObj["source"].toString().toStdString(),
+                                     respObj["status"].toString().toStdString(),
+                    OSD_MODE::AUTO
+                    ));
         }
         handleError(respObj["status"].toString());
 
         emit signalDataProcessed(model);
     } catch (ErrJsonParse &e) {
-        qDebug()<<Q_FUNC_INFO<<"caught error: "<<e.getMessage();
+#ifdef USE_LOG4QT
+        logger()->error()<<Q_FUNC_INFO<<" -> caught error: "<<e.getMessage();
+#else
+        qWarning()<<Q_FUNC_INFO<<"caught error: "<<e.getMessage();
+#endif
     }  catch (...) {
-        qDebug()<<Q_FUNC_INFO<<"caught unkbnown error";
+#ifdef USE_LOG4QT
+        logger()->error()<<Q_FUNC_INFO<<" -> caught unkbnown error";
+#else
+        qWarning()<<Q_FUNC_INFO<<"caught unkbnown error";
+#endif
     }
 }
 

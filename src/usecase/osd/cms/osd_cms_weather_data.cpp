@@ -4,13 +4,20 @@
 #include "src/shared/common/errors/err_object_creation.h"
 #include "src/shared/utils/utils.h"
 
+#ifdef USE_LOG4QT
+#include <log4qt/logger.h>
+LOG4QT_DECLARE_STATIC_LOGGER(logger, OSDCMSWeatherData)
+#else
+#include <QDebug>
+#endif
+
 OSDCMSWeatherData* OSDCMSWeatherData::weatherData = nullptr;
 
 OSDCMSWeatherData::OSDCMSWeatherData(
-    HttpClientWrapper *parent,
-    OSDCmsConfig *cmsConfig,
-    OSDWeatherRepository *repoWeather
-    ): HttpClientWrapper(parent), cfgCms(cmsConfig), repoWeather(repoWeather)
+        HttpClientWrapper *parent,
+        OSDCmsConfig *cmsConfig,
+        OSDWeatherRepository *repoWeather
+        ): HttpClientWrapper(parent), cfgCms(cmsConfig), repoWeather(repoWeather)
 {
     if(parent == nullptr) {
         throw ErrObjectCreation();
@@ -18,10 +25,10 @@ OSDCMSWeatherData::OSDCMSWeatherData(
 }
 
 OSDCMSWeatherData *OSDCMSWeatherData::getInstance(
-    HttpClientWrapper *httpClient = nullptr,
-    OSDCmsConfig *cmsConfig = nullptr,
-    OSDWeatherRepository *repoWeather
-    )
+        HttpClientWrapper *httpClient = nullptr,
+        OSDCmsConfig *cmsConfig = nullptr,
+        OSDWeatherRepository *repoWeather
+        )
 {
     if (weatherData == nullptr) {
         if(cmsConfig == nullptr) {
@@ -55,8 +62,13 @@ void OSDCMSWeatherData::onReplyFinished()
 {
     QByteArray respRaw = httpResponse->readAll();
 
+#ifdef USE_LOG4QT
+    logger()->debug()<<Q_FUNC_INFO<<" -> respRaw: "<<respRaw;
+    logger()->debug()<<Q_FUNC_INFO<<" -> err: "<<httpResponse->error();
+#else
     qDebug()<<Q_FUNC_INFO<<"respRaw: "<<respRaw;
     qDebug()<<Q_FUNC_INFO<<"err: "<<httpResponse->error();
+#endif
 
     BaseResponse<WeatherModel> resp = errorResponse(httpResponse->error());
     if(resp.getHttpCode() != 0) {
@@ -67,13 +79,13 @@ void OSDCMSWeatherData::onReplyFinished()
     resp = toResponse(respRaw);
 
     repoWeather->SetWeather(OSDWeatherEntity(
-        resp.getData().getTemperature(),
-        resp.getData().getPressure(),
-        resp.getData().getHumidity(),
-        "manual",
-        "",
-        OSD_MODE::MANUAL
-        ));
+                                resp.getData().getTemperature(),
+                                resp.getData().getPressure(),
+                                resp.getData().getHumidity(),
+                                "manual",
+                                "",
+                                OSD_MODE::MANUAL
+                                ));
 
     emit signal_setWeatherResponse(resp);
 
@@ -89,13 +101,30 @@ BaseResponse<WeatherModel> OSDCMSWeatherData::toResponse(QByteArray raw)
         WeatherModel model(respData["temperature"].toDouble(),respData["pressure"].toDouble(),respData["humidity"].toDouble());
         BaseResponse<WeatherModel> resp(respCode, respMsg, model);
 
+#ifdef USE_LOG4QT
+        logger()->debug()<<Q_FUNC_INFO<<" -> resp. http code: "<<resp.getHttpCode()
+                        <<", message: "<<resp.getMessage()
+                       <<", temp: "<<resp.getData().getTemperature()
+                      <<", hum: "<<resp.getData().getHumidity()
+                     <<", press: "<<resp.getData().getPressure()
+                       ;
+#else
         qDebug()<<Q_FUNC_INFO<<"resp"<<resp.getHttpCode()<<resp.getMessage()<<resp.getData().getTemperature()<<resp.getData().getHumidity()<<resp.getData().getPressure();
+#endif
 
         return resp;
     } catch (ErrJsonParse &e) {
-        qDebug()<<Q_FUNC_INFO<<"caught error: "<<e.getMessage();
+#ifdef USE_LOG4QT
+        logger()->error()<<Q_FUNC_INFO<<" -> caught error: "<<e.getMessage();
+#else
+        qWarning()<<Q_FUNC_INFO<<"caught error: "<<e.getMessage();
+#endif
     }  catch (...) {
-        qDebug()<<Q_FUNC_INFO<<"caught unkbnown error";
+#ifdef USE_LOG4QT
+        logger()->error()<<Q_FUNC_INFO<<" -> caught unkbnown error";
+#else
+        qWarning()<<Q_FUNC_INFO<<"caught unkbnown error";
+#endif
     }
 
     ErrUnknown status;
@@ -109,10 +138,18 @@ BaseResponse<WeatherModel> OSDCMSWeatherData::errorResponse(QNetworkReply::Netwo
     try {
         ErrHelper::throwHttpError(err);
     } catch (BaseError &e) {
-        qDebug()<<Q_FUNC_INFO<<"caught error: "<<e.getMessage();
+#ifdef USE_LOG4QT
+        logger()->error()<<Q_FUNC_INFO<<" -> caught error: "<<e.getMessage();
+#else
+        qWarning()<<Q_FUNC_INFO<<"caught error: "<<e.getMessage();
+#endif
         return BaseResponse<WeatherModel>(e.getCode(), e.getMessage(), model);
     }  catch (...) {
-        qDebug()<<Q_FUNC_INFO<<"caught unkbnown error";
+#ifdef USE_LOG4QT
+        logger()->error()<<Q_FUNC_INFO<<" -> caught unkbnown error";
+#else
+        qWarning()<<Q_FUNC_INFO<<"caught unkbnown error";
+#endif
         ErrUnknown status;
         return BaseResponse<WeatherModel>(status.getCode(), status.getMessage(), model);
     }

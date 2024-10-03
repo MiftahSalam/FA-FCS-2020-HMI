@@ -1,17 +1,24 @@
 #include "gun_firing_service.h"
 #include "src/shared/common/errors/err_object_creation.h"
 
+#ifdef USE_LOG4QT
+#include <log4qt/logger.h>
+LOG4QT_DECLARE_STATIC_LOGGER(logger, GunFiringService)
+#else
+#include <QDebug>
+#endif
+
 const QString FIRE_CMD_TEMPLATE = "$FIRE,%1*HH\r\n";
 
 GunFiringService *GunFiringService::instance = nullptr;
 
 GunFiringService::GunFiringService(QObject *parent,
-//        SerialMessagingOpts *serialConfig,
-        TcpMessagingOpts *tcpConfig,
-        GunManagerService *gunService,
-        WeaponAssignService *waService,
-        WeaponTrackAssignService *wtaService
-        )
+                                   //        SerialMessagingOpts *serialConfig,
+                                   TcpMessagingOpts *tcpConfig,
+                                   GunManagerService *gunService,
+                                   WeaponAssignService *waService,
+                                   WeaponTrackAssignService *wtaService
+                                   )
     :
       QObject{parent},
       _gunService(gunService),
@@ -23,7 +30,7 @@ GunFiringService::GunFiringService(QObject *parent,
     foreach (auto weapon, _weapons) {
         firingPorts.insert(weapon, nullptr);
     }
-//    firingPorts.insert("40mm", new SerialMessagingWrapper(this, serialConfig));
+    //    firingPorts.insert("40mm", new SerialMessagingWrapper(this, serialConfig));
     firingPorts.insert("40mm", new TcpMessagingWrapper(this, tcpConfig));
 
     timer = new QTimer(this);
@@ -36,7 +43,11 @@ void GunFiringService::OnWeaponAssign(BaseResponse<TrackAssignResponse> resp, bo
 {
     if (resp.getHttpCode() != 0)
     {
+#ifdef USE_LOG4QT
+        logger()->debug() << Q_FUNC_INFO << " -> error resp code: " << resp.getHttpCode() << ", resp msg: " << resp.getMessage();
+#else
         qDebug() << Q_FUNC_INFO << "error resp code:" << resp.getHttpCode() << "resp msg:" << resp.getMessage();
+#endif
         return;
     }
 
@@ -107,9 +118,9 @@ void GunFiringService::OnTimeout()
 
         if (_weaponsOpenFire.contains(w)) {
             port->sendMessage(FIRE_CMD_TEMPLATE.arg("1").toUtf8());
-//            port->sendActivateButtonMessage(FIRE_CMD_TEMPLATE.arg("1").toUtf8());
+            //            port->sendActivateButtonMessage(FIRE_CMD_TEMPLATE.arg("1").toUtf8());
         } else {
-//            port->sendActivateButtonMessage(FIRE_CMD_TEMPLATE.arg("0").toUtf8());
+            //            port->sendActivateButtonMessage(FIRE_CMD_TEMPLATE.arg("0").toUtf8());
             port->sendMessage(FIRE_CMD_TEMPLATE.arg("0").toUtf8());
         }
     }
@@ -154,7 +165,7 @@ GunFiringService *GunFiringService::getInstance(QObject *parent,
         }
 
         TcpMessagingOpts *gunFiringStreamVal = msgConfig->getInstance("")->getContent().value("fire_button");
-//        SerialMessagingOpts *gunFiringStreamVal = msgConfig->getInstance("")->getContent().value("fire_button");
+        //        SerialMessagingOpts *gunFiringStreamVal = msgConfig->getInstance("")->getContent().value("fire_button");
 
         instance = new GunFiringService(parent, gunFiringStreamVal, gunService, waService, wtaService);
 

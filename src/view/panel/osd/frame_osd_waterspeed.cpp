@@ -2,9 +2,15 @@
 #include "ui_frame_osd_waterspeed.h"
 #include "qtimer.h"
 #include "src/di/di.h"
-#include "src/shared/utils/utils.h"
 
 #include <QMessageBox>
+
+#ifdef USE_LOG4QT
+#include <log4qt/logger.h>
+LOG4QT_DECLARE_STATIC_LOGGER(logger, FrameOSDWaterSpeed)
+#else
+#include <QDebug>
+#endif
 
 FrameOSDWaterSpeed::FrameOSDWaterSpeed(QWidget *parent) :
     QWidget(parent),
@@ -68,19 +74,27 @@ void FrameOSDWaterSpeed::resetModeIndex()
 
 void FrameOSDWaterSpeed::onDataResponse(BaseResponse<WaterSpeedModel> resp)
 {
-    qDebug()<<Q_FUNC_INFO<<"resp code:"<<resp.getHttpCode()<<"resp msg:"<<resp.getMessage();
+#ifdef USE_LOG4QT
+    logger()->debug() << Q_FUNC_INFO << " -> resp code: " << resp.getHttpCode() << ", resp msg: " << resp.getMessage();
+#else
+    qDebug() << Q_FUNC_INFO << "resp code:" << resp.getHttpCode() << "resp msg:" << resp.getMessage();
+#endif
 
     if (resp.getHttpCode() != 0) {
-//        ui->mode->setCurrentModeIndex((int)OSD_MODE::AUTO);
 
         QMessageBox::warning(this, "Request Error", QString("Failed to change manual data with error: %1").arg(resp.getMessage()));
-//        autoUiSetup();
         return;
-
-        qDebug()<<Q_FUNC_INFO<<"resp data getWaterSpeed: "<<resp.getData().getSpeed()
-             <<"resp data getWaterCourse: "<<resp.getData().getCourse()
-              ;
     }
+
+#ifdef USE_LOG4QT
+    logger()->debug() << Q_FUNC_INFO
+                      << " -> getSpeed: " << resp.getData().getSpeed()
+                      << ", getCourse: " << resp.getData().getCourse();
+#else
+    qDebug()<<Q_FUNC_INFO<<"resp data getWaterSpeed: "<<resp.getData().getSpeed()
+           <<"resp data getWaterCourse: "<<resp.getData().getCourse()
+             ;
+#endif
 }
 
 void FrameOSDWaterSpeed::onModeChangeResponse(const QString datafisis, BaseResponse<InputModeModel> resp, bool needConfirm)
@@ -89,8 +103,15 @@ void FrameOSDWaterSpeed::onModeChangeResponse(const QString datafisis, BaseRespo
         return;
     }
 
-    qDebug()<<Q_FUNC_INFO<<"resp code:"<<resp.getHttpCode()<<"resp msg:"<<resp.getMessage();
-    qDebug()<<Q_FUNC_INFO<<"needConfirm:"<<needConfirm;
+#ifdef USE_LOG4QT
+    logger()->debug() << Q_FUNC_INFO << " -> resp code: " << resp.getHttpCode()
+                      << ", resp msg: " << resp.getMessage()
+                      << ", needConfirm: " << needConfirm
+                         ;
+#else
+    qDebug() << Q_FUNC_INFO << "resp code:" << resp.getHttpCode() << "resp msg:" << resp.getMessage();
+    qDebug() << Q_FUNC_INFO << "needConfirm:" << needConfirm;
+#endif
 
     if (resp.getHttpCode() != 0) {
         resetModeIndex();
@@ -100,7 +121,11 @@ void FrameOSDWaterSpeed::onModeChangeResponse(const QString datafisis, BaseRespo
         return;
     }
 
+#ifdef USE_LOG4QT
+    logger()->trace() << Q_FUNC_INFO << " -> resp data. waterspeed mode: " << resp.getData().getWaterSpeed();
+#else
     qDebug()<<Q_FUNC_INFO<<"resp code:"<<"resp data waterspeed mode: "<<resp.getData().getWaterSpeed();
+#endif
 
     switch (currentMode) {
     case OSD_MODE::AUTO:
@@ -122,12 +147,12 @@ void FrameOSDWaterSpeed::onModeChange(int index)
     case OSD_MODE::AUTO:
         manual_mode = false;
         currentMode = OSD_MODE::AUTO;
-//        autoUiSetup();
+        //        autoUiSetup();
         break;
     case OSD_MODE::MANUAL:
         manual_mode = true;
         currentMode = OSD_MODE::MANUAL;
-//        manualUiSetup();
+        //        manualUiSetup();
         break;
     default:
         break;
@@ -166,7 +191,7 @@ void FrameOSDWaterSpeed::manualUiSetup()
 void FrameOSDWaterSpeed::onTimeout()
 {
     //update ui
-//    qDebug()<<Q_FUNC_INFO;
+    //    qDebug()<<Q_FUNC_INFO;
 
     auto currError = _streamWS->check();
     if (currError.getCode() == ERROR_CODE_MESSAGING_NOT_CONNECTED.first) {
@@ -202,7 +227,7 @@ void FrameOSDWaterSpeed::onTimeout()
 
 void FrameOSDWaterSpeed::onStreamReceive(WaterSpeedModel model)
 {
-//    qDebug()<<Q_FUNC_INFO<<"waterspeed: speed ->"<<model.getSpeed()<<", course ->"<<model.getCourse();
+    //    qDebug()<<Q_FUNC_INFO<<"waterspeed: speed ->"<<model.getSpeed()<<", course ->"<<model.getCourse();
     auto currentMode = (OSD_MODE)_cmsMode->getDataMode().getWaterSpeed();
     if (currentMode == OSD_MODE::MANUAL) {
         return;
@@ -219,7 +244,7 @@ void FrameOSDWaterSpeed::onStreamReceive(WaterSpeedModel model)
 
 void FrameOSDWaterSpeed::onUpdateWaterSpeedAutoUi()
 {
-//    qDebug()<<"UPdate UIIII";
+    //    qDebug()<<"UPdate UIIII";
     autoUiSetup();
 }
 

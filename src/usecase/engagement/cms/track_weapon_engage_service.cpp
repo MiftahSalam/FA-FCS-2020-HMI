@@ -5,6 +5,13 @@
 #include "src/shared/common/errors/err_object_creation.h"
 #include "src/shared/utils/utils.h"
 
+#ifdef USE_LOG4QT
+#include <log4qt/logger.h>
+LOG4QT_DECLARE_STATIC_LOGGER(logger, TrackWeaponEngageService)
+#else
+#include <QDebug>
+#endif
+
 TrackWeaponEngageService* TrackWeaponEngageService::instance = nullptr;
 
 TrackWeaponEngageService::TrackWeaponEngageService(
@@ -57,15 +64,24 @@ void TrackWeaponEngageService::sendResetAssignment(const QString weapon)
     httpResponse = httpClient.sendCustomRequest(httpReq, "DELETE", "{}");
     connect(httpResponse, &QNetworkReply::finished, this, &TrackWeaponEngageService::onResetAssignReplyFinished);
 
+#ifdef USE_LOG4QT
+    logger()->debug()<<Q_FUNC_INFO<<" -> url: "<<_cmsConfig->getInstance("")->getResetAssignUrl()+"/"+weapon;
+#else
     qDebug()<<Q_FUNC_INFO<<"url: "<<_cmsConfig->getInstance("")->getResetAssignUrl()+"/"+weapon;
+#endif
 }
 
 void TrackWeaponEngageService::onReplyFinished()
 {
     QByteArray respRaw = httpResponse->readAll();
 
+#ifdef USE_LOG4QT
+    logger()->debug()<<Q_FUNC_INFO<<" -> respRaw: "<<respRaw;
+    logger()->debug()<<Q_FUNC_INFO<<" -> err: "<<httpResponse->error();
+#else
     qDebug()<<Q_FUNC_INFO<<"respRaw: "<<respRaw;
     qDebug()<<Q_FUNC_INFO<<"err: "<<httpResponse->error();
+#endif
 
     BaseResponse<TrackAssignResponse> resp = errorHttpResponse(httpResponse->error());
     bool assign = isAssignResponse();
@@ -84,8 +100,13 @@ void TrackWeaponEngageService::onResetAssignReplyFinished()
 {
     QByteArray respRaw = httpResponse->readAll();
 
+#ifdef USE_LOG4QT
+    logger()->debug()<<Q_FUNC_INFO<<" -> respRaw: "<<respRaw;
+    logger()->debug()<<Q_FUNC_INFO<<" -> err: "<<httpResponse->error();
+#else
     qDebug()<<Q_FUNC_INFO<<"respRaw: "<<respRaw;
     qDebug()<<Q_FUNC_INFO<<"err: "<<httpResponse->error();
+#endif
 }
 
 BaseResponse<TrackAssignResponse> TrackWeaponEngageService::toResponse(QByteArray raw)
@@ -100,22 +121,42 @@ BaseResponse<TrackAssignResponse> TrackWeaponEngageService::toResponse(QByteArra
         TrackAssignResponse model(respData["id"].toInt(),respData["weapon"].toString().toStdString());
         BaseResponse<TrackAssignResponse> resp(respCode, respMsg, model);
 
+#ifdef USE_LOG4QT
+        logger()->debug()<<Q_FUNC_INFO<<" -> resp. http code: "<<resp.getHttpCode()
+                        <<", message: "<<resp.getMessage()
+                       <<", track id: "<<resp.getData().getTrackId()
+                      <<", weapon: "<<QString::fromStdString(resp.getData().getWeapon());
+#else
+
         qDebug()<<Q_FUNC_INFO<<"resp"
                <<resp.getHttpCode()
               <<resp.getMessage()
              <<resp.getData().getTrackId()
             <<QString::fromStdString(resp.getData().getWeapon());
+#endif
 
         ErrHelper::throwTrackEngageError(respCode);
 
         return resp;
     } catch (ErrJsonParse &e) {
+#ifdef USE_LOG4QT
+        logger()->error()<<Q_FUNC_INFO<<" -> caught error json parser: "<<e.getMessage();
+#else
         qDebug()<<Q_FUNC_INFO<<"caught error json parser: "<<e.getMessage();
+#endif
     }  catch (BaseError &e) {
-        qDebug()<<Q_FUNC_INFO<<"caught error: "<<e.getMessage();
+#ifdef USE_LOG4QT
+        logger()->error()<<Q_FUNC_INFO<<" -> caught error: "<<e.getMessage();
+#else
+        qWarning()<<Q_FUNC_INFO<<"caught error: "<<e.getMessage();
+#endif
         return BaseResponse<TrackAssignResponse>(e.getCode(), e.getMessage(), model);
     }  catch (...) {
-        qDebug()<<Q_FUNC_INFO<<"caught unkbnown error";
+#ifdef USE_LOG4QT
+        logger()->error()<<Q_FUNC_INFO<<" -> caught unkbnown error";
+#else
+        qWarning()<<Q_FUNC_INFO<<"caught unkbnown error";
+#endif
     }
 
     ErrUnknown status;
@@ -135,10 +176,18 @@ BaseResponse<TrackAssignResponse> TrackWeaponEngageService::errorHttpResponse(QN
             break;
         }
     } catch (BaseError &e) {
-        qDebug()<<Q_FUNC_INFO<<"caught error: "<<e.getMessage();
+#ifdef USE_LOG4QT
+        logger()->error()<<Q_FUNC_INFO<<" -> caught error: "<<e.getMessage();
+#else
+        qWarning()<<Q_FUNC_INFO<<"caught error: "<<e.getMessage();
+#endif
         return BaseResponse<TrackAssignResponse>(e.getCode(), e.getMessage(), model);
     }  catch (...) {
-        qDebug()<<Q_FUNC_INFO<<"caught unkbnown error";
+#ifdef USE_LOG4QT
+        logger()->error()<<Q_FUNC_INFO<<" -> caught unkbnown error";
+#else
+        qWarning()<<Q_FUNC_INFO<<"caught unkbnown error";
+#endif
     }
 
     NoError status;
@@ -151,7 +200,13 @@ bool TrackWeaponEngageService::isAssignResponse()
     auto headers = httpResponse->rawHeaderPairs();
     QString method;
 
+#ifdef USE_LOG4QT
+    foreach (auto header, headers) {
+        logger()->debug()<<Q_FUNC_INFO<<" -> respHeaderRaw. key: "<<header.first<<", value: "<<header.second;
+    }
+#else
     qDebug()<<Q_FUNC_INFO<<"respHeaderRaw: "<<headers;
+#endif
 
     foreach (auto header, headers) {
         if (header.first == "Method") {

@@ -4,11 +4,18 @@
 #include "src/shared/common/errors/err_osd_data.h"
 #include "src/shared/utils/utils.h"
 
+#ifdef USE_LOG4QT
+#include <log4qt/logger.h>
+LOG4QT_DECLARE_STATIC_LOGGER(logger, OSDStreamPosition)
+#else
+#include <QDebug>
+#endif
+
 OSDStreamPosition* OSDStreamPosition::positionStream = nullptr;
 
 OSDStreamPosition::OSDStreamPosition(TcpMessagingOpts *config,
-        OSDPositionRepository *repoPos,
-        OSDCMSInputMode *modeService)
+                                     OSDPositionRepository *repoPos,
+                                     OSDCMSInputMode *modeService)
 //OSDStreamPosition::OSDStreamPosition(AMQPConfig *config)
     : cfg(config), _repoPos(repoPos), serviceMode(modeService), currentErr(NoError())
 {
@@ -74,7 +81,13 @@ void OSDStreamPosition::onDataReceived(QByteArray data)
         QJsonObject respObj = Utils::byteArrayToJsonObject(data);
         PositionModel model(respObj["latitude"].toDouble(-91),respObj["longitude"].toDouble(-181));
 
+#ifdef USE_LOG4QT
+        logger()->trace()<<Q_FUNC_INFO<<" -> latitude: "<<model.getLatitude()
+                        <<", longitude: "<<model.getLongitude()
+                          ;
+#else
         qDebug()<<Q_FUNC_INFO<<"data position: lat ->"<<model.getLatitude()<<"lon ->"<<model.getLongitude();
+#endif
 
         //check source mode manual
         if (respObj.contains("source")) {
@@ -89,18 +102,26 @@ void OSDStreamPosition::onDataReceived(QByteArray data)
                                       model.getLatitude(),
                                       model.getLongitude(),
                                       respObj["source"].toString().toStdString(),
-                                      respObj["status"].toString().toStdString(),
-                                      OSD_MODE::AUTO
-                                  ));
+                                  respObj["status"].toString().toStdString(),
+                    OSD_MODE::AUTO
+                    ));
         }
 
         handleError(respObj["status"].toString());
 
         emit signalDataProcessed(model);
     } catch (ErrJsonParse &e) {
-        qDebug()<<Q_FUNC_INFO<<"caught error: "<<e.getMessage();
+#ifdef USE_LOG4QT
+        logger()->error()<<Q_FUNC_INFO<<" -> caught error: "<<e.getMessage();
+#else
+        qWarning()<<Q_FUNC_INFO<<"caught error: "<<e.getMessage();
+#endif
     }  catch (...) {
-        qDebug()<<Q_FUNC_INFO<<"caught unkbnown error";
+#ifdef USE_LOG4QT
+        logger()->error()<<Q_FUNC_INFO<<" -> caught unkbnown error";
+#else
+        qWarning()<<Q_FUNC_INFO<<"caught unkbnown error";
+#endif
     }
 }
 

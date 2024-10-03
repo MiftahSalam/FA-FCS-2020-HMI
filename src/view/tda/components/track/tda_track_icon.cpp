@@ -1,6 +1,11 @@
 #include "tda_track_icon.h"
 
+#ifdef USE_LOG4QT
+#include <log4qt/logger.h>
+LOG4QT_DECLARE_STATIC_LOGGER(logger, TdaTrackIcon)
+#else
 #include <QDebug>
+#endif
 
 const QString TRACK_INFO_TEMPLATE = "Track Information\n\n"
                                     "TN : %1\n"
@@ -15,7 +20,13 @@ TdaTrackIcon::TdaTrackIcon(QWidget *parent, TrackParam* param)
     : QLabel(parent), currentParam(param)
 {
     currentIconImagePath = fileImageLocation(currentParam->getCur_identity(), currentParam->getCur_env()); //get image from file
+
+#ifdef USE_LOG4QT
+    logger()->trace()<<Q_FUNC_INFO<<" -> currentIconImagePath: "<<currentIconImagePath;
+#else
     qDebug()<<Q_FUNC_INFO<<currentIconImagePath;
+#endif
+
     QImage image(currentIconImagePath);
 
     setObjectName(QString::fromUtf8("trackIcon"));
@@ -25,14 +36,14 @@ TdaTrackIcon::TdaTrackIcon(QWidget *parent, TrackParam* param)
     setStyleSheet(QString::fromUtf8("color: rgb(255, 255, 255);background-color: rgba(0,0,0,0);"));
     setScaledContents(true);
     setToolTip(QString(TRACK_INFO_TEMPLATE)
-                       .arg(QString::number(param->getTn()))
-                       .arg(QString::number(param->getRange(),'f',2))
-                       .arg(QString::number(param->getBearing(),'f',2))
-                       .arg(QString::number(param->getSpeed(),'f',2))
-                       .arg(QString::number(param->getCourse(),'f',2))
-                       .arg(QString::number(0,'f',2))
-                       .arg(TrackUtils::identity2String(param->getCur_identity()))
-                       );
+               .arg(QString::number(param->getTn()))
+               .arg(QString::number(param->getRange(),'f',2))
+               .arg(QString::number(param->getBearing(),'f',2))
+               .arg(QString::number(param->getSpeed(),'f',2))
+               .arg(QString::number(param->getCourse(),'f',2))
+               .arg(QString::number(0,'f',2))
+               .arg(TrackUtils::identity2String(param->getCur_identity()))
+               );
 }
 
 void TdaTrackIcon::updateProps(TrackParam param)

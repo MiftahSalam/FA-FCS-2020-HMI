@@ -3,8 +3,14 @@
 #include "src/shared/common/errors/err_object_creation.h"
 #include "src/shared/utils/utils.h"
 
-#include <QDebug>
 #include <cmath>
+
+#ifdef USE_LOG4QT
+#include <log4qt/logger.h>
+LOG4QT_DECLARE_STATIC_LOGGER(logger, TDATracksObject)
+#else
+#include <QDebug>
+#endif
 
 TDATracksObject::TDATracksObject(QObject *parent,
                                  TrackBaseRepository *repoTrack,
@@ -36,7 +42,6 @@ TDATracksObject::TDATracksObject(QObject *parent,
 
 TDATracksObject::~TDATracksObject()
 {
-    qDebug() << Q_FUNC_INFO;
     trackObjListMap.clear();
 }
 
@@ -120,7 +125,12 @@ void TDATracksObject::onAssignModeChange(const QString &weapon, const WeaponAssi
 
 void TDATracksObject::OnTracksAdded(std::list<TrackBaseEntity *> tnList)
 {
+#ifdef USE_LOG4QT
+    logger()->debug() << Q_FUNC_INFO << " -> tnList size: " << tnList.size();
+#else
     qDebug() << Q_FUNC_INFO << "tnList size" << tnList.size();
+#endif
+
     foreach (auto track, tnList)
     {
         generateTrackUI(track);
@@ -129,7 +139,12 @@ void TDATracksObject::OnTracksAdded(std::list<TrackBaseEntity *> tnList)
 
 void TDATracksObject::OnTracksRemoved(std::list<int> tnIdList)
 {
+#ifdef USE_LOG4QT
+    logger()->debug() << Q_FUNC_INFO << " -> tnIdList size: " << tnIdList.size();
+#else
     qDebug() << Q_FUNC_INFO << "tnIdList size" << tnIdList.size();
+#endif
+
     foreach (auto trackId, tnIdList)
     {
         delete trackObjListMap.take(trackId);

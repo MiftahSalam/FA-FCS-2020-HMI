@@ -4,6 +4,13 @@
 #include "src/shared/common/errors/err_osd_data.h"
 #include "src/shared/utils/utils.h"
 
+#ifdef USE_LOG4QT
+#include <log4qt/logger.h>
+LOG4QT_DECLARE_STATIC_LOGGER(logger, OSDStreamSpeed)
+#else
+#include <QDebug>
+#endif
+
 OSDStreamSpeed* OSDStreamSpeed::speedStream = nullptr;
 
 OSDStreamSpeed::OSDStreamSpeed(
@@ -60,7 +67,13 @@ void OSDStreamSpeed::onDataReceived(QByteArray data)
         QJsonObject respObj = Utils::byteArrayToJsonObject(data);
         SpeedModel model(respObj["sog"].toDouble(),respObj["cog"].toDouble());
 
+#ifdef USE_LOG4QT
+        logger()->trace()<<Q_FUNC_INFO<<" -> speed: "<<model.getSpeed()
+                        <<", course: "<<model.getCourse()
+                          ;
+#else
         qDebug()<<Q_FUNC_INFO<<"data speed: SOG ->"<<model.getSpeed()<<"COG ->"<<model.getCourse();
+#endif
 
         //check source mode manual
         if (respObj.contains("source")) {
@@ -72,21 +85,29 @@ void OSDStreamSpeed::onDataReceived(QByteArray data)
         auto speedMode = serviceMode->getDataMode().getSpeed();
         if (!speedMode && check().getCode() == ERROR_NO.first) {
             _repoSpeed->SetSpeed(OSDSpeedEntity(
-                                      model.getSpeed(),
-                                      model.getCourse(),
-                                      respObj["source"].toString().toStdString(),
-                                      respObj["status"].toString().toStdString(),
-                                      OSD_MODE::AUTO
-                                  ));
+                                     model.getSpeed(),
+                                     model.getCourse(),
+                                     respObj["source"].toString().toStdString(),
+                                 respObj["status"].toString().toStdString(),
+                    OSD_MODE::AUTO
+                    ));
         }
 
         handleError(respObj["status"].toString());
 
         emit signalDataProcessed(model);
     } catch (ErrJsonParse &e) {
-        qDebug()<<Q_FUNC_INFO<<"caught error: "<<e.getMessage();
+#ifdef USE_LOG4QT
+        logger()->error()<<Q_FUNC_INFO<<" -> caught error: "<<e.getMessage();
+#else
+        qWarning()<<Q_FUNC_INFO<<"caught error: "<<e.getMessage();
+#endif
     }  catch (...) {
-        qDebug()<<Q_FUNC_INFO<<"caught unkbnown error";
+#ifdef USE_LOG4QT
+        logger()->error()<<Q_FUNC_INFO<<" -> caught unkbnown error";
+#else
+        qWarning()<<Q_FUNC_INFO<<"caught unkbnown error";
+#endif
     }
 }
 

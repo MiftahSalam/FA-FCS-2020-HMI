@@ -5,6 +5,14 @@
 
 #include <QMessageBox>
 
+
+#ifdef USE_LOG4QT
+#include <log4qt/logger.h>
+LOG4QT_DECLARE_STATIC_LOGGER(logger, FrameTrackEngage)
+#else
+#include <QDebug>
+#endif
+
 FrameTrackEngage::FrameTrackEngage(QWidget *parent) :
     QWidget(parent),
     ui(new Ui::FrameTrackEngage)
@@ -218,7 +226,12 @@ void FrameTrackEngage::onAssignModeChange(const QString &weapon, const WeaponAss
 
 void FrameTrackEngage::onAssignmentResponseData(BaseResponse<TrackAssignResponse> resp, bool assign)
 {
+#ifdef USE_LOG4QT
+    logger()->debug() << Q_FUNC_INFO << " -> resp code: " << resp.getHttpCode()
+                      << ", resp msg: " << resp.getMessage();
+#else
     qDebug() << Q_FUNC_INFO << "resp code:" << resp.getHttpCode() << "resp msg:" << resp.getMessage();
+#endif
 
     if (resp.getHttpCode() != 0)
     {

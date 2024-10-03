@@ -6,6 +6,13 @@
 
 #include <QMessageBox>
 
+#ifdef USE_LOG4QT
+#include <log4qt/logger.h>
+LOG4QT_DECLARE_STATIC_LOGGER(logger, FrameOSDGyro)
+#else
+#include <QDebug>
+#endif
+
 FrameOSDGyro::FrameOSDGyro(QWidget *parent) : QWidget(parent),
     ui(new Ui::FrameOSDGyro),
     _cmsGyro(DI::getInstance()->getOSDCMSService()->getServiceOSDCMSGyro()),
@@ -44,8 +51,6 @@ FrameOSDGyro::FrameOSDGyro(QWidget *parent) : QWidget(parent),
 
 void FrameOSDGyro::onModeChange(int index)
 {
-    qDebug() << "Status Gyro :" << index;
-
     bool manual_mode;
     switch ((OSD_MODE)index)
     {
@@ -71,8 +76,6 @@ void FrameOSDGyro::onAfterModeReset()
 
 void FrameOSDGyro::onTimeout()
 {
-//    qDebug() << Q_FUNC_INFO;
-
     auto currError = _streamGyro->check();
     if (currError.getCode() == ERROR_CODE_MESSAGING_NOT_CONNECTED.first)
     {
@@ -148,8 +151,15 @@ void FrameOSDGyro::onModeChangeResponse(const QString datafisis, BaseResponse<In
         return;
     }
 
+#ifdef USE_LOG4QT
+    logger()->debug() << Q_FUNC_INFO << " -> resp code: " << resp.getHttpCode()
+                      << ", resp msg: " << resp.getMessage()
+                      << ", needConfirm: " << needConfirm
+                         ;
+#else
     qDebug() << Q_FUNC_INFO << "resp code:" << resp.getHttpCode() << "resp msg:" << resp.getMessage();
     qDebug() << Q_FUNC_INFO << "needConfirm:" << needConfirm;
+#endif
 
     if (resp.getHttpCode() != 0)
     {
@@ -162,7 +172,11 @@ void FrameOSDGyro::onModeChangeResponse(const QString datafisis, BaseResponse<In
         return;
     }
 
+#ifdef USE_LOG4QT
+    logger()->trace() << Q_FUNC_INFO << " -> resp data. inertia mode: " << resp.getData().getInersia();
+#else
     qDebug() << Q_FUNC_INFO << "resp code:" << "resp data inertia mode: " << resp.getData().getInersia();
+#endif
 
     //    auto currentMode = (OSD_MODE)resp.getData().getInersia();
     switch (currentMode)
@@ -183,7 +197,11 @@ void FrameOSDGyro::onModeChangeResponse(const QString datafisis, BaseResponse<In
 void FrameOSDGyro::onDataResponse(BaseResponse<GyroModel> resp)
 {
     // todo handle response
+#ifdef USE_LOG4QT
+    logger()->debug() << Q_FUNC_INFO << " -> resp code: " << resp.getHttpCode() << ", resp msg: " << resp.getMessage();
+#else
     qDebug() << Q_FUNC_INFO << "resp code:" << resp.getHttpCode() << "resp msg:" << resp.getMessage();
+#endif
 
     if (resp.getHttpCode() != 0)
     {
@@ -191,18 +209,22 @@ void FrameOSDGyro::onDataResponse(BaseResponse<GyroModel> resp)
         return;
     }
 
+#ifdef USE_LOG4QT
+    logger()->debug() << Q_FUNC_INFO
+                      << " -> getHeading: " << resp.getData().getHeading()
+                      << ", getPicth: " << resp.getData().getPicth()
+                      << ", getRoll: " << resp.getData().getRoll();
+#else
     qDebug() << Q_FUNC_INFO
              << "resp data getHeading: " << resp.getData().getHeading()
              << "resp data getPicth: " << resp.getData().getPicth()
              << "resp data getRoll: " << resp.getData().getRoll();
+#endif
 
 }
 
 void FrameOSDGyro::onStreamReceive(GyroModel model)
 {
-//    qDebug() << Q_FUNC_INFO << "Inertia: Heading ->" << model.getHeading()
-//             << ", Pitch ->" << model.getPicth() << ", Roll ->" << model.getRoll();
-
     auto currentMode = (OSD_MODE)_cmsMode->getDataMode().getInersia();
     if (currentMode == OSD_MODE::MANUAL)
     {
