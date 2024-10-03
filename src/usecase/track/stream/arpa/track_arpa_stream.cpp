@@ -4,6 +4,13 @@
 #include "src/shared/common/errors/err_osd_data.h"
 #include "src/shared/utils/utils.h"
 
+#ifdef USE_LOG4QT
+#include <log4qt/logger.h>
+LOG4QT_DECLARE_STATIC_LOGGER(logger, TrackArpaStream)
+#else
+#include <QDebug>
+#endif
+
 TrackArpaStream* TrackArpaStream::arpaStream = nullptr;
 
 TrackArpaStream::TrackArpaStream(
@@ -80,7 +87,11 @@ void TrackArpaStream::onDataReceived(QByteArray data)
                 }
 
                 if (model.getId() <= 0) {
-                    qDebug()<<Q_FUNC_INFO<<"invalid track";
+#ifdef USE_LOG4QT
+                    logger()->warn()<<Q_FUNC_INFO<<" -> invalid track";
+#else
+                    qWarning()<<Q_FUNC_INFO<<"invalid track";
+#endif
                     return;
                 }
 
@@ -106,12 +117,24 @@ void TrackArpaStream::onDataReceived(QByteArray data)
                 handleError(respObj["status"].toString());
             }
         } else {
-            qDebug()<<Q_FUNC_INFO<<"empty track array parser";
+#ifdef USE_LOG4QT
+            logger()->error()<<Q_FUNC_INFO<<" -> empty track array parser";
+#else
+            qWarning()<<Q_FUNC_INFO<<"empty track array parser";
+#endif
         }
     } catch (ErrJsonParse &e) {
-        qDebug()<<Q_FUNC_INFO<<"caught error: "<<e.getMessage();
+#ifdef USE_LOG4QT
+        logger()->error()<<Q_FUNC_INFO<<" -> caught error: "<<e.getMessage();
+#else
+        qWarning()<<Q_FUNC_INFO<<"caught error: "<<e.getMessage();
+#endif
     }  catch (...) {
-        qDebug()<<Q_FUNC_INFO<<"caught unkbnown error";
+#ifdef USE_LOG4QT
+        logger()->error()<<Q_FUNC_INFO<<" -> caught unkbnown error";
+#else
+        qWarning()<<Q_FUNC_INFO<<"caught unkbnown error";
+#endif
     }
 }
 
@@ -119,13 +142,21 @@ void TrackArpaStream::periodUpdate()
 {
     check();
 
+#ifdef USE_LOG4QT
+    logger()->debug()<<Q_FUNC_INFO<<" -> track count: "<<_repoArpa->FindAll().size();
+#else
     qDebug()<<Q_FUNC_INFO<<"track count"<<_repoArpa->FindAll().size();
+#endif
 
     long long now = QDateTime::currentMSecsSinceEpoch();
     std::list<TrackBaseEntity*> allTracks = _repoArpa->FindAll();
     foreach (TrackBaseEntity* track, allTracks) {
         if (now - track->getTimeStamp() > arpaConfig->getStaleTimeout()) {
-            qDebug()<<Q_FUNC_INFO<<"stale track track "<<track->getId();
+#ifdef USE_LOG4QT
+            logger()->info()<<Q_FUNC_INFO<<" -> stale track id: "<<track->getId();
+#else
+            qInfo()<<Q_FUNC_INFO<<"stale track track "<<track->getId();
+#endif
             _repoArpa->Remove(track->getId());
         }
     }
@@ -155,7 +186,11 @@ QJsonArray TrackArpaStream::enhanceJsonParse(const QByteArray data)
     while (bufData.size() > 0 && idxHeadJson >= 0 && idxTailJson > 0)
     {
         try {
+#ifdef USE_LOG4QT
+            logger()->debug()<<Q_FUNC_INFO<<" -> bufProcessedData: "<<bufProcessedData;
+#else
             qDebug()<<Q_FUNC_INFO<<"bufProcessedData"<<bufProcessedData;
+#endif
             QJsonObject respObj = Utils::byteArrayToJsonObject(bufProcessedData);
             result.append(respObj);
         } catch (...) {
@@ -164,12 +199,15 @@ QJsonArray TrackArpaStream::enhanceJsonParse(const QByteArray data)
 
         bufData.remove(idxHeadJson, idxTailJson - idxHeadJson + 1);
 
+#ifdef USE_LOG4QT
+        logger()->debug()<<Q_FUNC_INFO<<" -> bufData: "<<bufData;
+#else
         qDebug()<<Q_FUNC_INFO<<"bufData"<<bufData;
+#endif
 
         idxHeadJson = bufData.indexOf('{');
         idxTailJson = bufData.indexOf('}');
         bufProcessedData = bufData.mid(idxHeadJson, idxTailJson - idxHeadJson + 1);
-
     }
 
     return result;

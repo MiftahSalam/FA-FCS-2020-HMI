@@ -5,6 +5,13 @@
 
 #include <QMessageBox>
 
+#ifdef USE_LOG4QT
+#include <log4qt/logger.h>
+LOG4QT_DECLARE_STATIC_LOGGER(logger, FrameOSDWeather)
+#else
+#include <QDebug>
+#endif
+
 FrameOSDWeather::FrameOSDWeather(QWidget *parent) :
     QWidget(parent),
     ui(new Ui::FrameOSDWeather),
@@ -69,8 +76,6 @@ void FrameOSDWeather::onAfterModeReset()
 
 void FrameOSDWeather::onTimeout()
 {
-//    qDebug()<<Q_FUNC_INFO;
-
     auto currError = _streamWeather->check();
     if (currError.getCode() == ERROR_CODE_MESSAGING_NOT_CONNECTED.first) {
         notConnectedUiSetup();
@@ -135,8 +140,15 @@ void FrameOSDWeather::onModeChangeResponse(const QString datafisis, BaseResponse
         return;
     }
 
-    qDebug()<<Q_FUNC_INFO<<"resp code:"<<resp.getHttpCode()<<"resp msg:"<<resp.getMessage();
-    qDebug()<<Q_FUNC_INFO<<"needConfirm:"<<needConfirm;
+#ifdef USE_LOG4QT
+    logger()->debug() << Q_FUNC_INFO << " -> resp code: " << resp.getHttpCode()
+                      << ", resp msg: " << resp.getMessage()
+                      << ", needConfirm: " << needConfirm
+                         ;
+#else
+    qDebug() << Q_FUNC_INFO << "resp code:" << resp.getHttpCode() << "resp msg:" << resp.getMessage();
+    qDebug() << Q_FUNC_INFO << "needConfirm:" << needConfirm;
+#endif
 
     if (resp.getHttpCode() != 0) {
         resetModeIndex();
@@ -146,7 +158,11 @@ void FrameOSDWeather::onModeChangeResponse(const QString datafisis, BaseResponse
         return;
     }
 
+#ifdef USE_LOG4QT
+    logger()->trace() << Q_FUNC_INFO << " -> resp data. weather mode: " << resp.getData().getWeather();
+#else
     qDebug()<<Q_FUNC_INFO<<"resp code:"<<"resp data weather mode: "<<resp.getData().getWeather();
+#endif
 
     //    auto currentMode = (OSD_MODE)resp.getData().getInersia();
     switch (currentMode) {
@@ -165,25 +181,33 @@ void FrameOSDWeather::onModeChangeResponse(const QString datafisis, BaseResponse
 void FrameOSDWeather::onDataResponse(BaseResponse<WeatherModel> resp)
 {
     //todo handle response
-    qDebug()<<Q_FUNC_INFO<<"resp code:"<<resp.getHttpCode()<<"resp msg:"<<resp.getMessage();
+#ifdef USE_LOG4QT
+    logger()->debug() << Q_FUNC_INFO << " -> resp code: " << resp.getHttpCode() << ", resp msg: " << resp.getMessage();
+#else
+    qDebug() << Q_FUNC_INFO << "resp code:" << resp.getHttpCode() << "resp msg:" << resp.getMessage();
+#endif
 
     if (resp.getHttpCode() != 0) {
         QMessageBox::warning(this, "Request Error", QString("Failed to change manual data with error: %1").arg(resp.getMessage()));
         return;
     }
 
+#ifdef USE_LOG4QT
+    logger()->debug() << Q_FUNC_INFO
+             << " -> getHumidity: " << resp.getData().getHumidity()
+             << ", getPressure: " << resp.getData().getPressure()
+             << ", getTemperature: " << resp.getData().getTemperature();
+#else
     qDebug()<<Q_FUNC_INFO
              <<"resp data getTemperature: "<<resp.getData().getTemperature()
              <<"resp data getPressure: "<<resp.getData().getPressure()
              <<"resp data getHumidity: "<<resp.getData().getHumidity()
         ;
+#endif
 }
 
 void FrameOSDWeather::onStreamReceive(WeatherModel model)
 {
-//    qDebug()<<Q_FUNC_INFO<<"Weather: Temperature ->"<<model.getTemperature()
-//             <<", Pressure ->"<<model.getPressure()<<", Humidity ->"<<model.getHumidity();
-
     auto currentMode = (OSD_MODE)_cmsMode->getDataMode().getWeather();
     if (currentMode == OSD_MODE::MANUAL) {
         return;

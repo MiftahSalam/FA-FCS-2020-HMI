@@ -67,7 +67,6 @@ void GunCoverageStream::onDataReceived(QByteArray data)
 void GunCoverageStream::periodUpdate()
 {
     check();
-    qDebug() << Q_FUNC_INFO;
 }
 
 void GunCoverageStream::handleError(const QString &err)

@@ -4,6 +4,13 @@
 
 #include <QMessageBox>
 
+#ifdef USE_LOG4QT
+#include <log4qt/logger.h>
+LOG4QT_DECLARE_STATIC_LOGGER(logger, FrameGunControlStatus)
+#else
+#include <QDebug>
+#endif
+
 FrameGunControlStatus::FrameGunControlStatus(QWidget *parent) :
     QFrame(parent),
     ui(new Ui::FrameGunControlStatus)
@@ -28,7 +35,13 @@ void FrameGunControlStatus::setup()
 
 void FrameGunControlStatus::onStatusDataResponse(BaseResponse<GunCommandStatusResponse> resp)
 {
+#ifdef USE_LOG4QT
+    logger()->debug() << Q_FUNC_INFO << " -> resp code: " << resp.getHttpCode()
+                      << ", resp msg: " << resp.getMessage()
+                         ;
+#else
     qDebug() << Q_FUNC_INFO << "resp code:" << resp.getHttpCode() << "resp msg:" << resp.getMessage();
+#endif
 
     if (resp.getHttpCode() != 0)
     {

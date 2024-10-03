@@ -68,7 +68,6 @@ void GunFeedbackBarrelStream::onDataReceived(QByteArray data)
 void GunFeedbackBarrelStream::periodUpdate()
 {
     check();
-    qDebug() << Q_FUNC_INFO;
 }
 
 void GunFeedbackBarrelStream::handleError(const QString &err)

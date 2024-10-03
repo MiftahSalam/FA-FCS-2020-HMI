@@ -5,6 +5,13 @@
 
 #include <QMessageBox>
 
+#ifdef USE_LOG4QT
+#include <log4qt/logger.h>
+LOG4QT_DECLARE_STATIC_LOGGER(logger, FrameOSDSpeed)
+#else
+#include <QDebug>
+#endif
+
 FrameOSDSpeed::FrameOSDSpeed(QWidget *parent) :
     QWidget(parent),
     ui(new Ui::FrameOSDSpeed),
@@ -42,8 +49,6 @@ FrameOSDSpeed::FrameOSDSpeed(QWidget *parent) :
 
 void FrameOSDSpeed::onModeChange(int index)
 {
-    qDebug()<<"Status Speed :" << index;
-
     bool manual_mode;
     switch ((OSD_MODE)index) {
     case OSD_MODE::AUTO:
@@ -69,8 +74,6 @@ void FrameOSDSpeed::onAfterModeReset()
 
 void FrameOSDSpeed::onTimeout()
 {
-//    qDebug()<<Q_FUNC_INFO;
-
     auto currError = _streamSpeed->check();
     if (currError.getCode() == ERROR_CODE_MESSAGING_NOT_CONNECTED.first) {
         notConnectedUiSetup();
@@ -131,8 +134,15 @@ void FrameOSDSpeed::onModeChangeResponse(const QString datafisis, BaseResponse<I
         return;
     }
 
-    qDebug()<<Q_FUNC_INFO<<"resp code:"<<resp.getHttpCode()<<"resp msg:"<<resp.getMessage();
-    qDebug()<<Q_FUNC_INFO<<"needConfirm:"<<needConfirm;
+#ifdef USE_LOG4QT
+    logger()->debug() << Q_FUNC_INFO << " -> resp code: " << resp.getHttpCode()
+                      << ", resp msg: " << resp.getMessage()
+                      << ", needConfirm: " << needConfirm
+                         ;
+#else
+    qDebug() << Q_FUNC_INFO << "resp code:" << resp.getHttpCode() << "resp msg:" << resp.getMessage();
+    qDebug() << Q_FUNC_INFO << "needConfirm:" << needConfirm;
+#endif
 
     if (resp.getHttpCode() != 0) {
         resetModeIndex();
@@ -143,7 +153,11 @@ void FrameOSDSpeed::onModeChangeResponse(const QString datafisis, BaseResponse<I
         return;
     }
 
-    qDebug()<<Q_FUNC_INFO<<"resp code:"<<"resp data speed mode: "<<resp.getData().getSpeed();
+#ifdef USE_LOG4QT
+    logger()->trace() << Q_FUNC_INFO << " -> resp data. speed mode: " << resp.getData().getSpeed();
+#else
+    qDebug() << Q_FUNC_INFO << "resp code:" << "resp data speed mode: " << resp.getData().getSpeed();
+#endif
 
     switch (currentMode) {
     case OSD_MODE::AUTO:
@@ -161,24 +175,31 @@ void FrameOSDSpeed::onModeChangeResponse(const QString datafisis, BaseResponse<I
 void FrameOSDSpeed::onDataResponse(BaseResponse<SpeedModel> resp)
 {
     //todo handle response
-    qDebug()<<Q_FUNC_INFO<<"resp code:"<<resp.getHttpCode()<<"resp msg:"<<resp.getMessage();
+#ifdef USE_LOG4QT
+    logger()->debug() << Q_FUNC_INFO << " -> resp code: " << resp.getHttpCode() << ", resp msg: " << resp.getMessage();
+#else
+    qDebug() << Q_FUNC_INFO << "resp code:" << resp.getHttpCode() << "resp msg:" << resp.getMessage();
+#endif
 
     if (resp.getHttpCode() != 0) {
         QMessageBox::warning(this, "Request Error", QString("Failed to change manual data with error: %1").arg(resp.getMessage()));
         return;
     }
 
+#ifdef USE_LOG4QT
+    logger()->debug() << Q_FUNC_INFO
+             << " -> getSpeed: " << resp.getData().getSpeed()
+             << ", getCourse: " << resp.getData().getCourse();
+#else
     qDebug()<<Q_FUNC_INFO
            <<"resp data getSpeed: "<<resp.getData().getSpeed()
           <<"resp data getCourse: "<<resp.getData().getCourse()
            ;
+#endif
 }
 
 void FrameOSDSpeed::onStreamReceive(SpeedModel model)
 {
-//    qDebug()<<Q_FUNC_INFO<<"Speed: SOG ->"<<model.getSpeed()
-//           <<", COG ->"<<model.getCourse();
-
     auto currentMode = (OSD_MODE)_cmsMode->getDataMode().getSpeed();
     if (currentMode == OSD_MODE::MANUAL) {
         return;
