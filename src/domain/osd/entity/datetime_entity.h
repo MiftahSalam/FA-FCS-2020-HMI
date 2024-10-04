@@ -1,10 +1,12 @@
 #ifndef DATETIME_ENTITY_H
 #define DATETIME_ENTITY_H
 
-class DateTimeEntity
+#include "osd_base_entity.h"
+
+class DateTimeEntity: public OSDBaseEntity
 {
 public:
-    DateTimeEntity(float date, float time);
+    DateTimeEntity(float date, float time, const std::string &source, const std::string &status, const OSD_MODE &mode);
 
     float date() const;
     void setDate(float newDate);

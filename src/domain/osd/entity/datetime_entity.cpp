@@ -1,7 +1,7 @@
 #include "datetime_entity.h"
 
-DateTimeEntity::DateTimeEntity(float date, float time):
-    _date(date),_time(time)
+DateTimeEntity::DateTimeEntity(float date, float time, const std::string &source, const std::string &status, const OSD_MODE &mode)
+    : OSDBaseEntity(source, status, mode), _date(date),_time(time)
 {
 
 }
