@@ -213,6 +213,7 @@ HEADERS += \
     src/domain/osd/entity/osd_waterspeed_entity.h \
     src/domain/osd/entity/osd_weather_entity.h \
     src/domain/osd/entity/osd_wind_entity.h \
+    src/domain/osd/repository/datetime_repository.h \
     src/domain/osd/repository/osd_base_repository.h \
     src/domain/osd/repository/osd_inertia_repository.h \
     src/domain/osd/repository/osd_position_repository.h \
