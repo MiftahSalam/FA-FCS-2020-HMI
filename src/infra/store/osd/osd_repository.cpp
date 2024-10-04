@@ -5,6 +5,7 @@
 #include "src/infra/store/osd/inmemory/osd_speed_repository_inmem_impl.h"
 #include "src/infra/store/osd/inmemory/osd_wind_repository_inmem_impl.h"
 #include "src/infra/store/osd/inmemory/osd_weather_repository_inmem_impl.h"
+#include "src/infra/store/osd/inmemory/datetime_repository_inmem_impl.h"
 
 
 OSDRepository::OSDRepository(QObject *parent)
@@ -16,6 +17,7 @@ OSDRepository::OSDRepository(QObject *parent)
     repoOSDSpeed = OSDSpeedRepositoryInMemImpl::GetInstance();
     repoOSDWind = OSDWindRepositoryInMemImpl::GetInstance();
     repoOSDWeather = OSDWeatherRepositoryInMemImpl::GetInstance();
+    repoDateTime = DateTimeRepositoryInMemImpl::GetInstance();
 }
 
 OSDPositionRepository *OSDRepository::getRepoOSDPosition() const
@@ -46,4 +48,9 @@ OSDWindRepository *OSDRepository::getRepoOSDWind() const
 OSDWeatherRepository *OSDRepository::getRepoOSDWeather() const
 {
     return repoOSDWeather;
+}
+
+DateTimeRepository *OSDRepository::getRepoDateTime() const
+{
+    return repoDateTime;
 }

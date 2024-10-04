@@ -1,27 +1,30 @@
 #include "datetime_entity.h"
 
-DateTimeEntity::DateTimeEntity(float date, float time, const std::string &source, const std::string &status, const OSD_MODE &mode)
-    : OSDBaseEntity(source, status, mode), _date(date),_time(time)
+
+DateTimeEntity::DateTimeEntity(const std::string dateTimeLocal, const std::string dateTimeUTC, const std::string &source, const std::string &status, const OSD_MODE &mode)
+    :OSDBaseEntity(source, status, mode), _dateTimeLocal(dateTimeLocal), _dateTimeUTC(dateTimeUTC)
+
 {
 
 }
 
-float DateTimeEntity::date() const
+std::string DateTimeEntity::dateTimeLocal() const
 {
-    return _date;
+    return _dateTimeLocal;
 }
 
-void DateTimeEntity::setDate(float newDate)
+void DateTimeEntity::setDatetimeLocal(const std::string &newDateTimeLocal)
 {
-    _date = newDate;
+    _dateTimeLocal = newDateTimeLocal;
 }
 
-float DateTimeEntity::time() const
+std::string DateTimeEntity::dateTimeUTC() const
 {
-    return _time;
+    return _dateTimeUTC;
 }
 
-void DateTimeEntity::setTime(float newTime)
+void DateTimeEntity::setDateTimeUTC(const std::string &newDateTimeUTC)
 {
-    _time = newTime;
+    _dateTimeUTC = newDateTimeUTC;
 }
+

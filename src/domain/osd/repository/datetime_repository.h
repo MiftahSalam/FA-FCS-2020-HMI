@@ -4,7 +4,7 @@
 #include "osd_base_repository.h"
 #include "src/domain/osd/entity/datetime_entity.h"
 
-class DateTimeEntity: public OSDBaseRepository
+class DateTimeRepository: public OSDBaseRepository
 {
 public:
     virtual void SetDateTime(const DateTimeEntity &date_time) = 0;
