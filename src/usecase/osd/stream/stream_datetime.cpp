@@ -6,8 +6,8 @@
 
 StreamDateTime* StreamDateTime::dateTimeStream = nullptr;
 
-StreamDateTime::StreamDateTime(TcpMessagingOpts *config):
-    cfg(config), currentErr(NoError())
+StreamDateTime::StreamDateTime(TcpMessagingOpts *config, DateTimeRepository *repoDateTime):
+    cfg(config), _repoDateTime(repoDateTime), currentErr(NoError())
 {
     consumer = new TcpMessagingWrapper(this, config);
     connect(consumer, &TcpMessagingWrapper::signalForwardMessage, this, &StreamDateTime::onDataReceived);
@@ -17,9 +17,19 @@ void StreamDateTime::onDataReceived(QByteArray data)
 {
     try {
         QJsonObject respObj = Utils::byteArrayToJsonObject(data);
-        DateTimeModel model(respObj["date"].toDouble(),respObj["time"].toDouble());
+        DateTimeModel model(respObj["date_time_utc"].toString().toStdString(),respObj["date_time_local"].toString().toStdString());
 
-        qDebug()<<Q_FUNC_INFO<<"date"<<model.getDate()<<"time"<<model.getTime();
+        qDebug()<<Q_FUNC_INFO<<"time local"<<model.getDateTimeLocal()<<"time UTC"<<model.getDateTimeUTC();
+
+        if(check().getCode() == ERROR_NO.first){
+            _repoDateTime->SetDateTime(DateTimeEntity(
+                model.getDateTimeLocal(),
+                model.getDateTimeUTC(),
+                respObj["source"].toString().toStdString(),
+                respObj["status"].toString().toStdString(),
+                OSD_MODE::AUTO
+                ));
+        }
 
         handleError(respObj["status"].toString());
 
@@ -44,7 +54,7 @@ void StreamDateTime::handleError(const QString &err)
     }
 }
 
-StreamDateTime *StreamDateTime::getInstance(TcpMessagingOpts *config)
+StreamDateTime *StreamDateTime::getInstance(TcpMessagingOpts *config, DateTimeRepository *repoDateTime)
 {
     if (dateTimeStream == nullptr)
     {
@@ -53,7 +63,11 @@ StreamDateTime *StreamDateTime::getInstance(TcpMessagingOpts *config)
             throw ErrObjectCreation();
         }
 
-        dateTimeStream = new StreamDateTime(config);
+        if(repoDateTime == nullptr){
+            throw ErrObjectCreation();
+        }
+
+        dateTimeStream = new StreamDateTime(config, repoDateTime);
     }
     return dateTimeStream;
 }

@@ -76,7 +76,8 @@ OSDStream::OSDStream(
 
     TcpMessagingOpts *datetimeStreamVal = config->getInstance("")->getContent().value("date_time");
     serviceStreamDateTime = StreamDateTime::getInstance(
-        datetimeStreamVal
+        datetimeStreamVal,
+        repoOSD->getRepoDateTime()
         );
 }
 

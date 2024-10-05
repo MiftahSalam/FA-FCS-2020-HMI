@@ -1,7 +1,8 @@
 #include "datetime_model.h"
+#include <string>
 
-DateTimeModel::DateTimeModel(double date, double time):
-    _date(date), _time(time)
+DateTimeModel::DateTimeModel(const std::string &dateTimeLocal, const std::string dateTimeUTC):
+    _dateTimeLocal(dateTimeLocal), _dateTimeUTC(dateTimeUTC)
 {
 
 }
@@ -9,18 +10,19 @@ DateTimeModel::DateTimeModel(double date, double time):
 DateTimeModel DateTimeModel::FromJsonObject(QJsonObject obj)
 {
     DateTimeModel model(
-        obj.value("date").toDouble(),
-        obj.value("time").toDouble()
+        obj.value("date_time_local").toString().toStdString(),
+        obj.value("date_time_utc").toString().toStdString()
         );
     return model;
 }
 
-double DateTimeModel::getDate() const
+std::string DateTimeModel::getDateTimeLocal() const
 {
-    return _date;
+    return _dateTimeLocal;
 }
 
-double DateTimeModel::getTime() const
+std::string DateTimeModel::getDateTimeUTC() const
 {
-    return _time;
+    return _dateTimeUTC;
 }
+

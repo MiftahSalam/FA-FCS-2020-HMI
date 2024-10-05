@@ -6,15 +6,15 @@
 class DateTimeModel
 {
 public:
-    DateTimeModel(double date, double time);
+    DateTimeModel(const std::string &dateTimeLocal,  const std::string dateTimeUTC);
 
     static DateTimeModel FromJsonObject(QJsonObject obj);
 
-    double getDate() const;
-    double getTime() const;
+    std::string getDateTimeLocal() const;
+    std::string getDateTimeUTC() const;
 
 private:
-    double _date, _time;
+    std::string _dateTimeLocal, _dateTimeUTC;
 };
 
 #endif // DATETIME_MODEL_H

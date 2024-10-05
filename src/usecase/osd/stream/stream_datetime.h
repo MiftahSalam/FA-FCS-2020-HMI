@@ -4,6 +4,7 @@
 #include <QObject>
 #include <QWidget>
 
+#include "src/domain/osd/repository/datetime_repository.h"
 #include "src/infra/messaging/tcp/tcp_messaging_wrapper.h"
 #include "src/model/osd/datetime_model.h"
 #include "src/shared/config/messaging_tcp_config.h"
@@ -16,7 +17,8 @@ public:
     StreamDateTime(StreamDateTime &other) = delete;
     void operator=(const StreamDateTime&) = delete;
     static StreamDateTime *getInstance(
-        TcpMessagingOpts *config
+        TcpMessagingOpts *config,
+        DateTimeRepository *repoDateTime
         );
 
     BaseError check() override;
@@ -26,7 +28,8 @@ signals:
 
 protected:
     StreamDateTime(
-        TcpMessagingOpts *config = nullptr
+        TcpMessagingOpts *config = nullptr,
+        DateTimeRepository *repoDateTime = nullptr
         );
 
 private slots:
@@ -36,6 +39,7 @@ private:
     static StreamDateTime *dateTimeStream;
     TcpMessagingWrapper *consumer;
     TcpMessagingOpts *cfg;
+    DateTimeRepository *_repoDateTime;
 
     BaseError currentErr;
 
