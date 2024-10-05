@@ -377,9 +377,26 @@ void FrameTDA::setupDI()
 
 void FrameTDA::setupDateTime()
 {
-    currentDateTime = QDateTime::currentDateTime();
-    QString dateTime = currentDateTime.toString("dd/MM/yyyy hh:mm:ss");
-    ui->label_date_time->setText(dateTime);
+    //temp
+    dateTimeUTC = "2009-01-19T03:27:50Z";
+    dateTimeLocal = "2009-01-18T17:00:50+07:00";
+
+    // dateTimeUTC = QString::fromStdString(osdRepo->getRepoDateTime()->GetDateTime()->dateTimeUTC());
+    // dateTimeLocal = QString::fromStdString(osdRepo->getRepoDateTime()->GetDateTime()->dateTimeLocal());
+
+    qDebug()<<dateTimeUTC<<dateTimeLocal<<"=========================";
+
+
+    QDateTime timeUtc = QDateTime::fromString(dateTimeUTC, Qt::ISODateWithMs);
+    QDateTime timeLocal = QDateTime::fromString(dateTimeLocal, Qt::ISODateWithMs);
+
+    ui->label_date_time_UTC->setText("UTC:"+timeUtc.toString("dd/MM/yyyy hh:mm:ss"));
+    ui->label_date_time_local->setText("Local:"+timeLocal.toString("dd/MM/yyyy hh:mm:ss"));
+
+    // currentDateTime = QDateTime::currentDateTime();
+    // currentDateTime = QDateTime::currentDateTimeUtc();
+    // QString dateTime = currentDateTime.toString("dd/MM/yyyy hh:mm:ss");
+    // ui->label_date_time->setText(dateTime);
 }
 
 void FrameTDA::handleMouseTrackingPolar(QMouseEvent *event)
