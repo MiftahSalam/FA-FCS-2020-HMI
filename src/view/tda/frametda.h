@@ -100,7 +100,7 @@ private:
    void setupStatusBar();
    void setupTdaObjects();
    void setupDI();
-   void setupDateTime();
+   void updateDateTime();
 
    void handleMouseTrackingPolar(QMouseEvent *event);
    void handleMouseTrackinglatLon(QMouseEvent *event);

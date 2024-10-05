@@ -3,6 +3,7 @@
 
 #include <QObject>
 #include <QWidget>
+#include <QTimer>
 
 #include "src/domain/osd/repository/datetime_repository.h"
 #include "src/infra/messaging/tcp/tcp_messaging_wrapper.h"
@@ -32,8 +33,11 @@ protected:
         DateTimeRepository *repoDateTime = nullptr
         );
 
+    QTimer *timer;
+
 private slots:
     void onDataReceived(QByteArray data) override;
+    void periodeUpdate();
 
 private:
     static StreamDateTime *dateTimeStream;

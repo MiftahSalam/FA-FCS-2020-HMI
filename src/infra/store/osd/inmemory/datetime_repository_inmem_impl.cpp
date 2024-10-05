@@ -8,6 +8,8 @@ DateTimeRepository *DateTimeRepositoryInMemImpl::GetInstance()
         DateTimeEntity *entity = new DateTimeEntity("","","","", OSD_MODE::AUTO);
         instance = new DateTimeRepositoryInMemImpl(entity);
     }
+
+    return instance;
 }
 
 void DateTimeRepositoryInMemImpl::SetSource(const std::string &source)

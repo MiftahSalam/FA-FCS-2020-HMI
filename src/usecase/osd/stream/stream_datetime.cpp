@@ -11,6 +11,10 @@ StreamDateTime::StreamDateTime(TcpMessagingOpts *config, DateTimeRepository *rep
 {
     consumer = new TcpMessagingWrapper(this, config);
     connect(consumer, &TcpMessagingWrapper::signalForwardMessage, this, &StreamDateTime::onDataReceived);
+
+    timer = new QTimer(this);
+    connect(timer, &QTimer::timeout, this, &StreamDateTime::periodeUpdate);
+    timer->start(1000);
 }
 
 void StreamDateTime::onDataReceived(QByteArray data)
@@ -39,6 +43,12 @@ void StreamDateTime::onDataReceived(QByteArray data)
     }  catch (...) {
         qDebug()<<Q_FUNC_INFO<<"caught unkbnown error";
     }
+}
+
+void StreamDateTime::periodeUpdate()
+{
+    check();
+    qDebug() << Q_FUNC_INFO;
 }
 
 void StreamDateTime::handleError(const QString &err)

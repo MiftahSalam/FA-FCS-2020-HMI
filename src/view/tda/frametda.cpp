@@ -77,7 +77,7 @@ void FrameTDA::timeOut()
 {
     update();
 
-    setupDateTime();
+    updateDateTime();
 }
 
 void FrameTDA::on_FrameTDA_customContextMenuRequested(const QPoint &pos)
@@ -375,17 +375,19 @@ void FrameTDA::setupDI()
     tdaScale = tdaConfig->getZoomScale();
 }
 
-void FrameTDA::setupDateTime()
+void FrameTDA::updateDateTime()
 {
     //temp
-    dateTimeUTC = "2009-01-19T03:27:50Z";
-    dateTimeLocal = "2009-01-18T17:00:50+07:00";
+    // osdRepo->getRepoDateTime()->SetDateTime(DateTimeEntity(
+    //     "2009-01-18T17:00:50+07:00",
+    //     "2009-01-19T03:27:50Z",
+    //     "",
+    //     "",
+    //     OSD_MODE::AUTO
+    //     ));
 
-    // dateTimeUTC = QString::fromStdString(osdRepo->getRepoDateTime()->GetDateTime()->dateTimeUTC());
-    // dateTimeLocal = QString::fromStdString(osdRepo->getRepoDateTime()->GetDateTime()->dateTimeLocal());
-
-    qDebug()<<dateTimeUTC<<dateTimeLocal<<"=========================";
-
+    dateTimeUTC = QString::fromStdString(osdRepo->getRepoDateTime()->GetDateTime()->dateTimeUTC());
+    dateTimeLocal = QString::fromStdString(osdRepo->getRepoDateTime()->GetDateTime()->dateTimeLocal());
 
     QDateTime timeUtc = QDateTime::fromString(dateTimeUTC, Qt::ISODateWithMs);
     QDateTime timeLocal = QDateTime::fromString(dateTimeLocal, Qt::ISODateWithMs);
