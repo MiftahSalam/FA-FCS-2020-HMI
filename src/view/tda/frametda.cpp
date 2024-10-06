@@ -370,6 +370,7 @@ void FrameTDA::setupDI()
     tdaConfig = DI::getInstance()->getConfig()->getTDAConfig();
     trackRepo = DI::getInstance()->getRepoTrack();
     fireTriangleRepo = DI::getInstance()->getRepoFireTriangle();
+    dtStream = DI::getInstance()->getServiceOSDStream()->getServiceStreamDateTime();
     waService = DI::getInstance()->getServiceWeaponAssign();
     wtaService = DI::getInstance()->getServiceWeaponTrackAssign();
 
@@ -383,20 +384,23 @@ void FrameTDA::updateDateTime()
     QDateTime timeLocal = QDateTime::currentDateTime();
 
     if (is_time_sync) {
-        //temp
-         osdRepo->getRepoDateTime()->SetDateTime(OSDDateTimeEntity(
-             "2009-01-18T17:00:50+07:00",
-             "2009-01-19T03:27:50Z",
-             "",
-             "",
-             OSD_MODE::AUTO
-             ));
+        long long dateTimeUTC =osdRepo->getRepoDateTime()->GetDateTime()->dateTimeProcessed();
+        long long dateTimeLocal =osdRepo->getRepoDateTime()->GetDateTime()->dateTimeLocalProcessed();
 
-        dateTimeUTC = QString::fromStdString(osdRepo->getRepoDateTime()->GetDateTime()->dateTimeUTC());
-        dateTimeLocal = QString::fromStdString(osdRepo->getRepoDateTime()->GetDateTime()->dateTimeLocal());
+        timeUtc = QDateTime::fromMSecsSinceEpoch(dateTimeUTC);
+        timeLocal = QDateTime::fromMSecsSinceEpoch(dateTimeLocal);
 
-        timeUtc = QDateTime::fromString(dateTimeUTC, Qt::ISODateWithMs);
-        timeLocal = QDateTime::fromString(dateTimeLocal, Qt::ISODateWithMs);
+        auto curError = dtStream->check();
+        if (curError.getCode() != ERROR_NO.first) {
+            ui->label_date_time_UTC->setStyleSheet(COLOR_FAILED_STYLESHEET);
+            ui->label_date_time_local->setStyleSheet(COLOR_FAILED_STYLESHEET);
+        } else {
+            ui->label_date_time_UTC->setStyleSheet(COLOR_MANUAL_STYLESHEET);
+            ui->label_date_time_local->setStyleSheet(COLOR_MANUAL_STYLESHEET);
+        }
+    } else {
+        ui->label_date_time_UTC->setStyleSheet(COLOR_MANUAL_STYLESHEET);
+        ui->label_date_time_local->setStyleSheet(COLOR_MANUAL_STYLESHEET);
     }
 
     ui->label_date_time_UTC->setText("UTC:"+timeUtc.toString("dd/MM/yyyy hh:mm:ss"));

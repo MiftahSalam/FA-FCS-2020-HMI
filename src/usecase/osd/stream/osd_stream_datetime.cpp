@@ -20,6 +20,7 @@ OSDStreamDateTime::OSDStreamDateTime(TcpMessagingOpts *config, OSDDateTimeReposi
 void OSDStreamDateTime::onDataReceived(QByteArray data)
 {
     try {
+        //{"date_time_utc": "2009-01-19T03:27:50Z","date_time_local": "2009-01-18T17:00:50+07:00", "status": "", "source": "input_2"}
         QJsonObject respObj = Utils::byteArrayToJsonObject(data);
         DateTimeModel model(respObj["date_time_utc"].toString().toStdString(),respObj["date_time_local"].toString().toStdString());
 
@@ -49,7 +50,12 @@ void OSDStreamDateTime::onDataReceived(QByteArray data)
 void OSDStreamDateTime::periodeUpdate()
 {
     check();
-    qDebug() << Q_FUNC_INFO;
+
+    QDateTime curTimeLocalEpoch = QDateTime::fromMSecsSinceEpoch(_repoDateTime->GetDateTime()->dateTimeLocalProcessed());
+    QDateTime curTimeEpoch = QDateTime::fromMSecsSinceEpoch(_repoDateTime->GetDateTime()->dateTimeProcessed());
+
+    _repoDateTime->UpdateTimeDisplay(curTimeEpoch.addSecs(1).toMSecsSinceEpoch());
+    _repoDateTime->UpdateTimeLocalDisplay(curTimeLocalEpoch.addSecs(1).toMSecsSinceEpoch());
 }
 
 void OSDStreamDateTime::handleError(const QString &err)

@@ -13,9 +13,16 @@ public:
     std::string dateTimeUTC() const;
     void setDateTimeUTC(const std::string &newDateTimeUTC);
 
+    long long dateTimeLocalProcessed() const;
+    void setDateTimeLocalProcessed(long long newDateTimeLocalProcessed);
+    long long dateTimeProcessed() const;
+    void setDateTimeProcessed(long long newDateTimeProcessed);
+
 private:
     std::string _dateTimeLocal;
     std::string _dateTimeUTC;
+    long long _dateTimeLocalProcessed;
+    long long _dateTimeProcessed;
 };
 
 #endif // OSD_DATETIME_ENTITY_H

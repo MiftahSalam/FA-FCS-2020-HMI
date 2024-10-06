@@ -17,6 +17,8 @@ public:
 public:
     void SetDateTime(const OSDDateTimeEntity &date_time) override;
     const OSDDateTimeEntity *GetDateTime() const override;
+    void UpdateTimeLocalDisplay(const long long &epoch) override;
+    void UpdateTimeDisplay(const long long &epoch) override;
 
 protected:
     OSDDateTimeRepositoryInMemImpl(OSDDateTimeEntity *entity);
