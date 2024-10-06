@@ -1,5 +1,5 @@
-#ifndef DATETIME_ENTITY_H
-#define DATETIME_ENTITY_H
+#ifndef OSD_DATETIME_ENTITY_H
+#define OSD_DATETIME_ENTITY_H
 
 #include "osd_base_entity.h"
 
@@ -18,4 +18,4 @@ private:
     std::string _dateTimeUTC;
 };
 
-#endif // DATETIME_ENTITY_H
+#endif // OSD_DATETIME_ENTITY_H

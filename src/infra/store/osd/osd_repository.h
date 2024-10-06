@@ -7,7 +7,7 @@
 #include "src/domain/osd/repository/osd_speed_repository.h"
 #include "src/domain/osd/repository/osd_wind_repository.h"
 #include "src/domain/osd/repository/osd_weather_repository.h"
-#include "src/domain/osd/repository/datetime_repository.h"
+#include "src/domain/osd/repository/osd_datetime_repository.h"
 
 #include <QObject>
 

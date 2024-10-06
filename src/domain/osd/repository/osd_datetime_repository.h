@@ -1,8 +1,8 @@
-#ifndef DATETIME_REPOSITORY_H
-#define DATETIME_REPOSITORY_H
+#ifndef OSD_DATETIME_REPOSITORY_H
+#define OSD_DATETIME_REPOSITORY_H
 
 #include "osd_base_repository.h"
-#include "src/domain/osd/entity/datetime_entity.h"
+#include "src/domain/osd/entity/osd_datetime_entity.h"
 
 class DateTimeRepository: public OSDBaseRepository
 {
@@ -11,4 +11,4 @@ public:
     virtual const DateTimeEntity *GetDateTime() const = 0;
 };
 
-#endif // DATETIME_REPOSITORY_H
+#endif // OSD_DATETIME_REPOSITORY_H

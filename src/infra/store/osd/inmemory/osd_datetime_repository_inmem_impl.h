@@ -1,8 +1,8 @@
-#ifndef DATETIME_REPOSITORY_INMEM_IMPL_H
-#define DATETIME_REPOSITORY_INMEM_IMPL_H
+#ifndef OSD_DATETIME_REPOSITORY_INMEM_IMPL_H
+#define OSD_DATETIME_REPOSITORY_INMEM_IMPL_H
 
-#include "src/domain/osd/entity/datetime_entity.h"
-#include "src/domain/osd/repository/datetime_repository.h"
+#include "src/domain/osd/entity/osd_datetime_entity.h"
+#include "src/domain/osd/repository/osd_datetime_repository.h"
 
 class DateTimeRepositoryInMemImpl: public DateTimeRepository
 {
@@ -27,4 +27,4 @@ private:
     DateTimeEntity *_entity;
 };
 
-#endif // DATETIME_REPOSITORY_INMEM_IMPL_H
+#endif // OSD_DATETIME_REPOSITORY_INMEM_IMPL_H

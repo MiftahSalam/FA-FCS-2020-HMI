@@ -11,7 +11,7 @@
 #include "src/usecase/osd/stream/osd_stream_speed.h"
 #include "src/usecase/osd/stream/osd_stream_wind.h"
 #include "src/usecase/osd/stream/osd_stream_weather.h"
-#include "src/usecase/osd/stream/stream_datetime.h"
+#include "src/usecase/osd/stream/osd_stream_datetime.h"
 
 #include <QObject>
 

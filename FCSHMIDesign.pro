@@ -26,8 +26,8 @@ SOURCES += \
     src/domain/gun/entity/gun_coverage_entity.cpp \
     src/domain/gun/entity/gun_status_command_entity.cpp \
     src/domain/gun/entity/gun_status_feedback_entity.cpp \
-    src/domain/osd/entity/datetime_entity.cpp \
     src/domain/osd/entity/osd_base_entity.cpp \
+    src/domain/osd/entity/osd_datetime_entity.cpp \
     src/domain/osd/entity/osd_inertia_entity.cpp \
     src/domain/osd/entity/osd_position_entity.cpp \
     src/domain/osd/entity/osd_waterspeed_entity.cpp \
@@ -48,7 +48,7 @@ SOURCES += \
     src/infra/store/gun/inmemory/gun_command_repository_inmem_impl.cpp \
     src/infra/store/gun/inmemory/gun_feedback_repository_inmem_imp.cpp \
     src/infra/store/gun/inmemory/gun_coverage_repository_inmem_impl.cpp \
-    src/infra/store/osd/inmemory/datetime_repository_inmem_impl.cpp \
+    src/infra/store/osd/inmemory/osd_datetime_repository_inmem_impl.cpp \
     src/infra/store/osd/inmemory/osd_inertia_repository_inmem_impl.cpp \
     src/infra/store/osd/inmemory/osd_position_repository_inmem_impl.cpp \
     src/infra/store/osd/inmemory/osd_waterspeed_repository_inmem_impl.cpp \
@@ -139,13 +139,13 @@ SOURCES += \
     src/usecase/osd/cms/osd_cms_wind_data.cpp \
     src/usecase/osd/osd_service.cpp \
     src/usecase/osd/stream/osd_stream.cpp \
+    src/usecase/osd/stream/osd_stream_datetime.cpp \
     src/usecase/osd/stream/osd_stream_gyro.cpp \
     src/usecase/osd/stream/osd_stream_position.cpp \
     src/usecase/osd/stream/osd_stream_waterspeed.cpp \
     src/usecase/osd/stream/osd_stream_speed.cpp \
     src/usecase/osd/stream/osd_stream_weather.cpp \
     src/usecase/osd/stream/osd_stream_wind.cpp \
-    src/usecase/osd/stream/stream_datetime.cpp \
     src/usecase/track/stream/arpa/track_arpa_stream.cpp \
     src/usecase/track/stream/track_stream.cpp \
     src/usecase/weapon_assign/weapon_assign_service.cpp \
@@ -207,15 +207,15 @@ HEADERS += \
     src/domain/gun/repository/gun_command_repository.h \
     src/domain/gun/repository/gun_coverage_repository.h \
     src/domain/gun/repository/gun_feedback_repository.h \
-    src/domain/osd/entity/datetime_entity.h \
     src/domain/osd/entity/osd_base_entity.h \
+    src/domain/osd/entity/osd_datetime_entity.h \
     src/domain/osd/entity/osd_inertia_entity.h \
     src/domain/osd/entity/osd_position_entity.h \
     src/domain/osd/entity/osd_waterspeed_entity.h \
     src/domain/osd/entity/osd_weather_entity.h \
     src/domain/osd/entity/osd_wind_entity.h \
-    src/domain/osd/repository/datetime_repository.h \
     src/domain/osd/repository/osd_base_repository.h \
+    src/domain/osd/repository/osd_datetime_repository.h \
     src/domain/osd/repository/osd_inertia_repository.h \
     src/domain/osd/repository/osd_position_repository.h \
     src/domain/osd/repository/osd_waterspeed_repository.h \
@@ -242,7 +242,7 @@ HEADERS += \
     src/infra/store/gun/inmemory/gun_command_repository_inmem_impl.h \
     src/infra/store/gun/inmemory/gun_feedback_repository_inmem_imp.h \
     src/infra/store/gun/inmemory/gun_coverage_repository_inmem_impl.h \
-    src/infra/store/osd/inmemory/datetime_repository_inmem_impl.h \
+    src/infra/store/osd/inmemory/osd_datetime_repository_inmem_impl.h \
     src/infra/store/osd/inmemory/osd_inertia_repository_inmem_impl.h \
     src/infra/store/osd/inmemory/osd_position_repository_inmem_impl.h \
     src/infra/store/osd/inmemory/osd_waterspeed_repository_inmem_impl.h \
@@ -307,7 +307,6 @@ HEADERS += \
     src/shared/config/base_config.h \
     src/shared/config/configuration.h \
     src/shared/config/gun_cms_config.h \
-    src/shared/config/messaging_serial_config \
     src/shared/config/messaging_serial_config.h \
     src/shared/config/messaging_tcp_config.h \
     src/shared/config/osd_cms_config.h \
@@ -345,13 +344,13 @@ HEADERS += \
     src/usecase/osd/osd_service.h \
     src/usecase/osd/stream/IOSDStream.h \
     src/usecase/osd/stream/osd_stream.h \
+    src/usecase/osd/stream/osd_stream_datetime.h \
     src/usecase/osd/stream/osd_stream_gyro.h \
     src/usecase/osd/stream/osd_stream_position.h \
     src/usecase/osd/stream/osd_stream_waterspeed.h \
     src/usecase/osd/stream/osd_stream_speed.h \
     src/usecase/osd/stream/osd_stream_weather.h \
     src/usecase/osd/stream/osd_stream_wind.h \
-    src/usecase/osd/stream/stream_datetime.h \
     src/usecase/track/stream/arpa/track_arpa_stream.h \
     src/usecase/track/stream/track_stream.h \
     src/usecase/track/stream/track_stream_base.h \

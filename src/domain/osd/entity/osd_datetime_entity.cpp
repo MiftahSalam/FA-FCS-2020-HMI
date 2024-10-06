@@ -1,4 +1,4 @@
-#include "datetime_entity.h"
+#include "osd_datetime_entity.h"
 
 
 DateTimeEntity::DateTimeEntity(const std::string dateTimeLocal, const std::string dateTimeUTC, const std::string &source, const std::string &status, const OSD_MODE &mode)

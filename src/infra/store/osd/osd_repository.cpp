@@ -5,7 +5,7 @@
 #include "src/infra/store/osd/inmemory/osd_speed_repository_inmem_impl.h"
 #include "src/infra/store/osd/inmemory/osd_wind_repository_inmem_impl.h"
 #include "src/infra/store/osd/inmemory/osd_weather_repository_inmem_impl.h"
-#include "src/infra/store/osd/inmemory/datetime_repository_inmem_impl.h"
+#include "src/infra/store/osd/inmemory/osd_datetime_repository_inmem_impl.h"
 
 
 OSDRepository::OSDRepository(QObject *parent)

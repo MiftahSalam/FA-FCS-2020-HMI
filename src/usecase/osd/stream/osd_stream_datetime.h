@@ -1,11 +1,11 @@
-#ifndef STREAM_DATETIME_H
-#define STREAM_DATETIME_H
+#ifndef OSD_STREAM_DATETIME_H
+#define OSD_STREAM_DATETIME_H
 
 #include <QObject>
 #include <QWidget>
 #include <QTimer>
 
-#include "src/domain/osd/repository/datetime_repository.h"
+#include "src/domain/osd/repository/osd_datetime_repository.h"
 #include "src/infra/messaging/tcp/tcp_messaging_wrapper.h"
 #include "src/model/osd/datetime_model.h"
 #include "src/shared/config/messaging_tcp_config.h"
@@ -50,4 +50,4 @@ private:
     void handleError(const QString &err) override;
 };
 
-#endif // STREAM_DATETIME_H
+#endif // OSD_STREAM_DATETIME_H
