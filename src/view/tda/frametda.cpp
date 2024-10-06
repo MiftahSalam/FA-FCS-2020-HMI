@@ -366,6 +366,7 @@ void FrameTDA::setupDI()
 {
     osdRepo = DI::getInstance()->getRepoOSD();
     gunRepo = DI::getInstance()->getRepoGun();
+    appConfig = DI::getInstance()->getConfig()->getAppConfig();
     tdaConfig = DI::getInstance()->getConfig()->getTDAConfig();
     trackRepo = DI::getInstance()->getRepoTrack();
     fireTriangleRepo = DI::getInstance()->getRepoFireTriangle();
@@ -377,28 +378,29 @@ void FrameTDA::setupDI()
 
 void FrameTDA::updateDateTime()
 {
-    //temp
-    // osdRepo->getRepoDateTime()->SetDateTime(DateTimeEntity(
-    //     "2009-01-18T17:00:50+07:00",
-    //     "2009-01-19T03:27:50Z",
-    //     "",
-    //     "",
-    //     OSD_MODE::AUTO
-    //     ));
+    bool is_time_sync = appConfig->getEnableTimeSync();
+    QDateTime timeUtc = QDateTime::currentDateTimeUtc();
+    QDateTime timeLocal = QDateTime::currentDateTime();
 
-    dateTimeUTC = QString::fromStdString(osdRepo->getRepoDateTime()->GetDateTime()->dateTimeUTC());
-    dateTimeLocal = QString::fromStdString(osdRepo->getRepoDateTime()->GetDateTime()->dateTimeLocal());
+    if (is_time_sync) {
+        //temp
+         osdRepo->getRepoDateTime()->SetDateTime(DateTimeEntity(
+             "2009-01-18T17:00:50+07:00",
+             "2009-01-19T03:27:50Z",
+             "",
+             "",
+             OSD_MODE::AUTO
+             ));
 
-    QDateTime timeUtc = QDateTime::fromString(dateTimeUTC, Qt::ISODateWithMs);
-    QDateTime timeLocal = QDateTime::fromString(dateTimeLocal, Qt::ISODateWithMs);
+        dateTimeUTC = QString::fromStdString(osdRepo->getRepoDateTime()->GetDateTime()->dateTimeUTC());
+        dateTimeLocal = QString::fromStdString(osdRepo->getRepoDateTime()->GetDateTime()->dateTimeLocal());
+
+        timeUtc = QDateTime::fromString(dateTimeUTC, Qt::ISODateWithMs);
+        timeLocal = QDateTime::fromString(dateTimeLocal, Qt::ISODateWithMs);
+    }
 
     ui->label_date_time_UTC->setText("UTC:"+timeUtc.toString("dd/MM/yyyy hh:mm:ss"));
     ui->label_date_time_local->setText("Local:"+timeLocal.toString("dd/MM/yyyy hh:mm:ss"));
-
-    // currentDateTime = QDateTime::currentDateTime();
-    // currentDateTime = QDateTime::currentDateTimeUtc();
-    // QString dateTime = currentDateTime.toString("dd/MM/yyyy hh:mm:ss");
-    // ui->label_date_time->setText(dateTime);
 }
 
 void FrameTDA::handleMouseTrackingPolar(QMouseEvent *event)

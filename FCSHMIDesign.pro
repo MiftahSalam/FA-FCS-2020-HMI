@@ -103,6 +103,7 @@ SOURCES += \
     src/shared/common/errors/err_osd_data.cpp \
     src/shared/common/errors/helper_err.cpp \
     src/shared/config/amqp_config.cpp \
+    src/shared/config/app_config.cpp \
     src/shared/config/arpa_config.cpp \
     src/shared/config/configuration.cpp \
     src/shared/config/gun_cms_config.cpp \
@@ -303,6 +304,7 @@ HEADERS += \
     src/shared/common/errors/err_osd_data.h \
     src/shared/common/errors/helper_err.h \
     src/shared/config/amqp_config.h \
+    src/shared/config/app_config.h \
     src/shared/config/arpa_config.h \
     src/shared/config/base_config.h \
     src/shared/config/configuration.h \

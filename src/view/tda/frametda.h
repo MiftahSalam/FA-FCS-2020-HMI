@@ -14,6 +14,7 @@
 
 #include "src/infra/store/osd/osd_repository.h"
 #include "src/infra/store/track/track_repository.h"
+#include "src/shared/config/app_config.h"
 #include "src/shared/config/tda_config.h"
 #include "src/usecase/engagement/weapon_track_assign_service.h"
 #include "src/usecase/weapon_assign/weapon_assign_service.h"
@@ -79,6 +80,7 @@ private:
    WeaponAssignService *waService;
    WeaponTrackAssignService *wtaService;
 
+   AppConfig *appConfig;
    TDAConfig *tdaConfig;
 
    QTimer *timer;

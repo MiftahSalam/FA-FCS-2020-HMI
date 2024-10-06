@@ -8,6 +8,7 @@ Configuration::Configuration()
 {
     osdCmsConfig = OSDCmsConfig::getInstance(COMMON_CONFIG_PATH);
     arpaConfig = ArpaConfig::getInstance(COMMON_CONFIG_PATH);
+    appConfig = AppConfig::getInstance(COMMON_CONFIG_PATH);
     gunCmsConfig = GunCmsConfig::getInstance(COMMON_CONFIG_PATH);
     //    amqpConfig = AMQPConfig::getInstance(COMMON_CONFIG_PATH);
     tcpMessageConfig = MessagingTcpConfig::getInstance(COMMON_CONFIG_PATH);
@@ -49,6 +50,11 @@ MessagingSerialConfig *Configuration::getSerialMessageConfig() const
 TrackWeaponAssignConfig *Configuration::getTrackWeaponAssignCmsConfig() const
 {
     return trackWeaponAssignCmsConfig;
+}
+
+AppConfig *Configuration::getAppConfig() const
+{
+    return appConfig;
 }
 
 // AMQPConfig *Configuration::getAmqpConfig() const

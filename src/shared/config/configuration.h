@@ -2,6 +2,7 @@
 #define CONFIGURATION_H
 
 #include "src/shared/config/amqp_config.h"
+#include "src/shared/config/app_config.h"
 #include "src/shared/config/arpa_config.h"
 #include "src/shared/config/gun_cms_config.h"
 #include "src/shared/config/messaging_serial_config.h"
@@ -31,8 +32,11 @@ public:
 
     TrackWeaponAssignConfig *getTrackWeaponAssignCmsConfig() const;
 
+    AppConfig *getAppConfig() const;
+
 private:
     OSDCmsConfig *osdCmsConfig;
+    AppConfig *appConfig;
     ArpaConfig *arpaConfig;
     GunCmsConfig *gunCmsConfig;
     TrackWeaponAssignConfig *trackWeaponAssignCmsConfig;
@@ -40,10 +44,6 @@ private:
     //    AMQPConfig *amqpConfig;
     MessagingTcpConfig *tcpMessageConfig;
     MessagingSerialConfig *serialMessageConfig;
-
-    // TODO: track assigned messaging config
-
-    // TODO: track engagement messaging config
 
     TDAConfig *tdaConfig;
 };
