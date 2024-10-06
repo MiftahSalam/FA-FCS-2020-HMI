@@ -23,7 +23,8 @@ void StreamDateTime::onDataReceived(QByteArray data)
         QJsonObject respObj = Utils::byteArrayToJsonObject(data);
         DateTimeModel model(respObj["date_time_utc"].toString().toStdString(),respObj["date_time_local"].toString().toStdString());
 
-        qDebug()<<Q_FUNC_INFO<<"time local"<<model.getDateTimeLocal()<<"time UTC"<<model.getDateTimeUTC();
+        qDebug()<<Q_FUNC_INFO<<"time local"<<QString::fromStdString(model.getDateTimeLocal())
+               <<"time UTC"<<QString::fromStdString(model.getDateTimeUTC());
 
         if(check().getCode() == ERROR_NO.first){
             _repoDateTime->SetDateTime(DateTimeEntity(
