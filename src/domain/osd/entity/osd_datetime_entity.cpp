@@ -1,29 +1,29 @@
 #include "osd_datetime_entity.h"
 
 
-DateTimeEntity::DateTimeEntity(const std::string dateTimeLocal, const std::string dateTimeUTC, const std::string &source, const std::string &status, const OSD_MODE &mode)
+OSDDateTimeEntity::OSDDateTimeEntity(const std::string dateTimeLocal, const std::string dateTimeUTC, const std::string &source, const std::string &status, const OSD_MODE &mode)
     :OSDBaseEntity(source, status, mode), _dateTimeLocal(dateTimeLocal), _dateTimeUTC(dateTimeUTC)
 
 {
 
 }
 
-std::string DateTimeEntity::dateTimeLocal() const
+std::string OSDDateTimeEntity::dateTimeLocal() const
 {
     return _dateTimeLocal;
 }
 
-void DateTimeEntity::setDatetimeLocal(const std::string &newDateTimeLocal)
+void OSDDateTimeEntity::setDatetimeLocal(const std::string &newDateTimeLocal)
 {
     _dateTimeLocal = newDateTimeLocal;
 }
 
-std::string DateTimeEntity::dateTimeUTC() const
+std::string OSDDateTimeEntity::dateTimeUTC() const
 {
     return _dateTimeUTC;
 }
 
-void DateTimeEntity::setDateTimeUTC(const std::string &newDateTimeUTC)
+void OSDDateTimeEntity::setDateTimeUTC(const std::string &newDateTimeUTC)
 {
     _dateTimeUTC = newDateTimeUTC;
 }

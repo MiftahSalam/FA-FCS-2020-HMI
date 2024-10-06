@@ -3,10 +3,10 @@
 
 #include "osd_base_entity.h"
 
-class DateTimeEntity: public OSDBaseEntity
+class OSDDateTimeEntity: public OSDBaseEntity
 {
 public:
-    DateTimeEntity(const std::string dateTimeLocal, const std::string dateTimeUTC, const std::string &source, const std::string &status, const OSD_MODE &mode);
+    OSDDateTimeEntity(const std::string dateTimeLocal, const std::string dateTimeUTC, const std::string &source, const std::string &status, const OSD_MODE &mode);
 
     std::string dateTimeLocal() const;
     void setDatetimeLocal(const std::string &newDateTimeLocal);

@@ -23,7 +23,7 @@ public:
     OSDSpeedRepository *getRepoOSDSpeed() const;
     OSDWindRepository *getRepoOSDWind() const;
     OSDWeatherRepository *getRepoOSDWeather() const;
-    DateTimeRepository *getRepoDateTime() const;
+    OSDDateTimeRepository *getRepoDateTime() const;
 
 private:
     OSDPositionRepository *repoOSDPosition;
@@ -32,7 +32,7 @@ private:
     OSDSpeedRepository *repoOSDSpeed;
     OSDWindRepository *repoOSDWind;
     OSDWeatherRepository *repoOSDWeather;
-    DateTimeRepository *repoDateTime;
+    OSDDateTimeRepository *repoDateTime;
 };
 
 #endif // OSDREPOSITORY_H

@@ -17,7 +17,7 @@ OSDRepository::OSDRepository(QObject *parent)
     repoOSDSpeed = OSDSpeedRepositoryInMemImpl::GetInstance();
     repoOSDWind = OSDWindRepositoryInMemImpl::GetInstance();
     repoOSDWeather = OSDWeatherRepositoryInMemImpl::GetInstance();
-    repoDateTime = DateTimeRepositoryInMemImpl::GetInstance();
+    repoDateTime = OSDDateTimeRepositoryInMemImpl::GetInstance();
 }
 
 OSDPositionRepository *OSDRepository::getRepoOSDPosition() const
@@ -50,7 +50,7 @@ OSDWeatherRepository *OSDRepository::getRepoOSDWeather() const
     return repoOSDWeather;
 }
 
-DateTimeRepository *OSDRepository::getRepoDateTime() const
+OSDDateTimeRepository *OSDRepository::getRepoDateTime() const
 {
     return repoDateTime;
 }

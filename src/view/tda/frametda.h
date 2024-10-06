@@ -80,6 +80,7 @@ private:
    WeaponAssignService *waService;
    WeaponTrackAssignService *wtaService;
 
+
    AppConfig *appConfig;
    TDAConfig *tdaConfig;
 

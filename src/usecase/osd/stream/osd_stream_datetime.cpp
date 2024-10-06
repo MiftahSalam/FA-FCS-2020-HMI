@@ -4,20 +4,20 @@
 #include "src/shared/common/errors/err_osd_data.h"
 #include "src/shared/utils/utils.h"
 
-StreamDateTime* StreamDateTime::dateTimeStream = nullptr;
+OSDStreamDateTime* OSDStreamDateTime::dateTimeStream = nullptr;
 
-StreamDateTime::StreamDateTime(TcpMessagingOpts *config, DateTimeRepository *repoDateTime):
+OSDStreamDateTime::OSDStreamDateTime(TcpMessagingOpts *config, OSDDateTimeRepository *repoDateTime):
     cfg(config), _repoDateTime(repoDateTime), currentErr(NoError())
 {
     consumer = new TcpMessagingWrapper(this, config);
-    connect(consumer, &TcpMessagingWrapper::signalForwardMessage, this, &StreamDateTime::onDataReceived);
+    connect(consumer, &TcpMessagingWrapper::signalForwardMessage, this, &OSDStreamDateTime::onDataReceived);
 
     timer = new QTimer(this);
-    connect(timer, &QTimer::timeout, this, &StreamDateTime::periodeUpdate);
+    connect(timer, &QTimer::timeout, this, &OSDStreamDateTime::periodeUpdate);
     timer->start(1000);
 }
 
-void StreamDateTime::onDataReceived(QByteArray data)
+void OSDStreamDateTime::onDataReceived(QByteArray data)
 {
     try {
         QJsonObject respObj = Utils::byteArrayToJsonObject(data);
@@ -27,7 +27,7 @@ void StreamDateTime::onDataReceived(QByteArray data)
                <<"time UTC"<<QString::fromStdString(model.getDateTimeUTC());
 
         if(check().getCode() == ERROR_NO.first){
-            _repoDateTime->SetDateTime(DateTimeEntity(
+            _repoDateTime->SetDateTime(OSDDateTimeEntity(
                 model.getDateTimeLocal(),
                 model.getDateTimeUTC(),
                 respObj["source"].toString().toStdString(),
@@ -46,13 +46,13 @@ void StreamDateTime::onDataReceived(QByteArray data)
     }
 }
 
-void StreamDateTime::periodeUpdate()
+void OSDStreamDateTime::periodeUpdate()
 {
     check();
     qDebug() << Q_FUNC_INFO;
 }
 
-void StreamDateTime::handleError(const QString &err)
+void OSDStreamDateTime::handleError(const QString &err)
 {
     if (err.toStdString().empty()) {
         currentErr = NoError();
@@ -65,7 +65,7 @@ void StreamDateTime::handleError(const QString &err)
     }
 }
 
-StreamDateTime *StreamDateTime::getInstance(TcpMessagingOpts *config, DateTimeRepository *repoDateTime)
+OSDStreamDateTime *OSDStreamDateTime::getInstance(TcpMessagingOpts *config, OSDDateTimeRepository *repoDateTime)
 {
     if (dateTimeStream == nullptr)
     {
@@ -78,12 +78,12 @@ StreamDateTime *StreamDateTime::getInstance(TcpMessagingOpts *config, DateTimeRe
             throw ErrObjectCreation();
         }
 
-        dateTimeStream = new StreamDateTime(config, repoDateTime);
+        dateTimeStream = new OSDStreamDateTime(config, repoDateTime);
     }
     return dateTimeStream;
 }
 
-BaseError StreamDateTime::check()
+BaseError OSDStreamDateTime::check()
 {
     auto connError = consumer->checkConnection();
     if (connError.getCode() != 0) {

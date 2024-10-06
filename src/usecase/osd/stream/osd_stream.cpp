@@ -75,7 +75,7 @@ OSDStream::OSDStream(
         );
 
     TcpMessagingOpts *datetimeStreamVal = config->getInstance("")->getContent().value("date_time");
-    serviceStreamDateTime = StreamDateTime::getInstance(
+    serviceStreamDateTime = OSDStreamDateTime::getInstance(
         datetimeStreamVal,
         repoOSD->getRepoDateTime()
         );
@@ -111,7 +111,7 @@ OSDStreamWeather *OSDStream::getServiceOSDStreamWeather() const
     return serviceOSDStreamWeather;
 }
 
-StreamDateTime *OSDStream::getServiceStreamDateTime() const
+OSDStreamDateTime *OSDStream::getServiceStreamDateTime() const
 {
     return serviceStreamDateTime;
 }

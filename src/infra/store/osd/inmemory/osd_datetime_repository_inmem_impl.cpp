@@ -1,33 +1,33 @@
 #include "osd_datetime_repository_inmem_impl.h"
 
-DateTimeRepositoryInMemImpl* DateTimeRepositoryInMemImpl::instance(nullptr);
+OSDDateTimeRepositoryInMemImpl* OSDDateTimeRepositoryInMemImpl::instance(nullptr);
 
-DateTimeRepository *DateTimeRepositoryInMemImpl::GetInstance()
+OSDDateTimeRepository *OSDDateTimeRepositoryInMemImpl::GetInstance()
 {
     if (instance == nullptr){
-        DateTimeEntity *entity = new DateTimeEntity("","","","", OSD_MODE::AUTO);
-        instance = new DateTimeRepositoryInMemImpl(entity);
+        OSDDateTimeEntity *entity = new OSDDateTimeEntity("","","","", OSD_MODE::AUTO);
+        instance = new OSDDateTimeRepositoryInMemImpl(entity);
     }
 
     return instance;
 }
 
-void DateTimeRepositoryInMemImpl::SetSource(const std::string &source)
+void OSDDateTimeRepositoryInMemImpl::SetSource(const std::string &source)
 {
     _entity->setSource(source);
 }
 
-void DateTimeRepositoryInMemImpl::SetStatus(const std::string &status)
+void OSDDateTimeRepositoryInMemImpl::SetStatus(const std::string &status)
 {
     _entity->setStatus(status);
 }
 
-void DateTimeRepositoryInMemImpl::SetMode(const OSD_MODE &mode)
+void OSDDateTimeRepositoryInMemImpl::SetMode(const OSD_MODE &mode)
 {
 
 }
 
-void DateTimeRepositoryInMemImpl::SetDateTime(const DateTimeEntity &date_time)
+void OSDDateTimeRepositoryInMemImpl::SetDateTime(const OSDDateTimeEntity &date_time)
 {
     _entity->setDatetimeLocal(date_time.dateTimeLocal());
     _entity->setDateTimeUTC(date_time.dateTimeUTC());
@@ -36,12 +36,12 @@ void DateTimeRepositoryInMemImpl::SetDateTime(const DateTimeEntity &date_time)
     _entity->setStatus(date_time.status());
 }
 
-const DateTimeEntity *DateTimeRepositoryInMemImpl::GetDateTime() const
+const OSDDateTimeEntity *OSDDateTimeRepositoryInMemImpl::GetDateTime() const
 {
     return _entity;
 }
 
-DateTimeRepositoryInMemImpl::DateTimeRepositoryInMemImpl(DateTimeEntity *entity)
+OSDDateTimeRepositoryInMemImpl::OSDDateTimeRepositoryInMemImpl(OSDDateTimeEntity *entity)
 {
     _entity = entity;
 }

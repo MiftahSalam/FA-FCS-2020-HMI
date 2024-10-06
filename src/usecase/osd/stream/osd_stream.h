@@ -33,7 +33,7 @@ public:
     OSDStreamSpeed *getServiceOSDStreamSpeed() const;
     OSDStreamWind *getServiceOSDStreamWind() const;
     OSDStreamWeather *getServiceOSDStreamWeather() const;
-    StreamDateTime *getServiceStreamDateTime() const;
+    OSDStreamDateTime *getServiceStreamDateTime() const;
     
 private:
     MessagingTcpConfig *consumerConfig;
@@ -45,7 +45,7 @@ private:
     OSDStreamSpeed *serviceOSDStreamSpeed;
     OSDStreamWind *serviceOSDStreamWind;
     OSDStreamWeather *serviceOSDStreamWeather;
-    StreamDateTime *serviceStreamDateTime;
+    OSDStreamDateTime *serviceStreamDateTime;
 };
 
 #endif // OSDSTREAM_H

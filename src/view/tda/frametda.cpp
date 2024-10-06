@@ -384,7 +384,7 @@ void FrameTDA::updateDateTime()
 
     if (is_time_sync) {
         //temp
-         osdRepo->getRepoDateTime()->SetDateTime(DateTimeEntity(
+         osdRepo->getRepoDateTime()->SetDateTime(OSDDateTimeEntity(
              "2009-01-18T17:00:50+07:00",
              "2009-01-19T03:27:50Z",
              "",

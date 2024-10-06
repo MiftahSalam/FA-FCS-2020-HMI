@@ -4,10 +4,10 @@
 #include "src/domain/osd/entity/osd_datetime_entity.h"
 #include "src/domain/osd/repository/osd_datetime_repository.h"
 
-class DateTimeRepositoryInMemImpl: public DateTimeRepository
+class OSDDateTimeRepositoryInMemImpl: public OSDDateTimeRepository
 {
 public:
-    static DateTimeRepository *GetInstance();
+    static OSDDateTimeRepository *GetInstance();
 
 public:
     void SetSource(const std::string &source) override;
@@ -15,16 +15,16 @@ public:
     void SetMode(const OSD_MODE &mode) override;
 
 public:
-    void SetDateTime(const DateTimeEntity &date_time) override;
-    const DateTimeEntity *GetDateTime() const override;
+    void SetDateTime(const OSDDateTimeEntity &date_time) override;
+    const OSDDateTimeEntity *GetDateTime() const override;
 
 protected:
-    DateTimeRepositoryInMemImpl(DateTimeEntity *entity);
+    OSDDateTimeRepositoryInMemImpl(OSDDateTimeEntity *entity);
 
 private:
-    static DateTimeRepositoryInMemImpl *instance;
+    static OSDDateTimeRepositoryInMemImpl *instance;
 
-    DateTimeEntity *_entity;
+    OSDDateTimeEntity *_entity;
 };
 
 #endif // OSD_DATETIME_REPOSITORY_INMEM_IMPL_H

@@ -11,15 +11,15 @@
 #include "src/shared/config/messaging_tcp_config.h"
 #include "src/usecase/osd/stream/IOSDStream.h"
 
-class StreamDateTime : public QObject, public IOSDStream<DateTimeModel>
+class OSDStreamDateTime : public QObject, public IOSDStream<DateTimeModel>
 {
     Q_OBJECT
 public:
-    StreamDateTime(StreamDateTime &other) = delete;
-    void operator=(const StreamDateTime&) = delete;
-    static StreamDateTime *getInstance(
+    OSDStreamDateTime(OSDStreamDateTime &other) = delete;
+    void operator=(const OSDStreamDateTime&) = delete;
+    static OSDStreamDateTime *getInstance(
         TcpMessagingOpts *config,
-        DateTimeRepository *repoDateTime
+        OSDDateTimeRepository *repoDateTime
         );
 
     BaseError check() override;
@@ -28,9 +28,9 @@ signals:
     void signalDataProcessed(DateTimeModel data) override;
 
 protected:
-    StreamDateTime(
+    OSDStreamDateTime(
         TcpMessagingOpts *config = nullptr,
-        DateTimeRepository *repoDateTime = nullptr
+        OSDDateTimeRepository *repoDateTime = nullptr
         );
 
     QTimer *timer;
@@ -40,10 +40,10 @@ private slots:
     void periodeUpdate();
 
 private:
-    static StreamDateTime *dateTimeStream;
+    static OSDStreamDateTime *dateTimeStream;
     TcpMessagingWrapper *consumer;
     TcpMessagingOpts *cfg;
-    DateTimeRepository *_repoDateTime;
+    OSDDateTimeRepository *_repoDateTime;
 
     BaseError currentErr;
 
