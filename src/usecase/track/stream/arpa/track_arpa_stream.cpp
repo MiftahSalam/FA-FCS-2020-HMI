@@ -72,6 +72,11 @@ void TrackArpaStream::onDataReceived(QByteArray data)
 {
     try {
         QJsonArray trackJsonArray = enhanceJsonParse(data);
+#ifdef USE_LOG4QT
+    logger()->debug()<<Q_FUNC_INFO<<" -> data json array size: "<<trackJsonArray.size();
+#else
+    qDebug()<<Q_FUNC_INFO<<"data json array size"<<trackJsonArray.size();
+#endif
         if (!trackJsonArray.isEmpty()) {
             for (int var = 0; var < trackJsonArray.size(); var++) {
                 QJsonObject respObj = trackJsonArray.at(var).toObject();
@@ -183,6 +188,12 @@ QJsonArray TrackArpaStream::enhanceJsonParse(const QByteArray data)
     int idxTailJson = data.indexOf('}');
     QByteArray bufProcessedData = bufData.mid(idxHeadJson, idxTailJson - idxHeadJson + 1);
 
+#ifdef USE_LOG4QT
+    logger()->debug()<<Q_FUNC_INFO<<" -> bufData: "<<bufData;
+#else
+    qDebug()<<Q_FUNC_INFO<<"bufData"<<bufData;
+#endif
+
     while (bufData.size() > 0 && idxHeadJson >= 0 && idxTailJson > 0)
     {
         try {
@@ -198,12 +209,6 @@ QJsonArray TrackArpaStream::enhanceJsonParse(const QByteArray data)
         }
 
         bufData.remove(idxHeadJson, idxTailJson - idxHeadJson + 1);
-
-#ifdef USE_LOG4QT
-        logger()->debug()<<Q_FUNC_INFO<<" -> bufData: "<<bufData;
-#else
-        qDebug()<<Q_FUNC_INFO<<"bufData"<<bufData;
-#endif
 
         idxHeadJson = bufData.indexOf('{');
         idxTailJson = bufData.indexOf('}');
