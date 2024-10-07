@@ -6,6 +6,13 @@
 #include <QSettings>
 #include <QDir>
 
+#ifdef USE_LOG4QT
+#include <log4qt/logger.h>
+LOG4QT_DECLARE_STATIC_LOGGER(logger, AppConfig)
+#else
+#include <QDebug>
+#endif
+
 const QString CONFIG_ENABLE_TIME_SYNC = "app/time_sync_enable";
 
 AppConfig *AppConfig::config = nullptr;
@@ -22,7 +29,11 @@ AppConfig::~AppConfig()
 
 AppConfig *AppConfig::getInstance(const QString path)
 {
+#ifdef USE_LOG4QT
+    logger()->trace()<<Q_FUNC_INFO<<" -> path; "<<path;
+#else
     qDebug()<<Q_FUNC_INFO<<"path"<<path;
+#endif
 
     if(config == nullptr) {
         if (!QFile::exists(path)) {
