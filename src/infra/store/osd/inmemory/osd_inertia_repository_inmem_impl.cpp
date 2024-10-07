@@ -7,7 +7,6 @@ OSDInertiaRepositoryInMemImpl::OSDInertiaRepositoryInMemImpl(OSDInertiaEntity *e
     _entity = entity;
 }
 
-
 OSDInertiaRepository *OSDInertiaRepositoryInMemImpl::GetInstance()
 {
     if (instance == nullptr) {

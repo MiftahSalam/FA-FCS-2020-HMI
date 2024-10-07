@@ -88,7 +88,7 @@ void FrameTDA::timeOut()
 {
     update();
 
-    setupDateTime();
+    updateDateTime();
 }
 
 void FrameTDA::on_FrameTDA_customContextMenuRequested(const QPoint &pos)
@@ -377,20 +377,45 @@ void FrameTDA::setupDI()
 {
     osdRepo = DI::getInstance()->getRepoOSD();
     gunRepo = DI::getInstance()->getRepoGun();
+    appConfig = DI::getInstance()->getConfig()->getAppConfig();
     tdaConfig = DI::getInstance()->getConfig()->getTDAConfig();
     trackRepo = DI::getInstance()->getRepoTrack();
     fireTriangleRepo = DI::getInstance()->getRepoFireTriangle();
+    dtStream = DI::getInstance()->getServiceOSDStream()->getServiceStreamDateTime();
     waService = DI::getInstance()->getServiceWeaponAssign();
     wtaService = DI::getInstance()->getServiceWeaponTrackAssign();
 
     tdaScale = tdaConfig->getZoomScale();
 }
 
-void FrameTDA::setupDateTime()
+void FrameTDA::updateDateTime()
 {
-    currentDateTime = QDateTime::currentDateTime();
-    QString dateTime = currentDateTime.toString("dd/MM/yyyy hh:mm:ss");
-    ui->label_date_time->setText(dateTime);
+    bool is_time_sync = appConfig->getEnableTimeSync();
+    QDateTime timeUtc = QDateTime::currentDateTimeUtc();
+    QDateTime timeLocal = QDateTime::currentDateTime();
+
+    if (is_time_sync) {
+        long long dateTimeUTC =osdRepo->getRepoDateTime()->GetDateTime()->dateTimeProcessed();
+        long long dateTimeLocal =osdRepo->getRepoDateTime()->GetDateTime()->dateTimeLocalProcessed();
+
+        timeUtc = QDateTime::fromMSecsSinceEpoch(dateTimeUTC);
+        timeLocal = QDateTime::fromMSecsSinceEpoch(dateTimeLocal);
+
+        auto curError = dtStream->check();
+        if (curError.getCode() != ERROR_NO.first) {
+            ui->label_date_time_UTC->setStyleSheet(COLOR_FAILED_STYLESHEET);
+            ui->label_date_time_local->setStyleSheet(COLOR_FAILED_STYLESHEET);
+        } else {
+            ui->label_date_time_UTC->setStyleSheet(COLOR_MANUAL_STYLESHEET);
+            ui->label_date_time_local->setStyleSheet(COLOR_MANUAL_STYLESHEET);
+        }
+    } else {
+        ui->label_date_time_UTC->setStyleSheet(COLOR_MANUAL_STYLESHEET);
+        ui->label_date_time_local->setStyleSheet(COLOR_MANUAL_STYLESHEET);
+    }
+
+    ui->label_date_time_UTC->setText("UTC:"+timeUtc.toString("dd/MM/yyyy hh:mm:ss"));
+    ui->label_date_time_local->setText("Local:"+timeLocal.toString("dd/MM/yyyy hh:mm:ss"));
 }
 
 void FrameTDA::handleMouseTrackingPolar(QMouseEvent *event)

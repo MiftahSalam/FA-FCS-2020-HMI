@@ -11,6 +11,7 @@
 #include "src/usecase/osd/stream/osd_stream_speed.h"
 #include "src/usecase/osd/stream/osd_stream_wind.h"
 #include "src/usecase/osd/stream/osd_stream_weather.h"
+#include "src/usecase/osd/stream/osd_stream_datetime.h"
 
 #include <QObject>
 
@@ -32,6 +33,7 @@ public:
     OSDStreamSpeed *getServiceOSDStreamSpeed() const;
     OSDStreamWind *getServiceOSDStreamWind() const;
     OSDStreamWeather *getServiceOSDStreamWeather() const;
+    OSDStreamDateTime *getServiceStreamDateTime() const;
     
 private:
     MessagingTcpConfig *consumerConfig;
@@ -43,6 +45,7 @@ private:
     OSDStreamSpeed *serviceOSDStreamSpeed;
     OSDStreamWind *serviceOSDStreamWind;
     OSDStreamWeather *serviceOSDStreamWeather;
+    OSDStreamDateTime *serviceStreamDateTime;
 };
 
 #endif // OSDSTREAM_H

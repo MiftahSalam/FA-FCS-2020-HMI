@@ -7,6 +7,7 @@
 #include "src/domain/osd/repository/osd_speed_repository.h"
 #include "src/domain/osd/repository/osd_wind_repository.h"
 #include "src/domain/osd/repository/osd_weather_repository.h"
+#include "src/domain/osd/repository/osd_datetime_repository.h"
 
 #include <QObject>
 
@@ -22,6 +23,7 @@ public:
     OSDSpeedRepository *getRepoOSDSpeed() const;
     OSDWindRepository *getRepoOSDWind() const;
     OSDWeatherRepository *getRepoOSDWeather() const;
+    OSDDateTimeRepository *getRepoDateTime() const;
 
 private:
     OSDPositionRepository *repoOSDPosition;
@@ -30,6 +32,7 @@ private:
     OSDSpeedRepository *repoOSDSpeed;
     OSDWindRepository *repoOSDWind;
     OSDWeatherRepository *repoOSDWeather;
+    OSDDateTimeRepository *repoDateTime;
 };
 
 #endif // OSDREPOSITORY_H
