@@ -47,7 +47,7 @@
       <widget class="QLabel" name="label_date_time_UTC">
        <property name="font">
         <font>
-         <pointsize>13</pointsize>
+         <pointsize>11</pointsize>
         </font>
        </property>
        <property name="styleSheet">
@@ -79,7 +79,7 @@
       <widget class="QLabel" name="label_date_time_local">
        <property name="font">
         <font>
-         <pointsize>13</pointsize>
+         <pointsize>11</pointsize>
         </font>
        </property>
        <property name="styleSheet">
