@@ -40,11 +40,11 @@ void OSDDateTimeRepositoryInMemImpl::SetDateTime(const OSDDateTimeEntity &date_t
     _entity->setStatus(date_time.status());
     _entity->setDateTimeLocalProcessed(
                 QDateTime::fromString(
-                    QString::fromStdString(date_time.dateTimeLocal()), Qt::ISODateWithMs).toMSecsSinceEpoch()
+                    QString::fromStdString(date_time.dateTimeLocal()), "dd-MM-yyyy hh:mm:ss").toMSecsSinceEpoch()
                 );
     _entity->setDateTimeProcessed(
                 QDateTime::fromString(
-                    QString::fromStdString(date_time.dateTimeUTC()), Qt::ISODateWithMs).toMSecsSinceEpoch()
+                    QString::fromStdString(date_time.dateTimeUTC()), "dd-MM-yyyy hh:mm:ss").toMSecsSinceEpoch()
                 );
 }
 
