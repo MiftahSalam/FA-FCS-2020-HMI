@@ -120,8 +120,8 @@ void FrameGunDataMonitoring::onStreamBarrelReceive(GunFeedbackBarrelModel model)
         return;
     }
 
-    ui->labelGunStatAz->setText(QString::number(model.getAzimuth()));
-    ui->labelGunStatEl->setText(QString::number(model.getElevation()));
+    ui->labelGunStatAz->setText(QString::number(model.getAzimuth(),'f', 2));
+    ui->labelGunStatEl->setText(QString::number(model.getElevation(),'f', 2));
 
     auto gunBarrelError = gunBarrelStream->check();
     if (gunBarrelError.getCode() == ERROR_NO.first){
