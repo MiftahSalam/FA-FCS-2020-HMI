@@ -208,8 +208,10 @@ bool WeaponTrackAssignService::isHeadingSpeedValid()
 {
     bool is_inertia_auto_mode = !_cmsOSDInputMode->getDataMode().getInersia();
     bool is_speed_auto_mode = !_cmsOSDInputMode->getDataMode().getSpeed();
+    int inertia_err_code = _streamInertia->check().getCode();
 
-    if (is_inertia_auto_mode && _streamInertia->check().getCode() != 0) {
+    if (is_inertia_auto_mode &&
+            inertia_err_code != 0 && inertia_err_code != ERROR_CODE_OSD_DATA_PARTIALLY_INVALID.first) {
         return false;
     }
 
