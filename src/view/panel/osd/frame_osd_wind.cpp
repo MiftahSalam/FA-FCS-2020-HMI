@@ -290,7 +290,13 @@ bool FrameOSDWind::validateInput()
     QString _speed = ui->inputSpeed->getCurrentValue();
     float value_speed = _speed.toFloat(&ok);
 
-    if ((value_speed < -150) || (value_speed > 150) || (!ok))
+    if (!ok)
+    {
+        QMessageBox::critical(this, "Fatal Error Wind Speed", "Invalid input format.\nValid input : -150 to 150");
+        return false;
+    }
+
+    if ((value_speed < -150) || (value_speed > 150))
     {
         QMessageBox::critical(this, "Fatal Error Wind Speed", "Invalid input : out of range.\nValid input : -150 to 150");
         return false;
@@ -299,7 +305,13 @@ bool FrameOSDWind::validateInput()
     QString _direction = ui->inputDirection->getCurrentValue();
     float value_direction = _direction.toFloat(&ok);
 
-    if ((value_direction < 0) || (value_direction > 360) || (!ok))
+    if (!ok)
+    {
+        QMessageBox::critical(this, "Fatal Error Wind Direction", "Invalid input format.\nValid input : 0 to 360");
+        return false;
+    }
+
+    if ((value_direction < 0) || (value_direction > 360))
     {
         QMessageBox::critical(this, "Fatal Error Wind Direction", "Invalid input : out of range.\nValid input : 0 to 360");
         return false;
