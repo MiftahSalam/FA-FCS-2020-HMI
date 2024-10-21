@@ -121,7 +121,7 @@
       </spacer>
      </item>
      <item>
-      <widget class="QPushButton" name="pushButton_2">
+      <widget class="QPushButton" name="buttonZoomOut">
        <property name="maximumSize">
         <size>
          <width>50</width>
@@ -134,7 +134,7 @@
       </widget>
      </item>
      <item>
-      <widget class="QPushButton" name="pushButton">
+      <widget class="QPushButton" name="buttonZoomIn">
        <property name="maximumSize">
         <size>
          <width>50</width>
