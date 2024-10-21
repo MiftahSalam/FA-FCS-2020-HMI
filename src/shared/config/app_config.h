@@ -15,6 +15,9 @@ public:
     bool getEnableTimeSync() const;
     void setEnableTimeSync(bool newEnableTimeSync);
 
+    QString getTimeDislayFormat() const;
+    void setTimeDislayFormat(const QString &newTimeDislayFormat);
+
 protected:
     AppConfig();
 
@@ -22,6 +25,7 @@ private:
     static AppConfig *config;
 
     bool enableTimeSync;
+    QString timeDislayFormat;
 
     // BaseConfig interface
     void setup(const QString path) override;

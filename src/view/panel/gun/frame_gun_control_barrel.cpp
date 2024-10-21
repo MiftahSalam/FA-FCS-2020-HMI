@@ -222,9 +222,9 @@ bool FrameGunControlBarrel::validateInput()
     QString elevation = ui->inputElevation->getCurrentValue();
     float valueEl = elevation.toFloat(&ok);
 
-    if ((valueEl < -20) || (valueEl > 80) || (!ok))
+    if ((valueEl < 0) || (valueEl > 80) || (!ok))
     {
-        QMessageBox::critical(this, "Fatal Error Barrel Control", "Invalid elevation input : out of range.\nValid input : -20 to 80");
+        QMessageBox::critical(this, "Fatal Error Barrel Control", "Invalid elevation input : out of range.\nValid input : 0 to 80");
         return false;
     }
 

@@ -391,6 +391,7 @@ void FrameTDA::setupDI()
 void FrameTDA::updateDateTime()
 {
     bool is_time_sync = appConfig->getEnableTimeSync();
+    QString time_format = appConfig->getTimeDislayFormat();
     QDateTime timeUtc = QDateTime::currentDateTimeUtc();
     QDateTime timeLocal = QDateTime::currentDateTime();
 
@@ -414,8 +415,8 @@ void FrameTDA::updateDateTime()
         ui->label_date_time_local->setStyleSheet(COLOR_MANUAL_STYLESHEET);
     }
 
-    ui->label_date_time_UTC->setText("UTC:"+timeUtc.toString("dd/MM/yyyy hh:mm:ss"));
-    ui->label_date_time_local->setText("Local:"+timeLocal.toString("dd/MM/yyyy hh:mm:ss"));
+    ui->label_date_time_UTC->setText("UTC: "+timeUtc.toString(time_format));
+    ui->label_date_time_local->setText("Local: "+timeLocal.toString(time_format));
 }
 
 void FrameTDA::handleMouseTrackingPolar(QMouseEvent *event)
