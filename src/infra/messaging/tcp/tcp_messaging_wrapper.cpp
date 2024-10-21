@@ -40,6 +40,15 @@ BaseError TcpMessagingWrapper::checkConnection()
     if (consumer->state() != QTcpSocket::ConnectedState) {
         return ErrMessagingNotConnected();
     } else if (deltaHB > config->timeout) {
+        if (deltaHB > 5 * config->timeout) {
+            timestampHeartBeat = now;
+            consumer->disconnectFromHost();
+#ifdef USE_LOG4QT
+            logger()->info()<<Q_FUNC_INFO<<" reconnecting to ip: "<<config->ip<<", port: "<<config->port;
+#else
+            qDebug<<Q_FUNC_INFO<<" reconnecting to ip: "<<config->ip<<", port: "<<config->port;
+#endif
+        }
         return ErrMessagingDataNoData();
     } else if (deltaDelay > config->timeout) {
         return ErrMessagingDataInvalidFormat();
