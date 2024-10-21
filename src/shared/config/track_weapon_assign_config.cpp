@@ -13,6 +13,7 @@ LOG4QT_DECLARE_STATIC_LOGGER(logger, TrackWeaponAssignConfig)
 #endif
 
 const QString CONFIG_ENGAGE_CMS_ASSIGN_URL = "engagement/cms/assign/url";
+const QString CONFIG_ENGAGE_CMS_ASSIGN_HB_URL = "engagement/cms/assign_heart_beat/url";
 const QString CONFIG_ENGAGE_CMS_RESET_ASSIGN_URL = "engagement/cms/reset-assign/url";
 const QString CONFIG_ENGAGE_CMS_CORRECTION_URL = "engagement/cms/correction/url";
 
@@ -21,6 +22,11 @@ TrackWeaponAssignConfig* TrackWeaponAssignConfig::config = nullptr;
 TrackWeaponAssignConfig::TrackWeaponAssignConfig()
 {
 
+}
+
+QString TrackWeaponAssignConfig::getAssignHBUrl() const
+{
+    return assignHBUrl;
 }
 
 TrackWeaponAssignConfig *TrackWeaponAssignConfig::getInstance(const QString path)
@@ -63,15 +69,18 @@ void TrackWeaponAssignConfig::setup(const QString path)
     QSettings configFile(path,QSettings::IniFormat);
 
     assignUrl = configFile.value(CONFIG_ENGAGE_CMS_ASSIGN_URL, "").toString();
+    assignHBUrl = configFile.value(CONFIG_ENGAGE_CMS_ASSIGN_HB_URL, "").toString();
     resetAssignUrl = configFile.value(CONFIG_ENGAGE_CMS_RESET_ASSIGN_URL, "").toString();
     engageCorrectionUrl = configFile.value(CONFIG_ENGAGE_CMS_CORRECTION_URL, "").toString();
 
 #ifdef USE_LOG4QT
     logger()->debug()<<Q_FUNC_INFO<<" -> assignUrl: "<<assignUrl;
+    logger()->debug()<<Q_FUNC_INFO<<" -> assignHBUrl: "<<assignHBUrl;
     logger()->debug()<<Q_FUNC_INFO<<" -> resetAssignUrl: "<<resetAssignUrl;
     logger()->debug()<<Q_FUNC_INFO<<" -> engageCorrectionUrl: "<<engageCorrectionUrl;
 #else
     qDebug()<<Q_FUNC_INFO<<"assignUrl"<<assignUrl;
+    qDebug()<<Q_FUNC_INFO<<"assignHBUrl"<<assignHBUrl;
     qDebug()<<Q_FUNC_INFO<<"resetAssignUrl"<<resetAssignUrl;
     qDebug()<<Q_FUNC_INFO<<"engageCorrectionUrl"<<engageCorrectionUrl;
 #endif
