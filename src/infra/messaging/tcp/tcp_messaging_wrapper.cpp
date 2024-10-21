@@ -44,9 +44,9 @@ BaseError TcpMessagingWrapper::checkConnection()
             timestampHeartBeat = now;
             consumer->disconnectFromHost();
 #ifdef USE_LOG4QT
-            logger()->info()<<Q_FUNC_INFO<<" reconnecting to ip: "<<config->ip<<", port: "<<config->port;
+            logger()->debug()<<Q_FUNC_INFO<<" reconnecting to ip: "<<config->ip<<", port: "<<config->port;
 #else
-            qDebug<<Q_FUNC_INFO<<" reconnecting to ip: "<<config->ip<<", port: "<<config->port;
+            qDebug()<<Q_FUNC_INFO<<" reconnecting to ip: "<<config->ip<<", port: "<<config->port;
 #endif
         }
         return ErrMessagingDataNoData();
