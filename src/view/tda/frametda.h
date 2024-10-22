@@ -54,6 +54,8 @@ private slots:
 
     void on_buttonZoomIn_clicked();
 
+    void on_buttonZoomOut_clicked();
+
 signals:
     void signalOnCostumContextMenuRequest(const QPoint &pos);
 

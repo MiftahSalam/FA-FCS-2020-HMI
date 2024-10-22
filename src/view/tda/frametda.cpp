@@ -524,3 +524,39 @@ void FrameTDA::on_buttonZoomIn_clicked()
     update();
 }
 
+
+void FrameTDA::on_buttonZoomOut_clicked()
+{
+    QString _zoomScale = QString::number(tdaScale);
+    cur_checked_zoom_scale = zoomString2Scale(_zoomScale);
+
+    if (cur_checked_zoom_scale == 8)
+        return;
+
+    cur_checked_zoom_scale = cur_checked_zoom_scale + 1;
+
+    zoomScale zoom = zoomInt2Scale(cur_checked_zoom_scale);
+    QString s_tdaScale = zoomScale2String(zoom);
+    tdaScale = s_tdaScale.remove(" NM").toDouble();
+    tdaConfig->setZoomScale(tdaScale);
+
+    for (int i = 0; i < Z_TOTAL; i++)
+    {
+        ZoomAction[i]->setChecked(false);
+    }
+
+    ZoomAction[cur_checked_zoom_scale]->setChecked(true);
+    ui->label_tdascale->setText(QString::number(tdaScale));
+
+    foreach (auto obj, objectItems)
+    {
+        TDAZoomableObjectBase *objZoom = dynamic_cast<TDAZoomableObjectBase *>(obj);
+        if (objZoom)
+        {
+            objZoom->OnZoom(tdaScale);
+        }
+    }
+
+    update();
+}
+
