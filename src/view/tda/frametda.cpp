@@ -172,7 +172,7 @@ void FrameTDA::onZoomChange()
     ZoomAction[cur_checked_zoom_scale]->setChecked(true);
     tdaScale = ZoomAction[cur_checked_zoom_scale]->text().remove(" NM").toDouble();
     tdaConfig->setZoomScale(tdaScale);
-    ui->label_tdascale->setText(QString::number(tdaScale));
+    ui->label_tdascale->setText(QString::number(tdaScale)+" NM");
 
     foreach (auto obj, objectItems)
     {
@@ -375,7 +375,7 @@ void FrameTDA::setupTdaObjects()
                 tdaConfig);
 
     objectItems << compass << tracksObject << headingMarker << gunBarrel << gunCoverage << fireTriangle;
-    ui->label_tdascale->setText(QString::number(tdaScale));
+    ui->label_tdascale->setText(QString::number(tdaScale)+" NM");
 }
 
 void FrameTDA::setupDI()
@@ -510,7 +510,7 @@ void FrameTDA::on_buttonZoomIn_clicked()
     }
 
     ZoomAction[cur_checked_zoom_scale]->setChecked(true);
-    ui->label_tdascale->setText(QString::number(tdaScale));
+    ui->label_tdascale->setText(QString::number(tdaScale)+" NM");
 
     foreach (auto obj, objectItems)
     {
@@ -546,7 +546,7 @@ void FrameTDA::on_buttonZoomOut_clicked()
     }
 
     ZoomAction[cur_checked_zoom_scale]->setChecked(true);
-    ui->label_tdascale->setText(QString::number(tdaScale));
+    ui->label_tdascale->setText(QString::number(tdaScale)+" NM");
 
     foreach (auto obj, objectItems)
     {
