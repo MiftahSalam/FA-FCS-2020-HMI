@@ -14,6 +14,7 @@ public:
     // TrackRepositoryPublisher interface
     void AddListener(TrackRepositoryListener *listener) override;
     void RemoveListener(TrackRepositoryListener *listener) override;
+    std::list<TrackRepositoryListener*> GetListeners() override;
 
     // TrackBaseRepository interface
     void Insert(const TrackBaseEntity &track) override;

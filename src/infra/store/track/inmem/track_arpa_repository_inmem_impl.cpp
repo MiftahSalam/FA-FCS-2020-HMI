@@ -106,3 +106,8 @@ void TrackArpaRepositoryInMemImpl::RemoveListener(TrackRepositoryListener *liste
 {
     listeners.removeAll(listener);
 }
+
+std::list<TrackRepositoryListener *> TrackArpaRepositoryInMemImpl::GetListeners()
+{
+    return std::list<TrackRepositoryListener *>( listeners.begin(), listeners.end());
+}

@@ -10,6 +10,7 @@ public:
     virtual void OnTracksAdded(std::list<TrackBaseEntity*> tnList) = 0;
     virtual void OnTracksRemoved(std::list<int> tnIdList) = 0;
     virtual void OnTrackPropertyChanged(int tn, TrackBaseEntity* track) = 0;
+    virtual void OnTrackSelectedChanged(int tn) = 0;
 };
 
 #endif // TRACK_REPOSITORY_LISTENER_H

@@ -70,6 +70,11 @@ void FrameTrackEngage::OnTrackPropertyChanged(int tn, TrackBaseEntity *track)
     Q_UNUSED(track);
 }
 
+void FrameTrackEngage::OnTrackSelectedChanged(int tn)
+{
+    Q_UNUSED(tn);
+}
+
 void FrameTrackEngage::resetMode()
 {
     QString weapon = ui->comboBoxTrackEngWeapon->currentText();

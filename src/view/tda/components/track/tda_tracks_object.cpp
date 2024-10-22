@@ -70,6 +70,20 @@ void TDATracksObject::OnZoom(float range)
     }
 }
 
+void TDATracksObject::OnTrackSelectedChange(int tn)
+{
+    const TrackBaseEntity *findTrack = arpaRepo->FindOne(tn);
+    if (findTrack)
+    {
+        // add this to listener
+        TrackRepositoryPublisher *publisher = dynamic_cast<TrackRepositoryPublisher *>(arpaRepo);
+        std::list<TrackRepositoryListener*> listeners = publisher->GetListeners();
+        foreach (TrackRepositoryListener *listener, listeners) {
+            listener->OnTrackSelectedChanged(tn);
+        }
+    }
+}
+
 void TDATracksObject::OnIdentityChange(int tn, TrackUtils::Identity newIdentity)
 {
     const TrackBaseEntity *findTrack = arpaRepo->FindOne(tn);
@@ -112,6 +126,7 @@ void TDATracksObject::OnWeaponAssignment(BaseResponse<TrackAssignResponse> resp,
 
 void TDATracksObject::onAssignModeChange(const QString &weapon, const WeaponAssign::WeaponAssignMode &mode)
 {
+    Q_UNUSED(weapon);
     if (mode == WeaponAssign::NONE) {
         TdaTrack *findTrack = trackObjListMap.value(currAssignedTrack, nullptr);
         if (findTrack)
@@ -167,10 +182,17 @@ void TDATracksObject::OnTrackPropertyChanged(int tn, TrackBaseEntity *track)
         findTrack->move(cartesian);
     }
 }
+
+void TDATracksObject::OnTrackSelectedChanged(int tn)
+{
+    Q_UNUSED(tn);
+}
+
 void TDATracksObject::generateTrackUI(TrackBaseEntity *newTrack)
 {
     TdaTrack *tr = new TdaTrack(parentWidget, TRACK_WIDGET_SIZE);
     connect(tr, &TdaTrack::identityChange_Signal, this, &TDATracksObject::OnIdentityChange);
+    connect(tr, &TdaTrack::trackSelected_Signal, this, &TDATracksObject::OnTrackSelectedChange);
 
     tr->buildUI(entityToTrackParam(newTrack));
     QPoint cartesian = Utils::polar2Cartesian(
