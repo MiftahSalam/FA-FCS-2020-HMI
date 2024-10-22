@@ -111,6 +111,11 @@ void GunManagerService::setStatusSingleShot(bool on)
     _statusService->setStatusSingleShot(on);
 }
 
+bool GunManagerService::getStatusSingleShot() const
+{
+   return  _statusService->getCurrentStatus()->single_shot();
+}
+
 void GunManagerService::setStatusFire(bool on)
 {
     _statusService->setStatusFire(on);
