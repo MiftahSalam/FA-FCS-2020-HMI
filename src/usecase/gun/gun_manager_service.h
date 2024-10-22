@@ -47,6 +47,7 @@ public:
     void resetStatus();
     void setStatusMount(bool on);
     void setStatusSingleShot(bool on);
+    bool getStatusSingleShot() const;
     void setStatusFire(bool on);
     void setStatusProxFuze(bool on);
     void setStatusSiren(bool on);

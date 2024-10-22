@@ -8,7 +8,7 @@ LOG4QT_DECLARE_STATIC_LOGGER(logger, GunFiringService)
 #include <QDebug>
 #endif
 
-const QString FIRE_CMD_TEMPLATE = "$FIRE,%1*HH\r\n";
+const QString FIRE_CMD_TEMPLATE = "$FIRE,%1,%2*HH\r\n";
 
 GunFiringService *GunFiringService::instance = nullptr;
 
@@ -111,17 +111,18 @@ void GunFiringService::onGunModeChange(BaseResponse<GunModeBarrelResponse> resp,
 
 void GunFiringService::OnTimeout()
 {
+    QString single = _gunService->getStatusSingleShot() ? "1" : "0";
     foreach (auto w, _weapons) {
         auto port = firingPorts.value(w);
 
         port->checkConnection();
 
         if (_weaponsOpenFire.contains(w)) {
-            port->sendMessage(FIRE_CMD_TEMPLATE.arg("1").toUtf8());
+            port->sendMessage(FIRE_CMD_TEMPLATE.arg("1").arg(single).toUtf8());
             //            port->sendActivateButtonMessage(FIRE_CMD_TEMPLATE.arg("1").toUtf8());
         } else {
             //            port->sendActivateButtonMessage(FIRE_CMD_TEMPLATE.arg("0").toUtf8());
-            port->sendMessage(FIRE_CMD_TEMPLATE.arg("0").toUtf8());
+            port->sendMessage(FIRE_CMD_TEMPLATE.arg("0").arg(single).toUtf8());
         }
     }
 }
