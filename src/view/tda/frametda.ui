@@ -121,6 +121,13 @@
       </spacer>
      </item>
      <item>
+      <widget class="QLabel" name="label_tdascale">
+       <property name="text">
+        <string>TextLabel</string>
+       </property>
+      </widget>
+     </item>
+     <item>
       <widget class="QPushButton" name="buttonZoomOut">
        <property name="maximumSize">
         <size>

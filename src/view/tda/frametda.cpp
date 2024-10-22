@@ -89,6 +89,9 @@ void FrameTDA::timeOut()
     update();
 
     updateDateTime();
+
+    //temp
+
 }
 
 void FrameTDA::on_FrameTDA_customContextMenuRequested(const QPoint &pos)
@@ -169,6 +172,7 @@ void FrameTDA::onZoomChange()
     ZoomAction[cur_checked_zoom_scale]->setChecked(true);
     tdaScale = ZoomAction[cur_checked_zoom_scale]->text().remove(" NM").toDouble();
     tdaConfig->setZoomScale(tdaScale);
+    ui->label_tdascale->setText(QString::number(tdaScale));
 
     foreach (auto obj, objectItems)
     {
@@ -371,6 +375,7 @@ void FrameTDA::setupTdaObjects()
                 tdaConfig);
 
     objectItems << compass << tracksObject << headingMarker << gunBarrel << gunCoverage << fireTriangle;
+    ui->label_tdascale->setText(QString::number(tdaScale));
 }
 
 void FrameTDA::setupDI()
@@ -494,24 +499,28 @@ void FrameTDA::on_buttonZoomIn_clicked()
 
     cur_checked_zoom_scale = cur_checked_zoom_scale - 1;
 
-    // onZoomChange();
-
     zoomScale zoom = zoomInt2Scale(cur_checked_zoom_scale);
     QString s_tdaScale = zoomScale2String(zoom);
     tdaScale = s_tdaScale.remove(" NM").toDouble();
+    tdaConfig->setZoomScale(tdaScale);
 
-    // tdaConfig->setZoomScale(tdaScale);
-    // tdaConfig->saveTDAConfig();
+    for (int i = 0; i < Z_TOTAL; i++)
+    {
+        ZoomAction[i]->setChecked(false);
+    }
 
-    // foreach (auto obj, objectItems)
-    // {
-    //     TDAZoomableObjectBase *objZoom = dynamic_cast<TDAZoomableObjectBase *>(obj);
-    //     if (objZoom)
-    //     {
-    //         objZoom->OnZoom(tdaScale);
-    //     }
-    // }
+    ZoomAction[cur_checked_zoom_scale]->setChecked(true);
+    ui->label_tdascale->setText(QString::number(tdaScale));
 
-    // update();
+    foreach (auto obj, objectItems)
+    {
+        TDAZoomableObjectBase *objZoom = dynamic_cast<TDAZoomableObjectBase *>(obj);
+        if (objZoom)
+        {
+            objZoom->OnZoom(tdaScale);
+        }
+    }
+
+    update();
 }
 
