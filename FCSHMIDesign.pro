@@ -166,6 +166,7 @@ SOURCES += \
     src/view/panel/osd/frame_osd_wind.cpp \
     src/view/panel/osd/frameosd.cpp \
     src/view/panel/wap/frame_engage_data.cpp \
+    src/view/panel/wap/frame_track_selected.cpp \
     src/view/panel/wap/framewap.cpp \
     src/view/panel/wap/frame_gun_correction.cpp \
     src/view/panel/wap/frame_track_engage.cpp \
@@ -375,6 +376,7 @@ HEADERS += \
     src/view/panel/osd/frame_osd_wind.h \
     src/view/panel/osd/frameosd.h \
     src/view/panel/wap/frame_engage_data.h \
+    src/view/panel/wap/frame_track_selected.h \
     src/view/panel/wap/framewap.h \
     src/view/panel/wap/frame_gun_correction.h \
     src/view/panel/wap/frame_track_engage.h \
@@ -416,6 +418,7 @@ FORMS += \
     src/view/panel/osd/frame_osd_wind.ui \
     src/view/panel/osd/frameosd.ui \
     src/view/panel/wap/frame_engage_data.ui \
+    src/view/panel/wap/frame_track_selected.ui \
     src/view/panel/wap/framewap.ui \
     src/view/panel/wap/frame_gun_correction.ui \
     src/view/panel/wap/frame_track_engage.ui \
