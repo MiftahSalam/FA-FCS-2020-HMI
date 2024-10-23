@@ -121,6 +121,10 @@ void TdaTrack::mousePressEvent(QMouseEvent *event)
         // menu->addMenu(desigSubMenu);
         menu->exec(event->globalPos());
     }
+    else if (event->button() == Qt::LeftButton)
+    {
+        emit trackSelected_Signal(trackData->getTn());
+    }
 }
 
 void TdaTrack::identityChange()
