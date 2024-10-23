@@ -71,6 +71,11 @@ void FrameTrackSelected::OnTrackSelectedChanged(int tn)
     }
 }
 
+void FrameTrackSelected::OnTrackDoubleClicked(int tn)
+{
+    OnTrackSelectedChanged(tn);
+}
+
 void FrameTrackSelected::on_pushButtonClear_clicked()
 {
     currentTrackSelected = -1;

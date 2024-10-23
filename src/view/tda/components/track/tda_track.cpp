@@ -127,6 +127,14 @@ void TdaTrack::mousePressEvent(QMouseEvent *event)
     }
 }
 
+void TdaTrack::mouseDoubleClickEvent(QMouseEvent *event)
+{
+    if (event->button() == Qt::LeftButton)
+    {
+        emit trackDoubleClicked_Signal(trackData->getTn());
+    }
+}
+
 void TdaTrack::identityChange()
 {
     for(int i=0;i<TrackUtils::IDENTITY_COUNT;i++)

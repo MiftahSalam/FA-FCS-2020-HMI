@@ -29,6 +29,7 @@ public:
 signals:
     void identityChange_Signal(int tn,TrackUtils::Identity identity);
     void trackSelected_Signal(int tn);
+    void trackDoubleClicked_Signal(int tn);
 //    void envChangeSignal(int tn,TrackUtils::Environment identity);
 //    void desig_request_signal(int tn,bool desig,QString desig_mode);
 
@@ -43,6 +44,7 @@ private slots:
 
 protected:
     void mousePressEvent(QMouseEvent *event) override;
+    void mouseDoubleClickEvent(QMouseEvent *event) override;
 
 private:    
     TdaTrackIcon *trackIconLabel;
