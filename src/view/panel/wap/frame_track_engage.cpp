@@ -77,7 +77,30 @@ void FrameTrackEngage::OnTrackSelectedChanged(int tn)
 
 void FrameTrackEngage::OnTrackDoubleClicked(int tn)
 {
-    Q_UNUSED(tn);
+    auto curMode = _gunService->getBarrelMode();
+    if (curMode != GunBarrelModeEntity::AUTO) {
+        QMessageBox::warning(this, "Warning Track Assign Control", QString("Failed to assign track. Gun not in auto mode"));
+        return;
+    }
+
+    QString weapon = ui->comboBoxTrackEngWeapon->currentText();
+    if (weapon == "-") {
+        QMessageBox::warning(this, "Warning Track Assign Control", QString("Failed to assign track. No weapon selected"));
+        return;
+    }
+
+    auto curWaMode = _waService->GetAssignment(weapon);
+    if (curWaMode->getMode() == WeaponAssign::NONE) {
+        QMessageBox::warning(this, "Warning Track Assign Control", QString("Failed to assign track. Weapon not assigned yet"));
+        return;
+    }
+
+    int idx = ui->comboBoxTrackEngTN->findText(QString::number(tn));
+    if (idx > 0) {
+        ui->comboBoxTrackEngTN->setCurrentIndex(idx);
+    } else {
+        QMessageBox::warning(this, "Warning Track Assign Control", QString("Failed to assign track. Trsck not found"));
+    }
 }
 
 void FrameTrackEngage::resetMode()
