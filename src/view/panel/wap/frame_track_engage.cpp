@@ -73,7 +73,7 @@ void FrameTrackEngage::OnTrackPropertyChanged(int tn, TrackBaseEntity *track)
 void FrameTrackEngage::resetMode()
 {
     QString weapon = ui->comboBoxTrackEngWeapon->currentText();
-    if (weapon != "-") {
+    if (weapon != "Standby") {
         _wtaService->BreakEngagementWeapon(weapon);
     }
 
@@ -132,7 +132,7 @@ void FrameTrackEngage::on_pushButtonTrackEngAssign_clicked()
     const QString weapon = ui->comboBoxTrackEngWeapon->currentText();
     const int tn = ui->comboBoxTrackEngTN->currentText().toInt();
 
-    if (weapon != "-" && tn > 0) {
+    if (weapon != "Standby" && tn > 0) {
         if (!_wtaService->IsEngage(weapon, tn)) {
             try {
                 _wtaService->SetEngagement(weapon, tn);

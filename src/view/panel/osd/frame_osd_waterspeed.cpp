@@ -52,10 +52,10 @@ void FrameOSDWaterSpeed::setup()
     OSDWaterSpeedProp prop{
         "Water Speed",
         TextInputProp{
-            "Speed:", "kts", "w_speedInput", "0"
+            "Drift:", "kts", "w_speedInput", "0"
         },
         TextInputProp{
-            "Course:", "deg", "w_courseInput", "0"
+            "Set:", "deg", "w_courseInput", "0"
         }
     };
     ui->groupBox->setTitle(prop.title);
@@ -299,13 +299,13 @@ bool FrameOSDWaterSpeed::validateInput()
 
     if (!ok)
     {
-        QMessageBox::critical(this, "Fatal Error Water Speed", "Invalid input format.\nValid input : -150 to 150");
+        QMessageBox::critical(this, "Fatal Error Water Drift", "Invalid input format.\nValid input : -150 to 150");
         return false;
     }
 
     if ((value_wSpeed < -150) || (value_wSpeed > 150))
     {
-        QMessageBox::critical(this, "Fatal Error Water Speed", "Invalid input : out of range.\nValid input : -150 to 150");
+        QMessageBox::critical(this, "Fatal Error Drift", "Invalid input : out of range.\nValid input : -150 to 150");
         return false;
     }
 
@@ -314,13 +314,13 @@ bool FrameOSDWaterSpeed::validateInput()
 
     if (!ok)
     {
-        QMessageBox::critical(this, "Fatal Error Water Course", "Invalid input format.\nValid input : 0 to 360");
+        QMessageBox::critical(this, "Fatal Error Set", "Invalid input format.\nValid input : 0 to 360");
         return false;
     }
 
     if ((value_wCourse < 0) || (value_wCourse > 360))
     {
-        QMessageBox::critical(this, "Fatal Error Water Course", "Invalid input : out of range.\nValid input : 0 to 360");
+        QMessageBox::critical(this, "Fatal Error Set", "Invalid input : out of range.\nValid input : 0 to 360");
         return false;
     }
 

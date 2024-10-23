@@ -51,7 +51,7 @@ void FrameWeaponAssign::onComboBoxWAPModeChanged(int index)
 {
     if (index >= 0) {
         std::string weapon = ui->comboBoxWAPWeapon->currentText().toStdString();
-        if (weapon != "-") {
+        if (weapon != "Standby") {
             _waService->SetAssignment(weapon, (WeaponAssign::WeaponAssignMode)index);
         } else {
             QMessageBox::warning(this, "Warning Weapon Assign Control", QString("No weapon selected"));
@@ -94,7 +94,7 @@ void FrameWeaponAssign::updateWeaponModeUI(QString weapon)
         QString modeStr;
         switch (modeList.at(var)) {
         case WeaponAssign::NONE:
-            modeStr = "-";
+            modeStr = "Standby";
             break;
         case WeaponAssign::DIRECT:
             modeStr = "Direct";

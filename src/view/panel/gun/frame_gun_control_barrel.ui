@@ -56,7 +56,7 @@
            <widget class="QComboBox" name="comboBoxGunBarControlMode">
             <item>
              <property name="text">
-              <string>-</string>
+              <string>Standby</string>
              </property>
             </item>
             <item>
