@@ -111,10 +111,10 @@ void FrameOSDSpeed::setup()
     OSDSpeedProp prop{
         "Speed",
         TextInputProp{
-            "SOG:", "kts", "SpeedInput", "0"
+            "Speed:", "kts", "SpeedInput", "0"
         },
         TextInputProp{
-            "COG:", "deg", "CourseInput", "0"
+            "Course:", "deg", "CourseInput", "0"
         }
     };
     ui->groupBox->setTitle(prop.title);
