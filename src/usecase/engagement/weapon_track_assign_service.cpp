@@ -131,6 +131,11 @@ void WeaponTrackAssignService::CheckUpdateEngagement(const QString &weapon)
                     ) {
                 BreakEngagement(weapon, curEngage->getTrackId());
             }
+
+            _cmsEngageService->sendAssignmentHB(TrackAssignRequest(
+                                                    curEngage->getTrackId(),
+                                                    weapon.toStdString()
+                                                    ));
         }
     }
 }

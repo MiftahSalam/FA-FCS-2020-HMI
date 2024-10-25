@@ -16,6 +16,8 @@ public:
     QString getEngageCorrectionUrl() const;
     QString getResetAssignUrl() const;
 
+    QString getAssignHBUrl() const;
+
 protected:
     TrackWeaponAssignConfig();
 
@@ -23,6 +25,7 @@ private:
     static TrackWeaponAssignConfig *config;
 
     QString assignUrl;
+    QString assignHBUrl;
     QString resetAssignUrl;
     QString engageCorrectionUrl;
 

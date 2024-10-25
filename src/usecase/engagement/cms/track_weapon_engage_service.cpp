@@ -57,6 +57,16 @@ void TrackWeaponEngageService::sendAssignment(TrackAssignRequest request, bool a
     connect(httpResponse, &QNetworkReply::finished, this, &TrackWeaponEngageService::onReplyFinished);
 }
 
+void TrackWeaponEngageService::sendAssignmentHB(TrackAssignRequest request)
+{
+    QNetworkRequest httpReq = QNetworkRequest(_cmsConfig->getInstance("")->getAssignHBUrl());
+    httpReq.setHeader(QNetworkRequest::ContentTypeHeader, "application/json");
+
+    httpResponse = httpClient.post(httpReq, request.toJSON());
+
+    connect(httpResponse, &QNetworkReply::finished, this, &TrackWeaponEngageService::onHBAssignReplyFinished);
+}
+
 void TrackWeaponEngageService::sendResetAssignment(const QString weapon)
 {
     QNetworkRequest httpReq = QNetworkRequest(_cmsConfig->getInstance("")->getResetAssignUrl()+"/"+weapon);
@@ -97,6 +107,19 @@ void TrackWeaponEngageService::onReplyFinished()
 }
 
 void TrackWeaponEngageService::onResetAssignReplyFinished()
+{
+    QByteArray respRaw = httpResponse->readAll();
+
+#ifdef USE_LOG4QT
+    logger()->debug()<<Q_FUNC_INFO<<" -> respRaw: "<<respRaw;
+    logger()->debug()<<Q_FUNC_INFO<<" -> err: "<<httpResponse->error();
+#else
+    qDebug()<<Q_FUNC_INFO<<"respRaw: "<<respRaw;
+    qDebug()<<Q_FUNC_INFO<<"err: "<<httpResponse->error();
+#endif
+}
+
+void TrackWeaponEngageService::onHBAssignReplyFinished()
 {
     QByteArray respRaw = httpResponse->readAll();
 

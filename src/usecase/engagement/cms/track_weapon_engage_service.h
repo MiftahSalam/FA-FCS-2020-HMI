@@ -20,6 +20,7 @@ public:
             );
 
     void sendAssignment(TrackAssignRequest request, bool assign);
+    void sendAssignmentHB(TrackAssignRequest request);
     void sendResetAssignment(const QString weapon);
 
 signals:
@@ -34,6 +35,7 @@ protected:
 private slots:
     void onReplyFinished() override;
     void onResetAssignReplyFinished();
+    void onHBAssignReplyFinished();
 
 private:
     static TrackWeaponEngageService *instance;
