@@ -28,11 +28,13 @@ public:
     void OnTracksRemoved(std::list<int> tnIdList) override;
     void OnTrackPropertyChanged(int tn, TrackBaseEntity *track) override;
     void OnTrackSelectedChanged(int tn) override;
+    void OnTrackDoubleClicked(int tn) override;
 
 public slots:
     // TDAZoomableObjectBase interface
     void OnZoom(float range) override;
 
+    void OnTrackDoubleClickedChange(int tn);
     void OnTrackSelectedChange(int tn);
     void OnIdentityChange(int tn, TrackUtils::Identity newIdentity);
     void OnWeaponAssignment(BaseResponse<TrackAssignResponse> resp, bool assign);

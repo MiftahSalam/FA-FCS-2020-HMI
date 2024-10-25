@@ -24,6 +24,7 @@ public:
     void OnTracksRemoved(std::list<int> tnIdList) override;
     void OnTrackPropertyChanged(int tn, TrackBaseEntity *track) override;
     void OnTrackSelectedChanged(int tn) override;
+    void OnTrackDoubleClicked(int tn) override;
 
 private slots:
     void on_pushButtonTrackEngAssign_clicked();

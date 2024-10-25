@@ -70,6 +70,20 @@ void TDATracksObject::OnZoom(float range)
     }
 }
 
+void TDATracksObject::OnTrackDoubleClickedChange(int tn)
+{
+    const TrackBaseEntity *findTrack = arpaRepo->FindOne(tn);
+    if (findTrack)
+    {
+        // add this to listener
+        TrackRepositoryPublisher *publisher = dynamic_cast<TrackRepositoryPublisher *>(arpaRepo);
+        std::list<TrackRepositoryListener*> listeners = publisher->GetListeners();
+        foreach (TrackRepositoryListener *listener, listeners) {
+            listener->OnTrackDoubleClicked(tn);
+        }
+    }
+}
+
 void TDATracksObject::OnTrackSelectedChange(int tn)
 {
     const TrackBaseEntity *findTrack = arpaRepo->FindOne(tn);
@@ -188,11 +202,17 @@ void TDATracksObject::OnTrackSelectedChanged(int tn)
     Q_UNUSED(tn);
 }
 
+void TDATracksObject::OnTrackDoubleClicked(int tn)
+{
+    Q_UNUSED(tn);
+}
+
 void TDATracksObject::generateTrackUI(TrackBaseEntity *newTrack)
 {
     TdaTrack *tr = new TdaTrack(parentWidget, TRACK_WIDGET_SIZE);
     connect(tr, &TdaTrack::identityChange_Signal, this, &TDATracksObject::OnIdentityChange);
     connect(tr, &TdaTrack::trackSelected_Signal, this, &TDATracksObject::OnTrackSelectedChange);
+    connect(tr, &TdaTrack::trackDoubleClicked_Signal, this, &TDATracksObject::OnTrackDoubleClickedChange);
 
     tr->buildUI(entityToTrackParam(newTrack));
     QPoint cartesian = Utils::polar2Cartesian(
