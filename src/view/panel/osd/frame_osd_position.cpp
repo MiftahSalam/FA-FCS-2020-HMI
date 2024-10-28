@@ -58,7 +58,7 @@ FrameOSDPosition::~FrameOSDPosition()
 void FrameOSDPosition::setup()
 {
     OSDPositionProp prop{
-        "Position",
+        "GPS",
         TextInputProp{
             "Latitude:", "deg", "latInput", Utils::latDecToStringDegree(0.0)},
         TextInputProp{
