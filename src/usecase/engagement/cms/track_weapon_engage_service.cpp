@@ -121,14 +121,14 @@ void TrackWeaponEngageService::onResetAssignReplyFinished()
 void TrackWeaponEngageService::onHBAssignReplyFinished()
 {
     QNetworkReply *objSender = dynamic_cast<QNetworkReply *>(sender());
-    QByteArray respRaw = httpResponse->readAll();
+    QByteArray respRaw = objSender->readAll();
 
 #ifdef USE_LOG4QT
     logger()->debug()<<Q_FUNC_INFO<<" -> respRaw: "<<respRaw;
-    logger()->debug()<<Q_FUNC_INFO<<" -> err: "<<httpResponse->error();
+    logger()->debug()<<Q_FUNC_INFO<<" -> err: "<<objSender->error();
 #else
     qDebug()<<Q_FUNC_INFO<<"respRaw: "<<respRaw;
-    qDebug()<<Q_FUNC_INFO<<"err: "<<httpResponse->error();
+    qDebug()<<Q_FUNC_INFO<<"err: "<<objSender->error();
 #endif
 
     objSender->deleteLater();
