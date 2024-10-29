@@ -63,7 +63,7 @@ void FrameGunControlStatus::onStatusDataResponse(BaseResponse<GunCommandStatusRe
     bool siren = resp.getData().getSiren();
 
     ui->pushButtonControlMount->setText( mount ? "On" : "Off");
-    ui->pushButtonControlSingleshoot->setText( single ? "On" : "Off");
+    ui->pushButtonControlSingleshoot->setText( single ? "Single" : "Auto");
     ui->pushButtonControlFire->setText( fire ? "Fire" : "Not Fire");
     ui->pushButtonControlProxFuze->setText( prox_fuze ? "On" : "Off");
     ui->pushButtonControlSiren->setText( siren ? "On" : "Off");
@@ -113,7 +113,7 @@ void FrameGunControlStatus::updateMode()
 void FrameGunControlStatus::resetStatus()
 {
     ui->pushButtonControlMount->setText("Off");
-    ui->pushButtonControlSingleshoot->setText("Off");
+    ui->pushButtonControlSingleshoot->setText("Single");
     ui->pushButtonControlFire->setText("No Fire");
     ui->pushButtonControlProxFuze->setText("Off");
     ui->pushButtonControlSiren->setText("Off");
