@@ -11,6 +11,7 @@ struct TcpMessagingOpts
     quint16 port;
     int delay; //in ms
     int timeout; //in ms
+    bool disconnect_rto;
 };
 
 class MessagingTcpConfig: public BaseConfig
