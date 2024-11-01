@@ -302,9 +302,9 @@ bool FrameOSDWeather::validateInput()
     QString Temp = ui->inputTemp->getCurrentValue();
     float valuetemp = Temp.toFloat(&ok);
 
-    if ((valuetemp < -273) || (valuetemp > 273) || (!ok))
+    if ((valuetemp < -50) || (valuetemp > 100) || (!ok))
     {
-        QMessageBox::critical(this, "Fatal Error Temperature", "Invalid input : out of range.\nValid input : -273 to 273");
+        QMessageBox::critical(this, "Fatal Error Temperature", "Invalid input : out of range.\nValid input : -50 to 100");
         return false;
     }
 
