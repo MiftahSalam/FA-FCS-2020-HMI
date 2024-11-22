@@ -3,6 +3,7 @@
 
 #include "src/model/gun/gun_feedback_status_model.h"
 #include "src/usecase/gun/gun_manager_service.h"
+#include "src/usecase/gun/stream/gun_coverage_stream.h"
 #include "src/usecase/gun/stream/gun_feedback_status_stream.h"
 #include "src/view/shared/frame_text_input.h"
 #include <QFrame>
@@ -47,8 +48,15 @@ private slots:
 private:
     Ui::FrameGunControlBarrel *ui;
 
+    struct BarrelLimit
+    {
+        float min;
+        float max;
+    };
+
     GunManagerService *gunService;
     GunFeedbackStatusStream *statusStream;
+    GunCoverageStream *coverageStream;
 
     GunBarrelModeEntity::MODE currentMode;
 
@@ -58,6 +66,7 @@ private:
     bool validateInput();
     void updateMode();
     void resetBarrel(bool needConfirm);
+    BarrelLimit calculateBarrelLimit();
 
     void setupDI();
 };

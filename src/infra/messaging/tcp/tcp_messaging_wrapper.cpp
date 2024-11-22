@@ -40,7 +40,7 @@ BaseError TcpMessagingWrapper::checkConnection()
     if (consumer->state() != QTcpSocket::ConnectedState) {
         return ErrMessagingNotConnected();
     } else if (deltaHB > config->timeout) {
-        if (deltaHB > 5 * config->timeout) {
+        if (deltaHB > 5 * config->timeout && config->disconnect_rto) {
             timestampHeartBeat = now;
             consumer->disconnectFromHost();
 #ifdef USE_LOG4QT

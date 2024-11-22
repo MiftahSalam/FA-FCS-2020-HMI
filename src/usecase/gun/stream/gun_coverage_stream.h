@@ -21,6 +21,7 @@ public:
         );
 
     BaseError check() override;
+    const GunCoverageEntity* GetCoverage() const;
 
 signals:
     void signalDataProcessed(GunCoverageModel data) override;

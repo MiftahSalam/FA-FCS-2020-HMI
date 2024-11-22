@@ -358,6 +358,7 @@ void FrameTDA::setupTdaObjects()
     TDAGunBarrelObject *gunBarrel = new TDAGunBarrelObject(
                 this,
                 osdRepo->getRepoOSDInertia(),
+                gunRepo->getRepoGunCoverage(),
                 gunRepo->getRepoGunFeedback(),
                 tdaConfig);
     TDATracksObject *tracksObject = new TDATracksObject(

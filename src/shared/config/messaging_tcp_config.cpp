@@ -60,6 +60,7 @@ void MessagingTcpConfig::setup(const QString path)
 #endif
 
         TcpMessagingOpts* opts = new TcpMessagingOpts();
+        opts->disconnect_rto = true;
 
         configFile.beginGroup(key);
         foreach (auto key1, configFile.childKeys()) {
@@ -72,6 +73,8 @@ void MessagingTcpConfig::setup(const QString path)
                 opts->delay = configFile.value(key1, "").toUInt();
             } else if (key1 == "timeout") {
                 opts->timeout = configFile.value(key1, "").toUInt();
+            } else if (key1 == "disconnect_when_timeout") {
+                opts->disconnect_rto = configFile.value(key1, true).toBool();
             }
         }
         configFile.endGroup();
@@ -110,9 +113,10 @@ void MessagingTcpConfig::setup(const QString path)
                         <<". ip: "<<val->ip
                        <<", port: "<<val->port
                       <<", delay: "<<val->delay
-                     <<", timeout: "<<val->timeout;
+                     <<", timeout: "<<val->timeout
+                    <<", disconnect_when_timeout: "<<val->disconnect_rto;
 #else
-        qDebug()<<Q_FUNC_INFO<<"content:"<<key<<"ip:"<<val->ip<<"port:"<<val->port<<"delay:"<<val->delay<<"timeout:"<<val->timeout;
+        qDebug()<<Q_FUNC_INFO<<"content:"<<key<<"ip:"<<val->ip<<"port:"<<val->port<<"delay:"<<val->delay<<"timeout:"<<val->timeout<<"disconnect_when_timeout"<<val->disconnect_rto;
 #endif
     }
 }

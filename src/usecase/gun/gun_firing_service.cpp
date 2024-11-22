@@ -109,8 +109,42 @@ void GunFiringService::onGunModeChange(BaseResponse<GunModeBarrelResponse> resp,
     }
 }
 
+void GunFiringService::checkGunOfflineMode()
+{
+    auto gun_tech_mode = _gunService->getCurrentTechStat();
+
+    if (gun_tech_mode == GunManagerService::OFFLINE) {
+        auto gun_mode = _gunService->getBarrelMode();
+        bool state_change = false;
+
+        switch (gun_mode) {
+        case GunBarrelModeEntity::NONE:
+        case GunBarrelModeEntity::AUTO:
+            state_change = true;
+            _weaponsOpenFire.removeAll("40mm");
+            _weaponsReady.removeAll("40mm");
+            break;
+        case GunBarrelModeEntity::MANUAL:
+            if (!_weaponsReady.contains("40mm")) {
+                state_change = true;
+                _weaponsOpenFire.removeAll("40mm");
+                _weaponsReady.append("40mm");
+            }
+            break;
+        default:
+            break;
+        }
+
+        if (state_change) {
+            emit signal_FiringChange("40mm", _weaponsReady.contains("40mm"));
+        }
+    }
+}
+
 void GunFiringService::OnTimeout()
 {
+    checkGunOfflineMode();
+
     QString single = _gunService->getStatusSingleShot() ? "1" : "0";
     foreach (auto w, _weapons) {
         auto port = firingPorts.value(w);

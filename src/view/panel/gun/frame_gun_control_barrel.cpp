@@ -212,10 +212,14 @@ bool FrameGunControlBarrel::validateInput()
 
     QString azimuth = ui->inputAzimuth->getCurrentValue();
     float valueAz = azimuth.toFloat(&ok);
+    BarrelLimit limit = calculateBarrelLimit();
 
-    if ((valueAz < 0) || (valueAz > 360) || (!ok))
+    if ((valueAz < 0) || (valueAz > 360) || ((valueAz > limit.min) && (valueAz < limit.max)) || (!ok))
     {
-        QMessageBox::critical(this, "Fatal Error Barrel Control", "Invalid azimuth input : out of range.\nValid input : 0-360");
+        QMessageBox::critical(
+                    this,
+                    "Fatal Error Barrel Control",
+                    QString("Invalid azimuth input : out of range.\nValid input : 0-%1 and %2-360").arg(limit.min).arg(limit.max));
         return false;
     }
 
@@ -229,6 +233,19 @@ bool FrameGunControlBarrel::validateInput()
     }
 
     return true;
+}
+
+FrameGunControlBarrel::BarrelLimit FrameGunControlBarrel::calculateBarrelLimit()
+{
+    float blind_arc = coverageStream->GetCoverage()->getBlindArc();
+    float minBArc = 180.0 - (blind_arc / 2);
+    float maxBArc = 180.0 + (blind_arc / 2);
+    BarrelLimit limit;
+
+    limit.min = minBArc;
+    limit.max = maxBArc;
+
+    return limit;
 }
 
 void FrameGunControlBarrel::updateMode()
@@ -256,6 +273,7 @@ void FrameGunControlBarrel::setupDI()
 {
     gunService = DI::getInstance()->getServiceGunManager();
     statusStream = DI::getInstance()->getServiceGunStream()->getServiceGunFeedback();
+    coverageStream = DI::getInstance()->getServiceGunStream()->getServiceGunCoverage();
 
     connect(gunService, &GunManagerService::OnBarrelModeCheck, this, &FrameGunControlBarrel::onModeCheck);
     connect(gunService, &GunManagerService::OnBarrelModeResponse, this, &FrameGunControlBarrel::onModeChangeResponse);

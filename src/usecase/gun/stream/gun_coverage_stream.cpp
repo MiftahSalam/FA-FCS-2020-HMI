@@ -107,5 +107,10 @@ BaseError GunCoverageStream::check()
     return currentErr;
 }
 
+const GunCoverageEntity *GunCoverageStream::GetCoverage() const
+{
+    return _repoGunCov->GetGunCoverage();
+}
+
 
 
