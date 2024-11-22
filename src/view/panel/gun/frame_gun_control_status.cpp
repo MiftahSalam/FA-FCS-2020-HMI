@@ -82,11 +82,11 @@ void FrameGunControlStatus::onModeCheck()
 
 void FrameGunControlStatus::availableUiSetup(bool available)
 {
-    ui->pushButtonControlMount->setEnabled(available);
+    ui->pushButtonControlMount->setEnabled(false);
     ui->pushButtonControlSingleshoot->setEnabled(available);
-    ui->pushButtonControlFire->setEnabled(available);
-    ui->pushButtonControlProxFuze->setEnabled(available);
-    ui->pushButtonControlSiren->setEnabled(available);
+    ui->pushButtonControlFire->setEnabled(false);
+    ui->pushButtonControlProxFuze->setEnabled(false);
+    ui->pushButtonControlSiren->setEnabled(false);
 }
 
 void FrameGunControlStatus::updateMode()
