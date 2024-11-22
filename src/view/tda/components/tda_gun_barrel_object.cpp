@@ -3,9 +3,11 @@
 #include <QTextStream>
 #include <cmath>
 
-TDAGunBarrelObject::TDAGunBarrelObject(QObject *parent, OSDInertiaRepository *repoInertia, GunFeedbackRepository *repoGunFeedback, TDAConfig *configTDA):
+TDAGunBarrelObject::TDAGunBarrelObject(QObject *parent, OSDInertiaRepository *repoInertia, GunCoverageRepository *repoGunCov, GunFeedbackRepository *repoGunFeedback, TDAConfig *configTDA):
     TDAObjectBase (parent), inertiaRepo(repoInertia),
-    gunFeedbackRepo(repoGunFeedback), tdaConfig(configTDA)
+    gunFeedbackRepo(repoGunFeedback),
+    repoGunCov(repoGunCov),
+    tdaConfig(configTDA)
 {
 }
 
@@ -23,15 +25,16 @@ void TDAGunBarrelObject::Draw(QPainter *painter, const int &side, const int &wid
         int sideMax = qMax(width,height);
         const float bearing = gunFeedbackRepo->GetBarrel()->azimuth();
         const float heading = inertiaRepo->GetInertia()->heading();
+        float gun_orientation = repoGunCov->GetGunCoverage()->getGunOrientation();
         double drawHeading = heading + 180;
 
         if (drawHeading > 180)
             drawHeading = drawHeading - 360;
 
-        painter->rotate(drawHeading+bearing);
+        painter->rotate(drawHeading+bearing+gun_orientation);
         painter->setPen(QPen(Qt::green,5));
         painter->drawLine(0,0,0,(sideMax/20));
-        painter->rotate(-drawHeading-bearing);
+        painter->rotate(-drawHeading-bearing-gun_orientation);
 
         painter->translate(-center_point);
     }
