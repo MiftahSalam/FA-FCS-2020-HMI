@@ -33,6 +33,9 @@ void FrameOSD::setup()
     ui->widgetWind->setup();
     ui->widgetWeather->setup();
 
+    ui->widgetWaterSpeed->hide();
+    ui->widgetWeather->hide();
+
 //    connect(ui->widgetPosition, &FrameOSDPosition::signalChangePositionMode, this, &FrameOSD::onChangePositionMode);
 //    connect(ui->widgetPosition, &FrameOSDPosition::signalChangePositionData, this, &FrameOSD::onChangePositionData);
 //    connect(this, &FrameOSD::signalOnModeResponse, ui->widgetPosition, &FrameOSDPosition::onModeChangeResponse);
