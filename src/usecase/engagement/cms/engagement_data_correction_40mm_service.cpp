@@ -25,17 +25,18 @@ EngagementDataCorrection40mmService::EngagementDataCorrection40mmService(
 
 void EngagementDataCorrection40mmService::onReplyFinished()
 {
-    QByteArray respRaw = httpResponse->readAll();
+    QNetworkReply *objSender = dynamic_cast<QNetworkReply *>(sender());
+    QByteArray respRaw = objSender->readAll();
 
 #ifdef USE_LOG4QT
     logger()->debug()<<Q_FUNC_INFO<<" -> respRaw: "<<respRaw;
-    logger()->debug()<<Q_FUNC_INFO<<" -> err: "<<httpResponse->error();
+    logger()->debug()<<Q_FUNC_INFO<<" -> err: "<<objSender->error();
 #else
     qDebug()<<Q_FUNC_INFO<<"respRaw:"<<respRaw;
-    qDebug()<<Q_FUNC_INFO<<"err:"<<httpResponse->error();
+    qDebug()<<Q_FUNC_INFO<<"err:"<<objSender->error();
 #endif
 
-    BaseResponse<EngagementCorrectionSetResponse> resp = errorResponse(httpResponse->error());
+    BaseResponse<EngagementCorrectionSetResponse> resp = errorResponse(objSender->error());
     if(resp.getHttpCode() != 0 || respRaw.isEmpty()) {
         emit signal_setCorrectionResponse(resp);
         return;
@@ -44,6 +45,8 @@ void EngagementDataCorrection40mmService::onReplyFinished()
     resp = toResponse(respRaw);
 
     emit signal_setCorrectionResponse(resp);
+
+    objSender->deleteLater();
 }
 
 BaseResponse<EngagementCorrectionSetResponse> EngagementDataCorrection40mmService::toResponse(QByteArray raw)
@@ -135,6 +138,6 @@ void EngagementDataCorrection40mmService::setCorrection(EngagementCorrectionSetR
     QNetworkRequest httpReq = QNetworkRequest(cfgCms->getInstance("")->getEngageCorrectionUrl());
     httpReq.setHeader(QNetworkRequest::ContentTypeHeader, "application/json");
 
-    httpResponse = httpClient.post(httpReq, request.toJSON());
-    connect(httpResponse, &QNetworkReply::finished, this, &EngagementDataCorrection40mmService::onReplyFinished);
+    auto curHttpResponse = httpClient.post(httpReq, request.toJSON());
+    connect(curHttpResponse, &QNetworkReply::finished, this, &EngagementDataCorrection40mmService::onReplyFinished);
 }

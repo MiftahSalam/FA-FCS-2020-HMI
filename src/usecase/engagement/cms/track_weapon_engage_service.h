@@ -45,7 +45,7 @@ private:
     BaseResponse<TrackAssignResponse> toResponse(QByteArray raw);
     BaseResponse<TrackAssignResponse> errorHttpResponse(QNetworkReply::NetworkError err);
 
-    bool isAssignResponse();
+    bool isAssignResponse(QNetworkReply *response);
 };
 
 #endif // TRACKWEAPONENGAGESERVICE_H

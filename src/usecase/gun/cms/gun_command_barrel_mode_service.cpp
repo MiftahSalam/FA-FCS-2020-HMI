@@ -35,6 +35,7 @@ GunCommandBarrelModeService::GunCommandBarrelModeService(
 
 void GunCommandBarrelModeService::onReplyFinished()
 {
+    QNetworkReply *httpResponse = dynamic_cast<QNetworkReply *>(sender());
     QByteArray respRaw = httpResponse->readAll();
 
 #ifdef USE_LOG4QT
@@ -65,6 +66,8 @@ void GunCommandBarrelModeService::onReplyFinished()
     previousMode = _repoGunCmd->GetBarrelMode()->getMode();
 
     emit signal_setModeResponse(resp, !requestSync);
+
+    httpResponse->deleteLater();
 }
 
 void GunCommandBarrelModeService::onTimerTimeout()
@@ -122,7 +125,7 @@ void GunCommandBarrelModeService::sendMode(GunModeBarrelRequest request)
     QNetworkRequest httpReq = QNetworkRequest(cfgCms->getInstance("")->getModeUrl());
     httpReq.setHeader(QNetworkRequest::ContentTypeHeader, "application/json");
 
-    httpResponse = httpClient.post(httpReq, request.toJSON());
+    auto httpResponse = httpClient.post(httpReq, request.toJSON());
     connect(httpResponse, &QNetworkReply::finished, this, &GunCommandBarrelModeService::onReplyFinished);
 }
 

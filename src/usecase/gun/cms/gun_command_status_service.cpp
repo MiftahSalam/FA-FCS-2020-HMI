@@ -26,17 +26,18 @@ GunCommandStatusService::GunCommandStatusService(
 
 void GunCommandStatusService::onReplyFinished()
 {
-    QByteArray respRaw = httpResponse->readAll();
+    QNetworkReply *objSender = dynamic_cast<QNetworkReply *>(sender());
+    QByteArray respRaw = objSender->readAll();
 
 #ifdef USE_LOG4QT
     logger()->debug()<<Q_FUNC_INFO<<" -> respRaw: "<<respRaw;
-    logger()->debug()<<Q_FUNC_INFO<<" -> err: "<<httpResponse->error();
+    logger()->debug()<<Q_FUNC_INFO<<" -> err: "<<objSender->error();
 #else
     qDebug()<<Q_FUNC_INFO<<"respRaw: "<<respRaw;
-    qDebug()<<Q_FUNC_INFO<<"err: "<<httpResponse->error();
+    qDebug()<<Q_FUNC_INFO<<"err: "<<objSender->error();
 #endif
 
-    BaseResponse<GunCommandStatusResponse> resp = errorResponse(httpResponse->error());
+    BaseResponse<GunCommandStatusResponse> resp = errorResponse(objSender->error());
     if(resp.getHttpCode() != 0 || respRaw.isEmpty()) {
         emit signal_setStatusResponse(resp);
         return;
@@ -53,6 +54,8 @@ void GunCommandStatusService::onReplyFinished()
                                ));
 
     emit signal_setStatusResponse(resp);
+
+    objSender->deleteLater();
 }
 
 GunCommandStatusService *GunCommandStatusService::getInstance(
@@ -104,7 +107,7 @@ void GunCommandStatusService::sendStatus(GunCommandStatusRequest request)
     QNetworkRequest httpReq = QNetworkRequest(cfgCms->getInstance("")->getStatusUrl());
     httpReq.setHeader(QNetworkRequest::ContentTypeHeader, "application/json");
 
-    httpResponse = httpClient.post(httpReq, request.toJSON());
+    auto httpResponse = httpClient.post(httpReq, request.toJSON());
     connect(httpResponse, &QNetworkReply::finished, this, &GunCommandStatusService::onReplyFinished);
 }
 
