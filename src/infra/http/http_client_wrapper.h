@@ -14,7 +14,6 @@ protected slots:
     virtual void onReplyFinished() {};
 
 protected:
-    QNetworkReply *httpResponse;
     QNetworkAccessManager httpClient;
     QMap<QString, QVariant> reqCtxObj;
 

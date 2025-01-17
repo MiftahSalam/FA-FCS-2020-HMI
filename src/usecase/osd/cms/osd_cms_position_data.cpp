@@ -54,12 +54,13 @@ void OSDCMSPositionData::set(OSDSetPositionRequest request)
     QNetworkRequest httpReq = QNetworkRequest(cfgCms->getInstance("")->getManualDataUrl()+"/position");
     httpReq.setHeader(QNetworkRequest::ContentTypeHeader, "application/json");
 
-    httpResponse = httpClient.put(httpReq, request.toJSON());
+    auto httpResponse = httpClient.put(httpReq, request.toJSON());
     connect(httpResponse, &QNetworkReply::finished, this, &OSDCMSPositionData::onReplyFinished);
 }
 
 void OSDCMSPositionData::onReplyFinished()
 {
+    QNetworkReply *httpResponse = dynamic_cast<QNetworkReply *>(sender());
     QByteArray respRaw = httpResponse->readAll();
 
 #ifdef USE_LOG4QT
@@ -87,6 +88,8 @@ void OSDCMSPositionData::onReplyFinished()
                              ));
 
     emit signal_setPositionResponse(resp);
+
+    httpResponse->deleteLater();
 }
 
 BaseResponse<PositionModel> OSDCMSPositionData::toResponse(QByteArray raw)

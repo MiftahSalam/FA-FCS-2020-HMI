@@ -52,12 +52,13 @@ void OSDCMSWindData::set(OSDSetWindRequest request)
     QNetworkRequest httpReq = QNetworkRequest(cfgCms->getInstance("")->getManualDataUrl()+"/wind");
     httpReq.setHeader(QNetworkRequest::ContentTypeHeader, "application/json");
 
-    httpResponse = httpClient.put(httpReq, request.toJSON());
+    auto httpResponse = httpClient.put(httpReq, request.toJSON());
     connect(httpResponse, &QNetworkReply::finished, this, &OSDCMSWindData::onReplyFinished);
 }
 
 void OSDCMSWindData::onReplyFinished()
 {
+    QNetworkReply *httpResponse = dynamic_cast<QNetworkReply *>(sender());
     QByteArray respRaw = httpResponse->readAll();
 
 #ifdef USE_LOG4QT
@@ -85,6 +86,8 @@ void OSDCMSWindData::onReplyFinished()
                           ));
 
     emit signal_setWindResponse(resp);
+
+    httpResponse->deleteLater();
 }
 
 BaseResponse<WindModel> OSDCMSWindData::toResponse(QByteArray raw)

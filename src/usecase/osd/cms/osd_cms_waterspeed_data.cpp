@@ -52,12 +52,13 @@ void OSDCMSWaterSpeedData::set(OSDSetWaterSpeedRequest request)
     QNetworkRequest httpReq = QNetworkRequest(cfgCms->getInstance("")->getManualDataUrl()+"/water-speed");
     httpReq.setHeader(QNetworkRequest::ContentTypeHeader, "application/json");
 
-    httpResponse = httpClient.put(httpReq, request.toJSON());
+    auto httpResponse = httpClient.put(httpReq, request.toJSON());
     connect(httpResponse, &QNetworkReply::finished, this, &OSDCMSWaterSpeedData::onReplyFinished);
 }
 
 void OSDCMSWaterSpeedData::onReplyFinished()
 {
+    QNetworkReply *httpResponse = dynamic_cast<QNetworkReply *>(sender());
     QByteArray respRaw = httpResponse->readAll();
 
 #ifdef USE_LOG4QT
@@ -85,6 +86,8 @@ void OSDCMSWaterSpeedData::onReplyFinished()
                               ));
 
     emit signal_setWaterSpeedResponse(resp);
+
+    httpResponse->deleteLater();
 }
 
 BaseResponse<WaterSpeedModel> OSDCMSWaterSpeedData::toResponse(QByteArray raw)
