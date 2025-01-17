@@ -49,7 +49,6 @@ private:
     // TODO: add input mode repo
     QTimer *timer;
 
-    QMap<QString, QVariant> reqCtxObj;
     bool synced;
 
     BaseResponse<InputModeModel> toResponse(QByteArray raw) override;
