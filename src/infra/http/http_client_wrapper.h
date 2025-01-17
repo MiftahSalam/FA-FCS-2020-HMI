@@ -16,6 +16,7 @@ protected slots:
 protected:
     QNetworkReply *httpResponse;
     QNetworkAccessManager httpClient;
+    QMap<QString, QVariant> reqCtxObj;
 
 signals:
 
