@@ -48,9 +48,8 @@ private:
     OSDCmsConfig *cfgCms;
     // TODO: add input mode repo
     QTimer *timer;
-    QString lastUpdateMode;
+
     bool synced;
-    bool requestSync;
 
     BaseResponse<InputModeModel> toResponse(QByteArray raw) override;
     BaseResponse<InputModeModel> errorResponse(QNetworkReply::NetworkError err) override;

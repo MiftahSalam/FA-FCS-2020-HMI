@@ -55,13 +55,14 @@ void OSDCMSGyroData::set(OSDSetGyroRequest request)
     QNetworkRequest httpReq = QNetworkRequest(cfgCms->getInstance("")->getManualDataUrl()+"/inertia");
     httpReq.setHeader(QNetworkRequest::ContentTypeHeader, "application/json");
 
-    httpResponse = httpClient.put(httpReq, request.toJSON());
+    auto httpResponse = httpClient.put(httpReq, request.toJSON());
     connect(httpResponse, &QNetworkReply::finished, this, &OSDCMSGyroData::onReplyFinished);
 
 }
 
 void OSDCMSGyroData::onReplyFinished()
 {
+    QNetworkReply *httpResponse = dynamic_cast<QNetworkReply *>(sender());
     QByteArray respRaw = httpResponse->readAll();
 
 #ifdef USE_LOG4QT
@@ -91,6 +92,7 @@ void OSDCMSGyroData::onReplyFinished()
 
     emit signal_setGyroResponse(resp);
 
+    httpResponse->deleteLater();
 }
 
 BaseResponse<GyroModel> OSDCMSGyroData::toResponse(QByteArray raw)

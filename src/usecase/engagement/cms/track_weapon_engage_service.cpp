@@ -49,12 +49,13 @@ void TrackWeaponEngageService::sendAssignment(TrackAssignRequest request, bool a
     QNetworkRequest httpReq = QNetworkRequest(_cmsConfig->getInstance("")->getAssignUrl());
     httpReq.setHeader(QNetworkRequest::ContentTypeHeader, "application/json");
 
+    QNetworkReply *curHttpResponse = nullptr;
     if (assign) {
-        httpResponse = httpClient.post(httpReq, request.toJSON());
+        curHttpResponse = httpClient.post(httpReq, request.toJSON());
     } else {
-        httpResponse = httpClient.sendCustomRequest(httpReq, "DELETE", request.toJSON());
+        curHttpResponse = httpClient.sendCustomRequest(httpReq, "DELETE", request.toJSON());
     }
-    connect(httpResponse, &QNetworkReply::finished, this, &TrackWeaponEngageService::onReplyFinished);
+    connect(curHttpResponse, &QNetworkReply::finished, this, &TrackWeaponEngageService::onReplyFinished);
 }
 
 void TrackWeaponEngageService::sendAssignmentHB(TrackAssignRequest request)
@@ -70,7 +71,7 @@ void TrackWeaponEngageService::sendResetAssignment(const QString weapon)
 {
     QNetworkRequest httpReq = QNetworkRequest(_cmsConfig->getInstance("")->getResetAssignUrl()+"/"+weapon);
 
-    httpResponse = httpClient.sendCustomRequest(httpReq, "DELETE", "{}");
+    auto httpResponse = httpClient.sendCustomRequest(httpReq, "DELETE", "{}");
     connect(httpResponse, &QNetworkReply::finished, this, &TrackWeaponEngageService::onResetAssignReplyFinished);
 
 #ifdef USE_LOG4QT
@@ -82,6 +83,7 @@ void TrackWeaponEngageService::sendResetAssignment(const QString weapon)
 
 void TrackWeaponEngageService::onReplyFinished()
 {
+    QNetworkReply *httpResponse = dynamic_cast<QNetworkReply *>(sender());
     QByteArray respRaw = httpResponse->readAll();
 
 #ifdef USE_LOG4QT
@@ -93,7 +95,7 @@ void TrackWeaponEngageService::onReplyFinished()
 #endif
 
     BaseResponse<TrackAssignResponse> resp = errorHttpResponse(httpResponse->error());
-    bool assign = isAssignResponse();
+    bool assign = isAssignResponse(httpResponse);
     if(resp.getHttpCode() != 0 || respRaw.isEmpty()) {
         emit signal_trackAssignmentResponse(resp, assign);
         return;
@@ -103,10 +105,13 @@ void TrackWeaponEngageService::onReplyFinished()
     resp = toResponse(respRaw);
 
     emit signal_trackAssignmentResponse(resp, assign);
+
+    httpResponse->deleteLater();
 }
 
 void TrackWeaponEngageService::onResetAssignReplyFinished()
 {
+    QNetworkReply *httpResponse = dynamic_cast<QNetworkReply *>(sender());
     QByteArray respRaw = httpResponse->readAll();
 
 #ifdef USE_LOG4QT
@@ -217,10 +222,9 @@ BaseResponse<TrackAssignResponse> TrackWeaponEngageService::errorHttpResponse(QN
 
     NoError status;
     return BaseResponse<TrackAssignResponse>(status.getCode(), status.getMessage(), model);
-
 }
 
-bool TrackWeaponEngageService::isAssignResponse()
+bool TrackWeaponEngageService::isAssignResponse(QNetworkReply *httpResponse)
 {
     auto headers = httpResponse->rawHeaderPairs();
     QString method;

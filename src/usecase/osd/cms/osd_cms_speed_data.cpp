@@ -54,12 +54,13 @@ void OSDCMSSpeedData::set(OSDSetSpeedRequest request)
     QNetworkRequest httpReq = QNetworkRequest(cfgCms->getInstance("")->getManualDataUrl()+"/speed");
     httpReq.setHeader(QNetworkRequest::ContentTypeHeader, "application/json");
 
-    httpResponse = httpClient.put(httpReq, request.toJSON());
+    auto httpResponse = httpClient.put(httpReq, request.toJSON());
     connect(httpResponse, &QNetworkReply::finished, this, &OSDCMSSpeedData::onReplyFinished);
 }
 
 void OSDCMSSpeedData::onReplyFinished()
 {
+    QNetworkReply *httpResponse = dynamic_cast<QNetworkReply *>(sender());
     QByteArray respRaw = httpResponse->readAll();
 
 #ifdef USE_LOG4QT
@@ -87,6 +88,8 @@ void OSDCMSSpeedData::onReplyFinished()
                             ));
 
     emit signal_setSpeedResponse(resp);
+
+    httpResponse->deleteLater();
 }
 
 BaseResponse<SpeedModel> OSDCMSSpeedData::toResponse(QByteArray raw)

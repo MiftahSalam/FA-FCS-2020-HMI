@@ -30,6 +30,7 @@ GunCommandBarrelService::GunCommandBarrelService(
 
 void GunCommandBarrelService::onReplyFinished()
 {
+    QNetworkReply *httpResponse = dynamic_cast<QNetworkReply *>(sender());
     QByteArray respRaw = httpResponse->readAll();
 
 #ifdef USE_LOG4QT
@@ -51,6 +52,8 @@ void GunCommandBarrelService::onReplyFinished()
     _repoGunCmd->SetBarrel(resp.getData().getAzimuth(), resp.getData().getElevation());
 
     emit signal_setBarrelResponse(resp, latestConfirm);
+
+    httpResponse->deleteLater();
 }
 
 GunCommandBarrelService *GunCommandBarrelService::getInstance(
@@ -85,7 +88,7 @@ void GunCommandBarrelService::setBarrelWithConfirm(GunCommandBarrelRequest reque
     QNetworkRequest httpReq = QNetworkRequest(cfgCms->getInstance("")->getManualBarrelUrl());
     httpReq.setHeader(QNetworkRequest::ContentTypeHeader, "application/json");
 
-    httpResponse = httpClient.post(httpReq, request.toJSON());
+    auto httpResponse = httpClient.post(httpReq, request.toJSON());
     connect(httpResponse, &QNetworkReply::finished, this, &GunCommandBarrelService::onReplyFinished);
 }
 

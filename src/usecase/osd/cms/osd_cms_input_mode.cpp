@@ -11,6 +11,10 @@ LOG4QT_DECLARE_STATIC_LOGGER(logger, OSDCMSInputMode)
 #include <QDebug>
 #endif
 
+const char * REQ_CTX_OSD_MODE = "ctx-req";
+const char * REQ_CTX_NEED_CONFIRM_KEY = "ctx-req-need-confirm";
+const char * REQ_CTX_LAST_UPDATE_DATA_KEY = "ctx-req-lastUpdate";
+
 OSDCMSInputMode* OSDCMSInputMode::inputMode = nullptr;
 
 OSDCMSInputMode::OSDCMSInputMode(
@@ -23,6 +27,9 @@ OSDCMSInputMode::OSDCMSInputMode(
     cfgCms(cmsConfig)
 {
     synced = false;
+
+    reqCtxObj.insert(REQ_CTX_NEED_CONFIRM_KEY, true);
+    reqCtxObj.insert(REQ_CTX_LAST_UPDATE_DATA_KEY, "");
 
     if(parent == nullptr) {
         throw ErrObjectCreation();
@@ -64,8 +71,9 @@ void OSDCMSInputMode::set(OSDInputModeRequest request)
     QNetworkRequest httpReq = QNetworkRequest(cfgCms->getInstance("")->getModeUrl());
     httpReq.setHeader(QNetworkRequest::ContentTypeHeader, "application/json");
 
-    httpResponse = httpClient.put(httpReq, request.toJSON());
-    connect(httpResponse, &QNetworkReply::finished, this, &OSDCMSInputMode::onReplyFinished);
+    auto curHttpResponse = httpClient.put(httpReq, request.toJSON());
+    curHttpResponse->setProperty(REQ_CTX_OSD_MODE, reqCtxObj);
+    connect(curHttpResponse, &QNetworkReply::finished, this, &OSDCMSInputMode::onReplyFinished);
 }
 
 void OSDCMSInputMode::setDataMode(const QString &dataFisis, const bool manualMode)
@@ -87,8 +95,8 @@ void OSDCMSInputMode::setDataMode(const QString &dataFisis, const bool manualMod
         // TODO: handle invalid datafisis
     }
 
-    requestSync = false;
-    lastUpdateMode = dataFisis;
+    reqCtxObj.insert(REQ_CTX_NEED_CONFIRM_KEY, true);
+    reqCtxObj.insert(REQ_CTX_LAST_UPDATE_DATA_KEY, dataFisis);
 
     set(currentMode);
 }
@@ -106,32 +114,41 @@ void OSDCMSInputMode::sync()
 #else
         qDebug()<<Q_FUNC_INFO<<"syncing";
 #endif
+        reqCtxObj.insert(REQ_CTX_NEED_CONFIRM_KEY, false);
+        reqCtxObj.insert(REQ_CTX_LAST_UPDATE_DATA_KEY, "");
 
-        lastUpdateMode = "";
-        requestSync = true;
         set(currentMode);
     }
 }
 
 void OSDCMSInputMode::onReplyFinished()
 {
-    QByteArray respRaw = httpResponse->readAll();
-    auto respErr = httpResponse->error();
+    QNetworkReply *objSender = dynamic_cast<QNetworkReply *>(sender());
+    QByteArray respRaw = objSender->readAll();
+    auto respErr = objSender->error();
+    auto curReqCtx = objSender->property(REQ_CTX_OSD_MODE).toMap();
+    auto lastUpdateData = curReqCtx.value(REQ_CTX_LAST_UPDATE_DATA_KEY).toString();
+    auto needConfirm = curReqCtx.value(REQ_CTX_NEED_CONFIRM_KEY).toBool();
 
 #ifdef USE_LOG4QT
     logger()->debug()<<Q_FUNC_INFO<<" -> respRaw: "<<respRaw;
     logger()->debug()<<Q_FUNC_INFO<<" -> err: "<<(int)respErr;
+    logger()->debug()<<Q_FUNC_INFO<<" -> resp prop needConfirm: "<<needConfirm;
+    logger()->debug()<<Q_FUNC_INFO<<" -> resp prop lastUpdateData: "<<lastUpdateData;
 #else
     qDebug()<<Q_FUNC_INFO<<"respRaw: "<<respRaw;
     qDebug()<<Q_FUNC_INFO<<"err: "<<httpResponse->error();
+    qDebug()<<Q_FUNC_INFO<<"resp prop needConfirm: "<<needConfirm;
+    qDebug()<<Q_FUNC_INFO<<"resp prop lastUpdateData: "<<lastUpdateData;
 #endif
 
-    BaseResponse<InputModeModel> resp = errorResponse(httpResponse->error());
-    if(resp.getHttpCode() != 0) {
+    BaseResponse<InputModeModel> resp = errorResponse(objSender->error());
+    if(resp.getHttpCode() != 0 || respRaw.isEmpty()) {
         resetToPrevMode();
         synced = false;
 
-        emit signal_setModeResponse(lastUpdateMode, resp, !requestSync);
+        emit signal_setModeResponse(lastUpdateData, resp, needConfirm);
+        // emit signal_setModeResponse(lastUpdateMode, resp, needConfirm);
 
         return;
     }
@@ -143,7 +160,10 @@ void OSDCMSInputMode::onReplyFinished()
     //TODO: update repo
     //    repoInputMode->SetEntity(); //temp
 
-    emit signal_setModeResponse(lastUpdateMode, resp, !requestSync);
+    emit signal_setModeResponse(lastUpdateData, resp, needConfirm);
+    // emit signal_setModeResponse(lastUpdateMode, resp, needConfirm);
+
+    objSender->deleteLater();
 }
 
 void OSDCMSInputMode::onTimerTimeout()
@@ -234,9 +254,4 @@ void OSDCMSInputMode::resetToPrevMode()
     //    repoInputMode->SetEntity(); //temp
 
     currentMode = previousMode;
-    //    if (lastUpdateMode == "position") {
-    //        currentMode.setPosition(previousMode.getPosition());
-    //    } else if (lastUpdateMode == "inertia"){
-    //        currentMode.setPosition(previousMode.getInersia());
-    //    }
 }

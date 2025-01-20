@@ -54,12 +54,13 @@ void OSDCMSWeatherData::set(OSDSetWeatherRequest request)
     QNetworkRequest httpReq = QNetworkRequest(cfgCms->getInstance("")->getManualDataUrl()+"/weather");
     httpReq.setHeader(QNetworkRequest::ContentTypeHeader, "application/json");
 
-    httpResponse = httpClient.put(httpReq, request.toJSON());
+    auto httpResponse = httpClient.put(httpReq, request.toJSON());
     connect(httpResponse, &QNetworkReply::finished, this, &OSDCMSWeatherData::onReplyFinished);
 }
 
 void OSDCMSWeatherData::onReplyFinished()
 {
+    QNetworkReply *httpResponse = dynamic_cast<QNetworkReply *>(sender());
     QByteArray respRaw = httpResponse->readAll();
 
 #ifdef USE_LOG4QT
@@ -89,6 +90,7 @@ void OSDCMSWeatherData::onReplyFinished()
 
     emit signal_setWeatherResponse(resp);
 
+    httpResponse->deleteLater();
 }
 
 BaseResponse<WeatherModel> OSDCMSWeatherData::toResponse(QByteArray raw)
