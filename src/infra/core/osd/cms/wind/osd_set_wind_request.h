@@ -1,7 +1,7 @@
 #ifndef OSDSETWINDREQUEST_H
 #define OSDSETWINDREQUEST_H
 
-#include "src/model/base_request.h"
+#include "src/infra/core/base_request.h"
 
 class OSDSetWindRequest: public BaseModel<OSDSetWindRequest>
 {

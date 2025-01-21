@@ -1,7 +1,7 @@
 #ifndef GUNCOMMANDREQUEST_H
 #define GUNCOMMANDREQUEST_H
 
-#include "src/model/base_request.h"
+#include "src/infra/core/base_request.h"
 
 class GunCommandBarrelRequest: public BaseModel<GunCommandBarrelRequest>
 {

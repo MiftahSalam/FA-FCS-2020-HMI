@@ -1,7 +1,7 @@
 #ifndef OSD_SET_WEATHER_REQUEST_H
 #define OSD_SET_WEATHER_REQUEST_H
 
-#include "src/model/base_request.h"
+#include "src/infra/core/base_request.h"
 
 class OSDSetWeatherRequest: public BaseModel<OSDSetWeatherRequest>
 {

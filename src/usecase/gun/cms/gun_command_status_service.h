@@ -3,7 +3,7 @@
 
 #include "src/domain/gun/repository/gun_command_repository.h"
 #include "src/infra/http/http_client_wrapper.h"
-#include "src/model/base_response.h"
+#include "src/infra/core/base_response.h"
 #include "src/model/gun/cms/gun_command_status_request.h"
 #include "src/model/gun/cms/gun_command_status_response.h"
 #include "src/shared/config/gun_cms_config.h"

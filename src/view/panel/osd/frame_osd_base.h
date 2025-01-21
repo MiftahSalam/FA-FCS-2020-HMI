@@ -3,7 +3,7 @@
 
 #include <QTimer>
 
-#include "src/model/base_response.h"
+#include "src/infra/core/base_response.h"
 #include "src/infra/core/osd/model/input_mode/input_mode_model.h"
 #include "src/view/shared/constant_ui.h"
 

@@ -1,7 +1,7 @@
 #ifndef GUNMODEBARRELREQUEST_H
 #define GUNMODEBARRELREQUEST_H
 
-#include "src/model/base_request.h"
+#include "src/infra/core/base_request.h"
 
 class GunModeBarrelRequest: public BaseModel<GunModeBarrelRequest>
 {

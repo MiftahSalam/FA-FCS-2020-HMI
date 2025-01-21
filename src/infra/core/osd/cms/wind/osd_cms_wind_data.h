@@ -4,7 +4,7 @@
 #include "src/domain/osd/repository/osd_wind_repository.h"
 #include "src/infra/http/http_client_wrapper.h"
 #include "src/infra/core/osd/cms/wind/osd_set_wind_request.h"
-#include "src/model/base_response.h"
+#include "src/infra/core/base_response.h"
 #include "src/infra/core/osd/model/wind/wind_model.h"
 #include "src/shared/config/osd_cms_config.h"
 #include "src/infra/http/i_cms_http.h"

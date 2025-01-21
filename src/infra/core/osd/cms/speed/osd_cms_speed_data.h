@@ -4,7 +4,7 @@
 #include "src/domain/osd/repository/osd_speed_repository.h"
 #include "src/infra/http/http_client_wrapper.h"
 #include "src/infra/core/osd/cms/speed/osd_set_speed_request.h"
-#include "src/model/base_response.h"
+#include "src/infra/core/base_response.h"
 #include "src/infra/core/osd/model/speed/speed_model.h"
 #include "src/shared/config/osd_cms_config.h"
 #include "src/infra/http/i_cms_http.h"

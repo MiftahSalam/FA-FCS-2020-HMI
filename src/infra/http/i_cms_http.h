@@ -3,7 +3,7 @@
 
 #include <QNetworkReply>
 
-#include "src/model/base_response.h"
+#include "src/infra/core/base_response.h"
 
 template<typename M, typename R> class ICmsHttp
 {

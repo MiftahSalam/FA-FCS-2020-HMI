@@ -1,7 +1,7 @@
 #ifndef FRAME_GUN_CONTROL_STATUS_H
 #define FRAME_GUN_CONTROL_STATUS_H
 
-#include "src/model/base_response.h"
+#include "src/infra/core/base_response.h"
 #include "src/model/gun/cms/gun_command_status_response.h"
 #include "src/usecase/gun/gun_manager_service.h"
 #include <QFrame>

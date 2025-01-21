@@ -4,7 +4,7 @@
 #include "src/domain/osd/repository/osd_waterspeed_repository.h"
 #include "src/infra/http/http_client_wrapper.h"
 #include "src/infra/core/osd/cms/water_speed/osd_set_waterspeed_request.h"
-#include "src/model/base_response.h"
+#include "src/infra/core/base_response.h"
 #include "src/infra/core/osd/model/water_speed/waterspeed_model.h"
 #include "src/shared/config/osd_cms_config.h"
 #include "src/infra/http/i_cms_http.h"

@@ -1,7 +1,7 @@
 #ifndef OSDSETWATERSPEEDREQUEST_H
 #define OSDSETWATERSPEEDREQUEST_H
 
-#include "src/model/base_request.h"
+#include "src/infra/core/base_request.h"
 
 class OSDSetWaterSpeedRequest: public BaseModel<OSDSetWaterSpeedRequest>
 {

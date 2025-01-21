@@ -233,6 +233,8 @@ HEADERS += \
     src/domain/track/repository/track_base_repository.h \
     src/domain/weapon_assign/entity/weapon_assign_entity.h \
     src/domain/weapon_assign/repository/weapon_assignment_repository.h \
+    src/infra/core/base_request.h \
+    src/infra/core/base_response.h \
     src/infra/core/osd/cms/osd_cms.h \
     src/infra/core/osd/cms/datetime_model.h \
     src/infra/core/osd/cms/input_mode/osd_cms_input_mode.h \
@@ -284,8 +286,6 @@ HEADERS += \
     src/infra/store/track/track_repository_publisher.h \
     src/infra/store/weapon_assign/inmemory/weapon_assignment_repository_inmem_impl.h \
     src/infra/store/weapon_track_assign/weapon_track_assignment_repository_inmem_impl.h \
-    src/model/base_request.h \
-    src/model/base_response.h \
     src/model/engagement/cms/engagement_correction_set_request.h \
     src/model/engagement/cms/engagement_correction_set_response.h \
     src/model/engagement/cms/track_assign_request.h \

@@ -4,7 +4,7 @@
 #include "src/domain/osd/repository/osd_weather_repository.h"
 #include "src/infra/http/http_client_wrapper.h"
 #include "src/infra/core/osd/cms/weather/osd_set_weather_request.h"
-#include "src/model/base_response.h"
+#include "src/infra/core/base_response.h"
 #include "src/infra/core/osd/model/weather/weather_model.h"
 #include "src/shared/config/osd_cms_config.h"
 #include "src/infra/http/i_cms_http.h"

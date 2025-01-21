@@ -1,9 +1,7 @@
 #ifndef OSDSETGYROREQUEST_H
 #define OSDSETGYROREQUEST_H
 
-#include "src/model/base_request.h"
-
-
+#include "src/infra/core/base_request.h"
 
 class OSDSetGyroRequest: public BaseModel<OSDSetGyroRequest>
 {
