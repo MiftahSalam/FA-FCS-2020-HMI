@@ -38,13 +38,13 @@ SOURCES += \
     src/domain/track/entity/track_base_entity.cpp \
     src/domain/weapon_assign/entity/weapon_assign_entity.cpp \
     src/infra/core/cms/osd/osd_cms.cpp \
-    src/infra/core/cms/osd/osd_cms_input_mode.cpp \
-    src/infra/core/cms/osd/osd_cms_gyro_data.cpp \
-    src/infra/core/cms/osd/osd_cms_position_data.cpp \
-    src/infra/core/cms/osd/osd_cms_waterspeed_data.cpp \
-    src/infra/core/cms/osd/osd_cms_speed_data.cpp \
-    src/infra/core/cms/osd/osd_cms_weather_data.cpp \
-    src/infra/core/cms/osd/osd_cms_wind_data.cpp \
+    src/infra/core/cms/osd/input_mode/osd_cms_input_mode.cpp \
+    src/infra/core/cms/osd/inertia/osd_cms_gyro_data.cpp \
+    src/infra/core/cms/osd/position/osd_cms_position_data.cpp \
+    src/infra/core/cms/osd/water_speed/osd_cms_waterspeed_data.cpp \
+    src/infra/core/cms/osd/speed/osd_cms_speed_data.cpp \
+    src/infra/core/cms/osd/weather/osd_cms_weather_data.cpp \
+    src/infra/core/cms/osd/wind/osd_cms_wind_data.cpp \
     src/infra/http/http_client_wrapper.cpp \
     src/infra/messaging/serial/serial_messaging_wrapper.cpp \
     src/infra/messaging/tcp/tcp_messaging_wrapper.cpp \
@@ -234,13 +234,13 @@ HEADERS += \
     src/domain/weapon_assign/entity/weapon_assign_entity.h \
     src/domain/weapon_assign/repository/weapon_assignment_repository.h \
     src/infra/core/cms/osd/osd_cms.h \
-    src/infra/core/cms/osd/osd_cms_input_mode.h \
-    src/infra/core/cms/osd/osd_cms_gyro_data.h \
-    src/infra/core/cms/osd/osd_cms_position_data.h \
-    src/infra/core/cms/osd/osd_cms_waterspeed_data.h \
-    src/infra/core/cms/osd/osd_cms_speed_data.h \
-    src/infra/core/cms/osd/osd_cms_weather_data.h \
-    src/infra/core/cms/osd/osd_cms_wind_data.h \
+    src/infra/core/cms/osd/input_mode/osd_cms_input_mode.h \
+    src/infra/core/cms/osd/inertia/osd_cms_gyro_data.h \
+    src/infra/core/cms/osd/position/osd_cms_position_data.h \
+    src/infra/core/cms/osd/water_speed/osd_cms_waterspeed_data.h \
+    src/infra/core/cms/osd/speed/osd_cms_speed_data.h \
+    src/infra/core/cms/osd/weather/osd_cms_weather_data.h \
+    src/infra/core/cms/osd/wind/osd_cms_wind_data.h \
     src/infra/http/i_cms_http.h \
     src/infra/http/http_client_wrapper.h \
     src/infra/messaging/serial/serial_messaging_wrapper.h \

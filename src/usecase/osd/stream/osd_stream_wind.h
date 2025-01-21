@@ -2,7 +2,7 @@
 #define OSDSTREAMWIND_H
 
 #include "src/domain/osd/repository/osd_wind_repository.h"
-#include "src/infra/core/cms/osd/osd_cms_input_mode.h"
+#include "src/infra/core/cms/osd/input_mode/osd_cms_input_mode.h"
 #include "src/infra/messaging/tcp/tcp_messaging_wrapper.h"
 #include "src/model/osd/wind_model.h"
 #include "src/shared/config/messaging_tcp_config.h"

@@ -1,8 +1,8 @@
 #ifndef FRAME_OSD_GYRO_H
 #define FRAME_OSD_GYRO_H
 
-#include "src/infra/core/cms/osd/osd_cms_input_mode.h"
-#include "src/infra/core/cms/osd/osd_cms_gyro_data.h"
+#include "src/infra/core/cms/osd/input_mode/osd_cms_input_mode.h"
+#include "src/infra/core/cms/osd/inertia/osd_cms_gyro_data.h"
 #include "src/usecase/osd/stream/osd_stream_gyro.h"
 #include "src/view/panel/osd/frame_osd_base.h"
 #include "src/view/shared/frame_text_input.h"
