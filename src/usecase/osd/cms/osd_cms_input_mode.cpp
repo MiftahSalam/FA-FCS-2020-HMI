@@ -137,7 +137,7 @@ void OSDCMSInputMode::onReplyFinished()
     logger()->debug()<<Q_FUNC_INFO<<" -> resp prop lastUpdateData: "<<lastUpdateData;
 #else
     qDebug()<<Q_FUNC_INFO<<"respRaw: "<<respRaw;
-    qDebug()<<Q_FUNC_INFO<<"err: "<<httpResponse->error();
+    qDebug()<<Q_FUNC_INFO<<"err: "<<respErr;
     qDebug()<<Q_FUNC_INFO<<"resp prop needConfirm: "<<needConfirm;
     qDebug()<<Q_FUNC_INFO<<"resp prop lastUpdateData: "<<lastUpdateData;
 #endif

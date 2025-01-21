@@ -7,7 +7,7 @@
 #include "src/model/base_response.h"
 #include "src/model/osd/waterspeed_model.h"
 #include "src/shared/config/osd_cms_config.h"
-#include "src/usecase/osd/cms/i_cms_http.h"
+#include "src/infra/http/i_cms_http.h"
 
 class OSDCMSWaterSpeedData : public HttpClientWrapper, public ICmsHttp<WaterSpeedModel, OSDSetWaterSpeedRequest>
 {

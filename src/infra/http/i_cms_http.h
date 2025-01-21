@@ -1,5 +1,5 @@
-#ifndef IOSDCMS_H
-#define IOSDCMS_H
+#ifndef ICMSHTTP_H
+#define ICMSHTTP_H
 
 #include <QNetworkReply>
 
@@ -15,4 +15,4 @@ protected:
     virtual BaseResponse<M> errorResponse(QNetworkReply::NetworkError err) = 0;
 };
 
-#endif // IOSDCMS_H
+#endif // ICMSHTTP_H

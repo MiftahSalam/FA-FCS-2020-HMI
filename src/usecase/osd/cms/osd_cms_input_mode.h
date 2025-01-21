@@ -9,7 +9,7 @@
 #include "src/model/osd/cms/osd_input_mode_request.h"
 #include "src/model/osd/input_mode_model.h"
 #include "src/shared/config/osd_cms_config.h"
-#include "src/usecase/osd/cms/i_cms_http.h"
+#include "src/infra/http/i_cms_http.h"
 
 class OSDCMSInputMode: public HttpClientWrapper, public ICmsHttp<InputModeModel, OSDInputModeRequest>
 {

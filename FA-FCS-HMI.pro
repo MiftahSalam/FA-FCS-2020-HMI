@@ -233,6 +233,7 @@ HEADERS += \
     src/domain/track/repository/track_base_repository.h \
     src/domain/weapon_assign/entity/weapon_assign_entity.h \
     src/domain/weapon_assign/repository/weapon_assignment_repository.h \
+    src/infra/http/i_cms_http.h \
     src/infra/http/http_client_wrapper.h \
     src/infra/messaging/serial/serial_messaging_wrapper.h \
     src/infra/messaging/tcp/tcp_messaging_wrapper.h \
@@ -336,7 +337,6 @@ HEADERS += \
     src/usecase/gun/stream/gun_feedback_status_stream.h \
     src/usecase/gun/stream/gun_stream.h \
     src/usecase/gun/stream/gun_stream_base.h \
-    src/usecase/osd/cms/i_osd_cms.h \
     src/usecase/osd/cms/osd_cms.h \
     src/usecase/osd/cms/osd_cms_gyro_data.h \
     src/usecase/osd/cms/osd_cms_input_mode.h \
