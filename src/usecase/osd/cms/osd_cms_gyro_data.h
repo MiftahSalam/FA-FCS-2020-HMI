@@ -7,9 +7,9 @@
 #include "src/model/base_response.h"
 #include "src/model/osd/gyro_model.h"
 #include "src/shared/config/osd_cms_config.h"
-#include "src/usecase/osd/cms/i_osd_cms.h"
+#include "src/usecase/osd/cms/i_cms_http.h"
 
-class OSDCMSGyroData : public HttpClientWrapper, public IOSDCMS<GyroModel, OSDSetGyroRequest>
+class OSDCMSGyroData : public HttpClientWrapper, public ICmsHttp<GyroModel, OSDSetGyroRequest>
 {
     Q_OBJECT
 public:

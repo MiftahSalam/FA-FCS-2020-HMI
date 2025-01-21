@@ -7,9 +7,9 @@
 #include "src/model/base_response.h"
 #include "src/model/osd/speed_model.h"
 #include "src/shared/config/osd_cms_config.h"
-#include "src/usecase/osd/cms/i_osd_cms.h"
+#include "src/usecase/osd/cms/i_cms_http.h"
 
-class OSDCMSSpeedData: public HttpClientWrapper, public IOSDCMS<SpeedModel, OSDSetSpeedRequest>
+class OSDCMSSpeedData: public HttpClientWrapper, public ICmsHttp<SpeedModel, OSDSetSpeedRequest>
 {
     Q_OBJECT
 public:

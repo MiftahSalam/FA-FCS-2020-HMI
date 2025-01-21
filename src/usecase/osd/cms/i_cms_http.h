@@ -5,7 +5,7 @@
 
 #include "src/model/base_response.h"
 
-template<typename M, typename R> class IOSDCMS
+template<typename M, typename R> class ICmsHttp
 {
 public:
     virtual void set(R request) = 0;

@@ -7,9 +7,9 @@
 #include "src/model/base_response.h"
 #include "src/model/osd/wind_model.h"
 #include "src/shared/config/osd_cms_config.h"
-#include "src/usecase/osd/cms/i_osd_cms.h"
+#include "src/usecase/osd/cms/i_cms_http.h"
 
-class OSDCMSWindData : public HttpClientWrapper, public IOSDCMS<WindModel, OSDSetWindRequest>
+class OSDCMSWindData : public HttpClientWrapper, public ICmsHttp<WindModel, OSDSetWindRequest>
 {
     Q_OBJECT
 public:
