@@ -2,6 +2,7 @@
 #define DI_H
 
 #include "src/domain/weapon_assign/repository/weapon_assignment_repository.h"
+#include "src/infra/core/cms/osd/osd_cms.h"
 #include "src/infra/store/fire_triangle/fire_triangle_repository.h"
 #include "src/infra/store/gun/gun_repository.h"
 #include "src/infra/store/osd/osd_repository.h"
@@ -10,7 +11,6 @@
 #include "src/usecase/gun/gun_firing_service.h"
 #include "src/usecase/engagement/weapon_track_assign_service.h"
 #include "src/usecase/gun/gun_manager_service.h"
-#include "src/usecase/osd/cms/osd_cms.h"
 #include "src/usecase/osd/stream/osd_stream.h"
 #include "src/usecase/track/stream/track_stream.h"
 #include "src/usecase/gun/stream/gun_stream.h"

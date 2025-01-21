@@ -2,9 +2,9 @@
 #define OSDSTREAM_H
 
 //#include "src/shared/config/amqp_config.h"
+#include "src/infra/core/cms/osd/osd_cms.h"
 #include "src/infra/store/osd/osd_repository.h"
 #include "src/shared/config/messaging_tcp_config.h"
-#include "src/usecase/osd/cms/osd_cms.h"
 #include "src/usecase/osd/stream/osd_stream_position.h"
 #include "src/usecase/osd/stream/osd_stream_gyro.h"
 #include "src/usecase/osd/stream/osd_stream_waterspeed.h"

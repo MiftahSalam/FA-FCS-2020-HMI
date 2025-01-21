@@ -1,6 +1,6 @@
 #include <QtTest/QTest>
 
-#include "src/usecase/osd/cms/osd_cms.h"
+#include "src/infra/core/cms/osd/osd_cms.h"
 #include "test_usecase_osd_cms.h"
 
 const QString COMMON_CONFIG_PATH_TEST = QDir::homePath()+QDir::separator()+".fa-hmi-test.conf";

@@ -5,10 +5,10 @@
 #include <QWidget>
 
 #include "src/domain/osd/repository/osd_weather_repository.h"
+#include "src/infra/core/cms/osd/osd_cms_input_mode.h"
 #include "src/infra/messaging/tcp/tcp_messaging_wrapper.h"
 #include "src/model/osd/weather_model.h"
 #include "src/shared/config/messaging_tcp_config.h"
-#include "src/usecase/osd/cms/osd_cms_input_mode.h"
 #include "src/usecase/osd/stream/IOSDStream.h"
 
 class OSDStreamWeather : public QObject, public IOSDStream<WeatherModel>

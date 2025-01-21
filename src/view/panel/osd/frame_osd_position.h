@@ -3,7 +3,8 @@
 
 #include <QWidget>
 
-#include "src/usecase/osd/cms/osd_cms_input_mode.h"
+#include "src/infra/core/cms/osd/osd_cms_input_mode.h"
+#include "src/infra/core/cms/osd/osd_cms_position_data.h"
 #include "src/usecase/osd/stream/osd_stream_position.h"
 #include "src/view/panel/osd/frame_osd_base.h"
 #include "src/view/shared/frame_text_input.h"
