@@ -4,14 +4,14 @@
 #include <QNetworkReply>
 #include <QObject>
 
-#include "src/infra/core/cms/osd/input_mode/osd_cms_input_mode.h"
+#include "src/infra/core/osd/cms/input_mode/osd_cms_input_mode.h"
 #include "src/infra/store/osd/osd_repository.h"
-#include "src/infra/core/cms/osd/position/osd_cms_position_data.h"
-#include "src/infra/core/cms/osd/inertia/osd_cms_gyro_data.h"
-#include "src/infra/core/cms/osd/water_speed/osd_cms_waterspeed_data.h"
-#include "src/infra/core/cms/osd/speed/osd_cms_speed_data.h"
-#include "src/infra/core/cms/osd/wind/osd_cms_wind_data.h"
-#include "src/infra/core/cms/osd/weather/osd_cms_weather_data.h"
+#include "src/infra/core/osd/cms/position/osd_cms_position_data.h"
+#include "src/infra/core/osd/cms/inertia/osd_cms_gyro_data.h"
+#include "src/infra/core/osd/cms/water_speed/osd_cms_waterspeed_data.h"
+#include "src/infra/core/osd/cms/speed/osd_cms_speed_data.h"
+#include "src/infra/core/osd/cms/wind/osd_cms_wind_data.h"
+#include "src/infra/core/osd/cms/weather/osd_cms_weather_data.h"
 #include "src/shared/config/osd_cms_config.h"
 
 class OSDCMS : public QObject

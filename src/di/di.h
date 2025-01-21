@@ -2,7 +2,7 @@
 #define DI_H
 
 #include "src/domain/weapon_assign/repository/weapon_assignment_repository.h"
-#include "src/infra/core/cms/osd/osd_cms.h"
+#include "src/infra/core/osd/cms/osd_cms.h"
 #include "src/infra/store/fire_triangle/fire_triangle_repository.h"
 #include "src/infra/store/gun/gun_repository.h"
 #include "src/infra/store/osd/osd_repository.h"

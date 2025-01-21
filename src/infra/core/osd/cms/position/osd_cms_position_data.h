@@ -3,9 +3,9 @@
 
 #include "src/domain/osd/repository/osd_position_repository.h"
 #include "src/infra/http/http_client_wrapper.h"
-#include "src/model/osd/cms/osd_set_position_request.h"
+#include "src/infra/core/osd/cms/position/osd_set_position_request.h"
 #include "src/model/base_response.h"
-#include "src/model/osd/position_model.h"
+#include "src/infra/core/osd/model/position/position_model.h"
 #include "src/shared/config/osd_cms_config.h"
 #include "src/infra/http/i_cms_http.h"
 

@@ -7,7 +7,7 @@
 
 #include "src/domain/osd/repository/osd_datetime_repository.h"
 #include "src/infra/messaging/tcp/tcp_messaging_wrapper.h"
-#include "src/model/osd/datetime_model.h"
+#include "src/infra/core/osd/model/date_time/datetime_model.h"
 #include "src/shared/config/messaging_tcp_config.h"
 #include "src/usecase/osd/stream/IOSDStream.h"
 

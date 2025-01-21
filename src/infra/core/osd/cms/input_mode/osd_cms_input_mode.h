@@ -6,8 +6,8 @@
 
 #include "src/domain/osd/repository/osd_base_repository.h"
 #include "src/infra/http/http_client_wrapper.h"
-#include "src/model/osd/cms/osd_input_mode_request.h"
-#include "src/model/osd/input_mode_model.h"
+#include "src/infra/core/osd/cms/input_mode/osd_input_mode_request.h"
+#include "src/infra/core/osd/model/input_mode/input_mode_model.h"
 #include "src/shared/config/osd_cms_config.h"
 #include "src/infra/http/i_cms_http.h"
 

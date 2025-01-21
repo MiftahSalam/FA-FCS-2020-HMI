@@ -37,14 +37,29 @@ SOURCES += \
     src/domain/osd/entity/osd_wind_entity.cpp \
     src/domain/track/entity/track_base_entity.cpp \
     src/domain/weapon_assign/entity/weapon_assign_entity.cpp \
-    src/infra/core/cms/osd/osd_cms.cpp \
-    src/infra/core/cms/osd/input_mode/osd_cms_input_mode.cpp \
-    src/infra/core/cms/osd/inertia/osd_cms_gyro_data.cpp \
-    src/infra/core/cms/osd/position/osd_cms_position_data.cpp \
-    src/infra/core/cms/osd/water_speed/osd_cms_waterspeed_data.cpp \
-    src/infra/core/cms/osd/speed/osd_cms_speed_data.cpp \
-    src/infra/core/cms/osd/weather/osd_cms_weather_data.cpp \
-    src/infra/core/cms/osd/wind/osd_cms_wind_data.cpp \
+    src/infra/core/osd/cms/osd_cms.cpp \
+    src/infra/core/osd/cms/input_mode/osd_cms_input_mode.cpp \
+    src/infra/core/osd/cms/input_mode/osd_input_mode_request.cpp \
+    src/infra/core/osd/cms/inertia/osd_cms_gyro_data.cpp \
+    src/infra/core/osd/cms/inertia/osd_set_gyro_request.cpp \
+    src/infra/core/osd/cms/position/osd_cms_position_data.cpp \
+    src/infra/core/osd/cms/position/osd_set_position_request.cpp \
+    src/infra/core/osd/cms/water_speed/osd_cms_waterspeed_data.cpp \
+    src/infra/core/osd/cms/water_speed/osd_set_waterspeed_request.cpp \
+    src/infra/core/osd/cms/speed/osd_cms_speed_data.cpp \
+    src/infra/core/osd/cms/speed/osd_set_speed_request.cpp \
+    src/infra/core/osd/cms/weather/osd_cms_weather_data.cpp \
+    src/infra/core/osd/cms/weather/osd_set_weather_request.cpp \
+    src/infra/core/osd/cms/wind/osd_cms_wind_data.cpp \
+    src/infra/core/osd/cms/wind/osd_set_wind_request.cpp \
+    src/infra/core/osd/model/date_time/datetime_model.cpp \
+    src/infra/core/osd/model/inertia/gyro_model.cpp \
+    src/infra/core/osd/model/input_mode/input_mode_model.cpp \
+    src/infra/core/osd/model/position/position_model.cpp \
+    src/infra/core/osd/model/water_speed/waterspeed_model.cpp \
+    src/infra/core/osd/model/speed/speed_model.cpp \
+    src/infra/core/osd/model/weather/weather_model.cpp \
+    src/infra/core/osd/model/wind/wind_model.cpp \
     src/infra/http/http_client_wrapper.cpp \
     src/infra/messaging/serial/serial_messaging_wrapper.cpp \
     src/infra/messaging/tcp/tcp_messaging_wrapper.cpp \
@@ -85,21 +100,6 @@ SOURCES += \
     src/model/gun/gun_coverage_model.cpp \
     src/model/gun/gun_feedback_barrel_model.cpp \
     src/model/gun/gun_feedback_status_model.cpp \
-    src/model/osd/cms/osd_input_mode_request.cpp \
-    src/model/osd/cms/osd_set_gyro_request.cpp \
-    src/model/osd/cms/osd_set_position_request.cpp \
-    src/model/osd/cms/osd_set_waterspeed_request.cpp \
-    src/model/osd/cms/osd_set_speed_request.cpp \
-    src/model/osd/cms/osd_set_weather_request.cpp \
-    src/model/osd/cms/osd_set_wind_request.cpp \
-    src/model/osd/datetime_model.cpp \
-    src/model/osd/gyro_model.cpp \
-    src/model/osd/input_mode_model.cpp \
-    src/model/osd/position_model.cpp \
-    src/model/osd/waterspeed_model.cpp \
-    src/model/osd/speed_model.cpp \
-    src/model/osd/weather_model.cpp \
-    src/model/osd/wind_model.cpp \
     src/model/track/arpa/track_arpa_model.cpp \
     src/shared/common/errors/err_amqp.cpp \
     src/shared/common/errors/err_base.cpp \
@@ -189,7 +189,7 @@ SOURCES += \
     test/shared/errors/test_base_error.cpp \
     test/shared/utils/test_utils.cpp \
     test/testsuit.cpp \
-    test/infra/core/cms/osd/test_usecase_osd_cms.cpp
+    test/infra/core/osd/cms/test_usecase_osd_cms.cpp
 
 HEADERS += \
     src/di/di.h \
@@ -233,14 +233,30 @@ HEADERS += \
     src/domain/track/repository/track_base_repository.h \
     src/domain/weapon_assign/entity/weapon_assign_entity.h \
     src/domain/weapon_assign/repository/weapon_assignment_repository.h \
-    src/infra/core/cms/osd/osd_cms.h \
-    src/infra/core/cms/osd/input_mode/osd_cms_input_mode.h \
-    src/infra/core/cms/osd/inertia/osd_cms_gyro_data.h \
-    src/infra/core/cms/osd/position/osd_cms_position_data.h \
-    src/infra/core/cms/osd/water_speed/osd_cms_waterspeed_data.h \
-    src/infra/core/cms/osd/speed/osd_cms_speed_data.h \
-    src/infra/core/cms/osd/weather/osd_cms_weather_data.h \
-    src/infra/core/cms/osd/wind/osd_cms_wind_data.h \
+    src/infra/core/osd/cms/osd_cms.h \
+    src/infra/core/osd/cms/datetime_model.h \
+    src/infra/core/osd/cms/input_mode/osd_cms_input_mode.h \
+    src/infra/core/osd/cms/input_mode/osd_input_mode_request.h \
+    src/infra/core/osd/cms/inertia/osd_cms_gyro_data.h \
+    src/infra/core/osd/cms/inertia/osd_set_gyro_request.h \
+    src/infra/core/osd/cms/position/osd_cms_position_data.h \
+    src/infra/core/osd/cms/position/osd_set_position_request.h \
+    src/infra/core/osd/cms/water_speed/osd_cms_waterspeed_data.h \
+    src/infra/core/osd/cms/water_speed/osd_set_waterspeed_request.h \
+    src/infra/core/osd/cms/speed/osd_cms_speed_data.h \
+    src/infra/core/osd/cms/speed/osd_set_speed_request.h \
+    src/infra/core/osd/cms/weather/osd_cms_weather_data.h \
+    src/infra/core/osd/cms/weather/osd_set_weather_request.h \
+    src/infra/core/osd/cms/wind/osd_cms_wind_data.h \
+    src/infra/core/osd/cms/wind/osd_set_wind_request.h \
+    src/infra/core/osd/model/date_time/datetime_model.h \
+    src/infra/core/osd/model/inertia/gyro_model.h \
+    src/infra/core/osd/model/input_mode/input_mode_model.h \
+    src/infra/core/osd/model/position/position_model.h \
+    src/infra/core/osd/model/water_speed/waterspeed_model.h \
+    src/infra/core/osd/model/speed/speed_model.h \
+    src/infra/core/osd/model/weather/weather_model.h \
+    src/infra/core/osd/model/wind/wind_model.h \
     src/infra/http/i_cms_http.h \
     src/infra/http/http_client_wrapper.h \
     src/infra/messaging/serial/serial_messaging_wrapper.h \
@@ -285,24 +301,6 @@ HEADERS += \
     src/model/gun/gun_coverage_model.h \
     src/model/gun/gun_feedback_barrel_model.h \
     src/model/gun/gun_feedback_status_model.h \
-    src/model/osd/cms/osd_input_mode_request.h \
-    src/model/osd/cms/osd_set_gyro_request.h \
-    src/model/osd/cms/osd_set_position_request.h \
-    src/model/osd/cms/osd_set_waterspeed_request.h \
-    src/model/osd/cms/osd_set_weather_request.h \
-    src/model/osd/cms/osd_set_wind_request.h \
-    src/model/osd/datetime_model.h \
-    src/model/osd/gyro_model.h \
-    src/model/osd/input_mode_model.h \
-    src/model/osd/position_model.h \
-    src/model/osd/waterspeed_model.h \
-    src/model/osd/cms/osd_set_speed_request.h \
-    src/model/osd/gyro_model.h \
-    src/model/osd/input_mode_model.h \
-    src/model/osd/position_model.h \
-    src/model/osd/speed_model.h \
-    src/model/osd/weather_model.h \
-    src/model/osd/wind_model.h \
     src/model/track/arpa/track_arpa_model.h \
     src/shared/common/errors/err_amqp.h \
     src/shared/common/errors/err_base.h \
@@ -400,7 +398,7 @@ HEADERS += \
     test/shared/errors/test_base_error.h \
     test/shared/utils/test_utils.h \
     test/testsuit.h \
-    test/infra/core/cms/osd/test_usecase_osd_cms.h
+    test/infra/core/osd/cms/test_usecase_osd_cms.h
 
 FORMS += \
     src/view/mainwindow.ui \
