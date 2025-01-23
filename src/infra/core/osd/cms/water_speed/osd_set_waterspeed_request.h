@@ -3,7 +3,7 @@
 
 #include "src/infra/core/base_request.h"
 
-class OSDSetWaterSpeedRequest: public BaseModel<OSDSetWaterSpeedRequest>
+class OSDSetWaterSpeedRequest: public BaseModel
 {
 public:
     OSDSetWaterSpeedRequest();
@@ -14,11 +14,10 @@ public:
     void setSpeed(const double w_speed);
     void setCourse(const double w_course);
 
+    // BaseModel interface
+    QByteArray toJSON() override;
+
 private:
     double speed, course;
-
-    // BaseModel interface
-public:
-    QByteArray toJSON() override;
 };
 #endif // OSDSETWATERSPEEDREQUEST_H

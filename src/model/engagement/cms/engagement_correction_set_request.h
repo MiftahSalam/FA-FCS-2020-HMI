@@ -3,7 +3,7 @@
 
 #include "src/infra/core/base_request.h"
 
-class EngagementCorrectionSetRequest: public BaseModel<EngagementCorrectionSetRequest>
+class EngagementCorrectionSetRequest: public BaseModel
 {
 public:
     EngagementCorrectionSetRequest();

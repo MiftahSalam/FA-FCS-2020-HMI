@@ -3,7 +3,7 @@
 
 #include "src/infra/core/base_request.h"
 
-class OSDSetGyroRequest: public BaseModel<OSDSetGyroRequest>
+class OSDSetGyroRequest: public BaseModel
 {
 public:
     OSDSetGyroRequest();
@@ -18,11 +18,10 @@ public:
     void setPitch(const double _pitch);
     void setRoll(const double _roll);
 
+    QByteArray toJSON() override;
+
 private:
     double heading, pitch, roll;
-
-public:
-    QByteArray toJSON() override;
 };
 
 #endif // OSDSETGYROREQUEST_H

@@ -3,7 +3,7 @@
 
 #include "src/infra/core/base_request.h"
 
-class OSDInputModeRequest: public BaseModel<OSDInputModeRequest>
+class OSDInputModeRequest: public BaseModel
 {
 public:
     OSDInputModeRequest();
@@ -22,6 +22,8 @@ public:
     bool getWeather() const;
     void setWeather(bool newWeather);
 
+    // BaseModel interface
+    QByteArray toJSON() override;
 
 private:
     bool position;
@@ -30,10 +32,6 @@ private:
     bool waterspeed;
     bool wind;
     bool weather;
-
-    // BaseModel interface
-public:
-    QByteArray toJSON() override;
 };
 
 #endif // OSDINPUTMODEREQUEST_H

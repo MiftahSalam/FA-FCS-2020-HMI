@@ -3,14 +3,13 @@
 
 #include "src/infra/core/base_request.h"
 
-class TrackAssignRequest: public BaseModel<TrackAssignRequest>
+class TrackAssignRequest: public BaseModel
 {
 public:
     TrackAssignRequest();
     TrackAssignRequest(int trackId, const std::string &weapon);
 
     // BaseModel interface
-public:
     QByteArray toJSON() override;
 
     int getTrackId() const;

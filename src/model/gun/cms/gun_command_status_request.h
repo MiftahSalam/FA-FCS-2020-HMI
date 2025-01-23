@@ -3,7 +3,7 @@
 
 #include "src/infra/core/base_request.h"
 
-class GunCommandStatusRequest: public BaseModel<GunCommandStatusRequest>
+class GunCommandStatusRequest: public BaseModel
 {
 public:
     GunCommandStatusRequest();

@@ -3,7 +3,7 @@
 
 #include "src/infra/core/base_request.h"
 
-class OSDSetWindRequest: public BaseModel<OSDSetWindRequest>
+class OSDSetWindRequest: public BaseModel
 {
 public:
     OSDSetWindRequest();
@@ -14,12 +14,11 @@ public:
     void setSpeed(const double _speed);
     void setDirection(const double _direction);
 
-private:
-    double speed, direction;
-
     // BaseModel interface
-public:
     QByteArray toJSON() override;
+
+private:
+    double speed, direction;    
 };
 
 #endif // OSDSETWINDREQUEST_H

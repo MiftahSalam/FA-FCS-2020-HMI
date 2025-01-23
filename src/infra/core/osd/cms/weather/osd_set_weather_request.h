@@ -3,7 +3,7 @@
 
 #include "src/infra/core/base_request.h"
 
-class OSDSetWeatherRequest: public BaseModel<OSDSetWeatherRequest>
+class OSDSetWeatherRequest: public BaseModel
 {
 public:
     OSDSetWeatherRequest();
@@ -18,11 +18,11 @@ public:
     void setHumidity(const double _hum);
     void setPressure(const double _press);
 
+    // BaseModel interface
+    QByteArray toJSON() override;
+
 private:
     double temperature, humidity, pressure;
-
-public:
-    QByteArray toJSON() override;
 };
 
 #endif // OSD_SET_WEATHER_REQUEST_H

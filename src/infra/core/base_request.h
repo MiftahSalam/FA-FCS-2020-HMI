@@ -1,9 +1,9 @@
 #ifndef BASEMODEL_H
 #define BASEMODEL_H
 
-#include <QString>
+#include <QByteArray>
 
-template <typename T> class BaseModel
+class BaseModel
 {
 public:
     virtual QByteArray toJSON() = 0;

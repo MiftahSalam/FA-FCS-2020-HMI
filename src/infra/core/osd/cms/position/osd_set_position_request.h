@@ -3,7 +3,7 @@
 
 #include "src/infra/core/base_request.h"
 
-class OSDSetPositionRequest: public BaseModel<OSDSetPositionRequest>
+class OSDSetPositionRequest: public BaseModel
 {
 public:
     OSDSetPositionRequest();
@@ -14,12 +14,11 @@ public:
     void setLatitude(const double lat);
     void setLongitude(const double lat);
 
+    // BaseModel interface
+    QByteArray toJSON() override;
+
 private:
     double latitude, longitude;
-
-    // BaseModel interface
-public:
-    QByteArray toJSON() override;
 };
 
 #endif // OSD_SET_POSITION_REQUEST_H
