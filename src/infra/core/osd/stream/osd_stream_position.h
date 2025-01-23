@@ -3,11 +3,11 @@
 
 #include "src/domain/osd/repository/osd_position_repository.h"
 #include "src/infra/core/osd/cms/input_mode/osd_cms_input_mode.h"
-#include "src/infra/messaging/tcp/tcp_messaging_wrapper.h"
 #include "src/infra/core/osd/model/position/position_model.h"
+#include "src/infra/messaging/tcp/tcp_messaging_wrapper.h"
+#include "src/infra/messaging/IOSDStream.h"
 //#include "src/shared/config/amqp_config.h"
 #include "src/shared/config/messaging_tcp_config.h"
-#include "src/usecase/osd/stream/IOSDStream.h"
 
 #include <QObject>
 

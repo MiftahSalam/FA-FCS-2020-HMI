@@ -3,7 +3,7 @@
 
 #include "src/infra/core/osd/cms/input_mode/osd_cms_input_mode.h"
 #include "src/infra/core/osd/cms/weather/osd_cms_weather_data.h"
-#include "src/usecase/osd/stream/osd_stream_weather.h"
+#include "src/infra/core/osd/stream/osd_stream_weather.h"
 #include "src/view/panel/osd/frame_osd_base.h"
 #include "src/view/shared/frame_text_input.h"
 

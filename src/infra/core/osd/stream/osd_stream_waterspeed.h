@@ -1,24 +1,24 @@
-#ifndef OSDSTREAMWIND_H
-#define OSDSTREAMWIND_H
+#ifndef OSDSTREAMWATERSPEED_H
+#define OSDSTREAMWATERSPEED_H
 
-#include "src/domain/osd/repository/osd_wind_repository.h"
+#include "src/domain/osd/repository/osd_waterspeed_repository.h"
 #include "src/infra/core/osd/cms/input_mode/osd_cms_input_mode.h"
+#include "src/infra/core/osd/model/water_speed/waterspeed_model.h"
 #include "src/infra/messaging/tcp/tcp_messaging_wrapper.h"
-#include "src/infra/core/osd/model/wind/wind_model.h"
+#include "src/infra/messaging/IOSDStream.h"
 #include "src/shared/config/messaging_tcp_config.h"
-#include "src/usecase/osd/stream/IOSDStream.h"
 
 #include <QObject>
 
-class OSDStreamWind : public QObject, public IOSDStream<WindModel>
+class OSDStreamWaterSpeed : public QObject, public IOSDStream<WaterSpeedModel>
 {
     Q_OBJECT
 public:
-    OSDStreamWind(OSDStreamWind &other) = delete;
-    void operator=(const OSDStreamWind&) = delete;
-    static OSDStreamWind* getInstance(
+    OSDStreamWaterSpeed(OSDStreamWaterSpeed &other) = delete;
+    void operator=(const OSDStreamWaterSpeed&) = delete;
+    static OSDStreamWaterSpeed* getInstance(
             TcpMessagingOpts *config,
-            OSDWindRepository *_repoWP,
+            OSDWaterSpeedRepository *_repoWP,
             OSDCMSInputMode *modeService
             );
 
@@ -26,12 +26,12 @@ public:
 
 signals:
     // IOSDStream interface
-    void signalDataProcessed(WindModel data) override;
+    void signalDataProcessed(WaterSpeedModel data) override;
 
 protected:
-    OSDStreamWind(
+    OSDStreamWaterSpeed(
             TcpMessagingOpts *config = nullptr,
-            OSDWindRepository *repoWind = nullptr,
+            OSDWaterSpeedRepository *repoWP = nullptr,
             OSDCMSInputMode *modeService = nullptr
             );
 
@@ -40,11 +40,11 @@ private slots:
     void onDataReceived(QByteArray data) override;
 
 private:
-    static OSDStreamWind *windStream;
+    static OSDStreamWaterSpeed *waterspeedStream;
 
     TcpMessagingWrapper *consumer;
     TcpMessagingOpts *cfg;
-    OSDWindRepository* _repoWind;
+    OSDWaterSpeedRepository* _repoWP;
     OSDCMSInputMode *serviceMode;
     // TODO: add input mode repo
 
@@ -53,4 +53,4 @@ private:
     void handleError(const QString &err) override;
 };
 
-#endif // OSDSTREAMWIND_H
+#endif // OSDSTREAMWATERSPEED_H

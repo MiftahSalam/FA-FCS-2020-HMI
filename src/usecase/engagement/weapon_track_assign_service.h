@@ -9,7 +9,7 @@
 #include "src/shared/config/track_weapon_assign_config.h"
 #include "src/usecase/engagement/cms/track_weapon_engage_service.h"
 #include "src/usecase/engagement/cms/engagement_data_correction_40mm_service.h"
-#include "src/usecase/osd/stream/osd_stream.h"
+#include "src/infra/core/osd/stream/osd_stream.h"
 #include <QObject>
 
 class WeaponTrackAssignService : public QObject

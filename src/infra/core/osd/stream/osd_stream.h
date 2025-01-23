@@ -5,13 +5,13 @@
 #include "src/infra/core/osd/cms/osd_cms.h"
 #include "src/infra/store/osd/osd_repository.h"
 #include "src/shared/config/messaging_tcp_config.h"
-#include "src/usecase/osd/stream/osd_stream_position.h"
-#include "src/usecase/osd/stream/osd_stream_gyro.h"
-#include "src/usecase/osd/stream/osd_stream_waterspeed.h"
-#include "src/usecase/osd/stream/osd_stream_speed.h"
-#include "src/usecase/osd/stream/osd_stream_wind.h"
-#include "src/usecase/osd/stream/osd_stream_weather.h"
-#include "src/usecase/osd/stream/osd_stream_datetime.h"
+#include "src/infra/core/osd/stream/osd_stream_position.h"
+#include "src/infra/core/osd/stream/osd_stream_gyro.h"
+#include "src/infra/core/osd/stream/osd_stream_waterspeed.h"
+#include "src/infra/core/osd/stream/osd_stream_speed.h"
+#include "src/infra/core/osd/stream/osd_stream_wind.h"
+#include "src/infra/core/osd/stream/osd_stream_weather.h"
+#include "src/infra/core/osd/stream/osd_stream_datetime.h"
 
 #include <QObject>
 

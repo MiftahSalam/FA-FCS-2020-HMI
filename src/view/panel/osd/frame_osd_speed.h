@@ -3,7 +3,7 @@
 
 #include "src/infra/core/osd/cms/input_mode/osd_cms_input_mode.h"
 #include "src/infra/core/osd/cms/speed/osd_cms_speed_data.h"
-#include "src/usecase/osd/stream/osd_stream_speed.h"
+#include "src/infra/core/osd/stream/osd_stream_speed.h"
 #include "src/view/panel/osd/frame_osd_base.h"
 #include "src/view/shared/frame_text_input.h"
 #include <QWidget>
