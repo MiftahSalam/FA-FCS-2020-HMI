@@ -1,10 +1,8 @@
 #ifndef OSDINPUTMODE_H
 #define OSDINPUTMODE_H
 
-
 #include <QTimer>
 
-#include "src/domain/osd/repository/osd_base_repository.h"
 #include "src/infra/http/http_client_wrapper.h"
 #include "src/infra/core/osd/cms/input_mode/osd_input_mode_request.h"
 #include "src/infra/core/osd/model/input_mode/input_mode_model.h"
@@ -19,8 +17,7 @@ public:
     void operator=(const OSDCMSInputMode&) = delete;
     static OSDCMSInputMode* getInstance(
             HttpClientWrapper *httpClient,
-            OSDCmsConfig *cmsConfig,
-            OSDBaseRepository* repoPos
+            OSDCmsConfig *cmsConfig
             );
 
     void set(OSDInputModeRequest request) override;
@@ -33,7 +30,8 @@ signals:
 protected:
     OSDCMSInputMode(
             HttpClientWrapper *parent = nullptr,
-            OSDCmsConfig *cmsConfig = nullptr);
+            OSDCmsConfig *cmsConfig = nullptr
+        );
 
 private slots:
     void onReplyFinished() override;

@@ -43,8 +43,7 @@ OSDCMSInputMode::OSDCMSInputMode(
 
 OSDCMSInputMode *OSDCMSInputMode::getInstance(
         HttpClientWrapper *httpClient = nullptr,
-        OSDCmsConfig *cmsConfig = nullptr,
-        OSDBaseRepository *repoPos =nullptr
+        OSDCmsConfig *cmsConfig = nullptr
         )
 {
     if (inputMode == nullptr) {
@@ -53,10 +52,6 @@ OSDCMSInputMode *OSDCMSInputMode::getInstance(
         }
 
         if(httpClient == nullptr) {
-            throw ErrObjectCreation();
-        }
-
-        if(repoPos == nullptr) {
             throw ErrObjectCreation();
         }
 
