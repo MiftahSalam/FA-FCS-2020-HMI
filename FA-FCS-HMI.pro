@@ -60,6 +60,14 @@ SOURCES += \
     src/infra/core/osd/model/speed/speed_model.cpp \
     src/infra/core/osd/model/weather/weather_model.cpp \
     src/infra/core/osd/model/wind/wind_model.cpp \
+    src/infra/core/osd/stream/osd_stream.cpp \
+    src/infra/core/osd/stream/osd_stream_datetime.cpp \
+    src/infra/core/osd/stream/osd_stream_gyro.cpp \
+    src/infra/core/osd/stream/osd_stream_position.cpp \
+    src/infra/core/osd/stream/osd_stream_waterspeed.cpp \
+    src/infra/core/osd/stream/osd_stream_speed.cpp \
+    src/infra/core/osd/stream/osd_stream_weather.cpp \
+    src/infra/core/osd/stream/osd_stream_wind.cpp \
     src/infra/http/http_client_wrapper.cpp \
     src/infra/messaging/serial/serial_messaging_wrapper.cpp \
     src/infra/messaging/tcp/tcp_messaging_wrapper.cpp \
@@ -140,14 +148,6 @@ SOURCES += \
     src/usecase/gun/stream/gun_feedback_status_stream.cpp \
     src/usecase/gun/stream/gun_stream.cpp \
     src/usecase/osd/osd_service.cpp \
-    src/usecase/osd/stream/osd_stream.cpp \
-    src/usecase/osd/stream/osd_stream_datetime.cpp \
-    src/usecase/osd/stream/osd_stream_gyro.cpp \
-    src/usecase/osd/stream/osd_stream_position.cpp \
-    src/usecase/osd/stream/osd_stream_waterspeed.cpp \
-    src/usecase/osd/stream/osd_stream_speed.cpp \
-    src/usecase/osd/stream/osd_stream_weather.cpp \
-    src/usecase/osd/stream/osd_stream_wind.cpp \
     src/usecase/track/stream/arpa/track_arpa_stream.cpp \
     src/usecase/track/stream/track_stream.cpp \
     src/usecase/weapon_assign/weapon_assign_service.cpp \
@@ -259,8 +259,17 @@ HEADERS += \
     src/infra/core/osd/model/speed/speed_model.h \
     src/infra/core/osd/model/weather/weather_model.h \
     src/infra/core/osd/model/wind/wind_model.h \
+    src/infra/core/osd/stream/osd_stream.h \
+    src/infra/core/osd/stream/osd_stream_datetime.h \
+    src/infra/core/osd/stream/osd_stream_gyro.h \
+    src/infra/core/osd/stream/osd_stream_position.h \
+    src/infra/core/osd/stream/osd_stream_waterspeed.h \
+    src/infra/core/osd/stream/osd_stream_speed.h \
+    src/infra/core/osd/stream/osd_stream_weather.h \
+    src/infra/core/osd/stream/osd_stream_wind.h \
     src/infra/http/i_cms_http.h \
     src/infra/http/http_client_wrapper.h \
+    src/infra/messaging/IOSDStream.h \
     src/infra/messaging/serial/serial_messaging_wrapper.h \
     src/infra/messaging/tcp/tcp_messaging_wrapper.h \
     src/infra/store/engagement/engagement_repository.h \
@@ -344,15 +353,6 @@ HEADERS += \
     src/usecase/gun/stream/gun_stream.h \
     src/usecase/gun/stream/gun_stream_base.h \
     src/usecase/osd/osd_service.h \
-    src/usecase/osd/stream/IOSDStream.h \
-    src/usecase/osd/stream/osd_stream.h \
-    src/usecase/osd/stream/osd_stream_datetime.h \
-    src/usecase/osd/stream/osd_stream_gyro.h \
-    src/usecase/osd/stream/osd_stream_position.h \
-    src/usecase/osd/stream/osd_stream_waterspeed.h \
-    src/usecase/osd/stream/osd_stream_speed.h \
-    src/usecase/osd/stream/osd_stream_weather.h \
-    src/usecase/osd/stream/osd_stream_wind.h \
     src/usecase/track/stream/arpa/track_arpa_stream.h \
     src/usecase/track/stream/track_stream.h \
     src/usecase/track/stream/track_stream_base.h \
