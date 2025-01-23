@@ -200,7 +200,7 @@ void FrameOSDWind::onTimeout()
     setErrorInput(currError);
 
     auto curMode = _cmsMode->getDataMode();
-    bool WindMode = curMode.getWind();
+    bool WindMode = curMode->wind();
     if ((OSD_MODE)WindMode != currentMode) {
         disconnect(ui->mode, &FrameOSDMode::signal_currentModeChange, this, &FrameOSDWind::onModeChange);
         if (WindMode) {
@@ -222,7 +222,7 @@ void FrameOSDWind::onTimeout()
 
 void FrameOSDWind::onStreamReceive(WindModel model)
 {
-    auto currentMode = (OSD_MODE)_cmsMode->getDataMode().getWind();
+    auto currentMode = (OSD_MODE)_cmsMode->getDataMode()->wind();
     if (currentMode == OSD_MODE::MANUAL) {
         return;
     }
@@ -243,7 +243,7 @@ void FrameOSDWind::onUpdateWindAutoUi()
 
 void FrameOSDWind::notConnectedUiSetup()
 {
-    auto currentMode = (OSD_MODE)_cmsMode->getDataMode().getWind();
+    auto currentMode = (OSD_MODE)_cmsMode->getDataMode()->wind();
     if (currentMode == OSD_MODE::MANUAL) {
         return;
     }
@@ -252,7 +252,7 @@ void FrameOSDWind::notConnectedUiSetup()
 
 void FrameOSDWind::noDataUiSetup()
 {
-    auto currentMode = (OSD_MODE)_cmsMode->getDataMode().getWind();
+    auto currentMode = (OSD_MODE)_cmsMode->getDataMode()->wind();
     if (currentMode == OSD_MODE::MANUAL) {
         return;
     }
@@ -261,7 +261,7 @@ void FrameOSDWind::noDataUiSetup()
 
 void FrameOSDWind::invalidDataUiSetup()
 {
-    auto currentMode = (OSD_MODE)_cmsMode->getDataMode().getWind();
+    auto currentMode = (OSD_MODE)_cmsMode->getDataMode()->wind();
     if (currentMode == OSD_MODE::MANUAL) {
         return;
     }

@@ -11,7 +11,7 @@ QT       += core gui network testlib serialport
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
 #DEFINES += USE_AMQP
-#DEFINES += USE_LOG4QT
+DEFINES += USE_LOG4QT
 
 TARGET = fa_fcs_hmi
 TEMPLATE = app
@@ -30,6 +30,7 @@ SOURCES += \
     src/domain/osd/entity/osd_base_entity.cpp \
     src/domain/osd/entity/osd_datetime_entity.cpp \
     src/domain/osd/entity/osd_inertia_entity.cpp \
+    src/domain/osd/entity/osd_mode_entity.cpp \
     src/domain/osd/entity/osd_position_entity.cpp \
     src/domain/osd/entity/osd_waterspeed_entity.cpp \
     src/domain/osd/entity/osd_speed_entity.cpp \
@@ -82,6 +83,7 @@ SOURCES += \
     src/infra/store/gun/inmemory/gun_coverage_repository_inmem_impl.cpp \
     src/infra/store/osd/inmemory/osd_datetime_repository_inmem_impl.cpp \
     src/infra/store/osd/inmemory/osd_inertia_repository_inmem_impl.cpp \
+    src/infra/store/osd/inmemory/osd_input_mode_repository_inmem_impl.cpp \
     src/infra/store/osd/inmemory/osd_position_repository_inmem_impl.cpp \
     src/infra/store/osd/inmemory/osd_waterspeed_repository_inmem_impl.cpp \
     src/infra/store/osd/inmemory/osd_speed_repository_inmem_impl.cpp \
@@ -213,6 +215,7 @@ HEADERS += \
     src/domain/osd/entity/osd_base_entity.h \
     src/domain/osd/entity/osd_datetime_entity.h \
     src/domain/osd/entity/osd_inertia_entity.h \
+    src/domain/osd/entity/osd_mode_entity.h \
     src/domain/osd/entity/osd_position_entity.h \
     src/domain/osd/entity/osd_waterspeed_entity.h \
     src/domain/osd/entity/osd_weather_entity.h \
@@ -220,6 +223,7 @@ HEADERS += \
     src/domain/osd/repository/osd_base_repository.h \
     src/domain/osd/repository/osd_datetime_repository.h \
     src/domain/osd/repository/osd_inertia_repository.h \
+    src/domain/osd/repository/osd_mode_repository.h \
     src/domain/osd/repository/osd_position_repository.h \
     src/domain/osd/repository/osd_waterspeed_repository.h \
     src/domain/osd/entity/osd_speed_entity.h \
@@ -283,6 +287,7 @@ HEADERS += \
     src/infra/store/gun/inmemory/gun_coverage_repository_inmem_impl.h \
     src/infra/store/osd/inmemory/osd_datetime_repository_inmem_impl.h \
     src/infra/store/osd/inmemory/osd_inertia_repository_inmem_impl.h \
+    src/infra/store/osd/inmemory/osd_input_mode_repository_inmem_impl.h \
     src/infra/store/osd/inmemory/osd_position_repository_inmem_impl.h \
     src/infra/store/osd/inmemory/osd_waterspeed_repository_inmem_impl.h \
     src/infra/store/osd/inmemory/osd_speed_repository_inmem_impl.h \

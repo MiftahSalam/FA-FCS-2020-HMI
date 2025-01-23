@@ -205,7 +205,7 @@ void FrameOSDWaterSpeed::onTimeout()
     setErrorInput(currError);
 
     auto curMode = _cmsMode->getDataMode();
-    bool WSMode = curMode.getWaterSpeed();
+    bool WSMode = curMode->waterSpeed();
     if ((OSD_MODE)WSMode != currentMode) {
         disconnect(ui->mode, &FrameOSDMode::signal_currentModeChange, this, &FrameOSDWaterSpeed::onModeChange);
         if (WSMode) {
@@ -228,7 +228,7 @@ void FrameOSDWaterSpeed::onTimeout()
 void FrameOSDWaterSpeed::onStreamReceive(WaterSpeedModel model)
 {
     //    qDebug()<<Q_FUNC_INFO<<"waterspeed: speed ->"<<model.getSpeed()<<", course ->"<<model.getCourse();
-    auto currentMode = (OSD_MODE)_cmsMode->getDataMode().getWaterSpeed();
+    auto currentMode = (OSD_MODE)_cmsMode->getDataMode()->waterSpeed();
     if (currentMode == OSD_MODE::MANUAL) {
         return;
     }
@@ -250,7 +250,7 @@ void FrameOSDWaterSpeed::onUpdateWaterSpeedAutoUi()
 
 void FrameOSDWaterSpeed::notConnectedUiSetup()
 {
-    auto currentMode = (OSD_MODE)_cmsMode->getDataMode().getWaterSpeed();
+    auto currentMode = (OSD_MODE)_cmsMode->getDataMode()->waterSpeed();
     if (currentMode == OSD_MODE::MANUAL) {
         return;
     }
@@ -259,7 +259,7 @@ void FrameOSDWaterSpeed::notConnectedUiSetup()
 
 void FrameOSDWaterSpeed::noDataUiSetup()
 {
-    auto currentMode = (OSD_MODE)_cmsMode->getDataMode().getWaterSpeed();
+    auto currentMode = (OSD_MODE)_cmsMode->getDataMode()->waterSpeed();
     if (currentMode == OSD_MODE::MANUAL) {
         return;
     }
@@ -268,7 +268,7 @@ void FrameOSDWaterSpeed::noDataUiSetup()
 
 void FrameOSDWaterSpeed::invalidDataUiSetup()
 {
-    auto currentMode = (OSD_MODE)_cmsMode->getDataMode().getWaterSpeed();
+    auto currentMode = (OSD_MODE)_cmsMode->getDataMode()->waterSpeed();
     if (currentMode == OSD_MODE::MANUAL) {
         return;
     }

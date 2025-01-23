@@ -86,7 +86,7 @@ void FrameOSDSpeed::onTimeout()
     setErrorInput(currError);
 
     auto curMode = _cmsMode->getDataMode();
-    bool speedMode = curMode.getSpeed();
+    bool speedMode = curMode->speed();
     if ((OSD_MODE)speedMode != currentMode) {
         disconnect(ui->mode, &FrameOSDMode::signal_currentModeChange, this, &FrameOSDSpeed::onModeChange);
         if (speedMode) {
@@ -200,7 +200,7 @@ void FrameOSDSpeed::onDataResponse(BaseResponse<SpeedModel> resp)
 
 void FrameOSDSpeed::onStreamReceive(SpeedModel model)
 {
-    auto currentMode = (OSD_MODE)_cmsMode->getDataMode().getSpeed();
+    auto currentMode = (OSD_MODE)_cmsMode->getDataMode()->speed();
     if (currentMode == OSD_MODE::MANUAL) {
         return;
     }
@@ -260,7 +260,7 @@ void FrameOSDSpeed::autoUiSetup()
 
 void FrameOSDSpeed::notConnectedUiSetup()
 {
-    auto currentMode = (OSD_MODE)_cmsMode->getDataMode().getSpeed();
+    auto currentMode = (OSD_MODE)_cmsMode->getDataMode()->speed();
     if (currentMode == OSD_MODE::MANUAL) {
         return;
     }
@@ -270,7 +270,7 @@ void FrameOSDSpeed::notConnectedUiSetup()
 
 void FrameOSDSpeed::noDataUiSetup()
 {
-    auto currentMode = (OSD_MODE)_cmsMode->getDataMode().getSpeed();
+    auto currentMode = (OSD_MODE)_cmsMode->getDataMode()->speed();
     if (currentMode == OSD_MODE::MANUAL) {
         return;
     }
@@ -279,7 +279,7 @@ void FrameOSDSpeed::noDataUiSetup()
 
 void FrameOSDSpeed::invalidDataUiSetup()
 {
-    auto currentMode = (OSD_MODE)_cmsMode->getDataMode().getSpeed();
+    auto currentMode = (OSD_MODE)_cmsMode->getDataMode()->speed();
     if (currentMode == OSD_MODE::MANUAL) {
         return;
     }

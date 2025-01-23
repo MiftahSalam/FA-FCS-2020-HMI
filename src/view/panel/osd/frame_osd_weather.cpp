@@ -88,7 +88,7 @@ void FrameOSDWeather::onTimeout()
     setErrorInput(currError);
 
     auto curMode = _cmsMode->getDataMode();
-    bool weatherMode = curMode.getWeather();
+    bool weatherMode = curMode->weather();
     if ((OSD_MODE)weatherMode != currentMode) {
         disconnect(ui->mode, &FrameOSDMode::signal_currentModeChange, this, &FrameOSDWeather::onModeChange);
         if (weatherMode) {
@@ -208,7 +208,7 @@ void FrameOSDWeather::onDataResponse(BaseResponse<WeatherModel> resp)
 
 void FrameOSDWeather::onStreamReceive(WeatherModel model)
 {
-    auto currentMode = (OSD_MODE)_cmsMode->getDataMode().getWeather();
+    auto currentMode = (OSD_MODE)_cmsMode->getDataMode()->weather();
     if (currentMode == OSD_MODE::MANUAL) {
         return;
     }
@@ -270,7 +270,7 @@ void FrameOSDWeather::autoUiSetup()
 
 void FrameOSDWeather::notConnectedUiSetup()
 {
-    auto currentMode = (OSD_MODE)_cmsMode->getDataMode().getWeather();
+    auto currentMode = (OSD_MODE)_cmsMode->getDataMode()->weather();
     if (currentMode == OSD_MODE::MANUAL) {
         return;
     }
@@ -279,7 +279,7 @@ void FrameOSDWeather::notConnectedUiSetup()
 
 void FrameOSDWeather::noDataUiSetup()
 {
-    auto currentMode = (OSD_MODE)_cmsMode->getDataMode().getWeather();
+    auto currentMode = (OSD_MODE)_cmsMode->getDataMode()->weather();
     if (currentMode == OSD_MODE::MANUAL) {
         return;
     }
@@ -288,7 +288,7 @@ void FrameOSDWeather::noDataUiSetup()
 
 void FrameOSDWeather::invalidDataUiSetup()
 {
-    auto currentMode = (OSD_MODE)_cmsMode->getDataMode().getWeather();
+    auto currentMode = (OSD_MODE)_cmsMode->getDataMode()->weather();
     if (currentMode == OSD_MODE::MANUAL) {
         return;
     }

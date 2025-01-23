@@ -18,14 +18,23 @@ const char * REQ_CTX_LAST_UPDATE_DATA_KEY = "ctx-req-lastUpdate";
 OSDCMSInputMode* OSDCMSInputMode::inputMode = nullptr;
 
 OSDCMSInputMode::OSDCMSInputMode(
-        HttpClientWrapper *parent,
-        OSDCmsConfig *cmsConfig
-        ):
+    HttpClientWrapper *parent,
+    OSDCmsConfig *cmsConfig,
+    OSDInputModeRepository *modeRepo
+    ):
     HttpClientWrapper(parent),
-    currentMode(OSDInputModeRequest(false, false, false, false, false, false)),
-    previousMode(OSDInputModeRequest(false, false, false, false, false, false)),
+    repoMode(modeRepo),
     cfgCms(cmsConfig)
 {
+    previousMode = new OSDInputModeEntity(
+        modeRepo->GetMode()->inersia(),
+        modeRepo->GetMode()->position(),
+        modeRepo->GetMode()->speed(),
+        modeRepo->GetMode()->waterSpeed(),
+        modeRepo->GetMode()->weather(),
+        modeRepo->GetMode()->wind()
+        );
+
     synced = false;
 
     reqCtxObj.insert(REQ_CTX_NEED_CONFIRM_KEY, true);
@@ -42,9 +51,10 @@ OSDCMSInputMode::OSDCMSInputMode(
 }
 
 OSDCMSInputMode *OSDCMSInputMode::getInstance(
-        HttpClientWrapper *httpClient = nullptr,
-        OSDCmsConfig *cmsConfig = nullptr
-        )
+    HttpClientWrapper *httpClient = nullptr,
+    OSDCmsConfig *cmsConfig = nullptr,
+    OSDInputModeRepository *modeRepo = nullptr
+    )
 {
     if (inputMode == nullptr) {
         if(cmsConfig == nullptr) {
@@ -55,7 +65,11 @@ OSDCMSInputMode *OSDCMSInputMode::getInstance(
             throw ErrObjectCreation();
         }
 
-        inputMode = new OSDCMSInputMode(httpClient, cmsConfig);
+        if(modeRepo == nullptr) {
+            throw ErrObjectCreation();
+        }
+
+        inputMode = new OSDCMSInputMode(httpClient, cmsConfig, modeRepo);
     }
 
     return inputMode;
@@ -73,32 +87,50 @@ void OSDCMSInputMode::set(OSDInputModeRequest request)
 
 void OSDCMSInputMode::setDataMode(const QString &dataFisis, const bool manualMode)
 {
+    OSDInputModeEntity curMode(
+        repoMode->GetMode()->position(),
+        repoMode->GetMode()->speed(),
+        repoMode->GetMode()->inersia(),
+        repoMode->GetMode()->waterSpeed(),
+        repoMode->GetMode()->wind(),
+        repoMode->GetMode()->weather()
+        );
+
     if (dataFisis == "position") {
-        currentMode.setPosition(manualMode);
+        curMode.setPositionMode(manualMode);
     } else if (dataFisis == "inertia") {
-        currentMode.setInersia(manualMode);
+        curMode.setInersiaMode(manualMode);
     } else if (dataFisis == "water_speed") {
-        currentMode.setWaterSpeed(manualMode);
+        curMode.setWaterSpeedMode(manualMode);
     } else if (dataFisis == "speed"){
-        currentMode.setSpeed(manualMode);
+        curMode.setSpeedMode(manualMode);
     } else if (dataFisis == "wind"){
-        currentMode.setWind(manualMode);
+        curMode.setWindMode(manualMode);
     }else if (dataFisis == "weather"){
-        currentMode.setWeather(manualMode);
+        curMode.setWeatherMode(manualMode);
     }else{
         return;
         // TODO: handle invalid datafisis
     }
 
+    repoMode->SetMode(curMode);
+
     reqCtxObj.insert(REQ_CTX_NEED_CONFIRM_KEY, true);
     reqCtxObj.insert(REQ_CTX_LAST_UPDATE_DATA_KEY, dataFisis);
 
-    set(currentMode);
+    set(OSDInputModeRequest(
+        repoMode->GetMode()->position(),
+        repoMode->GetMode()->speed(),
+        repoMode->GetMode()->inersia(),
+        repoMode->GetMode()->waterSpeed(),
+        repoMode->GetMode()->wind(),
+        repoMode->GetMode()->weather()
+        ));
 }
 
-const OSDInputModeRequest OSDCMSInputMode::getDataMode() const
+const OSDInputModeEntity *OSDCMSInputMode::getDataMode() const
 {
-    return currentMode;
+    return repoMode->GetMode();
 }
 
 void OSDCMSInputMode::sync()
@@ -112,7 +144,14 @@ void OSDCMSInputMode::sync()
         reqCtxObj.insert(REQ_CTX_NEED_CONFIRM_KEY, false);
         reqCtxObj.insert(REQ_CTX_LAST_UPDATE_DATA_KEY, "");
 
-        set(currentMode);
+        set(OSDInputModeRequest(
+            repoMode->GetMode()->position(),
+            repoMode->GetMode()->speed(),
+            repoMode->GetMode()->inersia(),
+            repoMode->GetMode()->waterSpeed(),
+            repoMode->GetMode()->wind(),
+            repoMode->GetMode()->weather()
+            ));
     }
 }
 
@@ -151,9 +190,12 @@ void OSDCMSInputMode::onReplyFinished()
     synced = true;
     resp = toResponse(respRaw);
 
-    previousMode = currentMode;
-    //TODO: update repo
-    //    repoInputMode->SetEntity(); //temp
+    previousMode->setInersiaMode(repoMode->GetMode()->inersia());
+    previousMode->setPositionMode(repoMode->GetMode()->position());
+    previousMode->setSpeedMode(repoMode->GetMode()->speed());
+    previousMode->setWaterSpeedMode(repoMode->GetMode()->waterSpeed());
+    previousMode->setWeatherMode(repoMode->GetMode()->weather());
+    previousMode->setWindMode(repoMode->GetMode()->wind());
 
     emit signal_setModeResponse(lastUpdateData, resp, needConfirm);
     // emit signal_setModeResponse(lastUpdateMode, resp, needConfirm);
@@ -174,25 +216,25 @@ BaseResponse<InputModeModel> OSDCMSInputMode::toResponse(QByteArray raw)
         QString respMsg = respObj["message"].toString();
         QJsonObject respData = respObj["data"].toObject();
         InputModeModel model(
-                    respData["position"].toBool(),
-                respData["speed"].toBool(),
-                respData["inertia"].toBool(),
-                respData["water_speed"].toBool(),
-                respData["wind"].toBool(),
-                respData["weather"].toBool()
-                );
+            respData["position"].toBool(),
+            respData["speed"].toBool(),
+            respData["inertia"].toBool(),
+            respData["water_speed"].toBool(),
+            respData["wind"].toBool(),
+            respData["weather"].toBool()
+            );
         BaseResponse<InputModeModel> resp(respCode, respMsg, model);
 
 #ifdef USE_LOG4QT
         logger()->debug()<<Q_FUNC_INFO<<" -> resp. http code: "<<resp.getHttpCode()
-                        <<", message: "<<resp.getMessage()
-                       <<", position: "<<resp.getData().getPosition()
-                      <<", speed: "<<resp.getData().getSpeed()
-                     <<", inertia: "<<resp.getData().getInersia()
-                    <<", water_speed: "<<resp.getData().getWaterSpeed()
-                   <<", wind: "<<resp.getData().getWind()
-                  <<", weather: "<<resp.getData().getWeather()
-                    ;
+                          <<", message: "<<resp.getMessage()
+                          <<", position: "<<resp.getData().getPosition()
+                          <<", speed: "<<resp.getData().getSpeed()
+                          <<", inertia: "<<resp.getData().getInersia()
+                          <<", water_speed: "<<resp.getData().getWaterSpeed()
+                          <<", wind: "<<resp.getData().getWind()
+                          <<", weather: "<<resp.getData().getWeather()
+            ;
 #else
         qDebug()<<Q_FUNC_INFO<<"resp"<<resp.getHttpCode()<<resp.getMessage()<<resp.getData().getInersia();
 #endif
@@ -245,8 +287,5 @@ BaseResponse<InputModeModel> OSDCMSInputMode::errorResponse(QNetworkReply::Netwo
 
 void OSDCMSInputMode::resetToPrevMode()
 {
-    //TODO: update repo
-    //    repoInputMode->SetEntity(); //temp
-
-    currentMode = previousMode;
+    repoMode->SetMode(*previousMode);
 }

@@ -93,7 +93,7 @@ void FrameOSDGyro::onTimeout()
     setErrorInput(currError);
 
     auto curMode = _cmsMode->getDataMode();
-    bool inertiaMode = curMode.getInersia();
+    bool inertiaMode = curMode->inersia();
     if ((OSD_MODE)inertiaMode != currentMode)
     {
         disconnect(ui->mode, &FrameOSDMode::signal_currentModeChange, this, &FrameOSDGyro::onModeChange);
@@ -225,7 +225,7 @@ void FrameOSDGyro::onDataResponse(BaseResponse<GyroModel> resp)
 
 void FrameOSDGyro::onStreamReceive(GyroModel model)
 {
-    auto currentMode = (OSD_MODE)_cmsMode->getDataMode().getInersia();
+    auto currentMode = (OSD_MODE)_cmsMode->getDataMode()->inersia();
     if (currentMode == OSD_MODE::MANUAL)
     {
         return;
@@ -297,7 +297,7 @@ void FrameOSDGyro::autoUiSetup()
 
 void FrameOSDGyro::notConnectedUiSetup()
 {
-    auto currentMode = (OSD_MODE)_cmsMode->getDataMode().getInersia();
+    auto currentMode = (OSD_MODE)_cmsMode->getDataMode()->inersia();
     if (currentMode == OSD_MODE::MANUAL)
     {
         return;
@@ -317,7 +317,7 @@ void FrameOSDGyro::notConnectedUiSetup()
 
 void FrameOSDGyro::noDataUiSetup()
 {
-    auto currentMode = (OSD_MODE)_cmsMode->getDataMode().getInersia();
+    auto currentMode = (OSD_MODE)_cmsMode->getDataMode()->inersia();
     if (currentMode == OSD_MODE::MANUAL)
     {
         return;
@@ -337,7 +337,7 @@ void FrameOSDGyro::noDataUiSetup()
 
 void FrameOSDGyro::invalidDataUiSetup()
 {
-    auto currentMode = (OSD_MODE)_cmsMode->getDataMode().getInersia();
+    auto currentMode = (OSD_MODE)_cmsMode->getDataMode()->inersia();
     if (currentMode == OSD_MODE::MANUAL)
     {
         return;

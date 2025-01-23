@@ -2,6 +2,7 @@
 #define OSDREPOSITORY_H
 
 #include "src/domain/osd/repository/osd_inertia_repository.h"
+#include "src/domain/osd/repository/osd_mode_repository.h"
 #include "src/domain/osd/repository/osd_position_repository.h"
 #include "src/domain/osd/repository/osd_waterspeed_repository.h"
 #include "src/domain/osd/repository/osd_speed_repository.h"
@@ -25,7 +26,10 @@ public:
     OSDWeatherRepository *getRepoOSDWeather() const;
     OSDDateTimeRepository *getRepoDateTime() const;
 
+    OSDInputModeRepository *getRepoOSDMode() const;
+
 private:
+    OSDInputModeRepository *repoOSDMode;
     OSDPositionRepository *repoOSDPosition;
     OSDInertiaRepository *repoOSDInertia;
     OSDWaterSpeedRepository *repoOSDWaterSpeed;

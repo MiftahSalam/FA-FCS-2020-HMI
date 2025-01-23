@@ -3,6 +3,7 @@
 
 #include <QTimer>
 
+#include "src/domain/osd/repository/osd_mode_repository.h"
 #include "src/infra/http/http_client_wrapper.h"
 #include "src/infra/core/osd/cms/input_mode/osd_input_mode_request.h"
 #include "src/infra/core/osd/model/input_mode/input_mode_model.h"
@@ -16,21 +17,23 @@ public:
     OSDCMSInputMode(OSDCMSInputMode &other) = delete;
     void operator=(const OSDCMSInputMode&) = delete;
     static OSDCMSInputMode* getInstance(
-            HttpClientWrapper *httpClient,
-            OSDCmsConfig *cmsConfig
-            );
+        HttpClientWrapper *httpClient,
+        OSDCmsConfig *cmsConfig,
+        OSDInputModeRepository *modeRepo
+        );
 
     void set(OSDInputModeRequest request) override;
     void setDataMode(const QString &dataFisis, const bool manualMode);
-    const OSDInputModeRequest getDataMode() const;
+    const OSDInputModeEntity* getDataMode() const;
 
 signals:
     void signal_setModeResponse(const QString datafisis, BaseResponse<InputModeModel> response, bool needConfirm);
 
 protected:
     OSDCMSInputMode(
-            HttpClientWrapper *parent = nullptr,
-            OSDCmsConfig *cmsConfig = nullptr
+        HttpClientWrapper *parent = nullptr,
+        OSDCmsConfig *cmsConfig = nullptr,
+        OSDInputModeRepository *modeRepo = nullptr
         );
 
 private slots:
@@ -41,10 +44,10 @@ private slots:
 
 private:
     static OSDCMSInputMode *inputMode;
-    OSDInputModeRequest currentMode;
-    OSDInputModeRequest previousMode;
+    OSDInputModeRepository *repoMode;
+    OSDInputModeEntity *previousMode;
     OSDCmsConfig *cfgCms;
-    // TODO: add input mode repo
+
     QTimer *timer;
 
     bool synced;

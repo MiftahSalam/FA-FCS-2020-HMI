@@ -211,8 +211,8 @@ bool WeaponTrackAssignService::isIdentityEngageable(const int trackId)
 
 bool WeaponTrackAssignService::isHeadingSpeedValid()
 {
-    bool is_inertia_auto_mode = !_cmsOSDInputMode->getDataMode().getInersia();
-    bool is_speed_auto_mode = !_cmsOSDInputMode->getDataMode().getSpeed();
+    bool is_inertia_auto_mode = !_cmsOSDInputMode->getDataMode()->inersia();
+    bool is_speed_auto_mode = !_cmsOSDInputMode->getDataMode()->speed();
     int inertia_err_code = _streamInertia->check().getCode();
 
     if (is_inertia_auto_mode &&

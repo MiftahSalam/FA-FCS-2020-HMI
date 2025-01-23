@@ -238,7 +238,7 @@ void FrameOSDPosition::onTimeout()
     setErrorInput(currError);
 
     auto curMode = _cmsMode->getDataMode();
-    bool posMode = curMode.getPosition();
+    bool posMode = curMode->position();
     if ((OSD_MODE)posMode != currentMode)
     {
         disconnect(ui->mode, &FrameOSDMode::signal_currentModeChange, this, &FrameOSDPosition::onModeChange);
@@ -266,7 +266,7 @@ void FrameOSDPosition::onTimeout()
 void FrameOSDPosition::onStreamReceive(PositionModel model)
 {
     //    qDebug() << Q_FUNC_INFO << "position: lat ->" << model.getLatitude() << ", lon ->" << model.getLongitude();
-    auto currentMode = (OSD_MODE)_cmsMode->getDataMode().getPosition();
+    auto currentMode = (OSD_MODE)_cmsMode->getDataMode()->position();
     if (currentMode == OSD_MODE::MANUAL)
     {
         return;
@@ -292,7 +292,7 @@ void FrameOSDPosition::onUpdatePositionAutoUi()
 
 void FrameOSDPosition::notConnectedUiSetup()
 {
-    auto currentMode = (OSD_MODE)_cmsMode->getDataMode().getPosition();
+    auto currentMode = (OSD_MODE)_cmsMode->getDataMode()->position();
     if (currentMode == OSD_MODE::MANUAL)
     {
         return;
@@ -309,7 +309,7 @@ void FrameOSDPosition::notConnectedUiSetup()
 
 void FrameOSDPosition::noDataUiSetup()
 {
-    auto currentMode = (OSD_MODE)_cmsMode->getDataMode().getPosition();
+    auto currentMode = (OSD_MODE)_cmsMode->getDataMode()->position();
     if (currentMode == OSD_MODE::MANUAL)
     {
         return;
@@ -326,7 +326,7 @@ void FrameOSDPosition::noDataUiSetup()
 
 void FrameOSDPosition::invalidDataUiSetup()
 {
-    auto currentMode = (OSD_MODE)_cmsMode->getDataMode().getPosition();
+    auto currentMode = (OSD_MODE)_cmsMode->getDataMode()->position();
     if (currentMode == OSD_MODE::MANUAL)
     {
         return;

@@ -85,7 +85,7 @@ void OSDStreamGyro::onDataReceived(QByteArray data)
         }
 
 
-        auto inertiaMode = serviceMode->getDataMode().getInersia();
+        auto inertiaMode = serviceMode->getDataMode()->inersia();
         if (!inertiaMode) {
             if(check().getCode() == ERROR_NO.first || check().getCode() == ERROR_CODE_OSD_DATA_PARTIALLY_INVALID.first)
             {

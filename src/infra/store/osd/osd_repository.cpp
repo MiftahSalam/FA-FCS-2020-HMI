@@ -1,4 +1,5 @@
 #include "osd_repository.h"
+#include "src/infra/store/osd/inmemory/osd_input_mode_repository_inmem_impl.h"
 #include "src/infra/store/osd/inmemory/osd_position_repository_inmem_impl.h"
 #include "src/infra/store/osd/inmemory/osd_inertia_repository_inmem_impl.h"
 #include "src/infra/store/osd/inmemory/osd_waterspeed_repository_inmem_impl.h"
@@ -11,6 +12,7 @@
 OSDRepository::OSDRepository(QObject *parent)
     : QObject{parent}
 {
+    repoOSDMode = OSDInputModeRepositoryInMemImpl::GetInstance();
     repoOSDPosition = OSDPositionRepositoryInMemImpl::GetInstance();
     repoOSDInertia = OSDInertiaRepositoryInMemImpl::GetInstance();
     repoOSDWaterSpeed = OSDWaterSpeedRepositoryInMemImpl::GetInstance();
@@ -53,4 +55,9 @@ OSDWeatherRepository *OSDRepository::getRepoOSDWeather() const
 OSDDateTimeRepository *OSDRepository::getRepoDateTime() const
 {
     return repoDateTime;
+}
+
+OSDInputModeRepository *OSDRepository::getRepoOSDMode() const
+{
+    return repoOSDMode;
 }
