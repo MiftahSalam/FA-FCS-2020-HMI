@@ -164,29 +164,18 @@ void FrameOSDPosition::onModeChangeResponse(const QString datafisis, BaseRespons
 
 void FrameOSDPosition::onModeChange(int index)
 {
-    //    if (afterResetModeIndx) {
-    //        QTimer::singleShot(10, this, &FrameOSDPosition::onAfterModeReset);
-    //        return;
-    //    }
-
-    bool manual_mode;
-    switch ((OSD_MODE)index)
-    {
+    switch ((OSD_MODE)index) {
     case OSD_MODE::AUTO:
-        manual_mode = false;
         currentMode = OSD_MODE::AUTO;
-        //        autoUiSetup();
         break;
     case OSD_MODE::MANUAL:
-        manual_mode = true;
         currentMode = OSD_MODE::MANUAL;
-        //        manualUiSetup();
         break;
     default:
         break;
     }
 
-    _cmsMode->setDataMode("position", manual_mode);
+    _cmsMode->setDataMode("position", currentMode);
 }
 
 void FrameOSDPosition::onAfterModeReset()

@@ -49,22 +49,18 @@ FrameOSDSpeed::FrameOSDSpeed(QWidget *parent) :
 
 void FrameOSDSpeed::onModeChange(int index)
 {
-    bool manual_mode;
     switch ((OSD_MODE)index) {
     case OSD_MODE::AUTO:
-        manual_mode = false;
         currentMode = OSD_MODE::AUTO;
         break;
     case OSD_MODE::MANUAL:
-        manual_mode = true;
         currentMode = OSD_MODE::MANUAL;
         break;
     default:
         break;
     }
 
-    _cmsMode->setDataMode("speed", manual_mode);
-    // on_pushButton_clicked();
+    _cmsMode->setDataMode("speed", currentMode);
 }
 
 void FrameOSDSpeed::onAfterModeReset()

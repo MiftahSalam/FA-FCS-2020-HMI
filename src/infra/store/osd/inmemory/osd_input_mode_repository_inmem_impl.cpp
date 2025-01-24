@@ -26,7 +26,7 @@ const OSDInputModeEntity *OSDInputModeRepositoryInMemImpl::GetMode() const
 OSDInputModeRepository *OSDInputModeRepositoryInMemImpl::GetInstance()
 {
     if (instance == nullptr) {
-        OSDInputModeEntity* entity = new OSDInputModeEntity(false, false, false, false, false, false);
+        OSDInputModeEntity* entity = new OSDInputModeEntity(OSD_MODE::AUTO, OSD_MODE::AUTO, OSD_MODE::AUTO, OSD_MODE::AUTO, OSD_MODE::AUTO, OSD_MODE::AUTO);
         instance = new OSDInputModeRepositoryInMemImpl(entity);
     }
 

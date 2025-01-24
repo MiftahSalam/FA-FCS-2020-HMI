@@ -1,67 +1,67 @@
 #include "osd_mode_entity.h"
 
-OSDInputModeEntity::OSDInputModeEntity(bool position, bool speed, bool inersia, bool waterspeed, bool wind, bool weather)
+OSDInputModeEntity::OSDInputModeEntity(OSD_MODE position, OSD_MODE speed, OSD_MODE inersia, OSD_MODE waterspeed, OSD_MODE wind, OSD_MODE weather)
     : _position(position),_speed(speed),_inersia(inersia),_waterspeed(waterspeed),_wind(wind),_weather(weather)
 {
 
 }
 
-bool OSDInputModeEntity::position() const
+OSD_MODE OSDInputModeEntity::position() const
 {
     return _position;
 }
 
-void OSDInputModeEntity::setPositionMode(bool newPosition)
+void OSDInputModeEntity::setPositionMode(OSD_MODE newPosition)
 {
     _position = newPosition;
 }
 
-bool OSDInputModeEntity::speed() const
+OSD_MODE OSDInputModeEntity::speed() const
 {
     return _speed;
 }
 
-void OSDInputModeEntity::setSpeedMode(bool newSpeed)
+void OSDInputModeEntity::setSpeedMode(OSD_MODE newSpeed)
 {
     _speed = newSpeed;
 }
 
-bool OSDInputModeEntity::inersia() const
+OSD_MODE OSDInputModeEntity::inersia() const
 {
     return _inersia;
 }
 
-void OSDInputModeEntity::setInersiaMode(bool newInersia)
+void OSDInputModeEntity::setInersiaMode(OSD_MODE newInersia)
 {
     _inersia = newInersia;
 }
 
-bool OSDInputModeEntity::waterSpeed() const
+OSD_MODE OSDInputModeEntity::waterSpeed() const
 {
     return _waterspeed;
 }
 
-void OSDInputModeEntity::setWaterSpeedMode(bool newWaterSpeed)
+void OSDInputModeEntity::setWaterSpeedMode(OSD_MODE newWaterSpeed)
 {
     _waterspeed = newWaterSpeed;
 }
 
-bool OSDInputModeEntity::wind() const
+OSD_MODE OSDInputModeEntity::wind() const
 {
     return _wind;
 }
 
-void OSDInputModeEntity::setWindMode(bool newWind)
+void OSDInputModeEntity::setWindMode(OSD_MODE newWind)
 {
     _wind = newWind;
 }
 
-bool OSDInputModeEntity::weather() const
+OSD_MODE OSDInputModeEntity::weather() const
 {
     return _weather;
 }
 
-void OSDInputModeEntity::setWeatherMode(bool newWeather)
+void OSDInputModeEntity::setWeatherMode(OSD_MODE newWeather)
 {
     _weather = newWeather;
 }

@@ -23,7 +23,7 @@ public:
         );
 
     void set(OSDInputModeRequest request) override;
-    void setDataMode(const QString &dataFisis, const bool manualMode);
+    void setDataMode(const QString &dataFisis, const OSD_MODE mode);
     const OSDInputModeEntity* getDataMode() const;
 
 signals:

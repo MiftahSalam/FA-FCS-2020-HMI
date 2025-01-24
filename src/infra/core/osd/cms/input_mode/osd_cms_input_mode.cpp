@@ -85,7 +85,7 @@ void OSDCMSInputMode::set(OSDInputModeRequest request)
     connect(curHttpResponse, &QNetworkReply::finished, this, &OSDCMSInputMode::onReplyFinished);
 }
 
-void OSDCMSInputMode::setDataMode(const QString &dataFisis, const bool manualMode)
+void OSDCMSInputMode::setDataMode(const QString &dataFisis, const OSD_MODE mode)
 {
     OSDInputModeEntity curMode(
         repoMode->GetMode()->position(),
@@ -97,17 +97,17 @@ void OSDCMSInputMode::setDataMode(const QString &dataFisis, const bool manualMod
         );
 
     if (dataFisis == "position") {
-        curMode.setPositionMode(manualMode);
+        curMode.setPositionMode(mode);
     } else if (dataFisis == "inertia") {
-        curMode.setInersiaMode(manualMode);
+        curMode.setInersiaMode(mode);
     } else if (dataFisis == "water_speed") {
-        curMode.setWaterSpeedMode(manualMode);
+        curMode.setWaterSpeedMode(mode);
     } else if (dataFisis == "speed"){
-        curMode.setSpeedMode(manualMode);
+        curMode.setSpeedMode(mode);
     } else if (dataFisis == "wind"){
-        curMode.setWindMode(manualMode);
+        curMode.setWindMode(mode);
     }else if (dataFisis == "weather"){
-        curMode.setWeatherMode(manualMode);
+        curMode.setWeatherMode(mode);
     }else{
         return;
         // TODO: handle invalid datafisis

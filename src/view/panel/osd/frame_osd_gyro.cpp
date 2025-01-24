@@ -51,22 +51,19 @@ FrameOSDGyro::FrameOSDGyro(QWidget *parent) : QWidget(parent),
 
 void FrameOSDGyro::onModeChange(int index)
 {
-    bool manual_mode;
     switch ((OSD_MODE)index)
     {
     case OSD_MODE::AUTO:
-        manual_mode = false;
         currentMode = OSD_MODE::AUTO;
         break;
     case OSD_MODE::MANUAL:
-        manual_mode = true;
         currentMode = OSD_MODE::MANUAL;
         break;
     default:
         break;
     }
 
-    _cmsMode->setDataMode("inertia", manual_mode);
+    _cmsMode->setDataMode("inertia", currentMode);
 }
 
 void FrameOSDGyro::onAfterModeReset()

@@ -1,6 +1,7 @@
 #include "frame_gun_data_monitoring.h"
 #include "ui_frame_gun_data_monitoring.h"
 #include "src/di/di.h"
+#include "src/view/shared/constant_ui.h"
 
 
 FrameGunDataMonitoring::FrameGunDataMonitoring(QWidget *parent) :

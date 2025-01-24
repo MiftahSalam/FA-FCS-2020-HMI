@@ -140,23 +140,18 @@ void FrameOSDWind::onModeChangeResponse(const QString datafisis, BaseResponse<In
 
 void FrameOSDWind::onModeChange(int index)
 {
-    bool manual_mode;
     switch ((OSD_MODE)index) {
     case OSD_MODE::AUTO:
-        manual_mode = false;
         currentMode = OSD_MODE::AUTO;
-        //        autoUiSetup();
         break;
     case OSD_MODE::MANUAL:
-        manual_mode = true;
         currentMode = OSD_MODE::MANUAL;
-        //        manualUiSetup();
         break;
     default:
         break;
     }
 
-    _cmsMode->setDataMode("wind", manual_mode);
+    _cmsMode->setDataMode("wind", currentMode);
 }
 
 void FrameOSDWind::onAfterModeReset()

@@ -1,6 +1,7 @@
 #include "frametda.h"
 #include "src/di/di.h"
 #include "src/shared/utils/utils.h"
+#include "src/view/shared/constant_ui.h"
 #include "src/view/tda/components/tda_compass_object.h"
 #include "src/view/tda/components/tda_gun_coverage_object.h"
 #include "src/view/tda/components/tda_heading_marker_object.h"
