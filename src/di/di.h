@@ -12,6 +12,7 @@
 #include "src/usecase/engagement/weapon_track_assign_service.h"
 #include "src/usecase/gun/gun_manager_service.h"
 #include "src/infra/core/osd/stream/osd_stream.h"
+#include "src/usecase/osd/osd_service.h"
 #include "src/usecase/track/stream/track_stream.h"
 #include "src/usecase/gun/stream/gun_stream.h"
 #include "src/usecase/fire_triangle/stream/fire_triangle_stream.h"
@@ -45,6 +46,8 @@ public:
     WeaponTrackAssignService *getServiceWeaponTrackAssign() const;
     GunFiringService *getServiceWeaponFiring() const;
 
+    OSDService *getServiceOSD() const;
+
 protected:
     DI();
 
@@ -62,6 +65,7 @@ private:
     EngagementRepository *repoEngagement;
 
     OSDCMS *serviceOSDCMS;
+    OSDService *serviceOSD;
     GunManagerService *serviceGunManager;
     WeaponAssignService *serviceWeaponAssign;
     GunFiringService *serviceWeaponFiring;
