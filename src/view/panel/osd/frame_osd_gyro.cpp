@@ -15,9 +15,7 @@ LOG4QT_DECLARE_STATIC_LOGGER(logger, FrameOSDGyro)
 
 FrameOSDGyro::FrameOSDGyro(QWidget *parent) : QWidget(parent),
     ui(new Ui::FrameOSDGyro),
-    _cmsGyro(DI::getInstance()->getOSDCMSService()->getServiceOSDCMSGyro()),
-    _cmsMode(DI::getInstance()->getOSDCMSService()->getServiceOSDCMSMode()),
-    _streamGyro(DI::getInstance()->getServiceOSDStream()->getServiceOSDStreamGyro())
+    _serviceOSD(DI::getInstance()->getServiceOSD())
 {
     ui->setupUi(this);
 
@@ -44,9 +42,9 @@ FrameOSDGyro::FrameOSDGyro(QWidget *parent) : QWidget(parent),
     connect(timer, &QTimer::timeout, this, &FrameOSDGyro::onTimeout);
     timer->start(1000);
 
-    connect(_cmsGyro, &OSDCMSGyroData::signal_setGyroResponse, this, &FrameOSDGyro::onDataResponse);
-    connect(_cmsMode, &OSDCMSInputMode::signal_setModeResponse, this, &FrameOSDGyro::onModeChangeResponse);
-    connect(_streamGyro, &OSDStreamGyro::signalDataProcessed, this, &FrameOSDGyro::onStreamReceive);
+    connect(_serviceOSD, &OSDService::signal_processedSetResponseGyro, this, &FrameOSDGyro::onDataResponse);
+    connect(_serviceOSD, &OSDService::signal_processedSetModeResponse, this, &FrameOSDGyro::onModeChangeResponse);
+    connect(_serviceOSD, &OSDService::signal_processedAutoDataGyro, this, &FrameOSDGyro::onStreamReceive);
 }
 
 void FrameOSDGyro::onModeChange(int index)
@@ -63,7 +61,7 @@ void FrameOSDGyro::onModeChange(int index)
         break;
     }
 
-    _cmsMode->setDataMode("inertia", currentMode);
+    _serviceOSD->setDataMode("inertia", currentMode);
 }
 
 void FrameOSDGyro::onAfterModeReset()
@@ -89,7 +87,7 @@ void FrameOSDGyro::onTimeout()
 
     setErrorInput(currError);
 
-    auto curMode = _cmsMode->getDataMode();
+    auto curMode = _serviceOSD->getDataMode();
     bool inertiaMode = curMode->inersia();
     if ((OSD_MODE)inertiaMode != currentMode)
     {
@@ -98,7 +96,7 @@ void FrameOSDGyro::onTimeout()
         {
             ui->mode->setCurrentModeIndex(1);
             manualUiSetup();
-            _cmsGyro->set(OSDSetGyroRequest(
+            _serviceOSD->setManualDataInertia(OSDSetGyroRequest(
                               ui->inputHeading->getCurrentValue().toFloat(),
                               ui->inputPitch->getCurrentValue().toFloat(),
                               ui->inputRoll->getCurrentValue().toFloat()));
@@ -191,26 +189,26 @@ void FrameOSDGyro::onModeChangeResponse(const QString datafisis, BaseResponse<In
 
 }
 
-void FrameOSDGyro::onDataResponse(BaseResponse<GyroModel> resp)
+void FrameOSDGyro::onDataResponse(GyroModel resp)
 {
     // todo handle response
 #ifdef USE_LOG4QT
-    logger()->debug() << Q_FUNC_INFO << " -> resp code: " << resp.getHttpCode() << ", resp msg: " << resp.getMessage();
+    logger()->debug() << Q_FUNC_INFO << " -> resp code: " << resp.err().getCode() << ", resp msg: " << QString::fromStdString(resp.status());
 #else
     qDebug() << Q_FUNC_INFO << "resp code:" << resp.getHttpCode() << "resp msg:" << resp.getMessage();
 #endif
 
-    if (resp.getHttpCode() != 0)
+    if (resp.err().getCode() != 0)
     {
-        QMessageBox::warning(this, "Request Error", QString("Failed to change manual data with error: %1").arg(resp.getMessage()));
+        QMessageBox::warning(this, "Request Error", QString("Failed to change manual data with error: %1").arg(resp.err().getMessage()));
         return;
     }
 
 #ifdef USE_LOG4QT
     logger()->debug() << Q_FUNC_INFO
-                      << " -> getHeading: " << resp.getData().getHeading()
-                      << ", getPicth: " << resp.getData().getPicth()
-                      << ", getRoll: " << resp.getData().getRoll();
+                      << " -> getHeading: " << resp.getHeading()
+                      << ", getPicth: " << resp.getPicth()
+                      << ", getRoll: " << resp.getRoll();
 #else
     qDebug() << Q_FUNC_INFO
              << "resp data getHeading: " << resp.getData().getHeading()
@@ -256,7 +254,7 @@ void FrameOSDGyro::on_pushButton_clicked()
         float pitch = ui->inputPitch->getCurrentValue().toFloat();
         float roll = ui->inputRoll->getCurrentValue().toFloat();
 
-        _cmsGyro->set(OSDSetGyroRequest(heading, pitch, roll));
+        _serviceOSD->setManualDataInertia(OSDSetGyroRequest(heading, pitch, roll));
     }
     catch (...)
     {

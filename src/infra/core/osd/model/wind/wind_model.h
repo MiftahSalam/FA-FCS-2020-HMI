@@ -1,9 +1,10 @@
 #ifndef WINDMODEL_H
 #define WINDMODEL_H
 
+#include "src/infra/core/osd/model/osd_base_model.h"
 #include <QJsonObject>
 
-class WindModel
+class WindModel: public OSDBaseModel
 {
 public:
     WindModel(double speed, double direction);

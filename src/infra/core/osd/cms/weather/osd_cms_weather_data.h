@@ -1,7 +1,6 @@
 #ifndef OSD_CMS_WEATHER_DATA_H
 #define OSD_CMS_WEATHER_DATA_H
 
-#include "src/domain/osd/repository/osd_weather_repository.h"
 #include "src/infra/http/http_client_wrapper.h"
 #include "src/infra/core/osd/cms/weather/osd_set_weather_request.h"
 #include "src/infra/core/base_response.h"
@@ -17,9 +16,7 @@ public:
     void operator=(const OSDCMSWeatherData&) = delete;
     static OSDCMSWeatherData* getInstance(
         HttpClientWrapper *httpClient,
-        OSDCmsConfig *cmsConfig,
-        OSDWeatherRepository* repoWeather = nullptr
-        );
+        OSDCmsConfig *cmsConfig);
 
     void set(OSDSetWeatherRequest request) override;
 
@@ -29,8 +26,7 @@ signals:
 protected:
     OSDCMSWeatherData(
         HttpClientWrapper *parent = nullptr,
-        OSDCmsConfig *cmsConfig = nullptr,
-        OSDWeatherRepository* repoWeather = nullptr
+        OSDCmsConfig *cmsConfig = nullptr
         );
 
 private slots:
@@ -39,9 +35,7 @@ private slots:
 private:
     static OSDCMSWeatherData *weatherData;
     OSDCmsConfig *cfgCms;
-    OSDWeatherRepository* repoWeather;
 
-    BaseResponse<WeatherModel> toResponse(QByteArray raw) override;
-    BaseResponse<WeatherModel> errorResponse(QNetworkReply::NetworkError err) override;
+    BaseResponse<WeatherModel> toResponse(QNetworkReply::NetworkError err, QByteArray raw) override;
 };
 #endif // OSD_CMS_WEATHER_DATA_H

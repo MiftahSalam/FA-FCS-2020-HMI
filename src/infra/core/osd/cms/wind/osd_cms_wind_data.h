@@ -1,7 +1,6 @@
 #ifndef OSDCMSWINDDATA_H
 #define OSDCMSWINDDATA_H
 
-#include "src/domain/osd/repository/osd_wind_repository.h"
 #include "src/infra/http/http_client_wrapper.h"
 #include "src/infra/core/osd/cms/wind/osd_set_wind_request.h"
 #include "src/infra/core/base_response.h"
@@ -16,10 +15,8 @@ public:
     OSDCMSWindData(OSDCMSWindData &other) = delete;
     void operator=(const OSDCMSWindData&) = delete;
     static OSDCMSWindData* getInstance(
-            HttpClientWrapper *httpClient,
-            OSDCmsConfig *cmsConfig,
-            OSDWindRepository* repoWind = nullptr
-            );
+        HttpClientWrapper *httpClient,
+        OSDCmsConfig *cmsConfig);
 
     void set(OSDSetWindRequest request) override;
 
@@ -29,8 +26,7 @@ signals:
 protected:
     OSDCMSWindData(
             HttpClientWrapper *parent = nullptr,
-            OSDCmsConfig *cmsConfig = nullptr,
-            OSDWindRepository* repoWind = nullptr
+            OSDCmsConfig *cmsConfig = nullptr
             );
 
 private slots:
@@ -39,10 +35,8 @@ private slots:
 private:
     static OSDCMSWindData *windData;
     OSDCmsConfig *cfgCms;
-    OSDWindRepository* repoWind;
 
-    BaseResponse<WindModel> toResponse(QByteArray raw) override;
-    BaseResponse<WindModel> errorResponse(QNetworkReply::NetworkError err) override;
+    BaseResponse<WindModel> toResponse(QNetworkReply::NetworkError err, QByteArray raw) override;
 };
 
 #endif // OSDCMSWINDDATA_H

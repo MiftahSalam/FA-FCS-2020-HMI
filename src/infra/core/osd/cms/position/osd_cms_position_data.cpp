@@ -1,6 +1,6 @@
 #include "osd_cms_position_data.h"
+#include "src/shared/common/errors/err_http.h"
 #include "src/shared/common/errors/helper_err.h"
-#include "src/shared/common/errors/err_json_parse.h"
 #include "src/shared/common/errors/err_object_creation.h"
 #include "src/shared/utils/utils.h"
 
@@ -15,9 +15,8 @@ OSDCMSPositionData* OSDCMSPositionData::positionData = nullptr;
 
 OSDCMSPositionData::OSDCMSPositionData(
         HttpClientWrapper *parent,
-        OSDCmsConfig *cmsConfig,
-        OSDPositionRepository *repoPos
-        ): HttpClientWrapper(parent), cfgCms(cmsConfig), repoPos(repoPos)
+        OSDCmsConfig *cmsConfig
+        ): HttpClientWrapper(parent), cfgCms(cmsConfig)
 {
     if(parent == nullptr) {
         throw ErrObjectCreation();
@@ -26,8 +25,7 @@ OSDCMSPositionData::OSDCMSPositionData(
 
 OSDCMSPositionData *OSDCMSPositionData::getInstance(
         HttpClientWrapper *httpClient = nullptr,
-        OSDCmsConfig *cmsConfig = nullptr,
-        OSDPositionRepository *repoPos
+        OSDCmsConfig *cmsConfig = nullptr
         )
 {
     if (positionData == nullptr) {
@@ -39,11 +37,7 @@ OSDCMSPositionData *OSDCMSPositionData::getInstance(
             throw ErrObjectCreation();
         }
 
-        if(repoPos == nullptr) {
-            throw ErrObjectCreation();
-        }
-
-        positionData = new OSDCMSPositionData(httpClient, cmsConfig, repoPos);
+        positionData = new OSDCMSPositionData(httpClient, cmsConfig);
     }
 
     return positionData;
@@ -71,35 +65,33 @@ void OSDCMSPositionData::onReplyFinished()
     qDebug()<<Q_FUNC_INFO<<"err: "<<httpResponse->error();
 #endif
 
-    BaseResponse<PositionModel> resp = errorResponse(httpResponse->error());
-    if(resp.getHttpCode() != 0) {
-        emit signal_setPositionResponse(resp);
-        return;
-    }
-
-    resp = toResponse(respRaw);
-
-    repoPos->SetPosition(OSDPositionEntity(
-                             resp.getData().getLatitude(),
-                             resp.getData().getLongitude(),
-                             "manual",
-                             "",
-                             OSD_MODE::MANUAL
-                             ));
+    BaseResponse<PositionModel> resp = toResponse(httpResponse->error(), respRaw);
 
     emit signal_setPositionResponse(resp);
 
     httpResponse->deleteLater();
 }
 
-BaseResponse<PositionModel> OSDCMSPositionData::toResponse(QByteArray raw)
+BaseResponse<PositionModel> OSDCMSPositionData::toResponse(QNetworkReply::NetworkError err, QByteArray raw)
 {
+    PositionModel model(-91, -181);
+
     try {
+        if (raw.isEmpty()) {
+            throw ErrHttpConnRefused();
+        }
+        ErrHelper::throwHttpError(err);
+
         QJsonObject respObj = Utils::byteArrayToJsonObject(raw);
         int respCode = respObj["code"].toInt();
         QString respMsg = respObj["message"].toString();
         QJsonObject respData = respObj["data"].toObject();
         PositionModel model(respData["latitude"].toDouble(-91),respData["longitude"].toDouble(-181));
+
+        model.setErr(NoError());
+        model.setMode(OSD_MODE::MANUAL);
+        model.setSource("manual");
+
         BaseResponse<PositionModel> resp(respCode, respMsg, model);
 
 #ifdef USE_LOG4QT
@@ -113,36 +105,16 @@ BaseResponse<PositionModel> OSDCMSPositionData::toResponse(QByteArray raw)
 #endif
 
         return resp;
-    } catch (ErrJsonParse &e) {
-#ifdef USE_LOG4QT
-        logger()->error()<<Q_FUNC_INFO<<" -> caught error: "<<e.getMessage();
-#else
-        qWarning()<<Q_FUNC_INFO<<"caught error: "<<e.getMessage();
-#endif
-    }  catch (...) {
-#ifdef USE_LOG4QT
-        logger()->error()<<Q_FUNC_INFO<<" -> caught unkbnown error";
-#else
-        qWarning()<<Q_FUNC_INFO<<"caught unkbnown error";
-#endif
-    }
-
-    ErrUnknown status;
-    PositionModel model(-91, -181);
-    return BaseResponse<PositionModel>(status.getCode(), status.getMessage(), model);
-}
-
-BaseResponse<PositionModel> OSDCMSPositionData::errorResponse(QNetworkReply::NetworkError err)
-{
-    PositionModel model(-91, -181);
-    try {
-        ErrHelper::throwHttpError(err);
     } catch (BaseError &e) {
 #ifdef USE_LOG4QT
         logger()->error()<<Q_FUNC_INFO<<" -> caught error: "<<e.getMessage();
 #else
         qWarning()<<Q_FUNC_INFO<<"caught error: "<<e.getMessage();
 #endif
+        model.setErr(e);
+        model.setMode(OSD_MODE::MANUAL);
+        model.setSource("manual");
+
         return BaseResponse<PositionModel>(e.getCode(), e.getMessage(), model);
     }  catch (...) {
 #ifdef USE_LOG4QT
@@ -152,8 +124,5 @@ BaseResponse<PositionModel> OSDCMSPositionData::errorResponse(QNetworkReply::Net
 #endif
         ErrUnknown status;
         return BaseResponse<PositionModel>(status.getCode(), status.getMessage(), model);
-    }
-
-    NoError status;
-    return BaseResponse<PositionModel>(status.getCode(), status.getMessage(), model);
+    }    
 }

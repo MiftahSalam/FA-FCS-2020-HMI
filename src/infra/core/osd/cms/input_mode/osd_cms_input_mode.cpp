@@ -1,6 +1,6 @@
 #include "osd_cms_input_mode.h"
 #include "src/shared/common/errors/helper_err.h"
-#include "src/shared/common/errors/err_json_parse.h"
+#include "src/shared/common/errors/err_http.h"
 #include "src/shared/common/errors/err_object_creation.h"
 #include "src/shared/utils/utils.h"
 
@@ -19,41 +19,22 @@ OSDCMSInputMode* OSDCMSInputMode::inputMode = nullptr;
 
 OSDCMSInputMode::OSDCMSInputMode(
     HttpClientWrapper *parent,
-    OSDCmsConfig *cmsConfig,
-    OSDInputModeRepository *modeRepo
+    OSDCmsConfig *cmsConfig
     ):
     HttpClientWrapper(parent),
-    repoMode(modeRepo),
     cfgCms(cmsConfig)
 {
-    previousMode = new OSDInputModeEntity(
-        modeRepo->GetMode()->inersia(),
-        modeRepo->GetMode()->position(),
-        modeRepo->GetMode()->speed(),
-        modeRepo->GetMode()->waterSpeed(),
-        modeRepo->GetMode()->weather(),
-        modeRepo->GetMode()->wind()
-        );
-
-    synced = false;
-
     reqCtxObj.insert(REQ_CTX_NEED_CONFIRM_KEY, true);
     reqCtxObj.insert(REQ_CTX_LAST_UPDATE_DATA_KEY, "");
 
     if(parent == nullptr) {
         throw ErrObjectCreation();
     }
-
-    timer = new QTimer(this);
-    connect(timer, &QTimer::timeout, this, &OSDCMSInputMode::onTimerTimeout);
-
-    timer->start(1000);
 }
 
 OSDCMSInputMode *OSDCMSInputMode::getInstance(
     HttpClientWrapper *httpClient = nullptr,
-    OSDCmsConfig *cmsConfig = nullptr,
-    OSDInputModeRepository *modeRepo = nullptr
+    OSDCmsConfig *cmsConfig = nullptr
     )
 {
     if (inputMode == nullptr) {
@@ -65,11 +46,7 @@ OSDCMSInputMode *OSDCMSInputMode::getInstance(
             throw ErrObjectCreation();
         }
 
-        if(modeRepo == nullptr) {
-            throw ErrObjectCreation();
-        }
-
-        inputMode = new OSDCMSInputMode(httpClient, cmsConfig, modeRepo);
+        inputMode = new OSDCMSInputMode(httpClient, cmsConfig);
     }
 
     return inputMode;
@@ -85,74 +62,12 @@ void OSDCMSInputMode::set(OSDInputModeRequest request)
     connect(curHttpResponse, &QNetworkReply::finished, this, &OSDCMSInputMode::onReplyFinished);
 }
 
-void OSDCMSInputMode::setDataMode(const QString &dataFisis, const OSD_MODE mode)
+void OSDCMSInputMode::setDataMode(const bool confirm, const QString &dataFisis, const OSDInputModeRequest modeReq)
 {
-    OSDInputModeEntity curMode(
-        repoMode->GetMode()->position(),
-        repoMode->GetMode()->speed(),
-        repoMode->GetMode()->inersia(),
-        repoMode->GetMode()->waterSpeed(),
-        repoMode->GetMode()->wind(),
-        repoMode->GetMode()->weather()
-        );
-
-    if (dataFisis == "position") {
-        curMode.setPositionMode(mode);
-    } else if (dataFisis == "inertia") {
-        curMode.setInersiaMode(mode);
-    } else if (dataFisis == "water_speed") {
-        curMode.setWaterSpeedMode(mode);
-    } else if (dataFisis == "speed"){
-        curMode.setSpeedMode(mode);
-    } else if (dataFisis == "wind"){
-        curMode.setWindMode(mode);
-    }else if (dataFisis == "weather"){
-        curMode.setWeatherMode(mode);
-    }else{
-        return;
-        // TODO: handle invalid datafisis
-    }
-
-    repoMode->SetMode(curMode);
-
-    reqCtxObj.insert(REQ_CTX_NEED_CONFIRM_KEY, true);
+    reqCtxObj.insert(REQ_CTX_NEED_CONFIRM_KEY, confirm);
     reqCtxObj.insert(REQ_CTX_LAST_UPDATE_DATA_KEY, dataFisis);
 
-    set(OSDInputModeRequest(
-        repoMode->GetMode()->position(),
-        repoMode->GetMode()->speed(),
-        repoMode->GetMode()->inersia(),
-        repoMode->GetMode()->waterSpeed(),
-        repoMode->GetMode()->wind(),
-        repoMode->GetMode()->weather()
-        ));
-}
-
-const OSDInputModeEntity *OSDCMSInputMode::getDataMode() const
-{
-    return repoMode->GetMode();
-}
-
-void OSDCMSInputMode::sync()
-{
-    if(!synced) {
-#ifdef USE_LOG4QT
-        logger()->trace()<<Q_FUNC_INFO<<" -> syncing";
-#else
-        qDebug()<<Q_FUNC_INFO<<"syncing";
-#endif
-        reqCtxObj.insert(REQ_CTX_NEED_CONFIRM_KEY, false);
-        reqCtxObj.insert(REQ_CTX_LAST_UPDATE_DATA_KEY, "");
-
-        set(OSDInputModeRequest(
-            repoMode->GetMode()->position(),
-            repoMode->GetMode()->speed(),
-            repoMode->GetMode()->inersia(),
-            repoMode->GetMode()->waterSpeed(),
-            repoMode->GetMode()->wind(),
-            repoMode->GetMode()->weather()
-            ));
-    }
+    set(modeReq);
 }
 
 void OSDCMSInputMode::onReplyFinished()
@@ -176,41 +91,22 @@ void OSDCMSInputMode::onReplyFinished()
     qDebug()<<Q_FUNC_INFO<<"resp prop lastUpdateData: "<<lastUpdateData;
 #endif
 
-    BaseResponse<InputModeModel> resp = errorResponse(objSender->error());
-    if(resp.getHttpCode() != 0 || respRaw.isEmpty()) {
-        resetToPrevMode();
-        synced = false;
-
-        emit signal_setModeResponse(lastUpdateData, resp, needConfirm);
-        // emit signal_setModeResponse(lastUpdateMode, resp, needConfirm);
-
-        return;
-    }
-
-    synced = true;
-    resp = toResponse(respRaw);
-
-    previousMode->setInersiaMode(repoMode->GetMode()->inersia());
-    previousMode->setPositionMode(repoMode->GetMode()->position());
-    previousMode->setSpeedMode(repoMode->GetMode()->speed());
-    previousMode->setWaterSpeedMode(repoMode->GetMode()->waterSpeed());
-    previousMode->setWeatherMode(repoMode->GetMode()->weather());
-    previousMode->setWindMode(repoMode->GetMode()->wind());
+    BaseResponse<InputModeModel> resp = toResponse(objSender->error(), respRaw);
 
     emit signal_setModeResponse(lastUpdateData, resp, needConfirm);
-    // emit signal_setModeResponse(lastUpdateMode, resp, needConfirm);
 
     objSender->deleteLater();
 }
 
-void OSDCMSInputMode::onTimerTimeout()
+BaseResponse<InputModeModel> OSDCMSInputMode::toResponse(QNetworkReply::NetworkError err, QByteArray raw)
 {
-    sync();
-}
-
-BaseResponse<InputModeModel> OSDCMSInputMode::toResponse(QByteArray raw)
-{
+    InputModeModel model(false, false, false, false, false, false);
     try {
+        if (raw.isEmpty()) {
+            throw ErrHttpConnRefused();
+        }
+        ErrHelper::throwHttpError(err);
+
         QJsonObject respObj = Utils::byteArrayToJsonObject(raw);
         int respCode = respObj["code"].toInt();
         QString respMsg = respObj["message"].toString();
@@ -240,30 +136,6 @@ BaseResponse<InputModeModel> OSDCMSInputMode::toResponse(QByteArray raw)
 #endif
 
         return resp;
-    } catch (ErrJsonParse &e) {
-#ifdef USE_LOG4QT
-        logger()->error()<<Q_FUNC_INFO<<" -> caught error: "<<e.getMessage();
-#else
-        qWarning()<<Q_FUNC_INFO<<"caught error: "<<e.getMessage();
-#endif
-    }  catch (...) {
-#ifdef USE_LOG4QT
-        logger()->error()<<Q_FUNC_INFO<<" -> caught unkbnown error";
-#else
-        qWarning()<<Q_FUNC_INFO<<"caught unkbnown error";
-#endif
-    }
-
-    ErrUnknown status;
-    InputModeModel model(false, false, false, false, false, false);
-    return BaseResponse<InputModeModel>(status.getCode(), status.getMessage(), model);
-}
-
-BaseResponse<InputModeModel> OSDCMSInputMode::errorResponse(QNetworkReply::NetworkError err)
-{
-    InputModeModel model(false, false, false, false, false, false);
-    try {
-        ErrHelper::throwHttpError(err);
     } catch (BaseError &e) {
 #ifdef USE_LOG4QT
         logger()->error()<<Q_FUNC_INFO<<" -> caught error: "<<e.getMessage();
@@ -280,12 +152,4 @@ BaseResponse<InputModeModel> OSDCMSInputMode::errorResponse(QNetworkReply::Netwo
         ErrUnknown status;
         return BaseResponse<InputModeModel>(status.getCode(), status.getMessage(), model);
     }
-
-    NoError status;
-    return BaseResponse<InputModeModel>(status.getCode(), status.getMessage(), model);
-}
-
-void OSDCMSInputMode::resetToPrevMode()
-{
-    repoMode->SetMode(*previousMode);
 }

@@ -3,9 +3,7 @@
 
 #include <QWidget>
 
-#include "src/infra/core/osd/cms/input_mode/osd_cms_input_mode.h"
-#include "src/infra/core/osd/cms/wind/osd_cms_wind_data.h"
-#include "src/infra/core/osd/stream/osd_stream_wind.h"
+#include "src/usecase/osd/osd_service.h"
 #include "src/view/panel/osd/frame_osd_base.h"
 #include "src/view/shared/frame_text_input.h"
 
@@ -33,7 +31,7 @@ public:
 
 public slots:
     void onModeChangeResponse(const QString datafisis, BaseResponse<InputModeModel> resp, bool needConfirm) override;
-    void onDataResponse(BaseResponse<WindModel> data) override;
+    void onDataResponse(WindModel data) override;
     void onStreamReceive(WindModel model) override;
     //added by riyadhi
     void onUpdateWindAutoUi();
@@ -51,9 +49,8 @@ private slots:
 
 private:
     Ui::FrameOSDWind *ui;
-    OSDCMSWindData *_cmsWind;
-    OSDCMSInputMode *_cmsMode;
-    OSDStreamWind* _streamWind;
+
+    OSDService *_serviceOSD;
 
     // FrameOSDBase interface
     void manualUiSetup() override;

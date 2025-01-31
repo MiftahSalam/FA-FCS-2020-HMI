@@ -56,6 +56,7 @@ SOURCES += \
     src/infra/core/osd/model/date_time/datetime_model.cpp \
     src/infra/core/osd/model/inertia/gyro_model.cpp \
     src/infra/core/osd/model/input_mode/input_mode_model.cpp \
+    src/infra/core/osd/model/osd_base_model.cpp \
     src/infra/core/osd/model/position/position_model.cpp \
     src/infra/core/osd/model/water_speed/waterspeed_model.cpp \
     src/infra/core/osd/model/speed/speed_model.cpp \
@@ -258,6 +259,7 @@ HEADERS += \
     src/infra/core/osd/model/date_time/datetime_model.h \
     src/infra/core/osd/model/inertia/gyro_model.h \
     src/infra/core/osd/model/input_mode/input_mode_model.h \
+    src/infra/core/osd/model/osd_base_model.h \
     src/infra/core/osd/model/position/position_model.h \
     src/infra/core/osd/model/water_speed/waterspeed_model.h \
     src/infra/core/osd/model/speed/speed_model.h \

@@ -1,6 +1,6 @@
 #include "osd_cms_wind_data.h"
+#include "src/shared/common/errors/err_http.h"
 #include "src/shared/common/errors/helper_err.h"
-#include "src/shared/common/errors/err_json_parse.h"
 #include "src/shared/common/errors/err_object_creation.h"
 #include "src/shared/utils/utils.h"
 
@@ -15,9 +15,8 @@ OSDCMSWindData* OSDCMSWindData::windData = nullptr;
 
 OSDCMSWindData::OSDCMSWindData(
         HttpClientWrapper *parent,
-        OSDCmsConfig *cmsConfig,
-        OSDWindRepository *repoWind
-        ): HttpClientWrapper(parent), cfgCms(cmsConfig), repoWind(repoWind)
+        OSDCmsConfig *cmsConfig
+        ): HttpClientWrapper(parent), cfgCms(cmsConfig)
 {
     if(parent == nullptr) {
         throw ErrObjectCreation();
@@ -26,8 +25,7 @@ OSDCMSWindData::OSDCMSWindData(
 
 OSDCMSWindData *OSDCMSWindData::getInstance(
         HttpClientWrapper *httpClient = nullptr,
-        OSDCmsConfig *cmsConfig = nullptr,
-        OSDWindRepository *repoWind
+        OSDCmsConfig *cmsConfig = nullptr
         )
 {
     if (windData == nullptr) {
@@ -39,10 +37,7 @@ OSDCMSWindData *OSDCMSWindData::getInstance(
             throw ErrObjectCreation();
         }
 
-        if(repoWind == nullptr) {
-            throw ErrObjectCreation();
-        }
-        windData = new OSDCMSWindData(httpClient, cmsConfig, repoWind);
+        windData = new OSDCMSWindData(httpClient, cmsConfig);
     }
     return windData;
 }
@@ -69,35 +64,32 @@ void OSDCMSWindData::onReplyFinished()
     qDebug()<<Q_FUNC_INFO<<"err: "<<httpResponse->error();
 #endif
 
-    BaseResponse<WindModel> resp = errorResponse(httpResponse->error());
-    if(resp.getHttpCode() != 0) {
-        emit signal_setWindResponse(resp);
-        return;
-    }
-
-    resp = toResponse(respRaw);
-
-    repoWind->SetWind(OSDWindEntity(
-                          resp.getData().getSpeed(),
-                          resp.getData().getDirection(),
-                          "manual",
-                          "",
-                          OSD_MODE::MANUAL
-                          ));
+    BaseResponse<WindModel> resp = toResponse(httpResponse->error(), respRaw);
 
     emit signal_setWindResponse(resp);
 
     httpResponse->deleteLater();
 }
 
-BaseResponse<WindModel> OSDCMSWindData::toResponse(QByteArray raw)
+BaseResponse<WindModel> OSDCMSWindData::toResponse(QNetworkReply::NetworkError err, QByteArray raw)
 {
+    WindModel model(0, 0);
     try {
+        if (raw.isEmpty()) {
+            throw ErrHttpConnRefused();
+        }
+        ErrHelper::throwHttpError(err);
+
         QJsonObject respObj = Utils::byteArrayToJsonObject(raw);
         int respCode = respObj["code"].toInt();
         QString respMsg = respObj["message"].toString();
         QJsonObject respData = respObj["data"].toObject();
         WindModel model(respData["speed"].toDouble(),respData["direction"].toDouble());
+
+        model.setErr(NoError());
+        model.setMode(OSD_MODE::MANUAL);
+        model.setSource("manual");
+
         BaseResponse<WindModel> resp(respCode, respMsg, model);
 
 #ifdef USE_LOG4QT
@@ -111,37 +103,16 @@ BaseResponse<WindModel> OSDCMSWindData::toResponse(QByteArray raw)
 #endif
 
         return resp;
-
-    } catch (ErrJsonParse &e) {
-#ifdef USE_LOG4QT
-        logger()->error()<<Q_FUNC_INFO<<" -> caught error: "<<e.getMessage();
-#else
-        qWarning()<<Q_FUNC_INFO<<"caught error: "<<e.getMessage();
-#endif
-    }  catch (...) {
-#ifdef USE_LOG4QT
-        logger()->error()<<Q_FUNC_INFO<<" -> caught unkbnown error";
-#else
-        qWarning()<<Q_FUNC_INFO<<"caught unkbnown error";
-#endif
-    }
-
-    ErrUnknown status;
-    WindModel model(0, 0);
-    return BaseResponse<WindModel>(status.getCode(), status.getMessage(), model);
-}
-
-BaseResponse<WindModel> OSDCMSWindData::errorResponse(QNetworkReply::NetworkError err)
-{
-    WindModel model(0, 0);
-    try {
-        ErrHelper::throwHttpError(err);
     } catch (BaseError &e) {
 #ifdef USE_LOG4QT
         logger()->error()<<Q_FUNC_INFO<<" -> caught error: "<<e.getMessage();
 #else
         qWarning()<<Q_FUNC_INFO<<"caught error: "<<e.getMessage();
-#endif
+#endif        
+        model.setErr(e);
+        model.setMode(OSD_MODE::MANUAL);
+        model.setSource("manual");
+
         return BaseResponse<WindModel>(e.getCode(), e.getMessage(), model);
     }  catch (...) {
 #ifdef USE_LOG4QT
@@ -149,10 +120,8 @@ BaseResponse<WindModel> OSDCMSWindData::errorResponse(QNetworkReply::NetworkErro
 #else
         qWarning()<<Q_FUNC_INFO<<"caught unkbnown error";
 #endif
+
         ErrUnknown status;
         return BaseResponse<WindModel>(status.getCode(), status.getMessage(), model);
     }
-
-    NoError status;
-    return BaseResponse<WindModel>(status.getCode(), status.getMessage(), model);
 }

@@ -1,7 +1,6 @@
 ﻿#ifndef OSDCMSGYRODATA_H
 #define OSDCMSGYRODATA_H
 
-#include "src/domain/osd/repository/osd_inertia_repository.h"
 #include "src/infra/http/http_client_wrapper.h"
 #include "src/infra/core/osd/cms/inertia/osd_set_gyro_request.h"
 #include "src/infra/core/base_response.h"
@@ -17,8 +16,7 @@ public:
     void operator=(const OSDCMSGyroData&) = delete;
     static OSDCMSGyroData* getInstance(
             HttpClientWrapper *httpClient,
-            OSDCmsConfig *cmsConfig,
-            OSDInertiaRepository* repoInertia = nullptr
+            OSDCmsConfig *cmsConfig
             );
 
     void set(OSDSetGyroRequest request) override;
@@ -29,8 +27,7 @@ signals:
 protected:
     OSDCMSGyroData(
             HttpClientWrapper *parent = nullptr,
-            OSDCmsConfig *cmsConfig = nullptr,
-            OSDInertiaRepository* repoInertia = nullptr
+            OSDCmsConfig *cmsConfig = nullptr
             );
 
 private slots:
@@ -39,10 +36,8 @@ private slots:
 private:
     static OSDCMSGyroData *gyroData;
     OSDCmsConfig *cfgCms;
-    OSDInertiaRepository* repoInertia;
 
-    BaseResponse<GyroModel> toResponse(QByteArray raw) override;
-    BaseResponse<GyroModel> errorResponse(QNetworkReply::NetworkError err) override;
+    BaseResponse<GyroModel> toResponse(QNetworkReply::NetworkError err, QByteArray raw) override;
 };
 
 #endif // OSDCMSGYRODATA_H

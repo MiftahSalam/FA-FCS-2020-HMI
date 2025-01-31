@@ -15,9 +15,7 @@ LOG4QT_DECLARE_STATIC_LOGGER(logger, FrameOSDSpeed)
 FrameOSDSpeed::FrameOSDSpeed(QWidget *parent) :
     QWidget(parent),
     ui(new Ui::FrameOSDSpeed),
-    _cmsSpeed(DI::getInstance()->getOSDCMSService()->getServiceOSDCMSSpeed()),
-    _cmsMode(DI::getInstance()->getOSDCMSService()->getServiceOSDCMSMode()),
-    _streamSpeed(DI::getInstance()->getServiceOSDStream()->getServiceOSDStreamSpeed())
+    _serviceOSD(DI::getInstance()->getServiceOSD())
 {
     ui->setupUi(this);
 
@@ -41,9 +39,9 @@ FrameOSDSpeed::FrameOSDSpeed(QWidget *parent) :
     connect(timer, &QTimer::timeout, this, &FrameOSDSpeed::onTimeout);
     timer->start(1000);
 
-    connect(_cmsSpeed, &OSDCMSSpeedData::signal_setSpeedResponse, this, &FrameOSDSpeed::onDataResponse);
-    connect(_cmsMode, &OSDCMSInputMode::signal_setModeResponse, this, &FrameOSDSpeed::onModeChangeResponse);
-    connect(_streamSpeed, &OSDStreamSpeed::signalDataProcessed, this, &FrameOSDSpeed::onStreamReceive);
+    connect(_serviceOSD, &OSDService::signal_processedSetResponseSpeed, this, &FrameOSDSpeed::onDataResponse);
+    connect(_serviceOSD, &OSDService::signal_processedSetModeResponse, this, &FrameOSDSpeed::onModeChangeResponse);
+    connect(_serviceOSD, &OSDService::signal_processedAutoDataSpeed, this, &FrameOSDSpeed::onStreamReceive);
 
 }
 
@@ -60,7 +58,7 @@ void FrameOSDSpeed::onModeChange(int index)
         break;
     }
 
-    _cmsMode->setDataMode("speed", currentMode);
+    _serviceOSD->setDataMode("speed", currentMode);
 }
 
 void FrameOSDSpeed::onAfterModeReset()
@@ -81,14 +79,14 @@ void FrameOSDSpeed::onTimeout()
 
     setErrorInput(currError);
 
-    auto curMode = _cmsMode->getDataMode();
+    auto curMode = _serviceOSD->getDataMode();
     bool speedMode = curMode->speed();
     if ((OSD_MODE)speedMode != currentMode) {
         disconnect(ui->mode, &FrameOSDMode::signal_currentModeChange, this, &FrameOSDSpeed::onModeChange);
         if (speedMode) {
             ui->mode->setCurrentModeIndex(1);
             manualUiSetup();
-            _cmsSpeed->set(OSDSetSpeedRequest(
+            _serviceOSD->setManualDataSpeed(OSDSetSpeedRequest(
                                ui->inputSpeed->getCurrentValue().toFloat(),
                                ui->inputCourse->getCurrentValue().toFloat()
                                ));
@@ -168,24 +166,25 @@ void FrameOSDSpeed::onModeChangeResponse(const QString datafisis, BaseResponse<I
     }
 }
 
-void FrameOSDSpeed::onDataResponse(BaseResponse<SpeedModel> resp)
+void FrameOSDSpeed::onDataResponse(SpeedModel resp)
 {
     //todo handle response
 #ifdef USE_LOG4QT
-    logger()->debug() << Q_FUNC_INFO << " -> resp code: " << resp.getHttpCode() << ", resp msg: " << resp.getMessage();
+    logger()->debug() << Q_FUNC_INFO << " -> resp code: " << resp.err().getCode() << ", resp msg: " << QString::fromStdString(resp.status());
 #else
     qDebug() << Q_FUNC_INFO << "resp code:" << resp.getHttpCode() << "resp msg:" << resp.getMessage();
 #endif
 
-    if (resp.getHttpCode() != 0) {
-        QMessageBox::warning(this, "Request Error", QString("Failed to change manual data with error: %1").arg(resp.getMessage()));
+    if (resp.err().getCode() != 0)
+    {
+        QMessageBox::warning(this, "Request Error", QString("Failed to change manual data with error: %1").arg(resp.err().getMessage()));
         return;
     }
 
 #ifdef USE_LOG4QT
     logger()->debug() << Q_FUNC_INFO
-                      << " -> getSpeed: " << resp.getData().getSpeed()
-                      << ", getCourse: " << resp.getData().getCourse();
+                      << " -> getSpeed: " << resp.getSpeed()
+                      << ", getCourse: " << resp.getCourse();
 #else
     qDebug()<<Q_FUNC_INFO
            <<"resp data getSpeed: "<<resp.getData().getSpeed()
@@ -226,7 +225,7 @@ void FrameOSDSpeed::on_pushButton_clicked()
         float speed = ui->inputSpeed->getCurrentValue().toFloat();
         float course = ui->inputCourse->getCurrentValue().toFloat();
 
-        _cmsSpeed->set(OSDSetSpeedRequest(speed, course));
+        _serviceOSD->setManualDataSpeed(OSDSetSpeedRequest(speed, course));
     } catch (...) {
         QMessageBox::critical(this, "Fatal Error Speed", "Invalid value input" );
     }

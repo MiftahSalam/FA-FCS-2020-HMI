@@ -16,9 +16,7 @@ LOG4QT_DECLARE_STATIC_LOGGER(logger, FrameOSDPosition)
 
 FrameOSDPosition::FrameOSDPosition(QWidget *parent) : QWidget(parent),
     ui(new Ui::FrameOSDPosition),
-    _cmsPos(DI::getInstance()->getOSDCMSService()->getServiceOSDCMSPosition()),
-    _cmsMode(DI::getInstance()->getOSDCMSService()->getServiceOSDCMSMode()),
-    _streamPos(DI::getInstance()->getServiceOSDStream()->getServiceOSDStreamPosition())
+    _serviceOSD(DI::getInstance()->getServiceOSD())
 {
     ui->setupUi(this);
 
@@ -45,9 +43,9 @@ FrameOSDPosition::FrameOSDPosition(QWidget *parent) : QWidget(parent),
     connect(timer, &QTimer::timeout, this, &FrameOSDPosition::onTimeout);
     timer->start(1000);
 
-    connect(_cmsPos, &OSDCMSPositionData::signal_setPositionResponse, this, &FrameOSDPosition::onDataResponse);
-    connect(_cmsMode, &OSDCMSInputMode::signal_setModeResponse, this, &FrameOSDPosition::onModeChangeResponse);
-    connect(_streamPos, &OSDStreamPosition::signalDataProcessed, this, &FrameOSDPosition::onStreamReceive);
+    connect(_serviceOSD, &OSDService::signal_processedSetResponsePosition, this, &FrameOSDPosition::onDataResponse);
+    connect(_serviceOSD, &OSDService::signal_processedSetModeResponse, this, &FrameOSDPosition::onModeChangeResponse);
+    connect(_serviceOSD, &OSDService::signal_processedAutoDataPosition, this, &FrameOSDPosition::onStreamReceive);
 }
 
 FrameOSDPosition::~FrameOSDPosition()
@@ -83,26 +81,26 @@ void FrameOSDPosition::resetModeIndex()
     //    connect(ui->mode, &FrameOSDMode::signal_currentModeChange, this, &FrameOSDPosition::onModeChange);
 }
 
-void FrameOSDPosition::onDataResponse(BaseResponse<PositionModel> resp)
+void FrameOSDPosition::onDataResponse(PositionModel resp)
 {
 #ifdef USE_LOG4QT
-    logger()->debug() << Q_FUNC_INFO << " -> resp code: " << resp.getHttpCode() << ", resp msg: " << resp.getMessage();
+    logger()->debug() << Q_FUNC_INFO << " -> resp code: " << resp.err().getCode() << ", resp msg: " << QString::fromStdString(resp.status());
 #else
     qDebug() << Q_FUNC_INFO << "resp code:" << resp.getHttpCode() << "resp msg:" << resp.getMessage();
 #endif
 
-    if (resp.getHttpCode() != 0)
+    if (resp.err().getCode() != 0)
     {
         //        ui->mode->setCurrentModeIndex((int)OSD_MODE::AUTO);
 
-        QMessageBox::warning(this, "Request Error", QString("Failed to change manual data with error: %1").arg(resp.getMessage()));
+        QMessageBox::warning(this, "Request Error", QString("Failed to change manual data with error: %1").arg(resp.err().getMessage()));
         //        autoUiSetup();
         return;
 
 #ifdef USE_LOG4QT
         logger()->debug() << Q_FUNC_INFO
-                          << " -> getLatitude: " << resp.getData().getLatitude()
-                          << ", getLongitude: " << resp.getData().getLongitude();
+                          << " -> getLatitude: " << resp.getLatitude()
+                          << ", getLongitude: " << resp.getLongitude();
 #else
         qDebug() << Q_FUNC_INFO << "resp data getLatitude: " << resp.getData().getLatitude()
                  << "resp data getLongitude: " << resp.getData().getLongitude();
@@ -175,7 +173,7 @@ void FrameOSDPosition::onModeChange(int index)
         break;
     }
 
-    _cmsMode->setDataMode("position", currentMode);
+    _serviceOSD->setDataMode("position", currentMode);
 }
 
 void FrameOSDPosition::onAfterModeReset()
@@ -210,7 +208,7 @@ void FrameOSDPosition::onTimeout()
     // update ui
     //    qDebug() << Q_FUNC_INFO;
 
-    auto currError = _streamPos->check();
+    auto currError = _serviceOSD->getOSDAutoStatusPosition();
     if (currError.getCode() == ERROR_CODE_MESSAGING_NOT_CONNECTED.first)
     {
         notConnectedUiSetup();
@@ -226,7 +224,7 @@ void FrameOSDPosition::onTimeout()
 
     setErrorInput(currError);
 
-    auto curMode = _cmsMode->getDataMode();
+    auto curMode = _serviceOSD->getDataMode();
     bool posMode = curMode->position();
     if ((OSD_MODE)posMode != currentMode)
     {
@@ -239,7 +237,7 @@ void FrameOSDPosition::onTimeout()
             float lat = Utils::latStrToDegree(ui->inputLatitude->getCurrentValue());
             float lon = Utils::lonStrToDegree(ui->inputLongitude->getCurrentValue());
 
-            _cmsPos->set(OSDSetPositionRequest(lat, lon));
+            _serviceOSD->setManualDataPosition(OSDSetPositionRequest(lat, lon));
         }
         else
         {
@@ -342,7 +340,7 @@ void FrameOSDPosition::on_pushButton_clicked()
         float lat = Utils::latStrToDegree(ui->inputLatitude->getCurrentValue());
         float lon = Utils::lonStrToDegree(ui->inputLongitude->getCurrentValue());
 
-        _cmsPos->set(OSDSetPositionRequest(lat, lon));
+        _serviceOSD->setManualDataPosition(OSDSetPositionRequest(lat, lon));
         //        emit signalChangePositionData(lat,lon);
     }
     catch (...)

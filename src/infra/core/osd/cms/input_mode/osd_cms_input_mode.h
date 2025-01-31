@@ -3,7 +3,6 @@
 
 #include <QTimer>
 
-#include "src/domain/osd/repository/osd_mode_repository.h"
 #include "src/infra/http/http_client_wrapper.h"
 #include "src/infra/core/osd/cms/input_mode/osd_input_mode_request.h"
 #include "src/infra/core/osd/model/input_mode/input_mode_model.h"
@@ -18,13 +17,10 @@ public:
     void operator=(const OSDCMSInputMode&) = delete;
     static OSDCMSInputMode* getInstance(
         HttpClientWrapper *httpClient,
-        OSDCmsConfig *cmsConfig,
-        OSDInputModeRepository *modeRepo
+        OSDCmsConfig *cmsConfig
         );
 
-    void set(OSDInputModeRequest request) override;
-    void setDataMode(const QString &dataFisis, const OSD_MODE mode);
-    const OSDInputModeEntity* getDataMode() const;
+    void setDataMode(const bool confirm, const QString &dataFisis, const OSDInputModeRequest modeReq);
 
 signals:
     void signal_setModeResponse(const QString datafisis, BaseResponse<InputModeModel> response, bool needConfirm);
@@ -32,30 +28,18 @@ signals:
 protected:
     OSDCMSInputMode(
         HttpClientWrapper *parent = nullptr,
-        OSDCmsConfig *cmsConfig = nullptr,
-        OSDInputModeRepository *modeRepo = nullptr
+        OSDCmsConfig *cmsConfig = nullptr
         );
 
 private slots:
     void onReplyFinished() override;
 
-    void onTimerTimeout();
-    void sync();
-
 private:
     static OSDCMSInputMode *inputMode;
-    OSDInputModeRepository *repoMode;
-    OSDInputModeEntity *previousMode;
     OSDCmsConfig *cfgCms;
 
-    QTimer *timer;
-
-    bool synced;
-
-    BaseResponse<InputModeModel> toResponse(QByteArray raw) override;
-    BaseResponse<InputModeModel> errorResponse(QNetworkReply::NetworkError err) override;
-
-    void resetToPrevMode();
+    void set(OSDInputModeRequest request) override;
+    BaseResponse<InputModeModel> toResponse(QNetworkReply::NetworkError err, QByteArray raw) override;
 };
 
 #endif // OSDINPUTMODE_H

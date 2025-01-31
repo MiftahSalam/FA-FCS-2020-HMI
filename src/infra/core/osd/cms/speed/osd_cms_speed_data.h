@@ -1,7 +1,6 @@
 #ifndef OSDCMSSPEEDDATA_H
 #define OSDCMSSPEEDDATA_H
 
-#include "src/domain/osd/repository/osd_speed_repository.h"
 #include "src/infra/http/http_client_wrapper.h"
 #include "src/infra/core/osd/cms/speed/osd_set_speed_request.h"
 #include "src/infra/core/base_response.h"
@@ -17,8 +16,7 @@ public:
     void operator=(const OSDCMSSpeedData&) = delete;
     static OSDCMSSpeedData* getInstance(
             HttpClientWrapper *httpClient,
-            OSDCmsConfig *cmsConfig,
-            OSDSpeedRepository* repoSpeed = nullptr
+            OSDCmsConfig *cmsConfig
             );
 
     void set(OSDSetSpeedRequest request) override;
@@ -29,8 +27,7 @@ signals:
 protected:
     OSDCMSSpeedData(
             HttpClientWrapper *parent = nullptr,
-            OSDCmsConfig *cmsConfig = nullptr,
-            OSDSpeedRepository* repoSpeed = nullptr
+            OSDCmsConfig *cmsConfig = nullptr
             );
 
 private slots:
@@ -39,11 +36,8 @@ private slots:
 private:
     static OSDCMSSpeedData *speedData;
     OSDCmsConfig *cfgCms;
-    OSDSpeedRepository* repoSpeed;
 
-    BaseResponse<SpeedModel> toResponse(QByteArray raw) override;
-    BaseResponse<SpeedModel> errorResponse(QNetworkReply::NetworkError err) override;
-
+    BaseResponse<SpeedModel> toResponse(QNetworkReply::NetworkError err, QByteArray raw) override;
 };
 
 #endif // OSDCMSSPEEDDATA_H

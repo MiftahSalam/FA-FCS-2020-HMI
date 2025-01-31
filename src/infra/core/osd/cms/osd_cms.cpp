@@ -23,28 +23,22 @@ OSDCMS::OSDCMS(QObject *parent, OSDCmsConfig *cmsConfig, OSDRepository *repoOSD)
         cmsConfig);
     serviceOSDCMSPosition = OSDCMSPositionData::getInstance(
         new HttpClientWrapper(),
-        cmsConfig,
-        repoOSD->getRepoOSDPosition());
+        cmsConfig);
     serviceOSDCMSGyro = OSDCMSGyroData::getInstance(
         new HttpClientWrapper(),
-        cmsConfig,
-        repoOSD->getRepoOSDInertia());
+        cmsConfig);
     serviceOSDCMSWaterSpeed = OSDCMSWaterSpeedData::getInstance(
         new HttpClientWrapper(),
-        cmsConfig,
-        repoOSD->getRepoOSDWaterSpeed());
+        cmsConfig);
     serviceOSDCMSSpeed = OSDCMSSpeedData::getInstance(
         new HttpClientWrapper(),
-        cmsConfig,
-        repoOSD->getRepoOSDSpeed());
+        cmsConfig);
     serviceOSDCMSWind = OSDCMSWindData::getInstance(
         new HttpClientWrapper(),
-        cmsConfig,
-        repoOSD->getRepoOSDWind());
+        cmsConfig);
     serviceOSDCMSWeather = OSDCMSWeatherData::getInstance(
         new HttpClientWrapper(),
-        cmsConfig,
-        repoOSD->getRepoOSDWeather());
+        cmsConfig);
 }
 
 OSDCMSInputMode *OSDCMS::getServiceOSDCMSMode() const

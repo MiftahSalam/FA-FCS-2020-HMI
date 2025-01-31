@@ -3,9 +3,9 @@
 
 #include <QTimer>
 
+#include "src/domain/osd/entity/osd_base_entity.h"
 #include "src/infra/core/base_response.h"
 #include "src/infra/core/osd/model/input_mode/input_mode_model.h"
-#include "src/view/shared/constant_ui.h"
 
 template <typename DataStreamModel, typename DataResponseModel> class FrameOSDBase
 {
@@ -16,7 +16,7 @@ public:
 public slots:
     virtual void onModeChangeResponse(const QString datafisis, BaseResponse<InputModeModel> mode, bool needConfirm) = 0; //handler set mode response from server
     virtual void onStreamReceive(DataStreamModel model) = 0; //handler data stream input
-    virtual void onDataResponse(BaseResponse<DataResponseModel> data) = 0; //handler manual data response from server
+    virtual void onDataResponse(DataResponseModel data) = 0; //handler manual data response from server
 
 protected:
     QTimer *timer; //timer to update ui

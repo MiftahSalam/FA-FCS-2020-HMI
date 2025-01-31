@@ -11,8 +11,7 @@ public:
     virtual void set(R request) = 0;
 
 protected:
-    virtual BaseResponse<M> toResponse(QByteArray raw) = 0;
-    virtual BaseResponse<M> errorResponse(QNetworkReply::NetworkError err) = 0;
+    virtual BaseResponse<M> toResponse(QNetworkReply::NetworkError err, QByteArray raw) = 0;
 };
 
 #endif // ICMSHTTP_H

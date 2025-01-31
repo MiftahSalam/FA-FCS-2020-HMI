@@ -15,9 +15,7 @@ LOG4QT_DECLARE_STATIC_LOGGER(logger, FrameOSDWaterSpeed)
 FrameOSDWaterSpeed::FrameOSDWaterSpeed(QWidget *parent) :
     QWidget(parent),
     ui(new Ui::FrameOSDWaterSpeed),
-    _cmsWS(DI::getInstance()->getOSDCMSService()->getServiceOSDCMSWaterSpeed()),
-    _cmsMode(DI::getInstance()->getOSDCMSService()->getServiceOSDCMSMode()),
-    _streamWS(DI::getInstance()->getServiceOSDStream()->getServiceOSDStreamWaterSpeed())
+    _serviceOSD(DI::getInstance()->getServiceOSD())
 {
     ui->setupUi(this);
 
@@ -42,9 +40,9 @@ FrameOSDWaterSpeed::FrameOSDWaterSpeed(QWidget *parent) :
     connect(timer, &QTimer::timeout, this, &FrameOSDWaterSpeed::onTimeout);
     timer->start(1000);
 
-    connect(_cmsWS, &OSDCMSWaterSpeedData::signal_setWaterSpeedResponse, this, &FrameOSDWaterSpeed::onDataResponse);
-    connect(_cmsMode, &OSDCMSInputMode::signal_setModeResponse, this, &FrameOSDWaterSpeed::onModeChangeResponse);
-    connect(_streamWS, &OSDStreamWaterSpeed::signalDataProcessed, this, &FrameOSDWaterSpeed::onStreamReceive);
+    connect(_serviceOSD, &OSDService::signal_processedSetResponseWaterSpeed, this, &FrameOSDWaterSpeed::onDataResponse);
+    connect(_serviceOSD, &OSDService::signal_processedSetModeResponse, this, &FrameOSDWaterSpeed::onModeChangeResponse);
+    connect(_serviceOSD, &OSDService::signal_processedAutoDataWaterSpeed, this, &FrameOSDWaterSpeed::onStreamReceive);
 }
 
 void FrameOSDWaterSpeed::setup()
@@ -72,24 +70,24 @@ void FrameOSDWaterSpeed::resetModeIndex()
     currentModeIndx = prevModeIndx;
 }
 
-void FrameOSDWaterSpeed::onDataResponse(BaseResponse<WaterSpeedModel> resp)
+void FrameOSDWaterSpeed::onDataResponse(WaterSpeedModel resp)
 {
 #ifdef USE_LOG4QT
-    logger()->debug() << Q_FUNC_INFO << " -> resp code: " << resp.getHttpCode() << ", resp msg: " << resp.getMessage();
+    logger()->debug() << Q_FUNC_INFO << " -> resp code: " << resp.err().getCode() << ", resp msg: " << QString::fromStdString(resp.status());
 #else
     qDebug() << Q_FUNC_INFO << "resp code:" << resp.getHttpCode() << "resp msg:" << resp.getMessage();
 #endif
 
-    if (resp.getHttpCode() != 0) {
+    if (resp.err().getCode() != 0) {
 
-        QMessageBox::warning(this, "Request Error", QString("Failed to change manual data with error: %1").arg(resp.getMessage()));
+        QMessageBox::warning(this, "Request Error", QString("Failed to change manual data with error: %1").arg(resp.err().getMessage()));
         return;
     }
 
 #ifdef USE_LOG4QT
     logger()->debug() << Q_FUNC_INFO
-                      << " -> getSpeed: " << resp.getData().getSpeed()
-                      << ", getCourse: " << resp.getData().getCourse();
+                      << " -> getSpeed: " << resp.getSpeed()
+                      << ", getCourse: " << resp.getCourse();
 #else
     qDebug()<<Q_FUNC_INFO<<"resp data getWaterSpeed: "<<resp.getData().getSpeed()
            <<"resp data getWaterCourse: "<<resp.getData().getCourse()
@@ -153,7 +151,7 @@ void FrameOSDWaterSpeed::onModeChange(int index)
         break;
     }
 
-    _cmsMode->setDataMode("water_speed", currentMode);
+    _serviceOSD->setDataMode("water_speed", currentMode);
 }
 
 void FrameOSDWaterSpeed::onAfterModeReset()
@@ -199,14 +197,14 @@ void FrameOSDWaterSpeed::onTimeout()
 
     setErrorInput(currError);
 
-    auto curMode = _cmsMode->getDataMode();
+    auto curMode = _serviceOSD->getDataMode();
     bool WSMode = curMode->waterSpeed();
     if ((OSD_MODE)WSMode != currentMode) {
         disconnect(ui->mode, &FrameOSDMode::signal_currentModeChange, this, &FrameOSDWaterSpeed::onModeChange);
         if (WSMode) {
             ui->mode->setCurrentModeIndex(1);
             manualUiSetup();
-            _cmsWS->set(OSDSetWaterSpeedRequest(
+            _serviceOSD->setManualDataWaterSpeed(OSDSetWaterSpeedRequest(
                             ui->inputWaterSpeed->getCurrentValue().toFloat(),
                             ui->inputWaterCourse->getCurrentValue().toFloat()
                             ));
@@ -280,7 +278,7 @@ void FrameOSDWaterSpeed::on_pushButton_clicked()
         float w_speed = ui->inputWaterSpeed->getCurrentValue().toFloat();
         float w_course = ui->inputWaterCourse->getCurrentValue().toFloat();
 
-        _cmsWS->set(OSDSetWaterSpeedRequest(w_speed, w_course));
+        _serviceOSD->setManualDataWaterSpeed(OSDSetWaterSpeedRequest(w_speed, w_course));
     } catch (...) {
         QMessageBox::critical(this, "Fatal Error Water Speed", "Invalid value input" );
     }

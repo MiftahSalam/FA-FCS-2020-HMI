@@ -1,7 +1,6 @@
 #ifndef OSDCMSWATERSPEEDDATA_H
 #define OSDCMSWATERSPEEDDATA_H
 
-#include "src/domain/osd/repository/osd_waterspeed_repository.h"
 #include "src/infra/http/http_client_wrapper.h"
 #include "src/infra/core/osd/cms/water_speed/osd_set_waterspeed_request.h"
 #include "src/infra/core/base_response.h"
@@ -17,8 +16,7 @@ public:
     void operator=(const OSDCMSWaterSpeedData&) = delete;
     static OSDCMSWaterSpeedData* getInstance(
             HttpClientWrapper *httpClient,
-            OSDCmsConfig *cmsConfig,
-            OSDWaterSpeedRepository* repoWS = nullptr
+            OSDCmsConfig *cmsConfig
             );
 
     void set(OSDSetWaterSpeedRequest request) override;
@@ -29,8 +27,7 @@ signals:
 protected:
     OSDCMSWaterSpeedData(
             HttpClientWrapper *parent = nullptr,
-            OSDCmsConfig *cmsConfig = nullptr,
-            OSDWaterSpeedRepository* repoWS = nullptr
+            OSDCmsConfig *cmsConfig = nullptr
             );
 
 private slots:
@@ -39,10 +36,8 @@ private slots:
 private:
     static OSDCMSWaterSpeedData *waterspeedData;
     OSDCmsConfig *cfgCms;
-    OSDWaterSpeedRepository* repoWS;
 
-    BaseResponse<WaterSpeedModel> toResponse(QByteArray raw) override;
-    BaseResponse<WaterSpeedModel> errorResponse(QNetworkReply::NetworkError err) override;
+    BaseResponse<WaterSpeedModel> toResponse(QNetworkReply::NetworkError err, QByteArray raw) override;
 };
 
 #endif // OSDCMSWATERSPEEDDATA_H
