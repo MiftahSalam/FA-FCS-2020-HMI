@@ -28,25 +28,27 @@ public:
     static DI *getInstance();
 
     Configuration *getConfig() const;
+
     OSDCMS *getOSDCMSService() const;
     OSDStream *getServiceOSDStream() const;
     OSDRepository *getRepoOSD() const;
+
     GunRepository *getRepoGun() const;
     TrackRepository *getRepoTrack() const;
     FireTriangleRepository *getRepoFireTriangle() const;
     WeaponTrackAssignmentRepository *getRepoTrackWeaponAssign() const;
     EngagementRepository *getRepoEngagementData() const;
+
     TrackStream *getServiceTrackStream() const;
     GunStream *getServiceGunStream() const;
     FireTriangleStream *getServiceFireTriangle() const;
     EngagementStream *getServiceEngagementStream() const;
 
+    OSDService *getServiceOSD() const;
     GunManagerService *getServiceGunManager() const;
     WeaponAssignService *getServiceWeaponAssign() const;
     WeaponTrackAssignService *getServiceWeaponTrackAssign() const;
     GunFiringService *getServiceWeaponFiring() const;
-
-    OSDService *getServiceOSD() const;
 
 protected:
     DI();

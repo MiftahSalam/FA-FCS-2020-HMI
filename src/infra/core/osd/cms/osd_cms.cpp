@@ -20,8 +20,7 @@ OSDCMS::OSDCMS(QObject *parent, OSDCmsConfig *cmsConfig, OSDRepository *repoOSD)
 
     serviceOSDCMSMode = OSDCMSInputMode::getInstance(
         new HttpClientWrapper(),
-        cmsConfig,
-        repoOSD->getRepoOSDMode());
+        cmsConfig);
     serviceOSDCMSPosition = OSDCMSPositionData::getInstance(
         new HttpClientWrapper(),
         cmsConfig,
