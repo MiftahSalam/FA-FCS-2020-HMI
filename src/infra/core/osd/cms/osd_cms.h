@@ -5,7 +5,6 @@
 #include <QObject>
 
 #include "src/infra/core/osd/cms/input_mode/osd_cms_input_mode.h"
-#include "src/infra/store/osd/osd_repository.h"
 #include "src/infra/core/osd/cms/position/osd_cms_position_data.h"
 #include "src/infra/core/osd/cms/inertia/osd_cms_gyro_data.h"
 #include "src/infra/core/osd/cms/water_speed/osd_cms_waterspeed_data.h"
@@ -20,8 +19,7 @@ class OSDCMS : public QObject
 public:
     OSDCMS(
             QObject *parent = nullptr,
-            OSDCmsConfig *cmsConfig = nullptr,
-            OSDRepository *repoOSD = nullptr
+            OSDCmsConfig *cmsConfig = nullptr
             );
 
     OSDCMSInputMode *getServiceOSDCMSMode() const;

@@ -5,15 +5,10 @@
 #include "src/shared/common/errors/err_object_creation.h"
 #include "osd_cms.h"
 
-OSDCMS::OSDCMS(QObject *parent, OSDCmsConfig *cmsConfig, OSDRepository *repoOSD)
+OSDCMS::OSDCMS(QObject *parent, OSDCmsConfig *cmsConfig)
     : QObject(parent), cfgCms(cmsConfig)
 {
     if (cmsConfig == nullptr)
-    {
-        throw ErrObjectCreation();
-    }
-
-    if (repoOSD == nullptr)
     {
         throw ErrObjectCreation();
     }
