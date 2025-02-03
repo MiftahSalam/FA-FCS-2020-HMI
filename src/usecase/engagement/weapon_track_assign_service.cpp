@@ -8,11 +8,7 @@ WeaponTrackAssignService::WeaponTrackAssignService(QObject *parent,
                                                    TrackWeaponAssignConfig *cmsConfig,
                                                    GunCoverageRepository* repoGunCov,
                                                    TrackBaseRepository *repoTrack,
-                                                   OSDInertiaRepository* repoInertia,
-                                                   OSDSpeedRepository* repoSpeed,
-                                                   OSDCMSInputMode* cmsOSDInputMode,
-                                                   OSDStreamGyro* streamInertia,
-                                                   OSDStreamSpeed* streamSpeed,
+                                                   OSDService *_serviceOSD,
                                                    TrackWeaponEngageService *cmsEngageService,
                                                    EngagementDataCorrection40mmService *cmsEngageCorrService,
                                                    WeaponAssignmentRepository *repoWA,
@@ -24,11 +20,7 @@ WeaponTrackAssignService::WeaponTrackAssignService(QObject *parent,
     _cmsEngageCorrService(cmsEngageCorrService),
     _repoGunCov(repoGunCov),
     _repoTrack(repoTrack),
-    _cmsOSDInputMode(cmsOSDInputMode),
-    _repoInertia(repoInertia),
-    _repoSpeed(repoSpeed),
-    _streamInertia(streamInertia),
-    _streamSpeed(streamSpeed),
+    _servicesOSD(_serviceOSD),
     _repoWA(repoWA),
     _repoWTA(repoWTA)
 {
@@ -38,9 +30,7 @@ WeaponTrackAssignService *WeaponTrackAssignService::getInstance(QObject *parent,
                                                                 TrackWeaponAssignConfig *cmsConfig,
                                                                 GunCoverageRepository *repoGunCov,
                                                                 TrackBaseRepository *repoTrack,
-                                                                OSDRepository* repoOSD,
-                                                                OSDCMS* cmsOSD,
-                                                                OSDStream* streamOSD,
+                                                                OSDService *serviceOSD,
                                                                 WeaponAssignmentRepository *repoWA,
                                                                 WeaponTrackAssignmentRepository *repoWTA
                                                                 )
@@ -66,49 +56,28 @@ WeaponTrackAssignService *WeaponTrackAssignService::getInstance(QObject *parent,
             throw ErrObjectCreation();
         }
 
-        if(cmsOSD->getServiceOSDCMSMode() == nullptr) {
+        if(serviceOSD == nullptr) {
             throw ErrObjectCreation();
         }
-
-        if(repoOSD->getRepoOSDInertia() == nullptr) {
-            throw ErrObjectCreation();
-        }
-
-        if(repoOSD->getRepoOSDSpeed() == nullptr) {
-            throw ErrObjectCreation();
-        }
-
-        if(streamOSD->getServiceOSDStreamGyro() == nullptr) {
-            throw ErrObjectCreation();
-        }
-
-        if(streamOSD->getServiceOSDStreamSpeed() == nullptr) {
-            throw ErrObjectCreation();
-        }
-
 
         TrackWeaponEngageService *engageCmsService = TrackWeaponEngageService::getInstance(
-                    new HttpClientWrapper(),
-                    cmsConfig);
+            new HttpClientWrapper(),
+            cmsConfig);
 
         EngagementDataCorrection40mmService* cmsEngageCorrService = EngagementDataCorrection40mmService::getInstance(
             new HttpClientWrapper(),
             cmsConfig);
 
         instance = new WeaponTrackAssignService(
-                    parent,
-                    cmsConfig,
-                    repoGunCov,
-                    repoTrack,
-                    repoOSD->getRepoOSDInertia(),
-                    repoOSD->getRepoOSDSpeed(),
-                    cmsOSD->getServiceOSDCMSMode(),
-                    streamOSD->getServiceOSDStreamGyro(),
-                    streamOSD->getServiceOSDStreamSpeed(),
-                    engageCmsService,
-                    cmsEngageCorrService,
-                    repoWA,
-                    repoWTA);
+            parent,
+            cmsConfig,
+            repoGunCov,
+            repoTrack,
+            serviceOSD,
+            engageCmsService,
+            cmsEngageCorrService,
+            repoWA,
+            repoWTA);
 
         connect(engageCmsService, &TrackWeaponEngageService::signal_trackAssignmentResponse,
                 instance, &WeaponTrackAssignService::onTrackAssignmentResponse);
@@ -126,16 +95,16 @@ void WeaponTrackAssignService::CheckUpdateEngagement(const QString &weapon)
         auto curEngage = GetEngagementTrack(weapon);
         if (curEngage) {
             if (!isEngageable(curEngage->getTrackId())
-                    || !isHeadingSpeedValid()
-                    || !isIdentityEngageable(curEngage->getTrackId())
-                    ) {
+                || !isHeadingSpeedValid()
+                || !isIdentityEngageable(curEngage->getTrackId())
+                ) {
                 BreakEngagement(weapon, curEngage->getTrackId());
             }
 
             _cmsEngageService->sendAssignmentHB(TrackAssignRequest(
-                                                    curEngage->getTrackId(),
-                                                    weapon.toStdString()
-                                                    ));
+                curEngage->getTrackId(),
+                weapon.toStdString()
+                ));
         }
     }
 }
@@ -162,7 +131,7 @@ bool WeaponTrackAssignService::isEngageable(const int trackId)
         float orientation = _repoGunCov->GetGunCoverage()->getGunOrientation();
         float blind_arc = _repoGunCov->GetGunCoverage()->getBlindArc();
         if (track->getRange() <= max_range) {
-            float shipHeading = _repoInertia->GetInertia()->heading();
+            float shipHeading = _servicesOSD->getOSDHeading();
             float minBArc = 180.0 + orientation + shipHeading - (blind_arc / 2);
             float maxBArc = 180.0 + orientation + shipHeading + (blind_arc / 2);
 
@@ -211,16 +180,16 @@ bool WeaponTrackAssignService::isIdentityEngageable(const int trackId)
 
 bool WeaponTrackAssignService::isHeadingSpeedValid()
 {
-    bool is_inertia_auto_mode = !_cmsOSDInputMode->getDataMode()->inersia();
-    bool is_speed_auto_mode = !_cmsOSDInputMode->getDataMode()->speed();
-    int inertia_err_code = _streamInertia->check().getCode();
+    bool is_inertia_auto_mode = !_servicesOSD->getDataMode()->inersia();
+    bool is_speed_auto_mode = !_servicesOSD->getDataMode()->speed();
+    int inertia_err_code = _servicesOSD->getOSDAutoStatusInertia().getCode();
 
     if (is_inertia_auto_mode &&
-            inertia_err_code != 0 && inertia_err_code != ERROR_CODE_OSD_DATA_PARTIALLY_INVALID.first) {
+        inertia_err_code != 0 && inertia_err_code != ERROR_CODE_OSD_DATA_PARTIALLY_INVALID.first) {
         return false;
     }
 
-    if (is_speed_auto_mode && _streamSpeed->check().getCode() != 0) {
+    if (is_speed_auto_mode && _servicesOSD->getOSDAutoStatusSpeed().getCode() != ERROR_NO.first) {
         return false;
     }
 
@@ -284,7 +253,7 @@ void WeaponTrackAssignService::BreakEngagementTrack(const int &trackId)
     QList<WeaponTrackAssignEntity*> wta_list(wta.begin(), wta.end());
     foreach (auto wta, wta_list) {
         if (wta->getTrackId() == trackId) {
-//            _repoWTA->BreakEngagement(WeaponTrackAssignEntity(wta->getWeapon(), trackId));
+            //            _repoWTA->BreakEngagement(WeaponTrackAssignEntity(wta->getWeapon(), trackId));
             BreakEngagement(QString::fromStdString(wta->getWeapon()), trackId);
         }
     }
@@ -297,7 +266,7 @@ void WeaponTrackAssignService::BreakEngagementWeapon(const QString &weapon)
     foreach (auto wta, wta_list) {
         if (wta->getWeapon() == weapon.toStdString()) {
             _repoWTA->BreakEngagement(WeaponTrackAssignEntity(weapon.toStdString(), wta->getTrackId()));
-//            BreakEngagement(weapon, wta->getTrackId());
+            //            BreakEngagement(weapon, wta->getTrackId());
         }
     }
     _cmsEngageService->sendResetAssignment(weapon);

@@ -16,8 +16,8 @@ DI::DI()
     repoTrackWeaponAssign = WeaponTrackAssignmentRepositoryInMemImpl::GetInstance();
     repoEngagement = new EngagementRepository(nullptr);
 
-    serviceOSDCMS = new OSDCMS(nullptr, config->getOsdCmsConfig(), repoOSD);
-    serviceOSDStream = new OSDStream(nullptr, config->getTcpMessageConfig(), repoOSD, serviceOSDCMS);
+    serviceOSDCMS = new OSDCMS(nullptr, config->getOsdCmsConfig());
+    serviceOSDStream = new OSDStream(nullptr, config->getTcpMessageConfig());
     serviceOSD = OSDService::getInstance(nullptr, repoOSD, serviceOSDCMS, serviceOSDStream);
     serviceGunManager = GunManagerService::getInstance(nullptr, config->getGunCmsConfig(), repoGun->getRepoGunFeedback(), repoGun->getRepoGunCmd());
     serviceWeaponAssign = WeaponAssignService::getInstance(nullptr, repoWeaponAssign);
