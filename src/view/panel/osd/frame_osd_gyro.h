@@ -19,7 +19,7 @@ struct OSDGyroProp
     TextInputProp roll;
 };
 
-class FrameOSDGyro : public QWidget, public FrameOSDBase<GyroModel, GyroModel>
+class FrameOSDGyro : public QWidget, public FrameOSDBase<GyroStreamModel, GyroModel>
 {
     Q_OBJECT
 
@@ -33,7 +33,7 @@ public:
 public slots:
     void onModeChangeResponse(const QString datafisis, BaseResponse<InputModeModel> mode, bool needConfirm) override;
     void onDataResponse(GyroModel data) override;
-    void onStreamReceive(GyroModel model) override;
+    void onStreamReceive(GyroStreamModel model) override;
     void onUpdateGyroAutoUi();
 
 signals:

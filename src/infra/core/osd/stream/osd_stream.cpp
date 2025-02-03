@@ -11,73 +11,48 @@
 //}
 
 OSDStream::OSDStream(
-        QObject *parent,
-        MessagingTcpConfig *config,
-        OSDRepository *repoOSD,
-        OSDCMS *osdService
-        ): QObject(parent), consumerConfig(config), serviceOSDCMS(osdService)
+    QObject *parent,
+    MessagingTcpConfig *config): QObject(parent), consumerConfig(config)
 {
     if (config == nullptr)
     {
         throw ErrObjectCreation();
     }
 
-    if (repoOSD == nullptr)
-    {
-        throw ErrObjectCreation();
-    }
-
-    if (osdService == nullptr)
-    {
-        throw ErrObjectCreation();
-    }
-// ambil nilai dari config
+    // ambil nilai dari config
     TcpMessagingOpts *posStreamVal = config->getInstance("")->getContent().value("position");
     serviceOSDStreamPosition = OSDStreamPosition::getInstance(
-                posStreamVal,
-                repoOSD->getRepoOSDPosition(),
-                osdService->getServiceOSDCMSMode()
-                );
+        posStreamVal
+        );
 
     TcpMessagingOpts *gyroStreamVal = config->getInstance("")->getContent().value("inertia");
     serviceOSDStreamGyro = OSDStreamGyro::getInstance(
-                gyroStreamVal,
-                repoOSD->getRepoOSDInertia(),
-                osdService->getServiceOSDCMSMode()
-                );
+        gyroStreamVal
+        );
 
     TcpMessagingOpts *waterspeedStreamVal = config->getInstance("")->getContent().value("water_speed");
     serviceOSDStreamWaterSpeed = OSDStreamWaterSpeed::getInstance(
-                waterspeedStreamVal,
-                repoOSD->getRepoOSDWaterSpeed(),
-                osdService->getServiceOSDCMSMode()
-                );
+        waterspeedStreamVal
+        );
 
     TcpMessagingOpts *speedStreamVal = config->getInstance("")->getContent().value("speed");
     serviceOSDStreamSpeed = OSDStreamSpeed::getInstance(
-                speedStreamVal,
-                repoOSD->getRepoOSDSpeed(),
-                osdService->getServiceOSDCMSMode()
-                );
+        speedStreamVal
+        );
 
     TcpMessagingOpts *windStreamVal = config->getInstance("")->getContent().value("wind");
     serviceOSDStreamWind = OSDStreamWind::getInstance(
-                windStreamVal,
-                repoOSD->getRepoOSDWind(),
-                osdService->getServiceOSDCMSMode()
-                );
+        windStreamVal
+        );
 
     TcpMessagingOpts *weatherStreamVal = config->getInstance("")->getContent().value("weather");
     serviceOSDStreamWeather = OSDStreamWeather::getInstance(
-        weatherStreamVal,
-        repoOSD->getRepoOSDWeather(),
-        osdService->getServiceOSDCMSMode()
+        weatherStreamVal
         );
 
     TcpMessagingOpts *datetimeStreamVal = config->getInstance("")->getContent().value("date_time");
     serviceStreamDateTime = OSDStreamDateTime::getInstance(
-        datetimeStreamVal,
-        repoOSD->getRepoDateTime()
+        datetimeStreamVal
         );
 }
 

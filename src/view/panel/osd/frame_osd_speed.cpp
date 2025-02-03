@@ -68,7 +68,7 @@ void FrameOSDSpeed::onAfterModeReset()
 
 void FrameOSDSpeed::onTimeout()
 {
-    auto currError = _streamSpeed->check();
+    auto currError = _serviceOSD->getOSDAutoStatusSpeed();
     if (currError.getCode() == ERROR_CODE_MESSAGING_NOT_CONNECTED.first) {
         notConnectedUiSetup();
     } else if (currError.getCode() == ERROR_CODE_MESSAGING_NO_DATA.first) {
@@ -193,14 +193,14 @@ void FrameOSDSpeed::onDataResponse(SpeedModel resp)
 #endif
 }
 
-void FrameOSDSpeed::onStreamReceive(SpeedModel model)
+void FrameOSDSpeed::onStreamReceive(SpeedStreamModel model)
 {
-    auto currentMode = (OSD_MODE)_cmsMode->getDataMode()->speed();
+    auto currentMode = (OSD_MODE)_serviceOSD->getDataMode()->speed();
     if (currentMode == OSD_MODE::MANUAL) {
         return;
     }
 
-    auto currStreamErr = _streamSpeed->check();
+    auto currStreamErr = _serviceOSD->getOSDAutoStatusSpeed();
 
     //validity SOG COG stream check
     ui->inputSpeed->setValue(QString::number(model.getSpeed()));
@@ -255,7 +255,7 @@ void FrameOSDSpeed::autoUiSetup()
 
 void FrameOSDSpeed::notConnectedUiSetup()
 {
-    auto currentMode = (OSD_MODE)_cmsMode->getDataMode()->speed();
+    auto currentMode = (OSD_MODE)_serviceOSD->getDataMode()->speed();
     if (currentMode == OSD_MODE::MANUAL) {
         return;
     }
@@ -265,7 +265,7 @@ void FrameOSDSpeed::notConnectedUiSetup()
 
 void FrameOSDSpeed::noDataUiSetup()
 {
-    auto currentMode = (OSD_MODE)_cmsMode->getDataMode()->speed();
+    auto currentMode = (OSD_MODE)_serviceOSD->getDataMode()->speed();
     if (currentMode == OSD_MODE::MANUAL) {
         return;
     }
@@ -274,7 +274,7 @@ void FrameOSDSpeed::noDataUiSetup()
 
 void FrameOSDSpeed::invalidDataUiSetup()
 {
-    auto currentMode = (OSD_MODE)_cmsMode->getDataMode()->speed();
+    auto currentMode = (OSD_MODE)_serviceOSD->getDataMode()->speed();
     if (currentMode == OSD_MODE::MANUAL) {
         return;
     }

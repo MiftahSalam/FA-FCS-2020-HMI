@@ -71,7 +71,7 @@ void FrameOSDWeather::onAfterModeReset()
 
 void FrameOSDWeather::onTimeout()
 {
-    auto currError = _streamWeather->check();
+    auto currError = _serviceOSD->getOSDAutoStatusWeather();
     if (currError.getCode() == ERROR_CODE_MESSAGING_NOT_CONNECTED.first) {
         notConnectedUiSetup();
     } else if (currError.getCode() == ERROR_CODE_MESSAGING_NO_DATA.first) {
@@ -202,14 +202,14 @@ void FrameOSDWeather::onDataResponse(WeatherModel resp)
 #endif
 }
 
-void FrameOSDWeather::onStreamReceive(WeatherModel model)
+void FrameOSDWeather::onStreamReceive(WeatherStreamModel model)
 {
-    auto currentMode = (OSD_MODE)_cmsMode->getDataMode()->weather();
+    auto currentMode = (OSD_MODE)_serviceOSD->getDataMode()->weather();
     if (currentMode == OSD_MODE::MANUAL) {
         return;
     }
 
-    auto currStreamErr = _streamWeather->check();
+    auto currStreamErr = _serviceOSD->getOSDAutoStatusWeather();
 
     // validity temp hum press stream check
     ui->inputTemp->setValue(QString::number(model.getTemperature()));
@@ -266,7 +266,7 @@ void FrameOSDWeather::autoUiSetup()
 
 void FrameOSDWeather::notConnectedUiSetup()
 {
-    auto currentMode = (OSD_MODE)_cmsMode->getDataMode()->weather();
+    auto currentMode = (OSD_MODE)_serviceOSD->getDataMode()->weather();
     if (currentMode == OSD_MODE::MANUAL) {
         return;
     }
@@ -275,7 +275,7 @@ void FrameOSDWeather::notConnectedUiSetup()
 
 void FrameOSDWeather::noDataUiSetup()
 {
-    auto currentMode = (OSD_MODE)_cmsMode->getDataMode()->weather();
+    auto currentMode = (OSD_MODE)_serviceOSD->getDataMode()->weather();
     if (currentMode == OSD_MODE::MANUAL) {
         return;
     }
@@ -284,7 +284,7 @@ void FrameOSDWeather::noDataUiSetup()
 
 void FrameOSDWeather::invalidDataUiSetup()
 {
-    auto currentMode = (OSD_MODE)_cmsMode->getDataMode()->weather();
+    auto currentMode = (OSD_MODE)_serviceOSD->getDataMode()->weather();
     if (currentMode == OSD_MODE::MANUAL) {
         return;
     }

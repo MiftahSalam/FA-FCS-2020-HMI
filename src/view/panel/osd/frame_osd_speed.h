@@ -17,7 +17,7 @@ struct OSDSpeedProp
     TextInputProp course;
 };
 
-class FrameOSDSpeed : public QWidget, public FrameOSDBase<SpeedModel, SpeedModel>
+class FrameOSDSpeed : public QWidget, public FrameOSDBase<SpeedStreamModel, SpeedModel>
 {
     Q_OBJECT
 
@@ -31,7 +31,7 @@ public:
 public slots:
     void onModeChangeResponse(const QString datafisis, BaseResponse<InputModeModel> mode, bool needConfirm) override;
     void onDataResponse(SpeedModel data) override;
-    void onStreamReceive(SpeedModel model) override;
+    void onStreamReceive(SpeedStreamModel model) override;
     void onUpdateSpeedAutoUi();
 
 signals:

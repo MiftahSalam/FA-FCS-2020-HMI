@@ -250,10 +250,10 @@ void FrameOSDPosition::onTimeout()
     }
 }
 
-void FrameOSDPosition::onStreamReceive(PositionModel model)
+void FrameOSDPosition::onStreamReceive(PositionStreamModel model)
 {
     //    qDebug() << Q_FUNC_INFO << "position: lat ->" << model.getLatitude() << ", lon ->" << model.getLongitude();
-    auto currentMode = (OSD_MODE)_cmsMode->getDataMode()->position();
+    auto currentMode = (OSD_MODE)_serviceOSD->getDataMode()->position();
     if (currentMode == OSD_MODE::MANUAL)
     {
         return;
@@ -262,7 +262,7 @@ void FrameOSDPosition::onStreamReceive(PositionModel model)
     ui->inputLatitude->setStatusOk();
     ui->inputLongitude->setStatusOk();
 
-    auto currStreamErr = _streamPos->check();
+    auto currStreamErr = _serviceOSD->getOSDAutoStatusPosition();
 
     // validity pitch roll stream check
     ui->inputLatitude->setValue(Utils::latDecToStringDegree(model.getLatitude()));
@@ -279,7 +279,7 @@ void FrameOSDPosition::onUpdatePositionAutoUi()
 
 void FrameOSDPosition::notConnectedUiSetup()
 {
-    auto currentMode = (OSD_MODE)_cmsMode->getDataMode()->position();
+    auto currentMode = (OSD_MODE)_serviceOSD->getDataMode()->position();
     if (currentMode == OSD_MODE::MANUAL)
     {
         return;
@@ -296,7 +296,7 @@ void FrameOSDPosition::notConnectedUiSetup()
 
 void FrameOSDPosition::noDataUiSetup()
 {
-    auto currentMode = (OSD_MODE)_cmsMode->getDataMode()->position();
+    auto currentMode = (OSD_MODE)_serviceOSD->getDataMode()->position();
     if (currentMode == OSD_MODE::MANUAL)
     {
         return;
@@ -313,7 +313,7 @@ void FrameOSDPosition::noDataUiSetup()
 
 void FrameOSDPosition::invalidDataUiSetup()
 {
-    auto currentMode = (OSD_MODE)_cmsMode->getDataMode()->position();
+    auto currentMode = (OSD_MODE)_serviceOSD->getDataMode()->position();
     if (currentMode == OSD_MODE::MANUAL)
     {
         return;

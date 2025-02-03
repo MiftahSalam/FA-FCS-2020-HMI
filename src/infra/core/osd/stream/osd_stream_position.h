@@ -1,9 +1,7 @@
 #ifndef OSDSTREAMPOSITION_H
 #define OSDSTREAMPOSITION_H
 
-#include "src/domain/osd/repository/osd_position_repository.h"
-#include "src/infra/core/osd/cms/input_mode/osd_cms_input_mode.h"
-#include "src/infra/core/osd/model/position/position_model.h"
+#include "src/infra/core/osd/model/position/position_stream_model.h"
 #include "src/infra/messaging/tcp/tcp_messaging_wrapper.h"
 #include "src/infra/messaging/IOSDStream.h"
 //#include "src/shared/config/amqp_config.h"
@@ -11,16 +9,14 @@
 
 #include <QObject>
 
-class OSDStreamPosition : public QObject, public IOSDStream<PositionModel>
+class OSDStreamPosition : public QObject, public IOSDStream<PositionStreamModel>
 {
     Q_OBJECT
 public:
     OSDStreamPosition(OSDStreamPosition &other) = delete;
     void operator=(const OSDStreamPosition&) = delete;
     static OSDStreamPosition* getInstance(
-            TcpMessagingOpts *config,
-            OSDPositionRepository *_repoPos,
-            OSDCMSInputMode *modeService
+            TcpMessagingOpts *config
             );
 //    static OSDStreamPosition* getInstance(AMQPConfig *config);
 
@@ -28,15 +24,12 @@ public:
 
 signals:
     // IOSDStream interface
-    void signalDataProcessed(PositionModel data) override;
+    void signalDataProcessed(PositionStreamModel data) override;
 
 protected:
     OSDStreamPosition(
-            TcpMessagingOpts *config = nullptr,
-            OSDPositionRepository *repoPos = nullptr,
-            OSDCMSInputMode *modeService = nullptr
+            TcpMessagingOpts *config = nullptr
             );
-//    OSDStreamPosition(AMQPConfig *config = nullptr);
 
     // IOSDStream interface
 private slots:
@@ -48,8 +41,6 @@ private:
 //    AmqpConsumerWrapper *consumer;
     TcpMessagingWrapper *consumer;
     TcpMessagingOpts *cfg;
-    OSDPositionRepository* _repoPos;
-    OSDCMSInputMode *serviceMode;
 //    AMQPConfig *cfg;
 
     BaseError currentErr;

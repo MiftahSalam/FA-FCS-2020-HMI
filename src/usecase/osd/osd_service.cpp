@@ -35,6 +35,21 @@ OSDService::OSDService(QObject *parent, OSDRepository *osdRepo, OSDCMS* osdCms, 
     connect(cmsOsd->getServiceOSDCMSWeather(), &OSDCMSWeatherData::signal_setWeatherResponse, this, &OSDService::onUpdateManualDataWeather);
     connect(cmsOsd->getServiceOSDCMSWind(), &OSDCMSWindData::signal_setWindResponse, this, &OSDService::onUpdateManualDataWind);
 
+    connect(streamOsd->getServiceOSDStreamGyro(), &OSDStreamGyro::signalDataProcessed,
+            this, &OSDService::onUpdateAutoDataInertia);
+    connect(streamOsd->getServiceOSDStreamPosition(), &OSDStreamPosition::signalDataProcessed,
+            this, &OSDService::onUpdateAutoDataPosition);
+    connect(streamOsd->getServiceOSDStreamSpeed(), &OSDStreamSpeed::signalDataProcessed,
+            this, &OSDService::onUpdateAutoDataSpeed);
+    connect(streamOsd->getServiceOSDStreamWaterSpeed(), &OSDStreamWaterSpeed::signalDataProcessed,
+            this, &OSDService::onUpdateAutoDataWaterSpeed);
+    connect(streamOsd->getServiceOSDStreamWind(), &OSDStreamWind::signalDataProcessed,
+            this, &OSDService::onUpdateAutoDataWind);
+    connect(streamOsd->getServiceOSDStreamWeather(), &OSDStreamWeather::signalDataProcessed,
+            this, &OSDService::onUpdateAutoDataWeather);
+    connect(streamOsd->getServiceStreamDateTime(), &OSDStreamDateTime::signalDataProcessed,
+            this, &OSDService::onUpdateAutoDataDateTime);
+
     connect(timer, &QTimer::timeout, this, &OSDService::onTimerTimeout);
 
     timer->start(1000);
@@ -43,6 +58,15 @@ OSDService::OSDService(QObject *parent, OSDRepository *osdRepo, OSDCMS* osdCms, 
 void OSDService::onTimerTimeout()
 {
     sync();
+
+    streamOsd->getServiceStreamDateTime()->check();
+
+    auto _repoDateTime = repoOsd->getRepoDateTime();
+    QDateTime curTimeLocalEpoch = QDateTime::fromMSecsSinceEpoch(_repoDateTime->GetDateTime()->dateTimeLocalProcessed());
+    QDateTime curTimeEpoch = QDateTime::fromMSecsSinceEpoch(_repoDateTime->GetDateTime()->dateTimeProcessed());
+
+    _repoDateTime->UpdateTimeDisplay(curTimeEpoch.addSecs(1).toMSecsSinceEpoch());
+    _repoDateTime->UpdateTimeLocalDisplay(curTimeLocalEpoch.addSecs(1).toMSecsSinceEpoch());
 }
 
 OSDService* OSDService::getInstance(
@@ -60,7 +84,11 @@ OSDService* OSDService::getInstance(
             throw ErrObjectCreation();
         }
 
-        instance = new OSDService(parent, osdRepo, osdCms);
+        if(osdStream == nullptr) {
+            throw ErrObjectCreation();
+        }
+
+        instance = new OSDService(parent, osdRepo, osdCms, osdStream);
     }
 
     return instance;
@@ -199,7 +227,26 @@ void OSDService::onUpdateInputMode(const QString datafisis, BaseResponse<InputMo
     emit signal_processedSetModeResponse(datafisis, resp, needConfirm);
 }
 
-void OSDService::onUpdateAutoDataPosition(PositionModel data)
+void OSDService::onUpdateAutoDataInertia(GyroStreamModel data)
+{
+    auto mode = getDataMode()->inersia();
+    auto stream = streamOsd->getServiceOSDStreamGyro();
+    auto _repo = repoOsd->getRepoOSDInertia();
+    if (!mode && stream->check().getCode() == ERROR_NO.first) {
+        _repo->SetInertia(OSDInertiaEntity(
+            data.getHeading(),
+            data.getPitch(),
+            data.getRoll(),
+            data.source(),
+            data.status(),
+            data.mode()
+            ));
+    }
+
+    emit signal_processedAutoDataGyro(data);
+}
+
+void OSDService::onUpdateAutoDataPosition(PositionStreamModel data)
 {
     auto positionMode = getDataMode()->position();
     auto streamPos = streamOsd->getServiceOSDStreamPosition();
@@ -213,6 +260,98 @@ void OSDService::onUpdateAutoDataPosition(PositionModel data)
             data.mode()
             ));
     }
+
+    emit signal_processedAutoDataPosition(data);
+}
+
+void OSDService::onUpdateAutoDataSpeed(SpeedStreamModel data)
+{
+    auto mode = getDataMode()->speed();
+    auto stream = streamOsd->getServiceOSDStreamSpeed();
+    auto _repo = repoOsd->getRepoOSDSpeed();
+    if (!mode && stream->check().getCode() == ERROR_NO.first) {
+        _repo->SetSpeed(OSDSpeedEntity(
+            data.getSpeed(),
+            data.getCourse(),
+            data.source(),
+            data.status(),
+            data.mode()
+            ));
+    }
+
+    emit signal_processedAutoDataSpeed(data);
+}
+
+void OSDService::onUpdateAutoDataWaterSpeed(WaterSpeedStreamModel data)
+{
+    auto mode = getDataMode()->waterSpeed();
+    auto stream = streamOsd->getServiceOSDStreamWaterSpeed();
+    auto _repo = repoOsd->getRepoOSDWaterSpeed();
+    if (!mode && stream->check().getCode() == ERROR_NO.first) {
+        _repo->SetWaterSpeed(OSDWaterSpeedEntity(
+            data.getSpeed(),
+            data.getCourse(),
+            data.source(),
+            data.status(),
+            data.mode()
+            ));
+    }
+
+    emit signal_processedAutoDataWaterSpeed(data);
+}
+
+void OSDService::onUpdateAutoDataWind(WindStreamModel data)
+{
+    auto mode = getDataMode()->wind();
+    auto stream = streamOsd->getServiceOSDStreamWind();
+    auto _repo = repoOsd->getRepoOSDWind();
+    if (!mode && stream->check().getCode() == ERROR_NO.first) {
+        _repo->SetWind(OSDWindEntity(
+            data.getSpeed(),
+            data.getDirection(),
+            data.source(),
+            data.status(),
+            data.mode()
+            ));
+    }
+
+    emit signal_processedAutoDataWind(data);
+}
+
+void OSDService::onUpdateAutoDataWeather(WeatherStreamModel data)
+{
+    auto mode = getDataMode()->weather();
+    auto stream = streamOsd->getServiceOSDStreamWeather();
+    auto _repo = repoOsd->getRepoOSDWeather();
+    if (!mode && stream->check().getCode() == ERROR_NO.first) {
+        _repo->SetWeather(OSDWeatherEntity(
+            data.getTemperature(),
+            data.getPressure(),
+            data.getHumidity(),
+            data.source(),
+            data.status(),
+            data.mode()
+            ));
+    }
+
+    emit signal_processedAutoDataWeather(data);
+}
+
+void OSDService::onUpdateAutoDataDateTime(DateTimeStreamModel data)
+{
+    auto stream = streamOsd->getServiceStreamDateTime();
+    auto _repo = repoOsd->getRepoDateTime();
+    if (stream->check().getCode() == ERROR_NO.first) {
+        _repo->SetDateTime(OSDDateTimeEntity(
+            data.getDateTimeLocal().toStdString(),
+            data.getDateTimeUTC().toStdString(),
+            data.source(),
+            data.status(),
+            data.mode()
+            ));
+    }
+
+    emit signal_processedAutoDataDateTime(data);
 }
 
 void OSDService::setDataMode(const QString &dataFisis, const OSD_MODE mode)

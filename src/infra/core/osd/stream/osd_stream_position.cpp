@@ -13,11 +13,9 @@ LOG4QT_DECLARE_STATIC_LOGGER(logger, OSDStreamPosition)
 
 OSDStreamPosition* OSDStreamPosition::positionStream = nullptr;
 
-OSDStreamPosition::OSDStreamPosition(TcpMessagingOpts *config,
-                                     OSDPositionRepository *repoPos,
-                                     OSDCMSInputMode *modeService)
+OSDStreamPosition::OSDStreamPosition(TcpMessagingOpts *config)
 //OSDStreamPosition::OSDStreamPosition(AMQPConfig *config)
-    : cfg(config), _repoPos(repoPos), serviceMode(modeService), currentErr(NoError())
+    : cfg(config), currentErr(NoError())
 {
     /*
     AMQPOptions *opt = new AMQPOptions(
@@ -37,10 +35,7 @@ OSDStreamPosition::OSDStreamPosition(TcpMessagingOpts *config,
 }
 
 OSDStreamPosition *OSDStreamPosition::getInstance(
-        TcpMessagingOpts *config = nullptr,
-        OSDPositionRepository* repoPos = nullptr,
-        OSDCMSInputMode *modeService = nullptr
-        )
+    TcpMessagingOpts *config = nullptr)
 //OSDStreamPosition *OSDStreamPosition::getInstance(AMQPConfig *config = nullptr)
 {
     if (positionStream == nullptr) {
@@ -48,15 +43,7 @@ OSDStreamPosition *OSDStreamPosition::getInstance(
             throw ErrObjectCreation();
         }
 
-        if(repoPos == nullptr) {
-            throw ErrObjectCreation();
-        }
-
-        if(modeService == nullptr) {
-            throw ErrObjectCreation();
-        }
-
-        positionStream = new OSDStreamPosition(config, repoPos, modeService);
+        positionStream = new OSDStreamPosition(config);
     }
 
     return positionStream;
@@ -77,9 +64,10 @@ BaseError OSDStreamPosition::check()
 
 void OSDStreamPosition::onDataReceived(QByteArray data)
 {
+    PositionStreamModel model;
     try {
         QJsonObject respObj = Utils::byteArrayToJsonObject(data);
-        PositionModel model(respObj["latitude"].toDouble(-91),respObj["longitude"].toDouble(-181));
+        model = PositionStreamModel::fromJsonObject(respObj);
 
 #ifdef USE_LOG4QT
         logger()->trace()<<Q_FUNC_INFO<<" -> latitude: "<<model.getLatitude()
@@ -96,26 +84,17 @@ void OSDStreamPosition::onDataReceived(QByteArray data)
             }
         }
 
-        auto positionMode = serviceMode->getDataMode()->position();
-        if (!positionMode && check().getCode() == ERROR_NO.first) {
-            _repoPos->SetPosition(OSDPositionEntity(
-                                      model.getLatitude(),
-                                      model.getLongitude(),
-                                      respObj["source"].toString().toStdString(),
-                                  respObj["status"].toString().toStdString(),
-                    OSD_MODE::AUTO
-                    ));
-        }
-
         handleError(respObj["status"].toString());
 
-        emit signalDataProcessed(model);
     } catch (ErrJsonParse &e) {
 #ifdef USE_LOG4QT
         logger()->error()<<Q_FUNC_INFO<<" -> caught error: "<<e.getMessage();
 #else
         qWarning()<<Q_FUNC_INFO<<"caught error: "<<e.getMessage();
 #endif
+
+        model.setErr(e);
+        model.setMode(OSD_MODE::AUTO);
     }  catch (...) {
 #ifdef USE_LOG4QT
         logger()->error()<<Q_FUNC_INFO<<" -> caught unkbnown error";
@@ -123,6 +102,8 @@ void OSDStreamPosition::onDataReceived(QByteArray data)
         qWarning()<<Q_FUNC_INFO<<"caught unkbnown error";
 #endif
     }
+
+    emit signalDataProcessed(model);
 }
 
 void OSDStreamPosition::handleError(const QString &err)

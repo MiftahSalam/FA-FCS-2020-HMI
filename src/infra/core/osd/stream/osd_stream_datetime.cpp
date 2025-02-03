@@ -13,52 +13,42 @@ LOG4QT_DECLARE_STATIC_LOGGER(logger, OSDStreamDateTime)
 
 OSDStreamDateTime* OSDStreamDateTime::dateTimeStream = nullptr;
 
-OSDStreamDateTime::OSDStreamDateTime(TcpMessagingOpts *config, OSDDateTimeRepository *repoDateTime):
-    cfg(config), _repoDateTime(repoDateTime), currentErr(NoError())
+OSDStreamDateTime::OSDStreamDateTime(TcpMessagingOpts *config
+                                     ):
+    cfg(config), currentErr(NoError())
 {
     consumer = new TcpMessagingWrapper(this, config);
     connect(consumer, &TcpMessagingWrapper::signalForwardMessage, this, &OSDStreamDateTime::onDataReceived);
-
-    timer = new QTimer(this);
-    connect(timer, &QTimer::timeout, this, &OSDStreamDateTime::periodeUpdate);
-    timer->start(1000);
 }
 
 void OSDStreamDateTime::onDataReceived(QByteArray data)
 {
+    DateTimeStreamModel model;
     try {
         //{"date_time_utc": "2009-01-19T03:27:50Z","date_time_local": "2009-01-18T17:00:50+07:00", "status": "", "source": "input_2"}
         QJsonObject respObj = Utils::byteArrayToJsonObject(data);
-        DateTimeModel model(respObj["date_time_local"].toString().toStdString(),respObj["date_time_utc"].toString().toStdString());
+        model = DateTimeStreamModel::fromJsonObject(respObj);
 
 #ifdef USE_LOG4QT
-        logger()->trace()<<Q_FUNC_INFO<<" -> time local: "<<QString::fromStdString(model.getDateTimeLocal())
-                        <<", time UTC: "<<QString::fromStdString(model.getDateTimeUTC())
+        logger()->trace()<<Q_FUNC_INFO<<" -> time local: "<<model.getDateTimeLocal()
+                        <<", time UTC: "<<model.getDateTimeUTC()
                          ;
 #else
         qDebug()<<Q_FUNC_INFO<<"time local"<<QString::fromStdString(model.getDateTimeLocal())
                <<"time UTC"<<QString::fromStdString(model.getDateTimeUTC());
 #endif
 
-        if(check().getCode() == ERROR_NO.first){
-            _repoDateTime->SetDateTime(OSDDateTimeEntity(
-                model.getDateTimeLocal(),
-                model.getDateTimeUTC(),
-                respObj["source"].toString().toStdString(),
-                respObj["status"].toString().toStdString(),
-                OSD_MODE::AUTO
-                ));
-        }
-
         handleError(respObj["status"].toString());
 
-        emit signalDataProcessed(model);
     }catch(ErrJsonParse &e) {
 #ifdef USE_LOG4QT
         logger()->error()<<Q_FUNC_INFO<<" -> caught error: "<<e.getMessage();
 #else
         qWarning()<<Q_FUNC_INFO<<"caught error: "<<e.getMessage();
 #endif
+
+        model.setErr(e);
+        model.setMode(OSD_MODE::AUTO);
     }  catch (...) {
 #ifdef USE_LOG4QT
         logger()->error()<<Q_FUNC_INFO<<" -> caught unkbnown error";
@@ -66,17 +56,8 @@ void OSDStreamDateTime::onDataReceived(QByteArray data)
         qWarning()<<Q_FUNC_INFO<<"caught unkbnown error";
 #endif
     }
-}
 
-void OSDStreamDateTime::periodeUpdate()
-{
-    check();
-
-    QDateTime curTimeLocalEpoch = QDateTime::fromMSecsSinceEpoch(_repoDateTime->GetDateTime()->dateTimeLocalProcessed());
-    QDateTime curTimeEpoch = QDateTime::fromMSecsSinceEpoch(_repoDateTime->GetDateTime()->dateTimeProcessed());
-
-    _repoDateTime->UpdateTimeDisplay(curTimeEpoch.addSecs(1).toMSecsSinceEpoch());
-    _repoDateTime->UpdateTimeLocalDisplay(curTimeLocalEpoch.addSecs(1).toMSecsSinceEpoch());
+    emit signalDataProcessed(model);
 }
 
 void OSDStreamDateTime::handleError(const QString &err)
@@ -92,7 +73,7 @@ void OSDStreamDateTime::handleError(const QString &err)
     }
 }
 
-OSDStreamDateTime *OSDStreamDateTime::getInstance(TcpMessagingOpts *config, OSDDateTimeRepository *repoDateTime)
+OSDStreamDateTime *OSDStreamDateTime::getInstance(TcpMessagingOpts *config)
 {
     if (dateTimeStream == nullptr)
     {
@@ -101,11 +82,7 @@ OSDStreamDateTime *OSDStreamDateTime::getInstance(TcpMessagingOpts *config, OSDD
             throw ErrObjectCreation();
         }
 
-        if(repoDateTime == nullptr){
-            throw ErrObjectCreation();
-        }
-
-        dateTimeStream = new OSDStreamDateTime(config, repoDateTime);
+        dateTimeStream = new OSDStreamDateTime(config);
     }
     return dateTimeStream;
 }

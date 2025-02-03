@@ -71,7 +71,7 @@ void FrameOSDGyro::onAfterModeReset()
 
 void FrameOSDGyro::onTimeout()
 {
-    auto currError = _streamGyro->check();
+    auto currError = _serviceOSD->getOSDAutoStatusInertia();
     if (currError.getCode() == ERROR_CODE_MESSAGING_NOT_CONNECTED.first)
     {
         notConnectedUiSetup();
@@ -218,19 +218,19 @@ void FrameOSDGyro::onDataResponse(GyroModel resp)
 
 }
 
-void FrameOSDGyro::onStreamReceive(GyroModel model)
+void FrameOSDGyro::onStreamReceive(GyroStreamModel model)
 {
-    auto currentMode = (OSD_MODE)_cmsMode->getDataMode()->inersia();
+    auto currentMode = (OSD_MODE)_serviceOSD->getDataMode()->inersia();
     if (currentMode == OSD_MODE::MANUAL)
     {
         return;
     }
 
-    auto currStreamErr = _streamGyro->check();
+    auto currStreamErr = _serviceOSD->getOSDAutoStatusInertia();
 
     // validity pitch roll stream check
     ui->inputHeading->setValue(QString::number(model.getHeading()));
-    ui->inputPitch->setValue(QString::number(model.getPicth()));
+    ui->inputPitch->setValue(QString::number(model.getPitch()));
     ui->inputRoll->setValue(QString::number(model.getRoll()));
 
     setErrorInput(currStreamErr);
@@ -292,7 +292,7 @@ void FrameOSDGyro::autoUiSetup()
 
 void FrameOSDGyro::notConnectedUiSetup()
 {
-    auto currentMode = (OSD_MODE)_cmsMode->getDataMode()->inersia();
+    auto currentMode = (OSD_MODE)_serviceOSD->getDataMode()->inersia();
     if (currentMode == OSD_MODE::MANUAL)
     {
         return;
@@ -312,7 +312,7 @@ void FrameOSDGyro::notConnectedUiSetup()
 
 void FrameOSDGyro::noDataUiSetup()
 {
-    auto currentMode = (OSD_MODE)_cmsMode->getDataMode()->inersia();
+    auto currentMode = (OSD_MODE)_serviceOSD->getDataMode()->inersia();
     if (currentMode == OSD_MODE::MANUAL)
     {
         return;
@@ -332,7 +332,7 @@ void FrameOSDGyro::noDataUiSetup()
 
 void FrameOSDGyro::invalidDataUiSetup()
 {
-    auto currentMode = (OSD_MODE)_cmsMode->getDataMode()->inersia();
+    auto currentMode = (OSD_MODE)_serviceOSD->getDataMode()->inersia();
     if (currentMode == OSD_MODE::MANUAL)
     {
         return;

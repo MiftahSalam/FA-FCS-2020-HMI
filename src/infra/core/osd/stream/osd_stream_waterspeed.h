@@ -1,39 +1,32 @@
 #ifndef OSDSTREAMWATERSPEED_H
 #define OSDSTREAMWATERSPEED_H
 
-#include "src/domain/osd/repository/osd_waterspeed_repository.h"
-#include "src/infra/core/osd/cms/input_mode/osd_cms_input_mode.h"
-#include "src/infra/core/osd/model/water_speed/waterspeed_model.h"
+#include "src/infra/core/osd/model/water_speed/water_speed_stream_model.h"
 #include "src/infra/messaging/tcp/tcp_messaging_wrapper.h"
 #include "src/infra/messaging/IOSDStream.h"
 #include "src/shared/config/messaging_tcp_config.h"
 
 #include <QObject>
 
-class OSDStreamWaterSpeed : public QObject, public IOSDStream<WaterSpeedModel>
+class OSDStreamWaterSpeed : public QObject, public IOSDStream<WaterSpeedStreamModel>
 {
     Q_OBJECT
 public:
     OSDStreamWaterSpeed(OSDStreamWaterSpeed &other) = delete;
     void operator=(const OSDStreamWaterSpeed&) = delete;
     static OSDStreamWaterSpeed* getInstance(
-            TcpMessagingOpts *config,
-            OSDWaterSpeedRepository *_repoWP,
-            OSDCMSInputMode *modeService
+            TcpMessagingOpts *config
             );
 
     BaseError check() override;
 
 signals:
     // IOSDStream interface
-    void signalDataProcessed(WaterSpeedModel data) override;
+    void signalDataProcessed(WaterSpeedStreamModel data) override;
 
 protected:
     OSDStreamWaterSpeed(
-            TcpMessagingOpts *config = nullptr,
-            OSDWaterSpeedRepository *repoWP = nullptr,
-            OSDCMSInputMode *modeService = nullptr
-            );
+        TcpMessagingOpts *config = nullptr);
 
     // IOSDStream interface
 private slots:
@@ -44,9 +37,6 @@ private:
 
     TcpMessagingWrapper *consumer;
     TcpMessagingOpts *cfg;
-    OSDWaterSpeedRepository* _repoWP;
-    OSDCMSInputMode *serviceMode;
-    // TODO: add input mode repo
 
     BaseError currentErr;
 

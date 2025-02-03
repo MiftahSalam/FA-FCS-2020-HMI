@@ -13,32 +13,24 @@ LOG4QT_DECLARE_STATIC_LOGGER(logger, OSDStreamWind)
 
 OSDStreamWind* OSDStreamWind::windStream = nullptr;
 
-OSDStreamWind::OSDStreamWind(TcpMessagingOpts *config,
-                             OSDWindRepository *repoWind,
-                             OSDCMSInputMode *modeService)
-    : cfg(config), _repoWind(repoWind), serviceMode(modeService), currentErr(NoError())
+OSDStreamWind::OSDStreamWind(TcpMessagingOpts *config
+                             )
+    : cfg(config), currentErr(NoError())
 {
     consumer = new TcpMessagingWrapper(this, config);
     connect(consumer, &TcpMessagingWrapper::signalForwardMessage, this, &OSDStreamWind::onDataReceived);
 }
 
 OSDStreamWind *OSDStreamWind::getInstance(
-        TcpMessagingOpts *config = nullptr,
-        OSDWindRepository* repoWind = nullptr,
-        OSDCMSInputMode *modeService = nullptr
+        TcpMessagingOpts *config = nullptr
         )
 {
     if (windStream == nullptr) {
         if(config == nullptr) {
             throw ErrObjectCreation();
         }
-        if(repoWind == nullptr) {
-            throw ErrObjectCreation();
-        }
-        if(modeService == nullptr) {
-            throw ErrObjectCreation();
-        }
-        windStream = new OSDStreamWind(config, repoWind, modeService);
+
+        windStream = new OSDStreamWind(config);
     }
     return windStream;
 }
@@ -58,9 +50,10 @@ BaseError OSDStreamWind::check()
 
 void OSDStreamWind::onDataReceived(QByteArray data)
 {
+    WindStreamModel model;
     try {
         QJsonObject respObj = Utils::byteArrayToJsonObject(data);
-        WindModel model(respObj["speed"].toDouble(),respObj["direction"].toDouble());
+        model = WindStreamModel::fromJsonObject(respObj);
 
 #ifdef USE_LOG4QT
         logger()->trace()<<Q_FUNC_INFO<<" -> speed: "<<model.getSpeed()
@@ -77,26 +70,17 @@ void OSDStreamWind::onDataReceived(QByteArray data)
             }
         }
 
-        auto windMode = serviceMode->getDataMode()->wind();
-        if (!windMode && check().getCode() == ERROR_NO.first) {
-            _repoWind->SetWind(OSDWindEntity(
-                                   model.getSpeed(),
-                                   model.getDirection(),
-                                   respObj["source"].toString().toStdString(),
-                               respObj["status"].toString().toStdString(),
-                    OSD_MODE::AUTO
-                    ));
-        }
-
         handleError(respObj["status"].toString());
 
-        emit signalDataProcessed(model);
     } catch (ErrJsonParse &e) {
 #ifdef USE_LOG4QT
         logger()->error()<<Q_FUNC_INFO<<" -> caught error: "<<e.getMessage();
 #else
         qWarning()<<Q_FUNC_INFO<<"caught error: "<<e.getMessage();
 #endif
+
+        model.setErr(e);
+        model.setMode(OSD_MODE::AUTO);
     }  catch (...) {
 #ifdef USE_LOG4QT
         logger()->error()<<Q_FUNC_INFO<<" -> caught unkbnown error";
@@ -104,6 +88,8 @@ void OSDStreamWind::onDataReceived(QByteArray data)
         qWarning()<<Q_FUNC_INFO<<"caught unkbnown error";
 #endif
     }
+
+    emit signalDataProcessed(model);
 }
 
 void OSDStreamWind::handleError(const QString &err)

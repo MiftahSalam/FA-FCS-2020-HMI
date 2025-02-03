@@ -4,36 +4,30 @@
 #include <QObject>
 #include <QWidget>
 
-#include "src/domain/osd/repository/osd_speed_repository.h"
-#include "src/infra/core/osd/cms/input_mode/osd_cms_input_mode.h"
-#include "src/infra/core/osd/model/speed/speed_model.h"
+#include "src/infra/core/osd/model/speed/speed_stream_model.h"
 #include "src/infra/messaging/tcp/tcp_messaging_wrapper.h"
 #include "src/infra/messaging/IOSDStream.h"
 #include "src/shared/config/messaging_tcp_config.h"
 
-class OSDStreamSpeed : public QObject, public IOSDStream<SpeedModel>
+class OSDStreamSpeed : public QObject, public IOSDStream<SpeedStreamModel>
 {
     Q_OBJECT
 public:
     OSDStreamSpeed(OSDStreamSpeed &other) = delete;
     void operator=(const OSDStreamSpeed&) = delete;
     static OSDStreamSpeed* getInstance(
-            TcpMessagingOpts *config,
-            OSDSpeedRepository *repoSpeed,
-            OSDCMSInputMode *modeService
+            TcpMessagingOpts *config
             );
 
     BaseError check() override;
 
 signals:
-    void signalDataProcessed(SpeedModel data) override;
+    void signalDataProcessed(SpeedStreamModel data) override;
 
 protected:
     OSDStreamSpeed(
-            TcpMessagingOpts *config = nullptr,
-            OSDSpeedRepository *repoSpeed = nullptr,
-            OSDCMSInputMode *modeService = nullptr
-            );
+        TcpMessagingOpts *config = nullptr
+        );
 
 private slots:
     void onDataReceived(QByteArray data) override;
@@ -43,8 +37,6 @@ private:
 
     TcpMessagingWrapper *consumer;
     TcpMessagingOpts *cfg;
-    OSDSpeedRepository* _repoSpeed;
-    OSDCMSInputMode *serviceMode;
 
     BaseError currentErr;
 

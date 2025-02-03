@@ -13,32 +13,22 @@ LOG4QT_DECLARE_STATIC_LOGGER(logger, OSDStreamWaterSpeed)
 
 OSDStreamWaterSpeed* OSDStreamWaterSpeed::waterspeedStream = nullptr;
 
-OSDStreamWaterSpeed::OSDStreamWaterSpeed(TcpMessagingOpts *config,
-                                         OSDWaterSpeedRepository *repoWP,
-                                         OSDCMSInputMode *modeService)
-    : cfg(config), _repoWP(repoWP), serviceMode(modeService), currentErr(NoError())
+OSDStreamWaterSpeed::OSDStreamWaterSpeed(TcpMessagingOpts *config)
+    : cfg(config), currentErr(NoError())
 {
     consumer = new TcpMessagingWrapper(this, config);
     connect(consumer, &TcpMessagingWrapper::signalForwardMessage, this, &OSDStreamWaterSpeed::onDataReceived);
 }
 
 OSDStreamWaterSpeed *OSDStreamWaterSpeed::getInstance(
-        TcpMessagingOpts *config = nullptr,
-        OSDWaterSpeedRepository* repoWP = nullptr,
-        OSDCMSInputMode *modeService = nullptr
-        )
+    TcpMessagingOpts *config = nullptr)
 {
     if (waterspeedStream == nullptr) {
         if(config == nullptr) {
             throw ErrObjectCreation();
         }
-        if(repoWP == nullptr) {
-            throw ErrObjectCreation();
-        }
-        if(modeService == nullptr) {
-            throw ErrObjectCreation();
-        }
-        waterspeedStream = new OSDStreamWaterSpeed(config, repoWP, modeService);
+
+        waterspeedStream = new OSDStreamWaterSpeed(config);
     }
     return waterspeedStream;
 }
@@ -58,9 +48,10 @@ BaseError OSDStreamWaterSpeed::check()
 
 void OSDStreamWaterSpeed::onDataReceived(QByteArray data)
 {
+    WaterSpeedStreamModel model;
     try {
         QJsonObject respObj = Utils::byteArrayToJsonObject(data);
-        WaterSpeedModel model(respObj["speed"].toDouble(),respObj["course"].toDouble());
+        model = WaterSpeedStreamModel::fromJsonObject(respObj);
 
 #ifdef USE_LOG4QT
         logger()->trace()<<Q_FUNC_INFO<<" -> speed: "<<model.getSpeed()
@@ -77,26 +68,17 @@ void OSDStreamWaterSpeed::onDataReceived(QByteArray data)
             }
         }
 
-        auto waterspeedMode = serviceMode->getDataMode()->waterSpeed();
-        if (!waterspeedMode && check().getCode() == ERROR_NO.first) {
-            _repoWP->SetWaterSpeed(OSDWaterSpeedEntity(
-                                       model.getSpeed(),
-                                       model.getCourse(),
-                                       respObj["source"].toString().toStdString(),
-                                   respObj["status"].toString().toStdString(),
-                    OSD_MODE::AUTO
-                    ));
-        }
-
         handleError(respObj["status"].toString());
 
-        emit signalDataProcessed(model);
     } catch (ErrJsonParse &e) {
 #ifdef USE_LOG4QT
         logger()->error()<<Q_FUNC_INFO<<" -> caught error: "<<e.getMessage();
 #else
         qWarning()<<Q_FUNC_INFO<<"caught error: "<<e.getMessage();
 #endif
+
+        model.setErr(e);
+        model.setMode(OSD_MODE::AUTO);
     }  catch (...) {
 #ifdef USE_LOG4QT
         logger()->error()<<Q_FUNC_INFO<<" -> caught unkbnown error";
@@ -104,6 +86,8 @@ void OSDStreamWaterSpeed::onDataReceived(QByteArray data)
         qWarning()<<Q_FUNC_INFO<<"caught unkbnown error";
 #endif
     }
+
+    emit signalDataProcessed(model);
 }
 
 void OSDStreamWaterSpeed::handleError(const QString &err)

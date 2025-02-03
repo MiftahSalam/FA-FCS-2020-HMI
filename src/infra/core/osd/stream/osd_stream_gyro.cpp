@@ -14,36 +14,23 @@ LOG4QT_DECLARE_STATIC_LOGGER(logger, OSDStreamGyro)
 OSDStreamGyro* OSDStreamGyro::gyroStream = nullptr;
 
 OSDStreamGyro::OSDStreamGyro(
-        TcpMessagingOpts *config,
-        OSDInertiaRepository *repoInertia,
-        OSDCMSInputMode *modeService
+        TcpMessagingOpts *config
         )
-    :cfg(config), _repoInertia(repoInertia), serviceMode(modeService), currentErr(NoError())
+    :cfg(config), currentErr(NoError())
 {
     consumer = new TcpMessagingWrapper(this, config);
     connect(consumer, &TcpMessagingWrapper::signalForwardMessage, this, &OSDStreamGyro::onDataReceived);
 }
 
 OSDStreamGyro *OSDStreamGyro::getInstance(
-        TcpMessagingOpts *config,
-        OSDInertiaRepository *repoInertia,
-        OSDCMSInputMode *modeService
-        )
+    TcpMessagingOpts *config)
 {
     if (gyroStream == nullptr) {
         if(config == nullptr) {
             throw ErrObjectCreation();
         }
 
-        if(repoInertia == nullptr) {
-            throw ErrObjectCreation();
-        }
-
-        if(modeService == nullptr) {
-            throw ErrObjectCreation();
-        }
-
-        gyroStream = new OSDStreamGyro(config, repoInertia, modeService);
+        gyroStream = new OSDStreamGyro(config);
     }
 
     return gyroStream;
@@ -64,19 +51,19 @@ BaseError OSDStreamGyro::check()
 
 void OSDStreamGyro::onDataReceived(QByteArray data)
 {
+    GyroStreamModel model;
     try {
         QJsonObject respObj = Utils::byteArrayToJsonObject(data);
-        GyroModel model(respObj["heading"].toDouble(),respObj["pitch"].toDouble(),respObj["roll"].toDouble());
+        model = GyroStreamModel::fromJsonObject(respObj);
 
 #ifdef USE_LOG4QT
         logger()->trace()<<Q_FUNC_INFO<<" -> Heading: "<<model.getHeading()
-                        <<", pitch: "<<model.getPicth()
+                        <<", pitch: "<<model.getPitch()
                        <<", roll: "<<model.getRoll()
                          ;
 #else
         qDebug()<<Q_FUNC_INFO<<"data gyro: heading ->"<<model.getHeading()<<"pitch ->"<<model.getPicth()<<"roll ->"<<model.getRoll();
 #endif
-
         //check source mode manual
         if (respObj.contains("source")) {
             if (respObj["source"].toString().contains("manual")) {
@@ -84,31 +71,16 @@ void OSDStreamGyro::onDataReceived(QByteArray data)
             }
         }
 
-
-        auto inertiaMode = serviceMode->getDataMode()->inersia();
-        if (!inertiaMode) {
-            if(check().getCode() == ERROR_NO.first || check().getCode() == ERROR_CODE_OSD_DATA_PARTIALLY_INVALID.first)
-            {
-                _repoInertia->SetInertia(OSDInertiaEntity(
-                                             model.getHeading(),
-                                             model.getPicth(),
-                                             model.getRoll(),
-                                             respObj["source"].toString().toStdString(),
-                                         respObj["status"].toString().toStdString(),
-                        OSD_MODE::AUTO
-                        ));
-            }
-        }
-
         handleError(respObj["status"].toString());
-
-        emit signalDataProcessed(model);
     } catch (ErrJsonParse &e) {
 #ifdef USE_LOG4QT
         logger()->error()<<Q_FUNC_INFO<<" -> caught error: "<<e.getMessage();
 #else
         qWarning()<<Q_FUNC_INFO<<"caught error: "<<e.getMessage();
 #endif
+
+        model.setErr(e);
+        model.setMode(OSD_MODE::AUTO);
     }  catch (...) {
 #ifdef USE_LOG4QT
         logger()->error()<<Q_FUNC_INFO<<" -> caught unkbnown error";
@@ -116,6 +88,8 @@ void OSDStreamGyro::onDataReceived(QByteArray data)
         qWarning()<<Q_FUNC_INFO<<"caught unkbnown error";
 #endif
     }
+
+    emit signalDataProcessed(model);
 }
 
 void OSDStreamGyro::handleError(const QString &err)

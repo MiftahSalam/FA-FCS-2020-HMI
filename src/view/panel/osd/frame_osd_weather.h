@@ -19,7 +19,7 @@ struct OSDWeatherProp
     TextInputProp Hum;
 };
 
-class FrameOSDWeather : public QWidget, public FrameOSDBase<WeatherModel, WeatherModel>
+class FrameOSDWeather : public QWidget, public FrameOSDBase<WeatherStreamModel, WeatherModel>
 {
     Q_OBJECT
 
@@ -33,7 +33,7 @@ public:
 public slots:
     void onModeChangeResponse(const QString datafisis, BaseResponse<InputModeModel> mode, bool needConfirm) override;
     void onDataResponse(WeatherModel data) override;
-    void onStreamReceive(WeatherModel model) override;
+    void onStreamReceive(WeatherStreamModel model) override;
 
 signals:
     void signalChangeWeatherMode(bool manual_mode);

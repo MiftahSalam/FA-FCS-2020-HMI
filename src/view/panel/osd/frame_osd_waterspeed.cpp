@@ -186,7 +186,7 @@ void FrameOSDWaterSpeed::onTimeout()
     //update ui
     //    qDebug()<<Q_FUNC_INFO;
 
-    auto currError = _streamWS->check();
+    auto currError = _serviceOSD->getOSDAutoStatusWaterSpeed();
     if (currError.getCode() == ERROR_CODE_MESSAGING_NOT_CONNECTED.first) {
         notConnectedUiSetup();
     } else if (currError.getCode() == ERROR_CODE_MESSAGING_NO_DATA.first) {
@@ -218,15 +218,15 @@ void FrameOSDWaterSpeed::onTimeout()
     }
 }
 
-void FrameOSDWaterSpeed::onStreamReceive(WaterSpeedModel model)
+void FrameOSDWaterSpeed::onStreamReceive(WaterSpeedStreamModel model)
 {
     //    qDebug()<<Q_FUNC_INFO<<"waterspeed: speed ->"<<model.getSpeed()<<", course ->"<<model.getCourse();
-    auto currentMode = (OSD_MODE)_cmsMode->getDataMode()->waterSpeed();
+    auto currentMode = (OSD_MODE)_serviceOSD->getDataMode()->waterSpeed();
     if (currentMode == OSD_MODE::MANUAL) {
         return;
     }
 
-    auto currStreamErr = _streamWS->check();
+    auto currStreamErr = _serviceOSD->getOSDAutoStatusWaterSpeed();
 
     // validity Speed Course stream check
     ui->inputWaterSpeed->setValue(QString::number(model.getSpeed()));
@@ -243,7 +243,7 @@ void FrameOSDWaterSpeed::onUpdateWaterSpeedAutoUi()
 
 void FrameOSDWaterSpeed::notConnectedUiSetup()
 {
-    auto currentMode = (OSD_MODE)_cmsMode->getDataMode()->waterSpeed();
+    auto currentMode = (OSD_MODE)_serviceOSD->getDataMode()->waterSpeed();
     if (currentMode == OSD_MODE::MANUAL) {
         return;
     }
@@ -252,7 +252,7 @@ void FrameOSDWaterSpeed::notConnectedUiSetup()
 
 void FrameOSDWaterSpeed::noDataUiSetup()
 {
-    auto currentMode = (OSD_MODE)_cmsMode->getDataMode()->waterSpeed();
+    auto currentMode = (OSD_MODE)_serviceOSD->getDataMode()->waterSpeed();
     if (currentMode == OSD_MODE::MANUAL) {
         return;
     }
@@ -261,7 +261,7 @@ void FrameOSDWaterSpeed::noDataUiSetup()
 
 void FrameOSDWaterSpeed::invalidDataUiSetup()
 {
-    auto currentMode = (OSD_MODE)_cmsMode->getDataMode()->waterSpeed();
+    auto currentMode = (OSD_MODE)_serviceOSD->getDataMode()->waterSpeed();
     if (currentMode == OSD_MODE::MANUAL) {
         return;
     }

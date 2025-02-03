@@ -5,45 +5,39 @@
 #include <QWidget>
 #include <QTimer>
 
-#include "src/domain/osd/repository/osd_datetime_repository.h"
-#include "src/infra/core/osd/model/date_time/datetime_model.h"
+#include "src/infra/core/osd/model/date_time/date_time_stream_model.h"
 #include "src/infra/messaging/tcp/tcp_messaging_wrapper.h"
 #include "src/infra/messaging/IOSDStream.h"
 #include "src/shared/config/messaging_tcp_config.h"
 
-class OSDStreamDateTime : public QObject, public IOSDStream<DateTimeModel>
+class OSDStreamDateTime : public QObject, public IOSDStream<DateTimeStreamModel>
 {
     Q_OBJECT
 public:
     OSDStreamDateTime(OSDStreamDateTime &other) = delete;
     void operator=(const OSDStreamDateTime&) = delete;
     static OSDStreamDateTime *getInstance(
-        TcpMessagingOpts *config,
-        OSDDateTimeRepository *repoDateTime
+        TcpMessagingOpts *config
         );
 
     BaseError check() override;
 
 signals:
-    void signalDataProcessed(DateTimeModel data) override;
+    void signalDataProcessed(DateTimeStreamModel data) override;
 
 protected:
     OSDStreamDateTime(
-        TcpMessagingOpts *config = nullptr,
-        OSDDateTimeRepository *repoDateTime = nullptr
+        TcpMessagingOpts *config = nullptr
         );
-
-    QTimer *timer;
 
 private slots:
     void onDataReceived(QByteArray data) override;
-    void periodeUpdate();
 
 private:
     static OSDStreamDateTime *dateTimeStream;
+
     TcpMessagingWrapper *consumer;
     TcpMessagingOpts *cfg;
-    OSDDateTimeRepository *_repoDateTime;
 
     BaseError currentErr;
 

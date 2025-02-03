@@ -4,6 +4,8 @@
 #include <QWidget>
 
 #include "src/usecase/osd/osd_service.h"
+#include "src/infra/core/osd/model/water_speed/water_speed_stream_model.h"
+#include "src/infra/core/osd/cms/water_speed/waterspeed_model.h"
 #include "src/view/panel/osd/frame_osd_base.h"
 #include "src/view/shared/frame_text_input.h"
 
@@ -18,7 +20,7 @@ struct OSDWaterSpeedProp
     TextInputProp watercourse;
 };
 
-class FrameOSDWaterSpeed : public QWidget, public FrameOSDBase<WaterSpeedModel, WaterSpeedModel>
+class FrameOSDWaterSpeed : public QWidget, public FrameOSDBase<WaterSpeedStreamModel, WaterSpeedModel>
 {
     Q_OBJECT
 
@@ -32,7 +34,7 @@ public:
 public slots:
     void onModeChangeResponse(const QString datafisis, BaseResponse<InputModeModel> resp, bool needConfirm) override;
     void onDataResponse(WaterSpeedModel data) override;
-    void onStreamReceive(WaterSpeedModel model) override;
+    void onStreamReceive(WaterSpeedStreamModel model) override;
     //added by riyadhi
     void onUpdateWaterSpeedAutoUi();
 
