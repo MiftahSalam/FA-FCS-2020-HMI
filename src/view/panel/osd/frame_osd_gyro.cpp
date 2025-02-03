@@ -139,7 +139,7 @@ void FrameOSDGyro::resetModeIndex()
     currentModeIndx = prevModeIndx;
 }
 
-void FrameOSDGyro::onModeChangeResponse(const QString datafisis, BaseResponse<InputModeModel> resp, bool needConfirm)
+void FrameOSDGyro::onModeChangeResponse(const QString datafisis, BaseResponse<InputModeResponseModel> resp, bool needConfirm)
 {
     if (datafisis != "inertia")
     {
@@ -189,7 +189,7 @@ void FrameOSDGyro::onModeChangeResponse(const QString datafisis, BaseResponse<In
 
 }
 
-void FrameOSDGyro::onDataResponse(GyroModel resp)
+void FrameOSDGyro::onDataResponse(GyroResponseModel resp)
 {
     // todo handle response
 #ifdef USE_LOG4QT

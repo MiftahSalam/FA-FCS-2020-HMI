@@ -65,16 +65,16 @@ void OSDCMSPositionData::onReplyFinished()
     qDebug()<<Q_FUNC_INFO<<"err: "<<httpResponse->error();
 #endif
 
-    BaseResponse<PositionModel> resp = toResponse(httpResponse->error(), respRaw);
+    BaseResponse<PositionResponseModel> resp = toResponse(httpResponse->error(), respRaw);
 
     emit signal_setPositionResponse(resp);
 
     httpResponse->deleteLater();
 }
 
-BaseResponse<PositionModel> OSDCMSPositionData::toResponse(QNetworkReply::NetworkError err, QByteArray raw)
+BaseResponse<PositionResponseModel> OSDCMSPositionData::toResponse(QNetworkReply::NetworkError err, QByteArray raw)
 {
-    PositionModel model(-91, -181);
+    PositionResponseModel model(-91, -181);
 
     try {
         if (raw.isEmpty()) {
@@ -86,13 +86,13 @@ BaseResponse<PositionModel> OSDCMSPositionData::toResponse(QNetworkReply::Networ
         int respCode = respObj["code"].toInt();
         QString respMsg = respObj["message"].toString();
         QJsonObject respData = respObj["data"].toObject();
-        PositionModel model(respData["latitude"].toDouble(-91),respData["longitude"].toDouble(-181));
+        PositionResponseModel model(respData["latitude"].toDouble(-91),respData["longitude"].toDouble(-181));
 
         model.setErr(NoError());
         model.setMode(OSD_MODE::MANUAL);
         model.setSource("manual");
 
-        BaseResponse<PositionModel> resp(respCode, respMsg, model);
+        BaseResponse<PositionResponseModel> resp(respCode, respMsg, model);
 
 #ifdef USE_LOG4QT
         logger()->debug()<<Q_FUNC_INFO<<" -> resp. http code: "<<resp.getHttpCode()
@@ -115,7 +115,7 @@ BaseResponse<PositionModel> OSDCMSPositionData::toResponse(QNetworkReply::Networ
         model.setMode(OSD_MODE::MANUAL);
         model.setSource("manual");
 
-        return BaseResponse<PositionModel>(e.getCode(), e.getMessage(), model);
+        return BaseResponse<PositionResponseModel>(e.getCode(), e.getMessage(), model);
     }  catch (...) {
 #ifdef USE_LOG4QT
         logger()->error()<<Q_FUNC_INFO<<" -> caught unkbnown error";
@@ -123,6 +123,6 @@ BaseResponse<PositionModel> OSDCMSPositionData::toResponse(QNetworkReply::Networ
         qWarning()<<Q_FUNC_INFO<<"caught unkbnown error";
 #endif
         ErrUnknown status;
-        return BaseResponse<PositionModel>(status.getCode(), status.getMessage(), model);
+        return BaseResponse<PositionResponseModel>(status.getCode(), status.getMessage(), model);
     }    
 }

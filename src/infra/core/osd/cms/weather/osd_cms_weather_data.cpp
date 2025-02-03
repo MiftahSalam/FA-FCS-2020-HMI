@@ -65,16 +65,16 @@ void OSDCMSWeatherData::onReplyFinished()
     qDebug()<<Q_FUNC_INFO<<"err: "<<httpResponse->error();
 #endif
 
-    BaseResponse<WeatherModel> resp = toResponse(httpResponse->error(), respRaw);
+    BaseResponse<WeatherResponseModel> resp = toResponse(httpResponse->error(), respRaw);
 
     emit signal_setWeatherResponse(resp);
 
     httpResponse->deleteLater();
 }
 
-BaseResponse<WeatherModel> OSDCMSWeatherData::toResponse(QNetworkReply::NetworkError err, QByteArray raw)
+BaseResponse<WeatherResponseModel> OSDCMSWeatherData::toResponse(QNetworkReply::NetworkError err, QByteArray raw)
 {
-    WeatherModel model(0, 0, 0);
+    WeatherResponseModel model(0, 0, 0);
     try {
         if (raw.isEmpty()) {
             throw ErrHttpConnRefused();
@@ -85,13 +85,13 @@ BaseResponse<WeatherModel> OSDCMSWeatherData::toResponse(QNetworkReply::NetworkE
         int respCode = respObj["code"].toInt();
         QString respMsg = respObj["message"].toString();
         QJsonObject respData = respObj["data"].toObject();
-        WeatherModel model(respData["temperature"].toDouble(),respData["pressure"].toDouble(),respData["humidity"].toDouble());
+        WeatherResponseModel model(respData["temperature"].toDouble(),respData["pressure"].toDouble(),respData["humidity"].toDouble());
 
         model.setErr(NoError());
         model.setMode(OSD_MODE::MANUAL);
         model.setSource("manual");
 
-        BaseResponse<WeatherModel> resp(respCode, respMsg, model);
+        BaseResponse<WeatherResponseModel> resp(respCode, respMsg, model);
 
 #ifdef USE_LOG4QT
         logger()->debug()<<Q_FUNC_INFO<<" -> resp. http code: "<<resp.getHttpCode()
@@ -116,7 +116,7 @@ BaseResponse<WeatherModel> OSDCMSWeatherData::toResponse(QNetworkReply::NetworkE
         model.setMode(OSD_MODE::MANUAL);
         model.setSource("manual");
 
-        return BaseResponse<WeatherModel>(e.getCode(), e.getMessage(), model);
+        return BaseResponse<WeatherResponseModel>(e.getCode(), e.getMessage(), model);
     }  catch (...) {
 #ifdef USE_LOG4QT
         logger()->error()<<Q_FUNC_INFO<<" -> caught unkbnown error";
@@ -124,6 +124,6 @@ BaseResponse<WeatherModel> OSDCMSWeatherData::toResponse(QNetworkReply::NetworkE
         qWarning()<<Q_FUNC_INFO<<"caught unkbnown error";
 #endif
         ErrUnknown status;
-        return BaseResponse<WeatherModel>(status.getCode(), status.getMessage(), model);
+        return BaseResponse<WeatherResponseModel>(status.getCode(), status.getMessage(), model);
     }
 }

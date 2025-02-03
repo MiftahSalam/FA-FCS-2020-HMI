@@ -81,7 +81,7 @@ void FrameOSDPosition::resetModeIndex()
     //    connect(ui->mode, &FrameOSDMode::signal_currentModeChange, this, &FrameOSDPosition::onModeChange);
 }
 
-void FrameOSDPosition::onDataResponse(PositionModel resp)
+void FrameOSDPosition::onDataResponse(PositionResponseModel resp)
 {
 #ifdef USE_LOG4QT
     logger()->debug() << Q_FUNC_INFO << " -> resp code: " << resp.err().getCode() << ", resp msg: " << QString::fromStdString(resp.status());
@@ -108,7 +108,7 @@ void FrameOSDPosition::onDataResponse(PositionModel resp)
     }
 }
 
-void FrameOSDPosition::onModeChangeResponse(const QString datafisis, BaseResponse<InputModeModel> resp, bool needConfirm)
+void FrameOSDPosition::onModeChangeResponse(const QString datafisis, BaseResponse<InputModeResponseModel> resp, bool needConfirm)
 {
     if (datafisis != "position")
     {

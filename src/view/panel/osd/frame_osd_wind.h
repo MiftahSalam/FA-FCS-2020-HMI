@@ -18,7 +18,7 @@ struct OSDWindProp
     TextInputProp direction;
 };
 
-class FrameOSDWind : public QWidget, public FrameOSDBase<WindStreamModel, WindModel>
+class FrameOSDWind : public QWidget, public FrameOSDBase<WindStreamModel, WindResponseModel>
 {
     Q_OBJECT
 
@@ -30,8 +30,8 @@ public:
     void resetModeIndex() override;
 
 public slots:
-    void onModeChangeResponse(const QString datafisis, BaseResponse<InputModeModel> resp, bool needConfirm) override;
-    void onDataResponse(WindModel data) override;
+    void onModeChangeResponse(const QString datafisis, BaseResponse<InputModeResponseModel> resp, bool needConfirm) override;
+    void onDataResponse(WindResponseModel data) override;
     void onStreamReceive(WindStreamModel model) override;
     //added by riyadhi
     void onUpdateWindAutoUi();

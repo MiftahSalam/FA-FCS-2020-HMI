@@ -63,16 +63,16 @@ void OSDCMSWaterSpeedData::onReplyFinished()
     qDebug()<<Q_FUNC_INFO<<"err: "<<httpResponse->error();
 #endif
 
-    BaseResponse<WaterSpeedModel> resp = toResponse(httpResponse->error(), respRaw);
+    BaseResponse<WaterSpeedResponseModel> resp = toResponse(httpResponse->error(), respRaw);
 
     emit signal_setWaterSpeedResponse(resp);
 
     httpResponse->deleteLater();
 }
 
-BaseResponse<WaterSpeedModel> OSDCMSWaterSpeedData::toResponse(QNetworkReply::NetworkError err, QByteArray raw)
+BaseResponse<WaterSpeedResponseModel> OSDCMSWaterSpeedData::toResponse(QNetworkReply::NetworkError err, QByteArray raw)
 {
-    WaterSpeedModel model(0, 0);
+    WaterSpeedResponseModel model(0, 0);
     try {
         if (raw.isEmpty()) {
             throw ErrHttpConnRefused();
@@ -83,13 +83,13 @@ BaseResponse<WaterSpeedModel> OSDCMSWaterSpeedData::toResponse(QNetworkReply::Ne
         int respCode = respObj["code"].toInt();
         QString respMsg = respObj["message"].toString();
         QJsonObject respData = respObj["data"].toObject();
-        WaterSpeedModel model(respData["speed"].toDouble(),respData["course"].toDouble());
+        WaterSpeedResponseModel model(respData["speed"].toDouble(),respData["course"].toDouble());
 
         model.setErr(NoError());
         model.setMode(OSD_MODE::MANUAL);
         model.setSource("manual");
 
-        BaseResponse<WaterSpeedModel> resp(respCode, respMsg, model);
+        BaseResponse<WaterSpeedResponseModel> resp(respCode, respMsg, model);
 
 #ifdef USE_LOG4QT
         logger()->debug()<<Q_FUNC_INFO<<" -> resp. http code: "<<resp.getHttpCode()
@@ -113,7 +113,7 @@ BaseResponse<WaterSpeedModel> OSDCMSWaterSpeedData::toResponse(QNetworkReply::Ne
         model.setMode(OSD_MODE::MANUAL);
         model.setSource("manual");
 
-        return BaseResponse<WaterSpeedModel>(e.getCode(), e.getMessage(), model);
+        return BaseResponse<WaterSpeedResponseModel>(e.getCode(), e.getMessage(), model);
     }  catch (...) {
 #ifdef USE_LOG4QT
         logger()->error()<<Q_FUNC_INFO<<" -> caught unkbnown error";
@@ -121,6 +121,6 @@ BaseResponse<WaterSpeedModel> OSDCMSWaterSpeedData::toResponse(QNetworkReply::Ne
         qWarning()<<Q_FUNC_INFO<<"caught unkbnown error";
 #endif
         ErrUnknown status;
-        return BaseResponse<WaterSpeedModel>(status.getCode(), status.getMessage(), model);
+        return BaseResponse<WaterSpeedResponseModel>(status.getCode(), status.getMessage(), model);
     }
 }

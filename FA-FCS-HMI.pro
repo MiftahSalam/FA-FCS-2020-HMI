@@ -54,20 +54,19 @@ SOURCES += \
     src/infra/core/osd/cms/wind/osd_cms_wind_data.cpp \
     src/infra/core/osd/cms/wind/osd_set_wind_request.cpp \
     src/infra/core/osd/model/date_time/date_time_stream_model.cpp \
-    src/infra/core/osd/model/date_time/datetime_model.cpp \
-    src/infra/core/osd/model/inertia/gyro_model.cpp \
+    src/infra/core/osd/model/inertia/gyro_cms_response_model.cpp \
     src/infra/core/osd/model/inertia/gyro_stream_model.cpp \
-    src/infra/core/osd/model/input_mode/input_mode_model.cpp \
+    src/infra/core/osd/model/input_mode/input_mode_cms_response_model.cpp \
     src/infra/core/osd/model/osd_base_model.cpp \
-    src/infra/core/osd/model/position/position_model.cpp \
+    src/infra/core/osd/model/position/position_cms_response_model.cpp \
     src/infra/core/osd/model/position/position_stream_model.cpp \
+    src/infra/core/osd/model/speed/speed_cms_response_model.cpp \
     src/infra/core/osd/model/speed/speed_stream_model.cpp \
+    src/infra/core/osd/model/water_speed/water_speed_cms_response_model.cpp \
     src/infra/core/osd/model/water_speed/water_speed_stream_model.cpp \
-    src/infra/core/osd/model/water_speed/waterspeed_model.cpp \
-    src/infra/core/osd/model/speed/speed_model.cpp \
-    src/infra/core/osd/model/weather/weather_model.cpp \
+    src/infra/core/osd/model/weather/weather_cms_response_model.cpp \
     src/infra/core/osd/model/weather/weather_stream_model.cpp \
-    src/infra/core/osd/model/wind/wind_model.cpp \
+    src/infra/core/osd/model/wind/wind_cms_response_model.cpp \
     src/infra/core/osd/model/wind/wind_stream_model.cpp \
     src/infra/core/osd/stream/osd_stream.cpp \
     src/infra/core/osd/stream/osd_stream_datetime.cpp \
@@ -264,20 +263,19 @@ HEADERS += \
     src/infra/core/osd/cms/wind/osd_cms_wind_data.h \
     src/infra/core/osd/cms/wind/osd_set_wind_request.h \
     src/infra/core/osd/model/date_time/date_time_stream_model.h \
-    src/infra/core/osd/model/date_time/datetime_model.h \
-    src/infra/core/osd/model/inertia/gyro_model.h \
+    src/infra/core/osd/model/inertia/gyro_cms_response_model.h \
     src/infra/core/osd/model/inertia/gyro_stream_model.h \
-    src/infra/core/osd/model/input_mode/input_mode_model.h \
+    src/infra/core/osd/model/input_mode/input_mode_cms_response_model.h \
     src/infra/core/osd/model/osd_base_model.h \
-    src/infra/core/osd/model/position/position_model.h \
+    src/infra/core/osd/model/position/position_cms_response_model.h \
     src/infra/core/osd/model/position/position_stream_model.h \
+    src/infra/core/osd/model/speed/speed_cms_response_model.h \
     src/infra/core/osd/model/speed/speed_stream_model.h \
+    src/infra/core/osd/model/water_speed/water_speed_cms_response_model.h \
     src/infra/core/osd/model/water_speed/water_speed_stream_model.h \
-    src/infra/core/osd/model/water_speed/waterspeed_model.h \
-    src/infra/core/osd/model/speed/speed_model.h \
-    src/infra/core/osd/model/weather/weather_model.h \
+    src/infra/core/osd/model/weather/weather_cms_response_model.h \
     src/infra/core/osd/model/weather/weather_stream_model.h \
-    src/infra/core/osd/model/wind/wind_model.h \
+    src/infra/core/osd/model/wind/wind_cms_response_model.h \
     src/infra/core/osd/model/wind/wind_stream_model.h \
     src/infra/core/osd/stream/osd_stream.h \
     src/infra/core/osd/stream/osd_stream_datetime.h \

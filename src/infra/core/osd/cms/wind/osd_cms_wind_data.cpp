@@ -64,16 +64,16 @@ void OSDCMSWindData::onReplyFinished()
     qDebug()<<Q_FUNC_INFO<<"err: "<<httpResponse->error();
 #endif
 
-    BaseResponse<WindModel> resp = toResponse(httpResponse->error(), respRaw);
+    BaseResponse<WindResponseModel> resp = toResponse(httpResponse->error(), respRaw);
 
     emit signal_setWindResponse(resp);
 
     httpResponse->deleteLater();
 }
 
-BaseResponse<WindModel> OSDCMSWindData::toResponse(QNetworkReply::NetworkError err, QByteArray raw)
+BaseResponse<WindResponseModel> OSDCMSWindData::toResponse(QNetworkReply::NetworkError err, QByteArray raw)
 {
-    WindModel model(0, 0);
+    WindResponseModel model(0, 0);
     try {
         if (raw.isEmpty()) {
             throw ErrHttpConnRefused();
@@ -84,13 +84,13 @@ BaseResponse<WindModel> OSDCMSWindData::toResponse(QNetworkReply::NetworkError e
         int respCode = respObj["code"].toInt();
         QString respMsg = respObj["message"].toString();
         QJsonObject respData = respObj["data"].toObject();
-        WindModel model(respData["speed"].toDouble(),respData["direction"].toDouble());
+        WindResponseModel model(respData["speed"].toDouble(),respData["direction"].toDouble());
 
         model.setErr(NoError());
         model.setMode(OSD_MODE::MANUAL);
         model.setSource("manual");
 
-        BaseResponse<WindModel> resp(respCode, respMsg, model);
+        BaseResponse<WindResponseModel> resp(respCode, respMsg, model);
 
 #ifdef USE_LOG4QT
         logger()->debug()<<Q_FUNC_INFO<<" -> resp. http code: "<<resp.getHttpCode()
@@ -113,7 +113,7 @@ BaseResponse<WindModel> OSDCMSWindData::toResponse(QNetworkReply::NetworkError e
         model.setMode(OSD_MODE::MANUAL);
         model.setSource("manual");
 
-        return BaseResponse<WindModel>(e.getCode(), e.getMessage(), model);
+        return BaseResponse<WindResponseModel>(e.getCode(), e.getMessage(), model);
     }  catch (...) {
 #ifdef USE_LOG4QT
         logger()->error()<<Q_FUNC_INFO<<" -> caught unkbnown error";
@@ -122,6 +122,6 @@ BaseResponse<WindModel> OSDCMSWindData::toResponse(QNetworkReply::NetworkError e
 #endif
 
         ErrUnknown status;
-        return BaseResponse<WindModel>(status.getCode(), status.getMessage(), model);
+        return BaseResponse<WindResponseModel>(status.getCode(), status.getMessage(), model);
     }
 }

@@ -6,8 +6,8 @@
 #include "src/infra/core/base_response.h"
 #include "src/infra/core/osd/cms/osd_cms.h"
 #include "src/infra/core/osd/model/date_time/date_time_stream_model.h"
-#include "src/infra/core/osd/model/inertia/gyro_model.h"
-#include "src/infra/core/osd/model/input_mode/input_mode_model.h"
+#include "src/infra/core/osd/model/inertia/gyro_cms_response_model.h"
+#include "src/infra/core/osd/model/input_mode/input_mode_cms_response_model.h"
 #include "src/infra/core/osd/stream/osd_stream.h"
 #include "src/infra/store/osd/osd_repository.h"
 
@@ -46,13 +46,13 @@ public:
     BaseError getOSDAutoStatusWeather() const;
 
 signals:
-    void signal_processedSetModeResponse(const QString datafisis, BaseResponse<InputModeModel> response, bool needConfirm);
-    void signal_processedSetResponseWind(WindModel data);
-    void signal_processedSetResponseGyro(GyroModel data);
-    void signal_processedSetResponseSpeed(SpeedModel data);
-    void signal_processedSetResponsePosition(PositionModel data);
-    void signal_processedSetResponseWeather(WeatherModel data);
-    void signal_processedSetResponseWaterSpeed(WaterSpeedModel data);
+    void signal_processedSetModeResponse(const QString datafisis, BaseResponse<InputModeResponseModel> response, bool needConfirm);
+    void signal_processedSetResponseWind(WindResponseModel data);
+    void signal_processedSetResponseGyro(GyroResponseModel data);
+    void signal_processedSetResponseSpeed(SpeedResponseModel data);
+    void signal_processedSetResponsePosition(PositionResponseModel data);
+    void signal_processedSetResponseWeather(WeatherResponseModel data);
+    void signal_processedSetResponseWaterSpeed(WaterSpeedResponseModel data);
 
     void signal_processedAutoDataWind(WindStreamModel data);
     void signal_processedAutoDataGyro(GyroStreamModel data);
@@ -63,13 +63,13 @@ signals:
     void signal_processedAutoDataDateTime(DateTimeStreamModel data);
 
 public slots:
-    void onUpdateManualDataGyro(BaseResponse<GyroModel> resp);
-    void onUpdateManualDataPosition(BaseResponse<PositionModel> resp);
-    void onUpdateManualDataSpeed(BaseResponse<SpeedModel> resp);
-    void onUpdateManualDataWaterSpeed(BaseResponse<WaterSpeedModel> resp);
-    void onUpdateManualDataWeather(BaseResponse<WeatherModel> resp);
-    void onUpdateManualDataWind(BaseResponse<WindModel> resp);
-    void onUpdateInputMode(const QString datafisis, BaseResponse<InputModeModel> resp, bool needConfirm);
+    void onUpdateManualDataGyro(BaseResponse<GyroResponseModel> resp);
+    void onUpdateManualDataPosition(BaseResponse<PositionResponseModel> resp);
+    void onUpdateManualDataSpeed(BaseResponse<SpeedResponseModel> resp);
+    void onUpdateManualDataWaterSpeed(BaseResponse<WaterSpeedResponseModel> resp);
+    void onUpdateManualDataWeather(BaseResponse<WeatherResponseModel> resp);
+    void onUpdateManualDataWind(BaseResponse<WindResponseModel> resp);
+    void onUpdateInputMode(const QString datafisis, BaseResponse<InputModeResponseModel> resp, bool needConfirm);
 
     void onUpdateAutoDataInertia(GyroStreamModel data);
     void onUpdateAutoDataPosition(PositionStreamModel data);

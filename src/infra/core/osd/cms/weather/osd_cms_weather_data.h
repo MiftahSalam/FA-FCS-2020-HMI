@@ -4,11 +4,11 @@
 #include "src/infra/http/http_client_wrapper.h"
 #include "src/infra/core/osd/cms/weather/osd_set_weather_request.h"
 #include "src/infra/core/base_response.h"
-#include "src/infra/core/osd/model/weather/weather_model.h"
+#include "src/infra/core/osd/model/weather/weather_cms_response_model.h"
 #include "src/shared/config/osd_cms_config.h"
 #include "src/infra/http/i_cms_http.h"
 
-class OSDCMSWeatherData : public HttpClientWrapper, public ICmsHttp<WeatherModel, OSDSetWeatherRequest>
+class OSDCMSWeatherData : public HttpClientWrapper, public ICmsHttp<WeatherResponseModel, OSDSetWeatherRequest>
 {
     Q_OBJECT
 public:
@@ -21,7 +21,7 @@ public:
     void set(OSDSetWeatherRequest request) override;
 
 signals:
-    void signal_setWeatherResponse(BaseResponse<WeatherModel> response);
+    void signal_setWeatherResponse(BaseResponse<WeatherResponseModel> response);
 
 protected:
     OSDCMSWeatherData(
@@ -36,6 +36,6 @@ private:
     static OSDCMSWeatherData *weatherData;
     OSDCmsConfig *cfgCms;
 
-    BaseResponse<WeatherModel> toResponse(QNetworkReply::NetworkError err, QByteArray raw) override;
+    BaseResponse<WeatherResponseModel> toResponse(QNetworkReply::NetworkError err, QByteArray raw) override;
 };
 #endif // OSD_CMS_WEATHER_DATA_H

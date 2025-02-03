@@ -129,7 +129,7 @@ void FrameOSDWeather::resetModeIndex()
     currentModeIndx = prevModeIndx;
 }
 
-void FrameOSDWeather::onModeChangeResponse(const QString datafisis, BaseResponse<InputModeModel> resp, bool needConfirm)
+void FrameOSDWeather::onModeChangeResponse(const QString datafisis, BaseResponse<InputModeResponseModel> resp, bool needConfirm)
 {
     if (datafisis != "weather") {
         return;
@@ -173,7 +173,7 @@ void FrameOSDWeather::onModeChangeResponse(const QString datafisis, BaseResponse
     }
 }
 
-void FrameOSDWeather::onDataResponse(WeatherModel resp)
+void FrameOSDWeather::onDataResponse(WeatherResponseModel resp)
 {
     //todo handle response
 #ifdef USE_LOG4QT

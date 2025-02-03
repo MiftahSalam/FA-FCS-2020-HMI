@@ -1,16 +1,16 @@
-#ifndef INPUTMODEMODEL_H
-#define INPUTMODEMODEL_H
+#ifndef InputModeResponseModel_H
+#define InputModeResponseModel_H
 
 #include "qjsonobject.h"
 
-class InputModeModel
+class InputModeResponseModel
 {
 public:
-    InputModeModel(bool position, bool speed, bool inersia, bool waterspeed,
+    InputModeResponseModel(bool position, bool speed, bool inersia, bool waterspeed,
                    bool wind, bool weather);
-    InputModeModel(){};
+    InputModeResponseModel(){};
 
-    static InputModeModel fromJsonObject(QJsonObject obj);
+    static InputModeResponseModel fromJsonObject(QJsonObject obj);
 
     bool getPosition() const;
     bool getSpeed() const;
@@ -29,4 +29,4 @@ private:
 
 };
 
-#endif // INPUTMODEMODEL_H
+#endif // InputModeResponseModel_H

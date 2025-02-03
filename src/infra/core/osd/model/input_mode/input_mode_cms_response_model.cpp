@@ -1,6 +1,6 @@
-#include "input_mode_model.h"
+#include "input_mode_cms_response_model.h"
 
-InputModeModel::InputModeModel(bool position, bool speed, bool inersia, bool waterspeed,
+InputModeResponseModel::InputModeResponseModel(bool position, bool speed, bool inersia, bool waterspeed,
                                bool wind, bool weather)
 {
     this->position = position;
@@ -11,9 +11,9 @@ InputModeModel::InputModeModel(bool position, bool speed, bool inersia, bool wat
     this->weather = weather;
 }
 
-InputModeModel InputModeModel::fromJsonObject(QJsonObject obj)
+InputModeResponseModel InputModeResponseModel::fromJsonObject(QJsonObject obj)
 {
-    InputModeModel model(
+    InputModeResponseModel model(
         obj.value("position").toBool(false),
         obj.value("speed").toBool(false),
         obj.value("inertia").toBool(false),
@@ -24,32 +24,32 @@ InputModeModel InputModeModel::fromJsonObject(QJsonObject obj)
 
     return model;
 }
-bool InputModeModel::getPosition() const
+bool InputModeResponseModel::getPosition() const
 {
     return position;
 }
 
-bool InputModeModel::getSpeed() const
+bool InputModeResponseModel::getSpeed() const
 {
     return speed;
 }
 
-bool InputModeModel::getInersia() const
+bool InputModeResponseModel::getInersia() const
 {
     return inersia;
 }
 
-bool InputModeModel::getWaterSpeed() const
+bool InputModeResponseModel::getWaterSpeed() const
 {
     return waterspeed;
 }
 
-bool InputModeModel::getWind() const
+bool InputModeResponseModel::getWind() const
 {
     return wind;
 }
 
-bool InputModeModel::getWeather() const
+bool InputModeResponseModel::getWeather() const
 {
     return weather;
 }

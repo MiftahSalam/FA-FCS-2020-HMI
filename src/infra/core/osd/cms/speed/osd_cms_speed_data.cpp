@@ -63,16 +63,16 @@ void OSDCMSSpeedData::onReplyFinished()
     qDebug()<<Q_FUNC_INFO<<"err: "<<httpResponse->error();
 #endif
 
-    BaseResponse<SpeedModel> resp = toResponse(httpResponse->error(), respRaw);
+    BaseResponse<SpeedResponseModel> resp = toResponse(httpResponse->error(), respRaw);
 
     emit signal_setSpeedResponse(resp);
 
     httpResponse->deleteLater();
 }
 
-BaseResponse<SpeedModel> OSDCMSSpeedData::toResponse(QNetworkReply::NetworkError err, QByteArray raw)
+BaseResponse<SpeedResponseModel> OSDCMSSpeedData::toResponse(QNetworkReply::NetworkError err, QByteArray raw)
 {
-    SpeedModel model(0, 0);
+    SpeedResponseModel model(0, 0);
     try {
         if (raw.isEmpty()) {
             throw ErrHttpConnRefused();
@@ -83,13 +83,13 @@ BaseResponse<SpeedModel> OSDCMSSpeedData::toResponse(QNetworkReply::NetworkError
         int respCode = respObj["code"].toInt();
         QString respMsg = respObj["message"].toString();
         QJsonObject respData = respObj["data"].toObject();
-        SpeedModel model(respData["sog"].toDouble(),respData["cog"].toDouble());
+        SpeedResponseModel model(respData["sog"].toDouble(),respData["cog"].toDouble());
 
         model.setErr(NoError());
         model.setMode(OSD_MODE::MANUAL);
         model.setSource("manual");
 
-        BaseResponse<SpeedModel> resp(respCode, respMsg, model);
+        BaseResponse<SpeedResponseModel> resp(respCode, respMsg, model);
 
 #ifdef USE_LOG4QT
         logger()->debug()<<Q_FUNC_INFO<<" -> resp. http code: "<<resp.getHttpCode()
@@ -112,7 +112,7 @@ BaseResponse<SpeedModel> OSDCMSSpeedData::toResponse(QNetworkReply::NetworkError
         model.setMode(OSD_MODE::MANUAL);
         model.setSource("manual");
 
-        return BaseResponse<SpeedModel>(e.getCode(), e.getMessage(), model);
+        return BaseResponse<SpeedResponseModel>(e.getCode(), e.getMessage(), model);
     }  catch (...) {
 #ifdef USE_LOG4QT
         logger()->error()<<Q_FUNC_INFO<<" -> caught unkbnown error";
@@ -120,6 +120,6 @@ BaseResponse<SpeedModel> OSDCMSSpeedData::toResponse(QNetworkReply::NetworkError
         qWarning()<<Q_FUNC_INFO<<"caught unkbnown error";
 #endif
         ErrUnknown status;
-        return BaseResponse<SpeedModel>(status.getCode(), status.getMessage(), model);
+        return BaseResponse<SpeedResponseModel>(status.getCode(), status.getMessage(), model);
     }
 }

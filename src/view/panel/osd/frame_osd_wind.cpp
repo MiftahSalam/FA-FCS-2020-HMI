@@ -69,7 +69,7 @@ void FrameOSDWind::resetModeIndex()
     currentModeIndx = prevModeIndx;
 }
 
-void FrameOSDWind::onDataResponse(WindModel resp)
+void FrameOSDWind::onDataResponse(WindResponseModel resp)
 {
 #ifdef USE_LOG4QT
     logger()->debug() << Q_FUNC_INFO << " -> resp code: " << resp.err().getCode() << ", resp msg: " << QString::fromStdString(resp.status());
@@ -94,7 +94,7 @@ void FrameOSDWind::onDataResponse(WindModel resp)
 #endif
 }
 
-void FrameOSDWind::onModeChangeResponse(const QString datafisis, BaseResponse<InputModeModel> resp, bool needConfirm)
+void FrameOSDWind::onModeChangeResponse(const QString datafisis, BaseResponse<InputModeResponseModel> resp, bool needConfirm)
 {
     if (datafisis != "wind") {
         return;

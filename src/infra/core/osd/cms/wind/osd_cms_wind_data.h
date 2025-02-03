@@ -4,11 +4,11 @@
 #include "src/infra/http/http_client_wrapper.h"
 #include "src/infra/core/osd/cms/wind/osd_set_wind_request.h"
 #include "src/infra/core/base_response.h"
-#include "src/infra/core/osd/model/wind/wind_model.h"
+#include "src/infra/core/osd/model/wind/wind_cms_response_model.h"
 #include "src/shared/config/osd_cms_config.h"
 #include "src/infra/http/i_cms_http.h"
 
-class OSDCMSWindData : public HttpClientWrapper, public ICmsHttp<WindModel, OSDSetWindRequest>
+class OSDCMSWindData : public HttpClientWrapper, public ICmsHttp<WindResponseModel, OSDSetWindRequest>
 {
     Q_OBJECT
 public:
@@ -21,7 +21,7 @@ public:
     void set(OSDSetWindRequest request) override;
 
 signals:
-    void signal_setWindResponse(BaseResponse<WindModel> response);
+    void signal_setWindResponse(BaseResponse<WindResponseModel> response);
 
 protected:
     OSDCMSWindData(
@@ -36,7 +36,7 @@ private:
     static OSDCMSWindData *windData;
     OSDCmsConfig *cfgCms;
 
-    BaseResponse<WindModel> toResponse(QNetworkReply::NetworkError err, QByteArray raw) override;
+    BaseResponse<WindResponseModel> toResponse(QNetworkReply::NetworkError err, QByteArray raw) override;
 };
 
 #endif // OSDCMSWINDDATA_H

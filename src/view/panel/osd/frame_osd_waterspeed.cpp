@@ -70,7 +70,7 @@ void FrameOSDWaterSpeed::resetModeIndex()
     currentModeIndx = prevModeIndx;
 }
 
-void FrameOSDWaterSpeed::onDataResponse(WaterSpeedModel resp)
+void FrameOSDWaterSpeed::onDataResponse(WaterSpeedResponseModel resp)
 {
 #ifdef USE_LOG4QT
     logger()->debug() << Q_FUNC_INFO << " -> resp code: " << resp.err().getCode() << ", resp msg: " << QString::fromStdString(resp.status());
@@ -95,7 +95,7 @@ void FrameOSDWaterSpeed::onDataResponse(WaterSpeedModel resp)
 #endif
 }
 
-void FrameOSDWaterSpeed::onModeChangeResponse(const QString datafisis, BaseResponse<InputModeModel> resp, bool needConfirm)
+void FrameOSDWaterSpeed::onModeChangeResponse(const QString datafisis, BaseResponse<InputModeResponseModel> resp, bool needConfirm)
 {
     if (datafisis != "water_speed") {
         return;

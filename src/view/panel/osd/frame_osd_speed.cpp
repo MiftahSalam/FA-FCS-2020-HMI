@@ -122,7 +122,7 @@ void FrameOSDSpeed::resetModeIndex()
     currentModeIndx = prevModeIndx;
 }
 
-void FrameOSDSpeed::onModeChangeResponse(const QString datafisis, BaseResponse<InputModeModel> resp, bool needConfirm)
+void FrameOSDSpeed::onModeChangeResponse(const QString datafisis, BaseResponse<InputModeResponseModel> resp, bool needConfirm)
 {
     if (datafisis != "speed") {
         return;
@@ -166,7 +166,7 @@ void FrameOSDSpeed::onModeChangeResponse(const QString datafisis, BaseResponse<I
     }
 }
 
-void FrameOSDSpeed::onDataResponse(SpeedModel resp)
+void FrameOSDSpeed::onDataResponse(SpeedResponseModel resp)
 {
     //todo handle response
 #ifdef USE_LOG4QT

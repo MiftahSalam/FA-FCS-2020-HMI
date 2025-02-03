@@ -20,7 +20,7 @@ struct OSDWaterSpeedProp
     TextInputProp watercourse;
 };
 
-class FrameOSDWaterSpeed : public QWidget, public FrameOSDBase<WaterSpeedStreamModel, WaterSpeedModel>
+class FrameOSDWaterSpeed : public QWidget, public FrameOSDBase<WaterSpeedStreamModel, WaterSpeedResponseModel>
 {
     Q_OBJECT
 
@@ -32,8 +32,8 @@ public:
     void resetModeIndex() override;
 
 public slots:
-    void onModeChangeResponse(const QString datafisis, BaseResponse<InputModeModel> resp, bool needConfirm) override;
-    void onDataResponse(WaterSpeedModel data) override;
+    void onModeChangeResponse(const QString datafisis, BaseResponse<InputModeResponseModel> resp, bool needConfirm) override;
+    void onDataResponse(WaterSpeedResponseModel data) override;
     void onStreamReceive(WaterSpeedStreamModel model) override;
     //added by riyadhi
     void onUpdateWaterSpeedAutoUi();

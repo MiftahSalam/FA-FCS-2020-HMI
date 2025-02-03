@@ -65,16 +65,16 @@ void OSDCMSGyroData::onReplyFinished()
     qDebug()<<Q_FUNC_INFO<<"err: "<<httpResponse->error();
 #endif
 
-    BaseResponse<GyroModel> resp = toResponse(httpResponse->error(), respRaw);
+    BaseResponse<GyroResponseModel> resp = toResponse(httpResponse->error(), respRaw);
 
     emit signal_setGyroResponse(resp);
 
     httpResponse->deleteLater();
 }
 
-BaseResponse<GyroModel> OSDCMSGyroData::toResponse(QNetworkReply::NetworkError err, QByteArray raw)
+BaseResponse<GyroResponseModel> OSDCMSGyroData::toResponse(QNetworkReply::NetworkError err, QByteArray raw)
 {
-    GyroModel model(-1, 90, 90);
+    GyroResponseModel model(-1, 90, 90);
     try {
         if (raw.isEmpty()) {
             throw ErrHttpConnRefused();
@@ -85,13 +85,13 @@ BaseResponse<GyroModel> OSDCMSGyroData::toResponse(QNetworkReply::NetworkError e
         int respCode = respObj["code"].toInt();
         QString respMsg = respObj["message"].toString();
         QJsonObject respData = respObj["data"].toObject();
-        GyroModel model(respData["heading"].toDouble(),respData["pitch"].toDouble(),respData["roll"].toDouble());
+        GyroResponseModel model(respData["heading"].toDouble(),respData["pitch"].toDouble(),respData["roll"].toDouble());
 
         model.setErr(NoError());
         model.setMode(OSD_MODE::MANUAL);
         model.setSource("manual");
 
-        BaseResponse<GyroModel> resp(respCode, respMsg, model);
+        BaseResponse<GyroResponseModel> resp(respCode, respMsg, model);
 
 #ifdef USE_LOG4QT
         logger()->debug()<<Q_FUNC_INFO<<" -> resp. http code: "<<resp.getHttpCode()
@@ -115,7 +115,7 @@ BaseResponse<GyroModel> OSDCMSGyroData::toResponse(QNetworkReply::NetworkError e
         model.setMode(OSD_MODE::MANUAL);
         model.setSource("manual");
 
-        return BaseResponse<GyroModel>(e.getCode(), e.getMessage(), model);
+        return BaseResponse<GyroResponseModel>(e.getCode(), e.getMessage(), model);
     }  catch (...) {
 #ifdef USE_LOG4QT
         logger()->error()<<Q_FUNC_INFO<<" -> caught unkbnown error";
@@ -124,6 +124,6 @@ BaseResponse<GyroModel> OSDCMSGyroData::toResponse(QNetworkReply::NetworkError e
 #endif
 
         ErrUnknown status;
-        return BaseResponse<GyroModel>(status.getCode(), status.getMessage(), model);
+        return BaseResponse<GyroResponseModel>(status.getCode(), status.getMessage(), model);
     }
 }

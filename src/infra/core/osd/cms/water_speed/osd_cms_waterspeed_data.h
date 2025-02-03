@@ -4,11 +4,11 @@
 #include "src/infra/http/http_client_wrapper.h"
 #include "src/infra/core/osd/cms/water_speed/osd_set_waterspeed_request.h"
 #include "src/infra/core/base_response.h"
-#include "src/infra/core/osd/model/water_speed/waterspeed_model.h"
+#include "src/infra/core/osd/model/water_speed/water_speed_cms_response_model.h"
 #include "src/shared/config/osd_cms_config.h"
 #include "src/infra/http/i_cms_http.h"
 
-class OSDCMSWaterSpeedData : public HttpClientWrapper, public ICmsHttp<WaterSpeedModel, OSDSetWaterSpeedRequest>
+class OSDCMSWaterSpeedData : public HttpClientWrapper, public ICmsHttp<WaterSpeedResponseModel, OSDSetWaterSpeedRequest>
 {
     Q_OBJECT
 public:
@@ -22,7 +22,7 @@ public:
     void set(OSDSetWaterSpeedRequest request) override;
 
 signals:
-    void signal_setWaterSpeedResponse(BaseResponse<WaterSpeedModel> response);
+    void signal_setWaterSpeedResponse(BaseResponse<WaterSpeedResponseModel> response);
 
 protected:
     OSDCMSWaterSpeedData(
@@ -37,7 +37,7 @@ private:
     static OSDCMSWaterSpeedData *waterspeedData;
     OSDCmsConfig *cfgCms;
 
-    BaseResponse<WaterSpeedModel> toResponse(QNetworkReply::NetworkError err, QByteArray raw) override;
+    BaseResponse<WaterSpeedResponseModel> toResponse(QNetworkReply::NetworkError err, QByteArray raw) override;
 };
 
 #endif // OSDCMSWATERSPEEDDATA_H

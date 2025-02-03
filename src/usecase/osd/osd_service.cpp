@@ -94,7 +94,7 @@ OSDService* OSDService::getInstance(
     return instance;
 }
 
-void OSDService::onUpdateManualDataGyro(BaseResponse<GyroModel> resp)
+void OSDService::onUpdateManualDataGyro(BaseResponse<GyroResponseModel> resp)
 {
     if(resp.getHttpCode() != ERROR_NO.first) {
         emit signal_processedSetResponseGyro(resp.getData());
@@ -113,7 +113,7 @@ void OSDService::onUpdateManualDataGyro(BaseResponse<GyroModel> resp)
     emit signal_processedSetResponseGyro(resp.getData());
 }
 
-void OSDService::onUpdateManualDataPosition(BaseResponse<PositionModel> resp)
+void OSDService::onUpdateManualDataPosition(BaseResponse<PositionResponseModel> resp)
 {
     if(resp.getHttpCode() != ERROR_NO.first) {
         emit signal_processedSetResponsePosition(resp.getData());
@@ -131,7 +131,7 @@ void OSDService::onUpdateManualDataPosition(BaseResponse<PositionModel> resp)
     emit signal_processedSetResponsePosition(resp.getData());
 }
 
-void OSDService::onUpdateManualDataSpeed(BaseResponse<SpeedModel> resp)
+void OSDService::onUpdateManualDataSpeed(BaseResponse<SpeedResponseModel> resp)
 {
     if(resp.getHttpCode() != ERROR_NO.first) {
         emit signal_processedSetResponseSpeed(resp.getData());
@@ -149,7 +149,7 @@ void OSDService::onUpdateManualDataSpeed(BaseResponse<SpeedModel> resp)
     emit signal_processedSetResponseSpeed(resp.getData());
 }
 
-void OSDService::onUpdateManualDataWaterSpeed(BaseResponse<WaterSpeedModel> resp)
+void OSDService::onUpdateManualDataWaterSpeed(BaseResponse<WaterSpeedResponseModel> resp)
 {
     if(resp.getHttpCode() != ERROR_NO.first) {
         emit signal_processedSetResponseWaterSpeed(resp.getData());
@@ -167,7 +167,7 @@ void OSDService::onUpdateManualDataWaterSpeed(BaseResponse<WaterSpeedModel> resp
     emit signal_processedSetResponseWaterSpeed(resp.getData());
 }
 
-void OSDService::onUpdateManualDataWeather(BaseResponse<WeatherModel> resp)
+void OSDService::onUpdateManualDataWeather(BaseResponse<WeatherResponseModel> resp)
 {
     if(resp.getHttpCode() != ERROR_NO.first) {
         emit signal_processedSetResponseWeather(resp.getData());
@@ -186,7 +186,7 @@ void OSDService::onUpdateManualDataWeather(BaseResponse<WeatherModel> resp)
     emit signal_processedSetResponseWeather(resp.getData());
 }
 
-void OSDService::onUpdateManualDataWind(BaseResponse<WindModel> resp)
+void OSDService::onUpdateManualDataWind(BaseResponse<WindResponseModel> resp)
 {
     if(resp.getHttpCode() != ERROR_NO.first) {
         emit signal_processedSetResponseWind(resp.getData());
@@ -204,7 +204,7 @@ void OSDService::onUpdateManualDataWind(BaseResponse<WindModel> resp)
     emit signal_processedSetResponseWind(resp.getData());
 }
 
-void OSDService::onUpdateInputMode(const QString datafisis, BaseResponse<InputModeModel> resp, bool needConfirm)
+void OSDService::onUpdateInputMode(const QString datafisis, BaseResponse<InputModeResponseModel> resp, bool needConfirm)
 {
     if(resp.getHttpCode() == ERROR_CODE_HTTP_RESPONSE_CONNECTION_REFUSED.first) {
         resetToPrevMode();

@@ -91,16 +91,16 @@ void OSDCMSInputMode::onReplyFinished()
     qDebug()<<Q_FUNC_INFO<<"resp prop lastUpdateData: "<<lastUpdateData;
 #endif
 
-    BaseResponse<InputModeModel> resp = toResponse(objSender->error(), respRaw);
+    BaseResponse<InputModeResponseModel> resp = toResponse(objSender->error(), respRaw);
 
     emit signal_setModeResponse(lastUpdateData, resp, needConfirm);
 
     objSender->deleteLater();
 }
 
-BaseResponse<InputModeModel> OSDCMSInputMode::toResponse(QNetworkReply::NetworkError err, QByteArray raw)
+BaseResponse<InputModeResponseModel> OSDCMSInputMode::toResponse(QNetworkReply::NetworkError err, QByteArray raw)
 {
-    InputModeModel model(false, false, false, false, false, false);
+    InputModeResponseModel model(false, false, false, false, false, false);
     try {
         if (raw.isEmpty()) {
             throw ErrHttpConnRefused();
@@ -111,7 +111,7 @@ BaseResponse<InputModeModel> OSDCMSInputMode::toResponse(QNetworkReply::NetworkE
         int respCode = respObj["code"].toInt();
         QString respMsg = respObj["message"].toString();
         QJsonObject respData = respObj["data"].toObject();
-        InputModeModel model(
+        InputModeResponseModel model(
             respData["position"].toBool(),
             respData["speed"].toBool(),
             respData["inertia"].toBool(),
@@ -119,7 +119,7 @@ BaseResponse<InputModeModel> OSDCMSInputMode::toResponse(QNetworkReply::NetworkE
             respData["wind"].toBool(),
             respData["weather"].toBool()
             );
-        BaseResponse<InputModeModel> resp(respCode, respMsg, model);
+        BaseResponse<InputModeResponseModel> resp(respCode, respMsg, model);
 
 #ifdef USE_LOG4QT
         logger()->debug()<<Q_FUNC_INFO<<" -> resp. http code: "<<resp.getHttpCode()
@@ -142,7 +142,7 @@ BaseResponse<InputModeModel> OSDCMSInputMode::toResponse(QNetworkReply::NetworkE
 #else
         qWarning()<<Q_FUNC_INFO<<"caught error: "<<e.getMessage();
 #endif
-        return BaseResponse<InputModeModel>(e.getCode(), e.getMessage(), model);
+        return BaseResponse<InputModeResponseModel>(e.getCode(), e.getMessage(), model);
     }  catch (...) {
 #ifdef USE_LOG4QT
         logger()->error()<<Q_FUNC_INFO<<" -> caught unkbnown error";
@@ -150,6 +150,6 @@ BaseResponse<InputModeModel> OSDCMSInputMode::toResponse(QNetworkReply::NetworkE
         qWarning()<<Q_FUNC_INFO<<"caught unkbnown error";
 #endif
         ErrUnknown status;
-        return BaseResponse<InputModeModel>(status.getCode(), status.getMessage(), model);
+        return BaseResponse<InputModeResponseModel>(status.getCode(), status.getMessage(), model);
     }
 }

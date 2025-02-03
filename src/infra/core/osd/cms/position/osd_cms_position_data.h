@@ -4,11 +4,11 @@
 #include "src/infra/http/http_client_wrapper.h"
 #include "src/infra/core/osd/cms/position/osd_set_position_request.h"
 #include "src/infra/core/base_response.h"
-#include "src/infra/core/osd/model/position/position_model.h"
+#include "src/infra/core/osd/model/position/position_cms_response_model.h"
 #include "src/shared/config/osd_cms_config.h"
 #include "src/infra/http/i_cms_http.h"
 
-class OSDCMSPositionData : public HttpClientWrapper, public ICmsHttp<PositionModel, OSDSetPositionRequest>
+class OSDCMSPositionData : public HttpClientWrapper, public ICmsHttp<PositionResponseModel, OSDSetPositionRequest>
 {
     Q_OBJECT
 public:
@@ -22,7 +22,7 @@ public:
     void set(OSDSetPositionRequest request) override;
 
 signals:
-    void signal_setPositionResponse(BaseResponse<PositionModel> response);
+    void signal_setPositionResponse(BaseResponse<PositionResponseModel> response);
 
 protected:
     OSDCMSPositionData(
@@ -37,6 +37,6 @@ private:
     static OSDCMSPositionData *positionData;
     OSDCmsConfig *cfgCms;
 
-    BaseResponse<PositionModel> toResponse(QNetworkReply::NetworkError err, QByteArray raw) override;
+    BaseResponse<PositionResponseModel> toResponse(QNetworkReply::NetworkError err, QByteArray raw) override;
 };
 #endif // OSDCMSPOSITIONDATA_H

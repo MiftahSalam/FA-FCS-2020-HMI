@@ -5,11 +5,11 @@
 
 #include "src/infra/http/http_client_wrapper.h"
 #include "src/infra/core/osd/cms/input_mode/osd_input_mode_request.h"
-#include "src/infra/core/osd/model/input_mode/input_mode_model.h"
+#include "src/infra/core/osd/model/input_mode/input_mode_cms_response_model.h"
 #include "src/shared/config/osd_cms_config.h"
 #include "src/infra/http/i_cms_http.h"
 
-class OSDCMSInputMode: public HttpClientWrapper, public ICmsHttp<InputModeModel, OSDInputModeRequest>
+class OSDCMSInputMode: public HttpClientWrapper, public ICmsHttp<InputModeResponseModel, OSDInputModeRequest>
 {
     Q_OBJECT
 public:
@@ -23,7 +23,7 @@ public:
     void setDataMode(const bool confirm, const QString &dataFisis, const OSDInputModeRequest modeReq);
 
 signals:
-    void signal_setModeResponse(const QString datafisis, BaseResponse<InputModeModel> response, bool needConfirm);
+    void signal_setModeResponse(const QString datafisis, BaseResponse<InputModeResponseModel> response, bool needConfirm);
 
 protected:
     OSDCMSInputMode(
@@ -39,7 +39,7 @@ private:
     OSDCmsConfig *cfgCms;
 
     void set(OSDInputModeRequest request) override;
-    BaseResponse<InputModeModel> toResponse(QNetworkReply::NetworkError err, QByteArray raw) override;
+    BaseResponse<InputModeResponseModel> toResponse(QNetworkReply::NetworkError err, QByteArray raw) override;
 };
 
 #endif // OSDINPUTMODE_H
