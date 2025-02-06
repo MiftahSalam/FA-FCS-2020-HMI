@@ -3,9 +3,9 @@
 
 #include "src/domain/gun/repository/gun_feedback_repository.h"
 #include "src/shared/config/gun_cms_config.h"
-#include "src/usecase/gun/cms/gun_command_barrel_mode_service.h"
-#include "src/usecase/gun/cms/gun_command_barrel_service.h"
-#include "src/usecase/gun/cms/gun_command_status_service.h"
+#include "src/infra/core/gun/cms/mode/gun_command_barrel_mode_service.h"
+#include "src/infra/core/gun/cms/barrel/gun_command_barrel_service.h"
+#include "src/infra/core/gun/cms/status/gun_command_status_service.h"
 #include <QObject>
 
 class GunManagerService : public QObject
