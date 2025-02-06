@@ -1,8 +1,7 @@
 #ifndef FRAME_OSD_WEATHER_H
 #define FRAME_OSD_WEATHER_H
 
-#include "src/usecase/osd/cms/osd_cms_input_mode.h"
-#include "src/usecase/osd/stream/osd_stream_weather.h"
+#include "src/usecase/osd/osd_service.h"
 #include "src/view/panel/osd/frame_osd_base.h"
 #include "src/view/shared/frame_text_input.h"
 
@@ -20,7 +19,7 @@ struct OSDWeatherProp
     TextInputProp Hum;
 };
 
-class FrameOSDWeather : public QWidget, public FrameOSDBase<WeatherModel, WeatherModel>
+class FrameOSDWeather : public QWidget, public FrameOSDBase<WeatherStreamModel, WeatherResponseModel>
 {
     Q_OBJECT
 
@@ -32,9 +31,9 @@ public:
     void resetModeIndex() override;
 
 public slots:
-    void onModeChangeResponse(const QString datafisis, BaseResponse<InputModeModel> mode, bool needConfirm) override;
-    void onDataResponse(BaseResponse<WeatherModel> data) override;
-    void onStreamReceive(WeatherModel model) override;
+    void onModeChangeResponse(const QString datafisis, BaseResponse<InputModeResponseModel> mode, bool needConfirm) override;
+    void onDataResponse(WeatherResponseModel data) override;
+    void onStreamReceive(WeatherStreamModel model) override;
 
 signals:
     void signalChangeWeatherMode(bool manual_mode);
@@ -49,9 +48,8 @@ private slots:
 
 private:
     Ui::FrameOSDWeather *ui;
-    OSDCMSWeatherData *_cmsWeather;
-    OSDCMSInputMode *_cmsMode;
-    OSDStreamWeather* _streamWeather;
+
+    OSDService *_serviceOSD;
 
     void manualUiSetup() override;
     void autoUiSetup() override;

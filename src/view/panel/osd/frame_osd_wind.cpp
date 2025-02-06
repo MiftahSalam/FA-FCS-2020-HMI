@@ -15,9 +15,7 @@ LOG4QT_DECLARE_STATIC_LOGGER(logger, FrameOSDWind)
 FrameOSDWind::FrameOSDWind(QWidget *parent) :
     QWidget(parent),
     ui(new Ui::FrameOSDWind),
-    _cmsWind(DI::getInstance()->getOSDCMSService()->getServiceOSDCMSWind()),
-    _cmsMode(DI::getInstance()->getOSDCMSService()->getServiceOSDCMSMode()),
-    _streamWind(DI::getInstance()->getServiceOSDStream()->getServiceOSDStreamWind())
+    _serviceOSD(DI::getInstance()->getServiceOSD())
 {
     ui->setupUi(this);
 
@@ -41,9 +39,9 @@ FrameOSDWind::FrameOSDWind(QWidget *parent) :
     connect(timer, &QTimer::timeout, this, &FrameOSDWind::onTimeout);
     timer->start(1000);
 
-    connect(_cmsWind, &OSDCMSWindData::signal_setWindResponse, this, &FrameOSDWind::onDataResponse);
-    connect(_cmsMode, &OSDCMSInputMode::signal_setModeResponse, this, &FrameOSDWind::onModeChangeResponse);
-    connect(_streamWind, &OSDStreamWind::signalDataProcessed, this, &FrameOSDWind::onStreamReceive);
+    connect(_serviceOSD, &OSDService::signal_processedSetResponseWind, this, &FrameOSDWind::onDataResponse);
+    connect(_serviceOSD, &OSDService::signal_processedSetModeResponse, this, &FrameOSDWind::onModeChangeResponse);
+    connect(_serviceOSD, &OSDService::signal_processedAutoDataWind, this, &FrameOSDWind::onStreamReceive);
 }
 
 void FrameOSDWind::setup()
@@ -71,23 +69,24 @@ void FrameOSDWind::resetModeIndex()
     currentModeIndx = prevModeIndx;
 }
 
-void FrameOSDWind::onDataResponse(BaseResponse<WindModel> resp)
+void FrameOSDWind::onDataResponse(WindResponseModel resp)
 {
 #ifdef USE_LOG4QT
-    logger()->debug() << Q_FUNC_INFO << " -> resp code: " << resp.getHttpCode() << ", resp msg: " << resp.getMessage();
+    logger()->debug() << Q_FUNC_INFO << " -> resp code: " << resp.err().getCode() << ", resp msg: " << QString::fromStdString(resp.status());
 #else
     qDebug() << Q_FUNC_INFO << "resp code:" << resp.getHttpCode() << "resp msg:" << resp.getMessage();
 #endif
 
-    if (resp.getHttpCode() != 0) {
-        QMessageBox::warning(this, "Request Error", QString("Failed to change manual data with error: %1").arg(resp.getMessage()));
+    if (resp.err().getCode() != 0)
+    {
+        QMessageBox::warning(this, "Request Error", QString("Failed to change manual data with error: %1").arg(resp.err().getMessage()));
         return;
     }
 
 #ifdef USE_LOG4QT
     logger()->debug() << Q_FUNC_INFO
-                      << " -> getSpeed: " << resp.getData().getSpeed()
-                      << ", getDirection: " << resp.getData().getDirection();
+                      << " -> getSpeed: " << resp.getSpeed()
+                      << ", getDirection: " << resp.getDirection();
 #else
     qDebug()<<Q_FUNC_INFO<<"resp data get Speed: "<<resp.getData().getSpeed()
            <<"resp data get Direction: "<<resp.getData().getDirection()
@@ -95,7 +94,7 @@ void FrameOSDWind::onDataResponse(BaseResponse<WindModel> resp)
 #endif
 }
 
-void FrameOSDWind::onModeChangeResponse(const QString datafisis, BaseResponse<InputModeModel> resp, bool needConfirm)
+void FrameOSDWind::onModeChangeResponse(const QString datafisis, BaseResponse<InputModeResponseModel> resp, bool needConfirm)
 {
     if (datafisis != "wind") {
         return;
@@ -140,23 +139,18 @@ void FrameOSDWind::onModeChangeResponse(const QString datafisis, BaseResponse<In
 
 void FrameOSDWind::onModeChange(int index)
 {
-    bool manual_mode;
     switch ((OSD_MODE)index) {
     case OSD_MODE::AUTO:
-        manual_mode = false;
         currentMode = OSD_MODE::AUTO;
-        //        autoUiSetup();
         break;
     case OSD_MODE::MANUAL:
-        manual_mode = true;
         currentMode = OSD_MODE::MANUAL;
-        //        manualUiSetup();
         break;
     default:
         break;
     }
 
-    _cmsMode->setDataMode("wind", manual_mode);
+    _serviceOSD->setDataMode("wind", currentMode);
 }
 
 void FrameOSDWind::onAfterModeReset()
@@ -188,7 +182,7 @@ void FrameOSDWind::manualUiSetup()
 
 void FrameOSDWind::onTimeout()
 {
-    auto currError = _streamWind->check();
+    auto currError = _serviceOSD->getOSDAutoStatusWind();
     if (currError.getCode() == ERROR_CODE_MESSAGING_NOT_CONNECTED.first) {
         notConnectedUiSetup();
     } else if (currError.getCode() == ERROR_CODE_MESSAGING_NO_DATA.first) {
@@ -199,14 +193,14 @@ void FrameOSDWind::onTimeout()
 
     setErrorInput(currError);
 
-    auto curMode = _cmsMode->getDataMode();
-    bool WindMode = curMode.getWind();
+    auto curMode = _serviceOSD->getDataMode();
+    bool WindMode = curMode->wind();
     if ((OSD_MODE)WindMode != currentMode) {
         disconnect(ui->mode, &FrameOSDMode::signal_currentModeChange, this, &FrameOSDWind::onModeChange);
         if (WindMode) {
             ui->mode->setCurrentModeIndex(1);
             manualUiSetup();
-            _cmsWind->set(OSDSetWindRequest(
+            _serviceOSD->setManualDataWind(OSDSetWindRequest(
                               ui->inputSpeed->getCurrentValue().toFloat(),
                               ui->inputDirection->getCurrentValue().toFloat()
                               ));
@@ -220,14 +214,14 @@ void FrameOSDWind::onTimeout()
     }
 }
 
-void FrameOSDWind::onStreamReceive(WindModel model)
+void FrameOSDWind::onStreamReceive(WindStreamModel model)
 {
-    auto currentMode = (OSD_MODE)_cmsMode->getDataMode().getWind();
+    auto currentMode = (OSD_MODE)_serviceOSD->getDataMode()->wind();
     if (currentMode == OSD_MODE::MANUAL) {
         return;
     }
 
-    auto currStreamErr = _streamWind->check();
+    auto currStreamErr = _serviceOSD->getOSDAutoStatusWind();
 
     //validity speed direction stream check
     ui->inputSpeed->setValue(QString::number(model.getSpeed()));
@@ -243,7 +237,7 @@ void FrameOSDWind::onUpdateWindAutoUi()
 
 void FrameOSDWind::notConnectedUiSetup()
 {
-    auto currentMode = (OSD_MODE)_cmsMode->getDataMode().getWind();
+    auto currentMode = (OSD_MODE)_serviceOSD->getDataMode()->wind();
     if (currentMode == OSD_MODE::MANUAL) {
         return;
     }
@@ -252,7 +246,7 @@ void FrameOSDWind::notConnectedUiSetup()
 
 void FrameOSDWind::noDataUiSetup()
 {
-    auto currentMode = (OSD_MODE)_cmsMode->getDataMode().getWind();
+    auto currentMode = (OSD_MODE)_serviceOSD->getDataMode()->wind();
     if (currentMode == OSD_MODE::MANUAL) {
         return;
     }
@@ -261,7 +255,7 @@ void FrameOSDWind::noDataUiSetup()
 
 void FrameOSDWind::invalidDataUiSetup()
 {
-    auto currentMode = (OSD_MODE)_cmsMode->getDataMode().getWind();
+    auto currentMode = (OSD_MODE)_serviceOSD->getDataMode()->wind();
     if (currentMode == OSD_MODE::MANUAL) {
         return;
     }
@@ -278,7 +272,7 @@ void FrameOSDWind::on_pushButton_clicked()
         float _speed = ui->inputSpeed->getCurrentValue().toFloat();
         float _direction = ui->inputDirection->getCurrentValue().toFloat();
 
-        _cmsWind->set(OSDSetWindRequest(_speed, _direction));
+        _serviceOSD->setManualDataWind(OSDSetWindRequest(_speed, _direction));
     } catch (...) {
         QMessageBox::critical(this, "Fatal Error Water Speed", "Invalid value input" );
     }

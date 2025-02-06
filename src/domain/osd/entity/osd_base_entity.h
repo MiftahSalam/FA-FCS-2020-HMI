@@ -1,8 +1,12 @@
 #ifndef OSD_BASE_ENTITY_H
 #define OSD_BASE_ENTITY_H
 
-#include "src/view/shared/constant_ui.h"
 #include <string>
+
+enum OSD_MODE {
+    AUTO = 0,
+    MANUAL = 1
+};
 
 class OSDBaseEntity
 {

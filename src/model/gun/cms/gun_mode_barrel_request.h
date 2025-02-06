@@ -1,9 +1,9 @@
 #ifndef GUNMODEBARRELREQUEST_H
 #define GUNMODEBARRELREQUEST_H
 
-#include "src/model/base_request.h"
+#include "src/infra/core/base_request.h"
 
-class GunModeBarrelRequest: public BaseModel<GunModeBarrelRequest>
+class GunModeBarrelRequest: public BaseModel
 {
 public:
     GunModeBarrelRequest();
@@ -13,7 +13,6 @@ public:
     void setManualMode(bool newManualMode);
 
     // BaseModel interface
-public:
     QByteArray toJSON() override;
 
 private:

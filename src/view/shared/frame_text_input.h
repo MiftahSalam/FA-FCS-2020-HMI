@@ -1,12 +1,6 @@
 #ifndef FRAME_TEXT_INPUT_H
 #define FRAME_TEXT_INPUT_H
 
-#include "src/usecase/osd/cms/osd_cms_position_data.h"
-#include "src/usecase/osd/cms/osd_cms_gyro_data.h"
-#include "src/usecase/osd/cms/osd_cms_waterspeed_data.h"
-#include "src/usecase/osd/cms/osd_cms_speed_data.h"
-#include "src/usecase/osd/cms/osd_cms_wind_data.h"
-#include "src/usecase/osd/cms/osd_cms_weather_data.h"
 #include <QFrame>
 
 namespace Ui {

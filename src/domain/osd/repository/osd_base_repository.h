@@ -1,8 +1,9 @@
 #ifndef OSD_BASE_REPOSITORY_H
 #define OSD_BASE_REPOSITORY_H
 
-#include "src/view/shared/constant_ui.h"
 #include <string>
+
+#include "src/domain/osd/entity/osd_base_entity.h"
 
 class OSDBaseRepository
 {

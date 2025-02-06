@@ -3,8 +3,9 @@
 
 #include <QWidget>
 
-#include "src/usecase/osd/cms/osd_cms_input_mode.h"
-#include "src/usecase/osd/stream/osd_stream_waterspeed.h"
+#include "src/usecase/osd/osd_service.h"
+#include "src/infra/core/osd/model/water_speed/water_speed_stream_model.h"
+#include "src/infra/core/osd/cms/water_speed/waterspeed_model.h"
 #include "src/view/panel/osd/frame_osd_base.h"
 #include "src/view/shared/frame_text_input.h"
 
@@ -19,7 +20,7 @@ struct OSDWaterSpeedProp
     TextInputProp watercourse;
 };
 
-class FrameOSDWaterSpeed : public QWidget, public FrameOSDBase<WaterSpeedModel, WaterSpeedModel>
+class FrameOSDWaterSpeed : public QWidget, public FrameOSDBase<WaterSpeedStreamModel, WaterSpeedResponseModel>
 {
     Q_OBJECT
 
@@ -31,9 +32,9 @@ public:
     void resetModeIndex() override;
 
 public slots:
-    void onModeChangeResponse(const QString datafisis, BaseResponse<InputModeModel> resp, bool needConfirm) override;
-    void onDataResponse(BaseResponse<WaterSpeedModel> data) override;
-    void onStreamReceive(WaterSpeedModel model) override;
+    void onModeChangeResponse(const QString datafisis, BaseResponse<InputModeResponseModel> resp, bool needConfirm) override;
+    void onDataResponse(WaterSpeedResponseModel data) override;
+    void onStreamReceive(WaterSpeedStreamModel model) override;
     //added by riyadhi
     void onUpdateWaterSpeedAutoUi();
 
@@ -50,9 +51,8 @@ private slots:
 
 private:
     Ui::FrameOSDWaterSpeed *ui;
-    OSDCMSWaterSpeedData *_cmsWS;
-    OSDCMSInputMode *_cmsMode;
-    OSDStreamWaterSpeed* _streamWS;
+
+    OSDService *_serviceOSD;
 
     // FrameOSDBase interface
     void manualUiSetup() override;

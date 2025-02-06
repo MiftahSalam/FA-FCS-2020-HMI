@@ -13,7 +13,7 @@ public:
     virtual void resetModeIndex() = 0; //handler when set mode request failed
 
 public slots:
-    // virtual void onModeChangeResponse(const QString datafisis, BaseResponse<InputModeModel> mode, bool needConfirm) = 0; //handler set mode response from server
+    // virtual void onModeChangeResponse(const QString datafisis, BaseResponse<InputModeResponseModel> mode, bool needConfirm) = 0; //handler set mode response from server
     virtual void onStreamReceive(DataStreamModel model) = 0; //handler data stream input
     virtual void onDataResponse(BaseResponse<DataResponseModel> data) = 0; //handler manual data response from server
 

@@ -3,13 +3,12 @@
 
 #include "src/domain/engagement/repository/weapon_track_assign_repository.h"
 #include "src/domain/gun/repository/gun_coverage_repository.h"
-#include "src/domain/osd/repository/osd_inertia_repository.h"
 #include "src/domain/track/repository/track_base_repository.h"
 #include "src/domain/weapon_assign/repository/weapon_assignment_repository.h"
 #include "src/shared/config/track_weapon_assign_config.h"
 #include "src/usecase/engagement/cms/track_weapon_engage_service.h"
 #include "src/usecase/engagement/cms/engagement_data_correction_40mm_service.h"
-#include "src/usecase/osd/stream/osd_stream.h"
+#include "src/usecase/osd/osd_service.h"
 #include <QObject>
 
 class WeaponTrackAssignService : public QObject
@@ -22,12 +21,10 @@ public:
                                                  TrackWeaponAssignConfig *cmsConfig = nullptr,
                                                  GunCoverageRepository* repoGunCov = nullptr,
                                                  TrackBaseRepository* repoTrack = nullptr,
-                                                 OSDRepository* _repoOSD = nullptr,
-                                                 OSDCMS* cmsOSD = nullptr,
-                                                 OSDStream* streamOSD = nullptr,
+                                                 OSDService* serviceOSD = nullptr,
                                                  WeaponAssignmentRepository *repoWA = nullptr,
                                                  WeaponTrackAssignmentRepository *repoWTA = nullptr
-            );
+                                                 );
 
     void CheckUpdateEngagement(const QString &weapon);
     bool IsWeaponEngaged(const QString &weapon);
@@ -51,11 +48,7 @@ protected:
             TrackWeaponAssignConfig *cmsConfig = nullptr,
             GunCoverageRepository* repoGunCov = nullptr,
             TrackBaseRepository* repoTrack = nullptr,
-            OSDInertiaRepository* repoInertia = nullptr,
-            OSDSpeedRepository* _repoSpeed = nullptr,
-            OSDCMSInputMode* cmsOSDInputMode = nullptr,
-            OSDStreamGyro* _streamInertia = nullptr,
-            OSDStreamSpeed* _streamSpeed = nullptr,
+            OSDService* _serviceOSD = nullptr,
             TrackWeaponEngageService *cmsEngageService = nullptr,
             EngagementDataCorrection40mmService *cmsEngageCorrService = nullptr,
             WeaponAssignmentRepository *repoWA = nullptr,
@@ -73,11 +66,7 @@ private:
     EngagementDataCorrection40mmService *_cmsEngageCorrService;
     GunCoverageRepository* _repoGunCov;
     TrackBaseRepository* _repoTrack;
-    OSDCMSInputMode* _cmsOSDInputMode;
-    OSDInertiaRepository* _repoInertia;
-    OSDSpeedRepository* _repoSpeed;
-    OSDStreamGyro* _streamInertia;
-    OSDStreamSpeed* _streamSpeed;
+    OSDService* _servicesOSD;
     WeaponAssignmentRepository *_repoWA;
     WeaponTrackAssignmentRepository *_repoWTA;
 

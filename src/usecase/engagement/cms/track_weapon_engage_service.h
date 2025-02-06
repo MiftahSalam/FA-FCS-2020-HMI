@@ -2,7 +2,7 @@
 #define TRACKWEAPONENGAGESERVICE_H
 
 #include "src/infra/http/http_client_wrapper.h"
-#include "src/model/base_response.h"
+#include "src/infra/core/base_response.h"
 #include "src/model/engagement/cms/track_assign_request.h"
 #include "src/model/engagement/cms/track_assign_response.h"
 #include "src/shared/config/track_weapon_assign_config.h"

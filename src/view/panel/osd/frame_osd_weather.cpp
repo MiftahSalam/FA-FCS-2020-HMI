@@ -15,9 +15,7 @@ LOG4QT_DECLARE_STATIC_LOGGER(logger, FrameOSDWeather)
 FrameOSDWeather::FrameOSDWeather(QWidget *parent) :
     QWidget(parent),
     ui(new Ui::FrameOSDWeather),
-    _cmsWeather(DI::getInstance()->getOSDCMSService()->getServiceOSDCMSWeather()),
-    _cmsMode(DI::getInstance()->getOSDCMSService()->getServiceOSDCMSMode()),
-    _streamWeather(DI::getInstance()->getServiceOSDStream()->getServiceOSDStreamWeather())
+    _serviceOSD(DI::getInstance()->getServiceOSD())
 {
     ui->setupUi(this);
 
@@ -44,29 +42,26 @@ FrameOSDWeather::FrameOSDWeather(QWidget *parent) :
     connect(timer, &QTimer::timeout, this, &FrameOSDWeather::onTimeout);
     timer->start(1000);
 
-    connect(_cmsWeather, &OSDCMSWeatherData::signal_setWeatherResponse, this, &FrameOSDWeather::onDataResponse);
-    connect(_cmsMode, &OSDCMSInputMode::signal_setModeResponse, this, &FrameOSDWeather::onModeChangeResponse);
-    connect(_streamWeather, &OSDStreamWeather::signalDataProcessed, this, &FrameOSDWeather::onStreamReceive);
+    connect(_serviceOSD, &OSDService::signal_processedSetResponseWeather, this, &FrameOSDWeather::onDataResponse);
+    connect(_serviceOSD, &OSDService::signal_processedSetModeResponse, this, &FrameOSDWeather::onModeChangeResponse);
+    connect(_serviceOSD, &OSDService::signal_processedAutoDataWeather, this, &FrameOSDWeather::onStreamReceive);
 }
 
 void FrameOSDWeather::onModeChange(int index)
 {
     qDebug()<<"Status Weather :" << index;
 
-    bool manual_mode;
     switch ((OSD_MODE)index) {
     case OSD_MODE::AUTO:
-        manual_mode = false;
         currentMode = OSD_MODE::AUTO;
         break;
     case OSD_MODE::MANUAL:
-        manual_mode = true;
         currentMode = OSD_MODE::MANUAL;
         break;
     default:
         break;
     }
-    _cmsMode->setDataMode("weather", manual_mode);
+    _serviceOSD->setDataMode("weather", currentMode);
 }
 
 void FrameOSDWeather::onAfterModeReset()
@@ -76,7 +71,7 @@ void FrameOSDWeather::onAfterModeReset()
 
 void FrameOSDWeather::onTimeout()
 {
-    auto currError = _streamWeather->check();
+    auto currError = _serviceOSD->getOSDAutoStatusWeather();
     if (currError.getCode() == ERROR_CODE_MESSAGING_NOT_CONNECTED.first) {
         notConnectedUiSetup();
     } else if (currError.getCode() == ERROR_CODE_MESSAGING_NO_DATA.first) {
@@ -87,14 +82,14 @@ void FrameOSDWeather::onTimeout()
 
     setErrorInput(currError);
 
-    auto curMode = _cmsMode->getDataMode();
-    bool weatherMode = curMode.getWeather();
+    auto curMode = _serviceOSD->getDataMode();
+    bool weatherMode = curMode->weather();
     if ((OSD_MODE)weatherMode != currentMode) {
         disconnect(ui->mode, &FrameOSDMode::signal_currentModeChange, this, &FrameOSDWeather::onModeChange);
         if (weatherMode) {
             ui->mode->setCurrentModeIndex(1);
             manualUiSetup();
-            _cmsWeather->set(OSDSetWeatherRequest(
+            _serviceOSD->setManualDataWeather(OSDSetWeatherRequest(
                                  ui->inputTemp->getCurrentValue().toFloat(),
                                  ui->inputPress->getCurrentValue().toFloat(),
                                  ui->inputHum->getCurrentValue().toFloat()
@@ -134,7 +129,7 @@ void FrameOSDWeather::resetModeIndex()
     currentModeIndx = prevModeIndx;
 }
 
-void FrameOSDWeather::onModeChangeResponse(const QString datafisis, BaseResponse<InputModeModel> resp, bool needConfirm)
+void FrameOSDWeather::onModeChangeResponse(const QString datafisis, BaseResponse<InputModeResponseModel> resp, bool needConfirm)
 {
     if (datafisis != "weather") {
         return;
@@ -178,25 +173,26 @@ void FrameOSDWeather::onModeChangeResponse(const QString datafisis, BaseResponse
     }
 }
 
-void FrameOSDWeather::onDataResponse(BaseResponse<WeatherModel> resp)
+void FrameOSDWeather::onDataResponse(WeatherResponseModel resp)
 {
     //todo handle response
 #ifdef USE_LOG4QT
-    logger()->debug() << Q_FUNC_INFO << " -> resp code: " << resp.getHttpCode() << ", resp msg: " << resp.getMessage();
+    logger()->debug() << Q_FUNC_INFO << " -> resp code: " << resp.err().getCode() << ", resp msg: " << QString::fromStdString(resp.status());
 #else
     qDebug() << Q_FUNC_INFO << "resp code:" << resp.getHttpCode() << "resp msg:" << resp.getMessage();
 #endif
 
-    if (resp.getHttpCode() != 0) {
-        QMessageBox::warning(this, "Request Error", QString("Failed to change manual data with error: %1").arg(resp.getMessage()));
+    if (resp.err().getCode() != 0)
+    {
+        QMessageBox::warning(this, "Request Error", QString("Failed to change manual data with error: %1").arg(resp.err().getMessage()));
         return;
     }
 
 #ifdef USE_LOG4QT
     logger()->debug() << Q_FUNC_INFO
-                      << " -> getHumidity: " << resp.getData().getHumidity()
-                      << ", getPressure: " << resp.getData().getPressure()
-                      << ", getTemperature: " << resp.getData().getTemperature();
+                      << " -> getHumidity: " << resp.getHumidity()
+                      << ", getPressure: " << resp.getPressure()
+                      << ", getTemperature: " << resp.getTemperature();
 #else
     qDebug()<<Q_FUNC_INFO
            <<"resp data getTemperature: "<<resp.getData().getTemperature()
@@ -206,14 +202,14 @@ void FrameOSDWeather::onDataResponse(BaseResponse<WeatherModel> resp)
 #endif
 }
 
-void FrameOSDWeather::onStreamReceive(WeatherModel model)
+void FrameOSDWeather::onStreamReceive(WeatherStreamModel model)
 {
-    auto currentMode = (OSD_MODE)_cmsMode->getDataMode().getWeather();
+    auto currentMode = (OSD_MODE)_serviceOSD->getDataMode()->weather();
     if (currentMode == OSD_MODE::MANUAL) {
         return;
     }
 
-    auto currStreamErr = _streamWeather->check();
+    auto currStreamErr = _serviceOSD->getOSDAutoStatusWeather();
 
     // validity temp hum press stream check
     ui->inputTemp->setValue(QString::number(model.getTemperature()));
@@ -234,7 +230,7 @@ void FrameOSDWeather::on_pushButton_clicked()
         float press = ui->inputPress->getCurrentValue().toFloat();
         float hum = ui->inputHum->getCurrentValue().toFloat();
 
-        _cmsWeather->set(OSDSetWeatherRequest(temp, press, hum));
+        _serviceOSD->setManualDataWeather(OSDSetWeatherRequest(temp, press, hum));
     } catch (...) {
         QMessageBox::critical(this, "Fatal Error Weather", "Invalid value input" );
     }
@@ -270,7 +266,7 @@ void FrameOSDWeather::autoUiSetup()
 
 void FrameOSDWeather::notConnectedUiSetup()
 {
-    auto currentMode = (OSD_MODE)_cmsMode->getDataMode().getWeather();
+    auto currentMode = (OSD_MODE)_serviceOSD->getDataMode()->weather();
     if (currentMode == OSD_MODE::MANUAL) {
         return;
     }
@@ -279,7 +275,7 @@ void FrameOSDWeather::notConnectedUiSetup()
 
 void FrameOSDWeather::noDataUiSetup()
 {
-    auto currentMode = (OSD_MODE)_cmsMode->getDataMode().getWeather();
+    auto currentMode = (OSD_MODE)_serviceOSD->getDataMode()->weather();
     if (currentMode == OSD_MODE::MANUAL) {
         return;
     }
@@ -288,7 +284,7 @@ void FrameOSDWeather::noDataUiSetup()
 
 void FrameOSDWeather::invalidDataUiSetup()
 {
-    auto currentMode = (OSD_MODE)_cmsMode->getDataMode().getWeather();
+    auto currentMode = (OSD_MODE)_serviceOSD->getDataMode()->weather();
     if (currentMode == OSD_MODE::MANUAL) {
         return;
     }

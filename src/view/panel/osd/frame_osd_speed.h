@@ -1,8 +1,7 @@
 #ifndef FRAME_OSD_SPEED_H
 #define FRAME_OSD_SPEED_H
 
-#include "src/usecase/osd/cms/osd_cms_input_mode.h"
-#include "src/usecase/osd/stream/osd_stream_speed.h"
+#include "src/usecase/osd/osd_service.h"
 #include "src/view/panel/osd/frame_osd_base.h"
 #include "src/view/shared/frame_text_input.h"
 #include <QWidget>
@@ -18,7 +17,7 @@ struct OSDSpeedProp
     TextInputProp course;
 };
 
-class FrameOSDSpeed : public QWidget, public FrameOSDBase<SpeedModel, SpeedModel>
+class FrameOSDSpeed : public QWidget, public FrameOSDBase<SpeedStreamModel, SpeedResponseModel>
 {
     Q_OBJECT
 
@@ -30,9 +29,9 @@ public:
     void resetModeIndex() override;
 
 public slots:
-    void onModeChangeResponse(const QString datafisis, BaseResponse<InputModeModel> mode, bool needConfirm) override;
-    void onDataResponse(BaseResponse<SpeedModel> data) override;
-    void onStreamReceive(SpeedModel model) override;
+    void onModeChangeResponse(const QString datafisis, BaseResponse<InputModeResponseModel> mode, bool needConfirm) override;
+    void onDataResponse(SpeedResponseModel data) override;
+    void onStreamReceive(SpeedStreamModel model) override;
     void onUpdateSpeedAutoUi();
 
 signals:
@@ -48,9 +47,8 @@ private slots:
 
 private:
     Ui::FrameOSDSpeed *ui;
-    OSDCMSSpeedData *_cmsSpeed;
-    OSDCMSInputMode *_cmsMode;
-    OSDStreamSpeed* _streamSpeed;
+
+    OSDService *_serviceOSD;
 
     void manualUiSetup() override;
     void autoUiSetup() override;

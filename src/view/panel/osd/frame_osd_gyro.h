@@ -1,8 +1,7 @@
 #ifndef FRAME_OSD_GYRO_H
 #define FRAME_OSD_GYRO_H
 
-#include "src/usecase/osd/cms/osd_cms_input_mode.h"
-#include "src/usecase/osd/stream/osd_stream_gyro.h"
+#include "src/usecase/osd/osd_service.h"
 #include "src/view/panel/osd/frame_osd_base.h"
 #include "src/view/shared/frame_text_input.h"
 
@@ -20,7 +19,7 @@ struct OSDGyroProp
     TextInputProp roll;
 };
 
-class FrameOSDGyro : public QWidget, public FrameOSDBase<GyroModel, GyroModel>
+class FrameOSDGyro : public QWidget, public FrameOSDBase<GyroStreamModel, GyroResponseModel>
 {
     Q_OBJECT
 
@@ -32,9 +31,9 @@ public:
     void resetModeIndex() override;
 
 public slots:
-    void onModeChangeResponse(const QString datafisis, BaseResponse<InputModeModel> mode, bool needConfirm) override;
-    void onDataResponse(BaseResponse<GyroModel> data) override;
-    void onStreamReceive(GyroModel model) override;
+    void onModeChangeResponse(const QString datafisis, BaseResponse<InputModeResponseModel> mode, bool needConfirm) override;
+    void onDataResponse(GyroResponseModel data) override;
+    void onStreamReceive(GyroStreamModel model) override;
     void onUpdateGyroAutoUi();
 
 signals:
@@ -50,9 +49,8 @@ private slots:
 
 private:
     Ui::FrameOSDGyro *ui;
-    OSDCMSGyroData *_cmsGyro;
-    OSDCMSInputMode *_cmsMode;
-    OSDStreamGyro* _streamGyro;
+
+    OSDService *_serviceOSD;
 
     void manualUiSetup() override;
     void autoUiSetup() override;

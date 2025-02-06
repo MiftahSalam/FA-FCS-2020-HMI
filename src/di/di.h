@@ -2,6 +2,7 @@
 #define DI_H
 
 #include "src/domain/weapon_assign/repository/weapon_assignment_repository.h"
+#include "src/infra/core/osd/cms/osd_cms.h"
 #include "src/infra/store/fire_triangle/fire_triangle_repository.h"
 #include "src/infra/store/gun/gun_repository.h"
 #include "src/infra/store/osd/osd_repository.h"
@@ -10,8 +11,8 @@
 #include "src/usecase/gun/gun_firing_service.h"
 #include "src/usecase/engagement/weapon_track_assign_service.h"
 #include "src/usecase/gun/gun_manager_service.h"
-#include "src/usecase/osd/cms/osd_cms.h"
-#include "src/usecase/osd/stream/osd_stream.h"
+#include "src/infra/core/osd/stream/osd_stream.h"
+#include "src/usecase/osd/osd_service.h"
 #include "src/usecase/track/stream/track_stream.h"
 #include "src/usecase/gun/stream/gun_stream.h"
 #include "src/usecase/fire_triangle/stream/fire_triangle_stream.h"
@@ -27,19 +28,23 @@ public:
     static DI *getInstance();
 
     Configuration *getConfig() const;
+
     OSDCMS *getOSDCMSService() const;
     OSDStream *getServiceOSDStream() const;
     OSDRepository *getRepoOSD() const;
+
     GunRepository *getRepoGun() const;
     TrackRepository *getRepoTrack() const;
     FireTriangleRepository *getRepoFireTriangle() const;
     WeaponTrackAssignmentRepository *getRepoTrackWeaponAssign() const;
     EngagementRepository *getRepoEngagementData() const;
+
     TrackStream *getServiceTrackStream() const;
     GunStream *getServiceGunStream() const;
     FireTriangleStream *getServiceFireTriangle() const;
     EngagementStream *getServiceEngagementStream() const;
 
+    OSDService *getServiceOSD() const;
     GunManagerService *getServiceGunManager() const;
     WeaponAssignService *getServiceWeaponAssign() const;
     WeaponTrackAssignService *getServiceWeaponTrackAssign() const;
@@ -62,6 +67,7 @@ private:
     EngagementRepository *repoEngagement;
 
     OSDCMS *serviceOSDCMS;
+    OSDService *serviceOSD;
     GunManagerService *serviceGunManager;
     WeaponAssignService *serviceWeaponAssign;
     GunFiringService *serviceWeaponFiring;

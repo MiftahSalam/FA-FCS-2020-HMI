@@ -3,8 +3,7 @@
 
 #include <QWidget>
 
-#include "src/usecase/osd/cms/osd_cms_input_mode.h"
-#include "src/usecase/osd/stream/osd_stream_wind.h"
+#include "src/usecase/osd/osd_service.h"
 #include "src/view/panel/osd/frame_osd_base.h"
 #include "src/view/shared/frame_text_input.h"
 
@@ -19,7 +18,7 @@ struct OSDWindProp
     TextInputProp direction;
 };
 
-class FrameOSDWind : public QWidget, public FrameOSDBase<WindModel, WindModel>
+class FrameOSDWind : public QWidget, public FrameOSDBase<WindStreamModel, WindResponseModel>
 {
     Q_OBJECT
 
@@ -31,9 +30,9 @@ public:
     void resetModeIndex() override;
 
 public slots:
-    void onModeChangeResponse(const QString datafisis, BaseResponse<InputModeModel> resp, bool needConfirm) override;
-    void onDataResponse(BaseResponse<WindModel> data) override;
-    void onStreamReceive(WindModel model) override;
+    void onModeChangeResponse(const QString datafisis, BaseResponse<InputModeResponseModel> resp, bool needConfirm) override;
+    void onDataResponse(WindResponseModel data) override;
+    void onStreamReceive(WindStreamModel model) override;
     //added by riyadhi
     void onUpdateWindAutoUi();
 
@@ -50,9 +49,8 @@ private slots:
 
 private:
     Ui::FrameOSDWind *ui;
-    OSDCMSWindData *_cmsWind;
-    OSDCMSInputMode *_cmsMode;
-    OSDStreamWind* _streamWind;
+
+    OSDService *_serviceOSD;
 
     // FrameOSDBase interface
     void manualUiSetup() override;

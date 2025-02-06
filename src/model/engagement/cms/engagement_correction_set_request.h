@@ -1,9 +1,9 @@
 #ifndef ENGAGEMENTCORRECTIONSETREQUEST_H
 #define ENGAGEMENTCORRECTIONSETREQUEST_H
 
-#include "src/model/base_request.h"
+#include "src/infra/core/base_request.h"
 
-class EngagementCorrectionSetRequest: public BaseModel<EngagementCorrectionSetRequest>
+class EngagementCorrectionSetRequest: public BaseModel
 {
 public:
     EngagementCorrectionSetRequest();
