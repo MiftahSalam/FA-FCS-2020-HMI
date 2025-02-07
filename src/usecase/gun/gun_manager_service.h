@@ -3,9 +3,9 @@
 
 #include "src/domain/gun/repository/gun_feedback_repository.h"
 #include "src/shared/config/gun_cms_config.h"
-#include "src/infra/core/gun/cms/mode/gun_command_barrel_mode_service.h"
 #include "src/infra/core/gun/cms/barrel/gun_command_barrel_service.h"
 #include "src/infra/core/gun/cms/status/gun_command_status_service.h"
+#include "src/usecase/gun/gun_barrel_control_mode_service.h"
 #include <QObject>
 
 class GunManagerService : public QObject
@@ -27,10 +27,12 @@ public:
     GunManagerService(GunManagerService &other) = delete;
     void operator=(const GunManagerService &) = delete;
     static GunManagerService *getInstance(
-            QObject *parent = nullptr,
-            GunCmsConfig *cmsConfig = nullptr,
-            GunFeedbackRepository *feedbackRepo = nullptr,
-            GunCommandRepository *cmdRepo = nullptr);
+        QObject *parent = nullptr,
+        GunCmsConfig *cmsConfig = nullptr,
+        GunFeedbackRepository *feedbackRepo = nullptr,
+        GunCommandRepository *cmdRepo = nullptr,
+        GunBarrelControlModeService *modeService = nullptr
+        );
 
     OPERATIONAL_STATUS getCurrentOpStat() const;
     TECHNICAL_STATUS getCurrentTechStat() const;
@@ -53,26 +55,26 @@ public:
     void setStatusSiren(bool on);
 
 signals:
-    void OnBarrelModeResponse(BaseResponse<GunModeBarrelResponse> response, bool needConfirm);
+    void OnBarrelModeResponse(GunModeBarrelResponse response, bool needConfirm);
     void OnBarrelPositionResponse(BaseResponse<GunCommandBarrelResponse> response, bool needConfirm);
     void OnStatusResponse(BaseResponse<GunCommandStatusResponse> response);
     void OnBarrelModeCheck();
 
 protected:
     GunManagerService(
-            QObject *parent = nullptr,
-            GunCmsConfig *cmsConfig = nullptr,
-            GunFeedbackRepository *feedbackRepo = nullptr,
-            GunCommandBarrelModeService *modeService = nullptr,
-            GunCommandBarrelService *barrelService = nullptr,
-            GunCommandStatusService *statusService= nullptr
-            );
+        QObject *parent = nullptr,
+        GunCmsConfig *cmsConfig = nullptr,
+        GunFeedbackRepository *feedbackRepo = nullptr,
+        GunBarrelControlModeService *modeService = nullptr,
+        GunCommandBarrelService *barrelService = nullptr,
+        GunCommandStatusService *statusService= nullptr
+        );
 
 private:
     static GunManagerService *gunManagerService;
 
     GunCmsConfig *_cmsConfig;
-    GunCommandBarrelModeService *_modeService;
+    GunBarrelControlModeService *_modeService;
     GunCommandBarrelService *_barrelService;
     GunFeedbackRepository *_feedbackRepository;
     GunCommandStatusService *_statusService;

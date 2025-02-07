@@ -46,7 +46,7 @@ signals:
 private slots:
     void OnWeaponAssign(BaseResponse<TrackAssignResponse> resp, bool assign);
     void onAssignModeChange(const QString &weapon, const WeaponAssign::WeaponAssignMode &mode);
-    void onGunModeChange(BaseResponse<GunModeBarrelResponse> resp, bool needConfirm);
+    void onGunModeChange(GunModeBarrelResponse resp, bool needConfirm);
     void checkGunOfflineMode();
     void OnTimeout();
 

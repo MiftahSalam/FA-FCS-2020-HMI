@@ -45,12 +45,12 @@ void FrameGunControlBarrel::setup()
     updateMode();
 }
 
-void FrameGunControlBarrel::onModeChangeResponse(BaseResponse<GunModeBarrelResponse> resp, bool needConfirm)
+void FrameGunControlBarrel::onModeChangeResponse(GunModeBarrelResponse resp, bool needConfirm)
 {
 #ifdef USE_LOG4QT
-    logger()->debug() << Q_FUNC_INFO << " -> resp code: " << resp.getHttpCode()
-                      << ", resp msg: " << resp.getMessage()
-                      << ", barrel mode manual: " << resp.getData().getManualMode()
+    logger()->debug() << Q_FUNC_INFO << " -> resp code: " << resp.err().getCode()
+                      << ", resp msg: " << resp.err().getMessage()
+                      << ", barrel mode manual: " << resp.getManualMode()
                       << ", needConfirm: " << needConfirm;
 #else
     qDebug() << Q_FUNC_INFO << "resp code:" << resp.getHttpCode() << "resp msg:" << resp.getMessage();
@@ -58,11 +58,11 @@ void FrameGunControlBarrel::onModeChangeResponse(BaseResponse<GunModeBarrelRespo
     qDebug() << Q_FUNC_INFO << "resp code:" << "resp barrel mode manual: " << resp.getData().getManualMode();
 #endif
 
-    if (resp.getHttpCode() != 0)
+    if (resp.err().getCode() != 0)
     {
         if (needConfirm)
         {
-            QMessageBox::warning(this, "Request Error", QString("Failed to input gun mode with error: %1").arg(resp.getMessage()));
+            QMessageBox::warning(this, "Request Error", QString("Failed to input gun mode with error: %1").arg(resp.err().getMessage()));
         }
 
         //        return;

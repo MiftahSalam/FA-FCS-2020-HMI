@@ -40,11 +40,13 @@ SOURCES += \
     src/domain/weapon_assign/entity/weapon_assign_entity.cpp \
     src/infra/core/gun/cms/barrel/gun_command_barrel_request.cpp \
     src/infra/core/gun/cms/barrel/gun_command_barrel_response.cpp \
+    src/infra/core/gun/cms/gun_base_model.cpp \
+    src/infra/core/gun/cms/gun_cms.cpp \
+    src/infra/core/gun/cms/mode/gun_cms_command_barrel_mode.cpp \
     src/infra/core/gun/cms/mode/gun_mode_barrel_request.cpp \
     src/infra/core/gun/cms/mode/gun_mode_barrel_response.cpp \
     src/infra/core/gun/cms/status/gun_command_status_request.cpp \
     src/infra/core/gun/cms/status/gun_command_status_response.cpp \
-    src/infra/core/gun/cms/mode/gun_command_barrel_mode_service.cpp \
     src/infra/core/gun/cms/barrel/gun_command_barrel_service.cpp \
     src/infra/core/gun/cms/status/gun_command_status_service.cpp \
     src/infra/core/osd/cms/osd_cms.cpp \
@@ -150,6 +152,7 @@ SOURCES += \
     src/usecase/engagement/weapon_track_assign_service.cpp \
     src/usecase/fire_triangle/stream/fire_triangle_service.cpp \
     src/usecase/fire_triangle/stream/fire_triangle_stream.cpp \
+    src/usecase/gun/gun_barrel_control_mode_service.cpp \
     src/usecase/gun/gun_firing_service.cpp \
     src/usecase/gun/gun_manager_service.cpp \
     src/usecase/gun/stream/gun_coverage_stream.cpp \
@@ -248,11 +251,13 @@ HEADERS += \
     src/infra/core/base_response.h \
     src/infra/core/gun/cms/barrel/gun_command_barrel_request.h \
     src/infra/core/gun/cms/barrel/gun_command_barrel_response.h \
+    src/infra/core/gun/cms/gun_base_model.h \
+    src/infra/core/gun/cms/gun_cms.h \
+    src/infra/core/gun/cms/mode/gun_cms_command_barrel_mode.h \
     src/infra/core/gun/cms/mode/gun_mode_barrel_request.h \
     src/infra/core/gun/cms/mode/gun_mode_barrel_response.h \
     src/infra/core/gun/cms/status/gun_command_status_request.h \
     src/infra/core/gun/cms/status/gun_command_status_response.h \
-    src/infra/core/gun/cms/mode/gun_command_barrel_mode_service.h \
     src/infra/core/gun/cms/barrel/gun_command_barrel_service.h \
     src/infra/core/gun/cms/status/gun_command_status_service.h \
     src/infra/core/osd/cms/osd_cms.h \
@@ -363,6 +368,7 @@ HEADERS += \
     src/usecase/engagement/weapon_track_assign_service.h \
     src/usecase/fire_triangle/stream/fire_triangle_service.h \
     src/usecase/fire_triangle/stream/fire_triangle_stream.h \
+    src/usecase/gun/gun_barrel_control_mode_service.h \
     src/usecase/gun/gun_firing_service.h \
     src/usecase/gun/gun_manager_service.h \
     src/usecase/gun/stream/gun_coverage_stream.h \

@@ -78,7 +78,7 @@ void GunFiringService::onAssignModeChange(const QString &weapon, const WeaponAss
     }
 }
 
-void GunFiringService::onGunModeChange(BaseResponse<GunModeBarrelResponse> resp, bool needConfirm)
+void GunFiringService::onGunModeChange(GunModeBarrelResponse resp, bool needConfirm)
 {
     Q_UNUSED(resp);
     Q_UNUSED(needConfirm);

@@ -30,7 +30,7 @@ public:
     void setup();
 
 public slots:
-    void onModeChangeResponse(BaseResponse<GunModeBarrelResponse> resp, bool needConfirm);
+    void onModeChangeResponse(GunModeBarrelResponse resp, bool needConfirm);
     void onBarrelDataResponse(BaseResponse<GunCommandBarrelResponse> resp, bool needConfirm);
 
 signals:
