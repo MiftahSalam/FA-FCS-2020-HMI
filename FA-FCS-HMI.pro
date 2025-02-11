@@ -45,10 +45,10 @@ SOURCES += \
     src/infra/core/gun/cms/mode/gun_cms_command_barrel_mode.cpp \
     src/infra/core/gun/cms/mode/gun_mode_barrel_request.cpp \
     src/infra/core/gun/cms/mode/gun_mode_barrel_response.cpp \
+    src/infra/core/gun/cms/status/gun_cms_command_status.cpp \
     src/infra/core/gun/cms/status/gun_command_status_request.cpp \
     src/infra/core/gun/cms/status/gun_command_status_response.cpp \
     src/infra/core/gun/cms/barrel/gun_command_barrel_service.cpp \
-    src/infra/core/gun/cms/status/gun_command_status_service.cpp \
     src/infra/core/osd/cms/osd_cms.cpp \
     src/infra/core/osd/cms/input_mode/osd_cms_input_mode.cpp \
     src/infra/core/osd/cms/input_mode/osd_input_mode_request.cpp \
@@ -256,10 +256,10 @@ HEADERS += \
     src/infra/core/gun/cms/mode/gun_cms_command_barrel_mode.h \
     src/infra/core/gun/cms/mode/gun_mode_barrel_request.h \
     src/infra/core/gun/cms/mode/gun_mode_barrel_response.h \
+    src/infra/core/gun/cms/status/gun_cms_command_status.h \
     src/infra/core/gun/cms/status/gun_command_status_request.h \
     src/infra/core/gun/cms/status/gun_command_status_response.h \
     src/infra/core/gun/cms/barrel/gun_command_barrel_service.h \
-    src/infra/core/gun/cms/status/gun_command_status_service.h \
     src/infra/core/osd/cms/osd_cms.h \
     src/infra/core/osd/cms/input_mode/osd_cms_input_mode.h \
     src/infra/core/osd/cms/input_mode/osd_input_mode_request.h \

@@ -9,7 +9,7 @@ GunManagerService::GunManagerService(
     GunFeedbackRepository *feedbackRepo,
     GunBarrelControlModeService *modeService,
     GunCommandBarrelService *barrelService,
-    GunCommandStatusService *statusService ) : QObject(parent),
+    GunCmsCommandStatus *statusService ) : QObject(parent),
     _cmsConfig(cmsConfig),
     _modeService(modeService),
     _barrelService(barrelService),
@@ -174,7 +174,7 @@ GunManagerService *GunManagerService::getInstance(QObject *parent,
             new HttpClientWrapper(),
             cmsConfig,
             cmdRepo);
-        GunCommandStatusService *statusService = GunCommandStatusService::getInstance(
+        GunCmsCommandStatus *statusService = GunCmsCommandStatus::getInstance(
             new HttpClientWrapper(),
             cmsConfig,
             cmdRepo);
@@ -184,7 +184,7 @@ GunManagerService *GunManagerService::getInstance(QObject *parent,
         connect(modeService, &GunBarrelControlModeService::signal_modeCheck, gunManagerService, &GunManagerService::OnBarrelModeCheck);
         connect(modeService, &GunBarrelControlModeService::signal_processedResponse, gunManagerService, &GunManagerService::OnBarrelModeResponse);
         connect(barrelService, &GunCommandBarrelService::signal_setBarrelResponse, gunManagerService, &GunManagerService::OnBarrelPositionResponse);
-        connect(statusService, &GunCommandStatusService::signal_setStatusResponse, gunManagerService, &GunManagerService::OnStatusResponse);
+        connect(statusService, &GunCmsCommandStatus::signal_setStatusResponse, gunManagerService, &GunManagerService::OnStatusResponse);
     }
 
     return gunManagerService;

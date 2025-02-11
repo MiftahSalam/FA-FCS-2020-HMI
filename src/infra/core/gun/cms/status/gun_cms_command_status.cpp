@@ -1,4 +1,4 @@
-#include "gun_command_status_service.h"
+#include "gun_cms_command_status.h"
 #include "src/shared/common/errors/helper_err.h"
 #include "src/shared/common/errors/err_json_parse.h"
 #include "src/shared/common/errors/err_object_creation.h"
@@ -6,14 +6,14 @@
 
 #ifdef USE_LOG4QT
 #include <log4qt/logger.h>
-LOG4QT_DECLARE_STATIC_LOGGER(logger, GunCommandStatusService)
+LOG4QT_DECLARE_STATIC_LOGGER(logger, GunCmsCommandStatus)
 #else
 #include <QDebug>
 #endif
 
-GunCommandStatusService* GunCommandStatusService::instance = nullptr;
+GunCmsCommandStatus* GunCmsCommandStatus::instance = nullptr;
 
-GunCommandStatusService::GunCommandStatusService(
+GunCmsCommandStatus::GunCmsCommandStatus(
         HttpClientWrapper *parent,
         GunCmsConfig *cmsConfig,
         GunCommandRepository *repoGunCmd
@@ -24,7 +24,7 @@ GunCommandStatusService::GunCommandStatusService(
     }
 }
 
-void GunCommandStatusService::onReplyFinished()
+void GunCmsCommandStatus::onReplyFinished()
 {
     QNetworkReply *objSender = dynamic_cast<QNetworkReply *>(sender());
     QByteArray respRaw = objSender->readAll();
@@ -58,7 +58,7 @@ void GunCommandStatusService::onReplyFinished()
     objSender->deleteLater();
 }
 
-GunCommandStatusService *GunCommandStatusService::getInstance(
+GunCmsCommandStatus *GunCmsCommandStatus::getInstance(
         HttpClientWrapper *httpClient = nullptr,
         GunCmsConfig *cmsConfig,
         GunCommandRepository *repoGunCmd
@@ -77,18 +77,18 @@ GunCommandStatusService *GunCommandStatusService::getInstance(
             throw ErrObjectCreation();
         }
 
-        instance = new GunCommandStatusService(httpClient, cmsConfig, repoGunCmd);
+        instance = new GunCmsCommandStatus(httpClient, cmsConfig, repoGunCmd);
     }
 
     return instance;
 }
 
-const GunStatusCommandEntity *GunCommandStatusService::getCurrentStatus() const
+const GunStatusCommandEntity *GunCmsCommandStatus::getCurrentStatus() const
 {
     return _repoGunCmd->GetStatus();
 }
 
-void GunCommandStatusService::setStatus(GunCommandStatusRequest request)
+void GunCmsCommandStatus::setStatus(GunCommandStatusRequest request)
 {
     /*
     _repoGunCmd->SetStatus(GunStatusCommandEntity(
@@ -102,16 +102,16 @@ void GunCommandStatusService::setStatus(GunCommandStatusRequest request)
     sendStatus(request);
 }
 
-void GunCommandStatusService::sendStatus(GunCommandStatusRequest request)
+void GunCmsCommandStatus::sendStatus(GunCommandStatusRequest request)
 {
     QNetworkRequest httpReq = QNetworkRequest(cfgCms->getInstance("")->getStatusUrl());
     httpReq.setHeader(QNetworkRequest::ContentTypeHeader, "application/json");
 
     auto httpResponse = httpClient.post(httpReq, request.toJSON());
-    connect(httpResponse, &QNetworkReply::finished, this, &GunCommandStatusService::onReplyFinished);
+    connect(httpResponse, &QNetworkReply::finished, this, &GunCmsCommandStatus::onReplyFinished);
 }
 
-void GunCommandStatusService::setStatusMount(bool on)
+void GunCmsCommandStatus::setStatusMount(bool on)
 {
     //    _repoGunCmd->SetMount(on);
     auto curStatus = _repoGunCmd->GetStatus();
@@ -124,7 +124,7 @@ void GunCommandStatusService::setStatusMount(bool on)
                    ));
 }
 
-void GunCommandStatusService::setStatusSingleShot(bool on)
+void GunCmsCommandStatus::setStatusSingleShot(bool on)
 {
     //    _repoGunCmd->SetSingleShot(on);
     auto curStatus = _repoGunCmd->GetStatus();
@@ -137,7 +137,7 @@ void GunCommandStatusService::setStatusSingleShot(bool on)
                    ));
 }
 
-void GunCommandStatusService::setStatusFire(bool on)
+void GunCmsCommandStatus::setStatusFire(bool on)
 {
     //    _repoGunCmd->SetFire(on);
     auto curStatus = _repoGunCmd->GetStatus();
@@ -150,7 +150,7 @@ void GunCommandStatusService::setStatusFire(bool on)
                    ));
 }
 
-void GunCommandStatusService::setStatusProxFuze(bool on)
+void GunCmsCommandStatus::setStatusProxFuze(bool on)
 {
     //    _repoGunCmd->SetProximity(on);
     auto curStatus = _repoGunCmd->GetStatus();
@@ -163,7 +163,7 @@ void GunCommandStatusService::setStatusProxFuze(bool on)
                    ));
 }
 
-void GunCommandStatusService::setStatusSiren(bool on)
+void GunCmsCommandStatus::setStatusSiren(bool on)
 {
     //    _repoGunCmd->SetSiren(on);
     auto curStatus = _repoGunCmd->GetStatus();
@@ -176,7 +176,7 @@ void GunCommandStatusService::setStatusSiren(bool on)
                    ));
 }
 
-BaseResponse<GunCommandStatusResponse> GunCommandStatusService::toResponse(QByteArray raw)
+BaseResponse<GunCommandStatusResponse> GunCmsCommandStatus::toResponse(QByteArray raw)
 {
     try {
         QJsonObject respObj = Utils::byteArrayToJsonObject(raw);
@@ -233,7 +233,7 @@ BaseResponse<GunCommandStatusResponse> GunCommandStatusService::toResponse(QByte
 
 }
 
-BaseResponse<GunCommandStatusResponse> GunCommandStatusService::errorResponse(QNetworkReply::NetworkError err)
+BaseResponse<GunCommandStatusResponse> GunCmsCommandStatus::errorResponse(QNetworkReply::NetworkError err)
 {
     GunCommandStatusResponse model;
     try {

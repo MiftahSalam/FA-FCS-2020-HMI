@@ -9,13 +9,13 @@
 #include "src/shared/config/gun_cms_config.h"
 #include <QObject>
 
-class GunCommandStatusService : public HttpClientWrapper
+class GunCmsCommandStatus : public HttpClientWrapper
 {
     Q_OBJECT
 public:
-    GunCommandStatusService(GunCommandStatusService &other) = delete;
-    void operator=(const GunCommandStatusService&) = delete;
-    static GunCommandStatusService* getInstance(
+    GunCmsCommandStatus(GunCmsCommandStatus &other) = delete;
+    void operator=(const GunCmsCommandStatus&) = delete;
+    static GunCmsCommandStatus* getInstance(
             HttpClientWrapper *httpClient,
             GunCmsConfig *cmsConfig = nullptr,
             GunCommandRepository *repoGunCmd = nullptr
@@ -33,7 +33,7 @@ signals:
     void signal_setStatusResponse(BaseResponse<GunCommandStatusResponse> response);
 
 protected:
-    GunCommandStatusService(
+    GunCmsCommandStatus(
             HttpClientWrapper *parent = nullptr,
             GunCmsConfig *cmsConfig = nullptr,
             GunCommandRepository *repoGunCmd = nullptr
@@ -43,7 +43,7 @@ private slots:
     void onReplyFinished() override;
 
 private:
-    static GunCommandStatusService *instance;
+    static GunCmsCommandStatus *instance;
     GunCmsConfig *cfgCms;
     GunCommandRepository* _repoGunCmd;
 
