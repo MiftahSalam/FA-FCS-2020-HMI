@@ -57,17 +57,21 @@ public:
 signals:
     void OnBarrelModeResponse(GunModeBarrelResponse response, bool needConfirm);
     void OnBarrelPositionResponse(BaseResponse<GunCommandBarrelResponse> response, bool needConfirm);
-    void OnStatusResponse(BaseResponse<GunCommandStatusResponse> response);
+    void OnStatusResponse(GunCommandStatusResponse response);
     void OnBarrelModeCheck();
+
+private slots:
+    void updateGunCommandStatus(BaseResponse<GunCommandStatusResponse> resp);
 
 protected:
     GunManagerService(
         QObject *parent = nullptr,
         GunCmsConfig *cmsConfig = nullptr,
         GunFeedbackRepository *feedbackRepo = nullptr,
+        GunCommandRepository *cmdRepo = nullptr,
         GunBarrelControlModeService *modeService = nullptr,
         GunCommandBarrelService *barrelService = nullptr,
-        GunCmsCommandStatus *statusService= nullptr
+        GunCmsCommandStatus *statusCms = nullptr
         );
 
 private:
@@ -77,7 +81,8 @@ private:
     GunBarrelControlModeService *_modeService;
     GunCommandBarrelService *_barrelService;
     GunFeedbackRepository *_feedbackRepository;
-    GunCmsCommandStatus *_statusService;
+    GunCmsCommandStatus *_statusCms;
+    GunCommandRepository *_repoGunCmd;
 
     OPERATIONAL_STATUS currentOpStat;
     TECHNICAL_STATUS currentTechStat;

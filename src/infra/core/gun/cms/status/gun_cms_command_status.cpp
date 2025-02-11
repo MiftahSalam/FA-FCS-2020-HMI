@@ -1,6 +1,6 @@
 #include "gun_cms_command_status.h"
+#include "src/shared/common/errors/err_http.h"
 #include "src/shared/common/errors/helper_err.h"
-#include "src/shared/common/errors/err_json_parse.h"
 #include "src/shared/common/errors/err_object_creation.h"
 #include "src/shared/utils/utils.h"
 
@@ -14,10 +14,8 @@ LOG4QT_DECLARE_STATIC_LOGGER(logger, GunCmsCommandStatus)
 GunCmsCommandStatus* GunCmsCommandStatus::instance = nullptr;
 
 GunCmsCommandStatus::GunCmsCommandStatus(
-        HttpClientWrapper *parent,
-        GunCmsConfig *cmsConfig,
-        GunCommandRepository *repoGunCmd
-        ): HttpClientWrapper{parent}, cfgCms(cmsConfig), _repoGunCmd(repoGunCmd)
+    HttpClientWrapper *parent,
+    GunCmsConfig *cmsConfig): HttpClientWrapper{parent}, cfgCms(cmsConfig)
 {
     if(parent == nullptr) {
         throw ErrObjectCreation();
@@ -37,21 +35,7 @@ void GunCmsCommandStatus::onReplyFinished()
     qDebug()<<Q_FUNC_INFO<<"err: "<<objSender->error();
 #endif
 
-    BaseResponse<GunCommandStatusResponse> resp = errorResponse(objSender->error());
-    if(resp.getHttpCode() != 0 || respRaw.isEmpty()) {
-        emit signal_setStatusResponse(resp);
-        return;
-    }
-
-    resp = toResponse(respRaw);
-
-    _repoGunCmd->SetStatus(GunStatusCommandEntity(
-                               resp.getData().getMount(),
-                               resp.getData().getSingleShot(),
-                               resp.getData().getFireOrder(),
-                               resp.getData().getProxFuze(),
-                               resp.getData().getSiren()
-                               ));
+    BaseResponse<GunCommandStatusResponse> resp = toResponse(objSender->error(), respRaw);
 
     emit signal_setStatusResponse(resp);
 
@@ -59,10 +43,8 @@ void GunCmsCommandStatus::onReplyFinished()
 }
 
 GunCmsCommandStatus *GunCmsCommandStatus::getInstance(
-        HttpClientWrapper *httpClient = nullptr,
-        GunCmsConfig *cmsConfig,
-        GunCommandRepository *repoGunCmd
-        )
+    HttpClientWrapper *httpClient = nullptr,
+    GunCmsConfig *cmsConfig)
 {
     if (instance == nullptr) {
         if(cmsConfig == nullptr) {
@@ -73,36 +55,13 @@ GunCmsCommandStatus *GunCmsCommandStatus::getInstance(
             throw ErrObjectCreation();
         }
 
-        if(repoGunCmd == nullptr) {
-            throw ErrObjectCreation();
-        }
-
-        instance = new GunCmsCommandStatus(httpClient, cmsConfig, repoGunCmd);
+        instance = new GunCmsCommandStatus(httpClient, cmsConfig);
     }
 
     return instance;
 }
 
-const GunStatusCommandEntity *GunCmsCommandStatus::getCurrentStatus() const
-{
-    return _repoGunCmd->GetStatus();
-}
-
-void GunCmsCommandStatus::setStatus(GunCommandStatusRequest request)
-{
-    /*
-    _repoGunCmd->SetStatus(GunStatusCommandEntity(
-                               request.getMount(),
-                               request.getSingleShot(),
-                               request.getFireOrder(),
-                               request.getProxFuze(),
-                               request.getSiren()
-                               ));
-    */
-    sendStatus(request);
-}
-
-void GunCmsCommandStatus::sendStatus(GunCommandStatusRequest request)
+void GunCmsCommandStatus::set(GunCommandStatusRequest request)
 {
     QNetworkRequest httpReq = QNetworkRequest(cfgCms->getInstance("")->getStatusUrl());
     httpReq.setHeader(QNetworkRequest::ContentTypeHeader, "application/json");
@@ -111,86 +70,28 @@ void GunCmsCommandStatus::sendStatus(GunCommandStatusRequest request)
     connect(httpResponse, &QNetworkReply::finished, this, &GunCmsCommandStatus::onReplyFinished);
 }
 
-void GunCmsCommandStatus::setStatusMount(bool on)
+void GunCmsCommandStatus::setStatus(GunCommandStatusRequest request)
 {
-    //    _repoGunCmd->SetMount(on);
-    auto curStatus = _repoGunCmd->GetStatus();
-    sendStatus(GunCommandStatusRequest(
-                   on,
-                   curStatus->single_shot(),
-                   curStatus->fire(),
-                   curStatus->proximity(),
-                   curStatus->siren()
-                   ));
+    set(request);
 }
 
-void GunCmsCommandStatus::setStatusSingleShot(bool on)
+BaseResponse<GunCommandStatusResponse> GunCmsCommandStatus::toResponse(QNetworkReply::NetworkError err, QByteArray raw)
 {
-    //    _repoGunCmd->SetSingleShot(on);
-    auto curStatus = _repoGunCmd->GetStatus();
-    sendStatus(GunCommandStatusRequest(
-                   curStatus->mount(),
-                   on,
-                   curStatus->fire(),
-                   curStatus->proximity(),
-                   curStatus->siren()
-                   ));
-}
-
-void GunCmsCommandStatus::setStatusFire(bool on)
-{
-    //    _repoGunCmd->SetFire(on);
-    auto curStatus = _repoGunCmd->GetStatus();
-    sendStatus(GunCommandStatusRequest(
-                   curStatus->mount(),
-                   curStatus->single_shot(),
-                   on,
-                   curStatus->proximity(),
-                   curStatus->siren()
-                   ));
-}
-
-void GunCmsCommandStatus::setStatusProxFuze(bool on)
-{
-    //    _repoGunCmd->SetProximity(on);
-    auto curStatus = _repoGunCmd->GetStatus();
-    sendStatus(GunCommandStatusRequest(
-                   curStatus->mount(),
-                   curStatus->single_shot(),
-                   curStatus->fire(),
-                   on,
-                   curStatus->siren()
-                   ));
-}
-
-void GunCmsCommandStatus::setStatusSiren(bool on)
-{
-    //    _repoGunCmd->SetSiren(on);
-    auto curStatus = _repoGunCmd->GetStatus();
-    sendStatus(GunCommandStatusRequest(
-                   curStatus->mount(),
-                   curStatus->single_shot(),
-                   curStatus->fire(),
-                   curStatus->proximity(),
-                   on
-                   ));
-}
-
-BaseResponse<GunCommandStatusResponse> GunCmsCommandStatus::toResponse(QByteArray raw)
-{
+    GunCommandStatusResponse model(false, false, false, false, false, false);
     try {
+        if (raw.isEmpty()) {
+            throw ErrHttpConnRefused();
+        }
+        ErrHelper::throwHttpError(err);
+
         QJsonObject respObj = Utils::byteArrayToJsonObject(raw);
         int respCode = respObj["code"].toInt();
         QString respMsg = respObj["message"].toString();
         QJsonObject respData = respObj["data"].toObject();
-        GunCommandStatusResponse model(
-                    respData["mount"].toBool(),
-                respData["single_shot"].toBool(),
-                respData["fire_order"].toBool(),
-                respData["not_fire_order"].toBool(),
-                respData["paralizing_proximity_fuze"].toBool(),
-                respData["siren_button"].toBool()
-                );
+
+        model = GunCommandStatusResponse::FromJsonObject(respData);
+        model.setErr(NoError());
+
         BaseResponse<GunCommandStatusResponse> resp(respCode, respMsg, model);
 
 #ifdef USE_LOG4QT
@@ -213,37 +114,14 @@ BaseResponse<GunCommandStatusResponse> GunCmsCommandStatus::toResponse(QByteArra
 #endif
 
         return resp;
-    } catch (ErrJsonParse &e) {
-#ifdef USE_LOG4QT
-        logger()->error()<<Q_FUNC_INFO<<" -> caught error: "<<e.getMessage();
-#else
-        qWarning()<<Q_FUNC_INFO<<"caught error: "<<e.getMessage();
-#endif
-    }  catch (...) {
-#ifdef USE_LOG4QT
-        logger()->error()<<Q_FUNC_INFO<<" -> caught unkbnown error";
-#else
-        qWarning()<<Q_FUNC_INFO<<"caught unkbnown error";
-#endif
-    }
-
-    ErrUnknown status;
-    GunCommandStatusResponse model;
-    return BaseResponse<GunCommandStatusResponse>(status.getCode(), status.getMessage(), model);
-
-}
-
-BaseResponse<GunCommandStatusResponse> GunCmsCommandStatus::errorResponse(QNetworkReply::NetworkError err)
-{
-    GunCommandStatusResponse model;
-    try {
-        ErrHelper::throwHttpError(err);
     } catch (BaseError &e) {
 #ifdef USE_LOG4QT
         logger()->error()<<Q_FUNC_INFO<<" -> caught error: "<<e.getMessage();
 #else
         qWarning()<<Q_FUNC_INFO<<"caught error: "<<e.getMessage();
 #endif
+        model.setErr(e);
+
         return BaseResponse<GunCommandStatusResponse>(e.getCode(), e.getMessage(), model);
     }  catch (...) {
 #ifdef USE_LOG4QT
@@ -251,11 +129,10 @@ BaseResponse<GunCommandStatusResponse> GunCmsCommandStatus::errorResponse(QNetwo
 #else
         qWarning()<<Q_FUNC_INFO<<"caught unkbnown error";
 #endif
+
         ErrUnknown status;
+        model.setErr(status);
+
         return BaseResponse<GunCommandStatusResponse>(status.getCode(), status.getMessage(), model);
     }
-
-    NoError status;
-    return BaseResponse<GunCommandStatusResponse>(status.getCode(), status.getMessage(), model);
-
 }

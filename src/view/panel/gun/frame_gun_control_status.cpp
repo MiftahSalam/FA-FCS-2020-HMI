@@ -33,19 +33,19 @@ void FrameGunControlStatus::setup()
     updateMode();
 }
 
-void FrameGunControlStatus::onStatusDataResponse(BaseResponse<GunCommandStatusResponse> resp)
+void FrameGunControlStatus::onStatusDataResponse(GunCommandStatusResponse resp)
 {
 #ifdef USE_LOG4QT
-    logger()->debug() << Q_FUNC_INFO << " -> resp code: " << resp.getHttpCode()
-                      << ", resp msg: " << resp.getMessage()
+    logger()->debug() << Q_FUNC_INFO << " -> resp code: " << resp.err().getCode()
+                      << ", resp msg: " << resp.err().getMessage()
                          ;
 #else
     qDebug() << Q_FUNC_INFO << "resp code:" << resp.getHttpCode() << "resp msg:" << resp.getMessage();
 #endif
 
-    if (resp.getHttpCode() != 0)
+    if (resp.err().getCode() != ERROR_NO.first)
     {
-        QMessageBox::critical(this, "Fatal Error Status Control", QString("Failed to change status data with error: %1").arg(resp.getMessage()));
+        QMessageBox::critical(this, "Fatal Error Status Control", QString("Failed to change status data with error: %1").arg(resp.err().getMessage()));
 
         ui->pushButtonControlMount->setChecked(previousStatus.getMount());
         ui->pushButtonControlSingleshoot->setChecked(previousStatus.getSingleShot());
@@ -56,11 +56,11 @@ void FrameGunControlStatus::onStatusDataResponse(BaseResponse<GunCommandStatusRe
         return;
     }
 
-    bool mount = resp.getData().getMount();
-    bool single = resp.getData().getSingleShot();
-    bool fire = resp.getData().getFireOrder();
-    bool prox_fuze = resp.getData().getProxFuze();
-    bool siren = resp.getData().getSiren();
+    bool mount = resp.getMount();
+    bool single = resp.getSingleShot();
+    bool fire = resp.getFireOrder();
+    bool prox_fuze = resp.getProxFuze();
+    bool siren = resp.getSiren();
 
     ui->pushButtonControlMount->setText( mount ? "On" : "Off");
     ui->pushButtonControlSingleshoot->setText( single ? "Single" : "Auto");
