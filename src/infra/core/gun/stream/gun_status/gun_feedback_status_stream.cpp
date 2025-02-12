@@ -13,36 +13,21 @@ LOG4QT_DECLARE_STATIC_LOGGER(logger, GunFeedbackStatusStream)
 GunFeedbackStatusStream *GunFeedbackStatusStream::gunFeedbackStream = nullptr;
 
 GunFeedbackStatusStream::GunFeedbackStatusStream(
-        TcpMessagingOpts *config,
-        GunFeedbackRepository *repoGunFback
-        ): cfg(config), repoGunFback(repoGunFback), currentErr(NoError())
+    TcpMessagingOpts *config): cfg(config), currentErr(NoError())
 {
     consumer = new TcpMessagingWrapper(this, config);
     connect(consumer, &TcpMessagingWrapper::signalForwardMessage, this, &GunFeedbackStatusStream::onDataReceived);
-
-    timer = new QTimer(this);
-    connect(timer, &QTimer::timeout, this, &GunFeedbackStatusStream::periodUpdate);
-    timer->start(1000);
 }
 
 void GunFeedbackStatusStream::onDataReceived(QByteArray data)
 {
+    GunFeedbackStatusModel model;
     try {
         /*
          * {"op_mode":true,"remote":false,"mount":false,"btemp":false,"grtst":false,"grtfr":false,"fire_mode":false,"blarc":false,"misalgn":false,"magazine":false}
          */
         QJsonObject respObj = Utils::byteArrayToJsonObject(data);
-        GunFeedbackStatusModel model(respObj["op_mode"].toBool(),
-                respObj["remote"].toBool(),
-                respObj["mount"].toBool(),
-                respObj["btemp"].toBool(),
-                respObj["grtst"].toBool(),
-                respObj["grtfr"].toBool(),
-                respObj["fire_mode"].toBool(),
-                respObj["blarc"].toBool(),
-                respObj["misalgn"].toBool(),
-                respObj["magazine"].toBool()
-                );
+        model = GunFeedbackStatusModel::fromJsonObject(respObj);
 
 #ifdef USE_LOG4QT
         logger()->trace()<<Q_FUNC_INFO<<" -> Gun Stats Data."
@@ -69,20 +54,6 @@ void GunFeedbackStatusStream::onDataReceived(QByteArray data)
         <<"misalrgn ->"<<model.getMissAlignment()
         <<"mag ->"<<model.getMagazine();
 #endif
-
-        repoGunFback->SetStatus(GunStatusFeedbackEntity(
-                                    model.getOpMode(),
-                                    model.getRemote(),
-                                    model.getMount(),
-                                    model.getBarrelTemperature(),
-                                    model.getGunReadyToStart(),
-                                    model.getGunReadyToFire(),
-                                    model.getFireMode(),
-                                    model.getBlindArc(),
-                                    model.getMissAlignment(),
-                                    model.getMagazine()
-                                    ));
-
         currentErr = NoError();
 
         emit signalDataProcessed(model);
@@ -92,29 +63,24 @@ void GunFeedbackStatusStream::onDataReceived(QByteArray data)
 #else
         qWarning()<<Q_FUNC_INFO<<"caught error: "<<e.getMessage();
 #endif
+        currentErr = e;
     }  catch (...) {
 #ifdef USE_LOG4QT
         logger()->error()<<Q_FUNC_INFO<<" -> caught unkbnown error";
 #else
         qWarning()<<Q_FUNC_INFO<<"caught unkbnown error";
 #endif
+        currentErr = ErrUnknown();
     }
-}
-
-void GunFeedbackStatusStream::periodUpdate()
-{
-    check();
 }
 
 void GunFeedbackStatusStream::handleError(const QString &err)
 {
-
+    Q_UNUSED(err);
 }
 
 GunFeedbackStatusStream *GunFeedbackStatusStream::getInstance(
-        TcpMessagingOpts *config = nullptr,
-        GunFeedbackRepository *repoGunFback = nullptr
-        )
+    TcpMessagingOpts *config = nullptr)
 {
     if(gunFeedbackStream == nullptr)
     {
@@ -123,19 +89,10 @@ GunFeedbackStatusStream *GunFeedbackStatusStream::getInstance(
             throw ErrObjectCreation();
         }
 
-        if(repoGunFback == nullptr) {
-            throw ErrObjectCreation();
-        }
-
-        gunFeedbackStream = new GunFeedbackStatusStream(config, repoGunFback);
+        gunFeedbackStream = new GunFeedbackStatusStream(config);
     }
 
     return gunFeedbackStream;
-}
-
-void GunFeedbackStatusStream::resetStatus()
-{
-    repoGunFback->SetStatus(GunStatusFeedbackEntity());
 }
 
 BaseError GunFeedbackStatusStream::check()

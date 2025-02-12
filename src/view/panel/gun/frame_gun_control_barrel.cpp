@@ -237,7 +237,7 @@ bool FrameGunControlBarrel::validateInput()
 
 FrameGunControlBarrel::BarrelLimit FrameGunControlBarrel::calculateBarrelLimit()
 {
-    float blind_arc = coverageStream->GetCoverage()->getBlindArc();
+    float blind_arc = gunService->getCoverage()->getBlindArc();
     float minBArc = 180.0 - (blind_arc / 2);
     float maxBArc = 180.0 + (blind_arc / 2);
     BarrelLimit limit;
@@ -272,11 +272,8 @@ void FrameGunControlBarrel::resetBarrel(bool needConfirm)
 void FrameGunControlBarrel::setupDI()
 {
     gunService = DI::getInstance()->getServiceGunManager();
-    statusStream = DI::getInstance()->getServiceGunStream()->getServiceGunFeedback();
-    coverageStream = DI::getInstance()->getServiceGunStream()->getServiceGunCoverage();
 
     connect(gunService, &GunManagerService::OnBarrelModeCheck, this, &FrameGunControlBarrel::onModeCheck);
     connect(gunService, &GunManagerService::OnBarrelModeResponse, this, &FrameGunControlBarrel::onModeChangeResponse);
     connect(gunService, &GunManagerService::OnBarrelPositionResponse, this, &FrameGunControlBarrel::onBarrelDataResponse);
-    connect(statusStream, &GunFeedbackStatusStream::signalDataProcessed, this, &FrameGunControlBarrel::onStatusStreamUpdate);
 }

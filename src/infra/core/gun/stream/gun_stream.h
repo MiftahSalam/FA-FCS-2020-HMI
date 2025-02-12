@@ -18,15 +18,15 @@ public:
         GunRepository *repoGun = nullptr
         );
 
-    GunCoverageStream *getServiceGunCoverage() const;
-    GunFeedbackStatusStream *getServiceGunFeedback() const;
-    GunFeedbackBarrelStream *getServiceGunBarrel() const;
+    GunCoverageStream *getStreamGunCoverage() const;
+    GunFeedbackStatusStream *getStreamGunStatus() const;
+    GunFeedbackBarrelStream *getStreamGunBarrel() const;
 
 private:
     MessagingTcpConfig *consumerConfig;
-    GunCoverageStream *serviceGunCoverage;
-    GunFeedbackStatusStream *serviceGunFBack;
-    GunFeedbackBarrelStream *serviceGunBarrel;
+    GunCoverageStream *streamGunCoverage;
+    GunFeedbackStatusStream *streamGunStatus;
+    GunFeedbackBarrelStream *streamGunBarrel;
 
 };
 

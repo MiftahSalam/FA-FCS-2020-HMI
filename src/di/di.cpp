@@ -20,6 +20,7 @@ DI::DI()
     serviceOSDStream = new OSDStream(nullptr, config->getTcpMessageConfig());
     serviceOSD = OSDService::getInstance(nullptr, repoOSD, serviceOSDCMS, serviceOSDStream);
     gunCmses = new GunCMS(nullptr, config->getGunCmsConfig());
+    serviceGunStream = new GunStream(nullptr, config->getTcpMessageConfig(), repoGun);
     serviceGunMode = GunBarrelControlModeService::getInstance(
         nullptr,
         repoGun->getRepoGunCmd(),
@@ -29,7 +30,9 @@ DI::DI()
         config->getGunCmsConfig(),
         repoGun->getRepoGunFeedback(),
         repoGun->getRepoGunCmd(),
-        serviceGunMode
+        repoGun->getRepoGunCoverage(),
+        serviceGunMode,
+        serviceGunStream
         );
     serviceWeaponAssign = WeaponAssignService::getInstance(nullptr, repoWeaponAssign);
     serviceWeaponTrackAssign = WeaponTrackAssignService::getInstance(
@@ -50,7 +53,6 @@ DI::DI()
 
     serviceTrackStream = new TrackStream(nullptr, config->getTcpMessageConfig(), config->getArpaConfig(), repoTrack);
 
-    serviceGunStream = new GunStream(nullptr, config->getTcpMessageConfig(), repoGun);
     serviceFireTriangle = new FireTriangleStream(nullptr, config->getTcpMessageConfig(), repoFireTriangle);
     serviceEngagementStream = new EngagementStream(nullptr, config->getTcpMessageConfig(), repoEngagement);
 }

@@ -7,8 +7,6 @@
 FrameGunDataMonitoring::FrameGunDataMonitoring(QWidget *parent) :
     QFrame(parent),
     ui(new Ui::FrameGunDataMonitoring),
-    gunStatusStream(DI::getInstance()->getServiceGunStream()->getServiceGunFeedback()),
-    gunBarrelStream(DI::getInstance()->getServiceGunStream()->getServiceGunBarrel()),
     gunManagerService(DI::getInstance()->getServiceGunManager())
 {
     ui->setupUi(this);
@@ -17,8 +15,8 @@ FrameGunDataMonitoring::FrameGunDataMonitoring(QWidget *parent) :
     connect(timer, &QTimer::timeout, this, &FrameGunDataMonitoring::onTimeout);
     timer->start(1000);
 
-    connect(gunStatusStream, &GunFeedbackStatusStream::signalDataProcessed, this, &FrameGunDataMonitoring::onStreamStatusReceive);
-    connect(gunBarrelStream, &GunFeedbackBarrelStream::signalDataProcessed, this, &FrameGunDataMonitoring::onStreamBarrelReceive);
+    connect(gunManagerService, &GunManagerService::signal_processedGunStatus, this, &FrameGunDataMonitoring::onStreamStatusReceive);
+    connect(gunManagerService, &GunManagerService::signal_processedGunBarrel, this, &FrameGunDataMonitoring::onStreamBarrelReceive);
 }
 
 FrameGunDataMonitoring::~FrameGunDataMonitoring()
@@ -124,7 +122,7 @@ void FrameGunDataMonitoring::onStreamBarrelReceive(GunFeedbackBarrelModel model)
     ui->labelGunStatAz->setText(QString::number(model.getAzimuth(),'f', 2));
     ui->labelGunStatEl->setText(QString::number(model.getElevation(),'f', 2));
 
-    auto gunBarrelError = gunBarrelStream->check();
+    auto gunBarrelError = gunManagerService->getGunBarrelError();
     if (gunBarrelError.getCode() == ERROR_NO.first){
         ui->labelGunStatAz->setStyleSheet(COLOR_OK_STYLESHEET);
         ui->labelGunStatEl->setStyleSheet(COLOR_OK_STYLESHEET);
@@ -142,8 +140,8 @@ void FrameGunDataMonitoring::onTimeout()
 
 void FrameGunDataMonitoring::updateTechStatus()
 {
-    auto gunStatusError = gunStatusStream->check();
-    auto gunBarrelError = gunBarrelStream->check();
+    auto gunStatusError = gunManagerService->getGunStatusError();
+    auto gunBarrelError = gunManagerService->getGunBarrelError();
 
     if (gunStatusError.getCode() == ERROR_NO.first && gunBarrelError.getCode() == ERROR_NO.first) {
         ui->labelGunStatTech->setText("Online");
@@ -153,19 +151,19 @@ void FrameGunDataMonitoring::updateTechStatus()
     } else {
         offlineUiSetup();
         gunManagerService->setTechStatus(GunManagerService::OFFLINE);
-        gunStatusStream->resetStatus();
+        gunManagerService->resetStatus();
     }
 }
 
 void FrameGunDataMonitoring::updateBarrelStatus()
 {
-    auto gunStatusError = gunStatusStream->check();
-    auto gunBarrelError = gunBarrelStream->check();
+    auto gunStatusError = gunManagerService->getGunStatusError();
+    auto gunBarrelError = gunManagerService->getGunBarrelError();
 
     if (gunStatusError.getCode() != ERROR_NO.first && gunBarrelError.getCode() != ERROR_NO.first) {
         notConnectedUiSetupBarrel();
 
-        gunBarrelStream->resetBarrel();
+        gunManagerService->resetBarrel(false);
 
         ui->labelGunStatAz->setText(QString::number(gunManagerService->getCurrentBarrel()->azimuth()));
         ui->labelGunStatEl->setText(QString::number(gunManagerService->getCurrentBarrel()->elevation()));

@@ -1,46 +1,40 @@
 #ifndef GUN_COVERAGE_STREAM_H
 #define GUN_COVERAGE_STREAM_H
 
-#include "src/domain/gun/repository/gun_coverage_repository.h"
+#include "src/infra/messaging/IOSDStream.h"
 #include "src/infra/messaging/tcp/tcp_messaging_wrapper.h"
 #include "src/infra/core/gun/stream/gun_coverage/gun_coverage_model.h"
 #include "src/shared/config/messaging_tcp_config.h"
-#include "src/infra/core/gun/stream/gun_stream_base.h"
 
 #include <QObject>
 
-class GunCoverageStream : public QObject, public GunStreamBase<GunCoverageModel>
+class GunCoverageStream : public QObject, public IOSDStream<GunCoverageModel>
 {
     Q_OBJECT
 public:
     GunCoverageStream(GunCoverageStream &other) = delete;
     void operator=(const GunCoverageStream&) = delete;
     static GunCoverageStream *getInstance(
-        TcpMessagingOpts *config,
-        GunCoverageRepository *_repoGunCov
-        );
+        TcpMessagingOpts *config);
 
     BaseError check() override;
-    const GunCoverageEntity* GetCoverage() const;
 
 signals:
     void signalDataProcessed(GunCoverageModel data) override;
 
 protected:
     GunCoverageStream(
-        TcpMessagingOpts *config = nullptr,
-        GunCoverageRepository *repoGunCov = nullptr
+        TcpMessagingOpts *config = nullptr
         );
 
 private slots:
     void onDataReceived(QByteArray data) override;
-    void periodUpdate() override;
 
 private:
     static GunCoverageStream *gunCoverageStream;
+
     TcpMessagingWrapper *consumer;
     TcpMessagingOpts *cfg;
-    GunCoverageRepository* _repoGunCov;
 
     BaseError currentErr;
 

@@ -55,8 +55,6 @@ private:
     };
 
     GunManagerService *gunService;
-    GunFeedbackStatusStream *statusStream;
-    GunCoverageStream *coverageStream;
 
     GunBarrelModeEntity::MODE currentMode;
 

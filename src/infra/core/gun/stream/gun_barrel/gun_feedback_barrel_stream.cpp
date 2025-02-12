@@ -13,25 +13,18 @@ LOG4QT_DECLARE_STATIC_LOGGER(logger, GunFeedbackBarrelStream)
 GunFeedbackBarrelStream *GunFeedbackBarrelStream::gunBarrelStream = nullptr;
 
 GunFeedbackBarrelStream::GunFeedbackBarrelStream(
-        TcpMessagingOpts *config,
-        GunFeedbackRepository *repoGunFback
-        ): cfg(config), repoGunFback(repoGunFback), currentErr(NoError())
+    TcpMessagingOpts *config): cfg(config), currentErr(NoError())
 {
     consumer = new TcpMessagingWrapper(this, config);
     connect(consumer, &TcpMessagingWrapper::signalForwardMessage, this, &GunFeedbackBarrelStream::onDataReceived);
-
-    timer = new QTimer(this);
-    connect(timer, &QTimer::timeout, this, &GunFeedbackBarrelStream::periodUpdate);
-    timer->start(1000);
 }
 
 void GunFeedbackBarrelStream::onDataReceived(QByteArray data)
 {
+    GunFeedbackBarrelModel model;
     try {
         QJsonObject respObj = Utils::byteArrayToJsonObject(data);
-        GunFeedbackBarrelModel model(respObj["azimuth"].toDouble(),
-                respObj["elevation"].toDouble()
-                );
+        model = GunFeedbackBarrelModel::fromJsonObject(respObj);
 
 #ifdef USE_LOG4QT
         logger()->trace()<<Q_FUNC_INFO<<" -> Gun barrel."
@@ -42,11 +35,6 @@ void GunFeedbackBarrelStream::onDataReceived(QByteArray data)
         qDebug()<<Q_FUNC_INFO<<"Gun Barrel Data. Azimuth"<<model.getAzimuth()<<"Elevation"<<model.getElevation();
 #endif
 
-        repoGunFback->SetBarrel(
-                    model.getAzimuth(),
-                    model.getElevation()
-                    );
-
         currentErr = NoError();
 
         emit signalDataProcessed(model);
@@ -56,29 +44,24 @@ void GunFeedbackBarrelStream::onDataReceived(QByteArray data)
 #else
         qWarning()<<Q_FUNC_INFO<<"caught error: "<<e.getMessage();
 #endif
+        currentErr = e;
     }  catch (...) {
 #ifdef USE_LOG4QT
         logger()->error()<<Q_FUNC_INFO<<" -> caught unkbnown error";
 #else
         qWarning()<<Q_FUNC_INFO<<"caught unkbnown error";
 #endif
+        currentErr = ErrUnknown();
     }
-}
-
-void GunFeedbackBarrelStream::periodUpdate()
-{
-    check();
 }
 
 void GunFeedbackBarrelStream::handleError(const QString &err)
 {
-
+    Q_UNUSED(err);
 }
 
 GunFeedbackBarrelStream *GunFeedbackBarrelStream::getInstance(
-        TcpMessagingOpts *config = nullptr,
-        GunFeedbackRepository *repoGunFback = nullptr
-        )
+    TcpMessagingOpts *config = nullptr)
 {
     if(gunBarrelStream == nullptr)
     {
@@ -87,19 +70,10 @@ GunFeedbackBarrelStream *GunFeedbackBarrelStream::getInstance(
             throw ErrObjectCreation();
         }
 
-        if(repoGunFback == nullptr) {
-            throw ErrObjectCreation();
-        }
-
-        gunBarrelStream = new GunFeedbackBarrelStream(config, repoGunFback);
+        gunBarrelStream = new GunFeedbackBarrelStream(config);
     }
 
     return gunBarrelStream;
-}
-
-void GunFeedbackBarrelStream::resetBarrel()
-{
-    repoGunFback->SetBarrel(0.,0.);
 }
 
 BaseError GunFeedbackBarrelStream::check()

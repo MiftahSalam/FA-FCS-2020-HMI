@@ -31,8 +31,6 @@ private slots:
 
 private:
     Ui::FrameGunDataMonitoring *ui;
-    GunFeedbackStatusStream* gunStatusStream;
-    GunFeedbackBarrelStream* gunBarrelStream;
     GunManagerService* gunManagerService;
 
     void updateTechStatus();
