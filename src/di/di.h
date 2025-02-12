@@ -15,7 +15,7 @@
 #include "src/infra/core/osd/stream/osd_stream.h"
 #include "src/usecase/osd/osd_service.h"
 #include "src/usecase/track/stream/track_stream.h"
-#include "src/usecase/gun/stream/gun_stream.h"
+#include "src/infra/core/gun/stream/gun_stream.h"
 #include "src/usecase/fire_triangle/stream/fire_triangle_stream.h"
 #include "src/usecase/weapon_assign/weapon_assign_service.h"
 #include "src/infra/store/engagement/engagement_repository.h"

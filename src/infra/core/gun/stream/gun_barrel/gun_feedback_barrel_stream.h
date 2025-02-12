@@ -3,9 +3,9 @@
 
 #include "src/domain/gun/repository/gun_feedback_repository.h"
 #include "src/infra/messaging/tcp/tcp_messaging_wrapper.h"
-#include "src/model/gun/gun_feedback_barrel_model.h"
+#include "src/infra/core/gun/stream/gun_barrel/gun_feedback_barrel_model.h"
 #include "src/shared/config/messaging_tcp_config.h"
-#include "src/usecase/gun/stream/gun_stream_base.h"
+#include "src/infra/core/gun/stream/gun_stream_base.h"
 
 #include <QObject>
 

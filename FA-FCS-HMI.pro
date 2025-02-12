@@ -49,6 +49,13 @@ SOURCES += \
     src/infra/core/gun/cms/status/gun_cms_command_status.cpp \
     src/infra/core/gun/cms/status/gun_command_status_request.cpp \
     src/infra/core/gun/cms/status/gun_command_status_response.cpp \
+    src/infra/core/gun/stream/gun_coverage/gun_coverage_model.cpp \
+    src/infra/core/gun/stream/gun_barrel/gun_feedback_barrel_model.cpp \
+    src/infra/core/gun/stream/gun_status/gun_feedback_status_model.cpp \
+    src/infra/core/gun/stream/gun_coverage/gun_coverage_stream.cpp \
+    src/infra/core/gun/stream/gun_barrel/gun_feedback_barrel_stream.cpp \
+    src/infra/core/gun/stream/gun_status/gun_feedback_status_stream.cpp \
+    src/infra/core/gun/stream/gun_stream.cpp \
     src/infra/core/osd/cms/osd_cms.cpp \
     src/infra/core/osd/cms/input_mode/osd_cms_input_mode.cpp \
     src/infra/core/osd/cms/input_mode/osd_input_mode_request.cpp \
@@ -119,9 +126,6 @@ SOURCES += \
     src/model/engagement/cms/track_assign_response.cpp \
     src/model/engagement/engagement_data_model.cpp \
     src/model/fire_triangle/fire_triangle_model.cpp \
-    src/model/gun/gun_coverage_model.cpp \
-    src/model/gun/gun_feedback_barrel_model.cpp \
-    src/model/gun/gun_feedback_status_model.cpp \
     src/model/track/arpa/track_arpa_model.cpp \
     src/shared/common/errors/err_amqp.cpp \
     src/shared/common/errors/err_base.cpp \
@@ -155,10 +159,6 @@ SOURCES += \
     src/usecase/gun/gun_barrel_control_mode_service.cpp \
     src/usecase/gun/gun_firing_service.cpp \
     src/usecase/gun/gun_manager_service.cpp \
-    src/usecase/gun/stream/gun_coverage_stream.cpp \
-    src/usecase/gun/stream/gun_feedback_barrel_stream.cpp \
-    src/usecase/gun/stream/gun_feedback_status_stream.cpp \
-    src/usecase/gun/stream/gun_stream.cpp \
     src/usecase/osd/osd_service.cpp \
     src/usecase/track/stream/arpa/track_arpa_stream.cpp \
     src/usecase/track/stream/track_stream.cpp \
@@ -260,6 +260,14 @@ HEADERS += \
     src/infra/core/gun/cms/status/gun_cms_command_status.h \
     src/infra/core/gun/cms/status/gun_command_status_request.h \
     src/infra/core/gun/cms/status/gun_command_status_response.h \
+    src/infra/core/gun/stream/gun_coverage/gun_coverage_model.h \
+    src/infra/core/gun/stream/gun_barrel/gun_feedback_barrel_model.h \
+    src/infra/core/gun/stream/gun_status/gun_feedback_status_model.h \
+    src/infra/core/gun/stream/gun_coverage/gun_coverage_stream.h \
+    src/infra/core/gun/stream/gun_barrel/gun_feedback_barrel_stream.h \
+    src/infra/core/gun/stream/gun_status/gun_feedback_status_stream.h \
+    src/infra/core/gun/stream/gun_stream.h \
+    src/infra/core/gun/stream/gun_stream_base.h \
     src/infra/core/osd/cms/osd_cms.h \
     src/infra/core/osd/cms/input_mode/osd_cms_input_mode.h \
     src/infra/core/osd/cms/input_mode/osd_input_mode_request.h \
@@ -333,9 +341,6 @@ HEADERS += \
     src/model/engagement/cms/track_assign_response.h \
     src/model/engagement/engagement_data_model.h \
     src/model/fire_triangle/fire_triangle_model.h \
-    src/model/gun/gun_coverage_model.h \
-    src/model/gun/gun_feedback_barrel_model.h \
-    src/model/gun/gun_feedback_status_model.h \
     src/model/track/arpa/track_arpa_model.h \
     src/shared/common/errors/err_amqp.h \
     src/shared/common/errors/err_base.h \
@@ -371,11 +376,6 @@ HEADERS += \
     src/usecase/gun/gun_barrel_control_mode_service.h \
     src/usecase/gun/gun_firing_service.h \
     src/usecase/gun/gun_manager_service.h \
-    src/usecase/gun/stream/gun_coverage_stream.h \
-    src/usecase/gun/stream/gun_feedback_barrel_stream.h \
-    src/usecase/gun/stream/gun_feedback_status_stream.h \
-    src/usecase/gun/stream/gun_stream.h \
-    src/usecase/gun/stream/gun_stream_base.h \
     src/usecase/osd/osd_service.h \
     src/usecase/track/stream/arpa/track_arpa_stream.h \
     src/usecase/track/stream/track_stream.h \
