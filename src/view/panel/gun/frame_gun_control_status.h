@@ -21,7 +21,7 @@ public:
     void setup();
 
 public slots:
-    void onStatusDataResponse(GunCommandStatusResponse resp);
+    void onStatusDataResponse(GunCommandStatusResponse resp, bool needConfirm);
 
 private slots:
     void onModeCheck();

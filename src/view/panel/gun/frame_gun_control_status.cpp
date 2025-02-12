@@ -33,7 +33,7 @@ void FrameGunControlStatus::setup()
     updateMode();
 }
 
-void FrameGunControlStatus::onStatusDataResponse(GunCommandStatusResponse resp)
+void FrameGunControlStatus::onStatusDataResponse(GunCommandStatusResponse resp, bool needConfirm)
 {
 #ifdef USE_LOG4QT
     logger()->debug() << Q_FUNC_INFO << " -> resp code: " << resp.err().getCode()
@@ -45,7 +45,9 @@ void FrameGunControlStatus::onStatusDataResponse(GunCommandStatusResponse resp)
 
     if (resp.err().getCode() != ERROR_NO.first)
     {
-        QMessageBox::critical(this, "Fatal Error Status Control", QString("Failed to change status data with error: %1").arg(resp.err().getMessage()));
+        if (needConfirm) {
+            QMessageBox::critical(this, "Fatal Error Status Control", QString("Failed to change status data with error: %1").arg(resp.err().getMessage()));
+        }
 
         ui->pushButtonControlMount->setChecked(previousStatus.getMount());
         ui->pushButtonControlSingleshoot->setChecked(previousStatus.getSingleShot());

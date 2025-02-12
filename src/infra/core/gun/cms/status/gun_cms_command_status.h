@@ -24,7 +24,7 @@ public:
     void setStatus(GunCommandStatusRequest request);
 
 signals:
-    void signal_setStatusResponse(BaseResponse<GunCommandStatusResponse> response);
+    void signal_setStatusResponse(BaseResponse<GunCommandStatusResponse> response, bool needConfirm);
 
 protected:
     GunCmsCommandStatus(

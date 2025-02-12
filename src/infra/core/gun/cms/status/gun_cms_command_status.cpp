@@ -11,6 +11,9 @@ LOG4QT_DECLARE_STATIC_LOGGER(logger, GunCmsCommandStatus)
 #include <QDebug>
 #endif
 
+const char * REQ_CTX_GUN_STATUS = "ctx-req";
+const char * REQ_CTX_GUN_STATUS_NEED_CONFIRM_KEY = "ctx-req-need-confirm";
+
 GunCmsCommandStatus* GunCmsCommandStatus::instance = nullptr;
 
 GunCmsCommandStatus::GunCmsCommandStatus(
@@ -26,6 +29,8 @@ void GunCmsCommandStatus::onReplyFinished()
 {
     QNetworkReply *objSender = dynamic_cast<QNetworkReply *>(sender());
     QByteArray respRaw = objSender->readAll();
+    auto curReqCtx = objSender->property(REQ_CTX_GUN_STATUS).toMap();
+    auto needConfirm = curReqCtx.value(REQ_CTX_GUN_STATUS_NEED_CONFIRM_KEY).toBool();
 
 #ifdef USE_LOG4QT
     logger()->debug()<<Q_FUNC_INFO<<" -> respRaw: "<<respRaw;
@@ -37,7 +42,7 @@ void GunCmsCommandStatus::onReplyFinished()
 
     BaseResponse<GunCommandStatusResponse> resp = toResponse(objSender->error(), respRaw);
 
-    emit signal_setStatusResponse(resp);
+    emit signal_setStatusResponse(resp, needConfirm);
 
     objSender->deleteLater();
 }
