@@ -2,7 +2,7 @@
 #define FRAME_GUN_CONTROL_STATUS_H
 
 #include "src/infra/core/base_response.h"
-#include "src/model/gun/cms/gun_command_status_response.h"
+#include "src/infra/core/gun/cms/barrel/gun_command_barrel_request.h"
 #include "src/usecase/gun/gun_manager_service.h"
 #include <QFrame>
 
@@ -21,7 +21,7 @@ public:
     void setup();
 
 public slots:
-    void onStatusDataResponse(BaseResponse<GunCommandStatusResponse> resp);
+    void onStatusDataResponse(GunCommandStatusResponse resp, bool needConfirm);
 
 private slots:
     void onModeCheck();

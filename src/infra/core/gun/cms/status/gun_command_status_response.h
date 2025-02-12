@@ -3,7 +3,9 @@
 
 #include <QJsonObject>
 
-class GunCommandStatusResponse
+#include "src/infra/core/gun/cms/gun_base_model.h"
+
+class GunCommandStatusResponse: public GunBaseModel
 {
 public:
     GunCommandStatusResponse();

@@ -13,6 +13,20 @@ GunCommandStatusResponse::GunCommandStatusResponse(bool mount, bool singleShot, 
     siren(siren)
 {}
 
+GunCommandStatusResponse GunCommandStatusResponse::FromJsonObject(QJsonObject obj)
+{
+    GunCommandStatusResponse model(
+        obj.value("mount").toBool(),
+        obj.value("single_shot").toBool(),
+        obj.value("fire_order").toBool(),
+        obj.value("not_fire_order").toBool(),
+        obj.value("paralizing_proximity_fuze").toBool(),
+        obj.value("siren_button").toBool()
+        );
+
+    return model;
+}
+
 bool GunCommandStatusResponse::getMount() const
 {
     return mount;

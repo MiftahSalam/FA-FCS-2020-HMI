@@ -1,10 +1,10 @@
 #ifndef FRAME_GUN_CONTROL_BARREL_H
 #define FRAME_GUN_CONTROL_BARREL_H
 
-#include "src/model/gun/gun_feedback_status_model.h"
+#include "src/infra/core/gun/stream/gun_status/gun_feedback_status_model.h"
 #include "src/usecase/gun/gun_manager_service.h"
-#include "src/usecase/gun/stream/gun_coverage_stream.h"
-#include "src/usecase/gun/stream/gun_feedback_status_stream.h"
+#include "src/infra/core/gun/stream/gun_coverage/gun_coverage_stream.h"
+#include "src/infra/core/gun/stream/gun_status/gun_feedback_status_stream.h"
 #include "src/view/shared/frame_text_input.h"
 #include <QFrame>
 
@@ -30,8 +30,8 @@ public:
     void setup();
 
 public slots:
-    void onModeChangeResponse(BaseResponse<GunModeBarrelResponse> resp, bool needConfirm);
-    void onBarrelDataResponse(BaseResponse<GunCommandBarrelResponse> resp, bool needConfirm);
+    void onModeChangeResponse(GunModeBarrelResponse resp, bool needConfirm);
+    void onBarrelDataResponse(GunCommandBarrelResponse resp, bool needConfirm);
 
 signals:
     void signalChangeControlMode(bool manual_mode);
@@ -55,8 +55,6 @@ private:
     };
 
     GunManagerService *gunService;
-    GunFeedbackStatusStream *statusStream;
-    GunCoverageStream *coverageStream;
 
     GunBarrelModeEntity::MODE currentMode;
 

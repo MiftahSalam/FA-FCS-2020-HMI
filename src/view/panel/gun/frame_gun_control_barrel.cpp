@@ -45,24 +45,24 @@ void FrameGunControlBarrel::setup()
     updateMode();
 }
 
-void FrameGunControlBarrel::onModeChangeResponse(BaseResponse<GunModeBarrelResponse> resp, bool needConfirm)
+void FrameGunControlBarrel::onModeChangeResponse(GunModeBarrelResponse resp, bool needConfirm)
 {
 #ifdef USE_LOG4QT
-    logger()->debug() << Q_FUNC_INFO << " -> resp code: " << resp.getHttpCode()
-                      << ", resp msg: " << resp.getMessage()
-                      << ", barrel mode manual: " << resp.getData().getManualMode()
+    logger()->debug() << Q_FUNC_INFO << " -> resp code: " << resp.err().getCode()
+                      << ", resp msg: " << resp.err().getMessage()
+                      << ", barrel mode manual: " << resp.getManualMode()
                       << ", needConfirm: " << needConfirm;
 #else
     qDebug() << Q_FUNC_INFO << "resp code:" << resp.getHttpCode() << "resp msg:" << resp.getMessage();
     qDebug() << Q_FUNC_INFO << "needConfirm:" << needConfirm;
-    qDebug() << Q_FUNC_INFO << "resp code:" << "resp barrel mode manual: " << resp.getData().getManualMode();
+    qDebug() << Q_FUNC_INFO << "resp code:" << "resp barrel mode manual: " << resp.getManualMode();
 #endif
 
-    if (resp.getHttpCode() != 0)
+    if (resp.err().getCode() != 0)
     {
         if (needConfirm)
         {
-            QMessageBox::warning(this, "Request Error", QString("Failed to input gun mode with error: %1").arg(resp.getMessage()));
+            QMessageBox::warning(this, "Request Error", QString("Failed to input gun mode with error: %1").arg(resp.err().getMessage()));
         }
 
         //        return;
@@ -91,25 +91,25 @@ void FrameGunControlBarrel::onModeChangeResponse(BaseResponse<GunModeBarrelRespo
     resetBarrel(needConfirm);
 }
 
-void FrameGunControlBarrel::onBarrelDataResponse(BaseResponse<GunCommandBarrelResponse> resp, bool needConfirm)
+void FrameGunControlBarrel::onBarrelDataResponse(GunCommandBarrelResponse resp, bool needConfirm)
 {
 #ifdef USE_LOG4QT
-    logger()->debug() << Q_FUNC_INFO << " -> resp code: " << resp.getHttpCode()
-                      << ", resp msg: " << resp.getMessage()
-                      << ", barrel az: " << resp.getData().getAzimuth()
-                      << ", barrel el: " << resp.getData().getElevation()
+    logger()->debug() << Q_FUNC_INFO << " -> resp code: " << resp.err().getCode()
+                      << ", resp msg: " << resp.err().getMessage()
+                      << ", barrel az: " << resp.getAzimuth()
+                      << ", barrel el: " << resp.getElevation()
                          ;
 #else
     qDebug() << Q_FUNC_INFO << "resp code:" << resp.getHttpCode() << "resp msg:" << resp.getMessage();
     qDebug() << Q_FUNC_INFO
-             << "resp data getAzimuth: " << resp.getData().getAzimuth()
-             << "resp data getElevation: " << resp.getData().getElevation();
+             << "resp data getAzimuth: " << resp.getAzimuth()
+             << "resp data getElevation: " << resp.getElevation();
 #endif
 
-    if (resp.getHttpCode() != 0)
+    if (resp.err().getCode() != 0)
     {
         if (needConfirm) {
-            QMessageBox::critical(this, "Fatal Error Barrel Control", QString("Failed to change manual data with error: %1").arg(resp.getMessage()));
+            QMessageBox::critical(this, "Fatal Error Barrel Control", QString("Failed to change manual data with error: %1").arg(resp.err().getMessage()));
         }
 
         return;
@@ -237,7 +237,7 @@ bool FrameGunControlBarrel::validateInput()
 
 FrameGunControlBarrel::BarrelLimit FrameGunControlBarrel::calculateBarrelLimit()
 {
-    float blind_arc = coverageStream->GetCoverage()->getBlindArc();
+    float blind_arc = gunService->getCoverage()->getBlindArc();
     float minBArc = 180.0 - (blind_arc / 2);
     float maxBArc = 180.0 + (blind_arc / 2);
     BarrelLimit limit;
@@ -272,11 +272,8 @@ void FrameGunControlBarrel::resetBarrel(bool needConfirm)
 void FrameGunControlBarrel::setupDI()
 {
     gunService = DI::getInstance()->getServiceGunManager();
-    statusStream = DI::getInstance()->getServiceGunStream()->getServiceGunFeedback();
-    coverageStream = DI::getInstance()->getServiceGunStream()->getServiceGunCoverage();
 
     connect(gunService, &GunManagerService::OnBarrelModeCheck, this, &FrameGunControlBarrel::onModeCheck);
     connect(gunService, &GunManagerService::OnBarrelModeResponse, this, &FrameGunControlBarrel::onModeChangeResponse);
     connect(gunService, &GunManagerService::OnBarrelPositionResponse, this, &FrameGunControlBarrel::onBarrelDataResponse);
-    connect(statusStream, &GunFeedbackStatusStream::signalDataProcessed, this, &FrameGunControlBarrel::onStatusStreamUpdate);
 }

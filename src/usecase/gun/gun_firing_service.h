@@ -4,7 +4,7 @@
 #include "qtimer.h"
 //#include "src/infra/messaging/serial/serial_messaging_wrapper.h"
 #include "src/infra/messaging/tcp/tcp_messaging_wrapper.h"
-#include "src/model/gun/cms/gun_mode_barrel_response.h"
+#include "src/infra/core/gun/cms/barrel/gun_command_barrel_request.h"
 #include "src/shared/config/messaging_serial_config.h"
 #include "src/usecase/engagement/weapon_track_assign_service.h"
 #include "src/usecase/gun/gun_manager_service.h"
@@ -46,7 +46,7 @@ signals:
 private slots:
     void OnWeaponAssign(BaseResponse<TrackAssignResponse> resp, bool assign);
     void onAssignModeChange(const QString &weapon, const WeaponAssign::WeaponAssignMode &mode);
-    void onGunModeChange(BaseResponse<GunModeBarrelResponse> resp, bool needConfirm);
+    void onGunModeChange(GunModeBarrelResponse resp, bool needConfirm);
     void checkGunOfflineMode();
     void OnTimeout();
 

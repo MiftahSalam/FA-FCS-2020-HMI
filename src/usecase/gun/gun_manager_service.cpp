@@ -4,20 +4,39 @@
 GunManagerService *GunManagerService::gunManagerService = nullptr;
 
 GunManagerService::GunManagerService(
-        QObject *parent,
-        GunCmsConfig *cmsConfig,
-        GunFeedbackRepository *feedbackRepo,
-        GunCommandBarrelModeService *modeService,
-        GunCommandBarrelService *barrelService,
-        GunCommandStatusService *statusService ) : QObject(parent),
+    QObject *parent,
+    GunCmsConfig *cmsConfig,
+    GunFeedbackRepository *feedbackRepo,
+    GunCommandRepository *cmdRepo,
+    GunCoverageRepository *coverageRepo,
+    GunBarrelControlModeService *modeService,
+    GunCmsCommandBarrel *barrelCms,
+    GunCmsCommandStatus *statusCms ,
+    GunStream *gunStream) :
+    QObject(parent),
     _cmsConfig(cmsConfig),
     _modeService(modeService),
-    _barrelService(barrelService),
-    _feedbackRepository(feedbackRepo),
-    _statusService(statusService),
+    _barrelService(barrelCms),
+    _repoFeedback(feedbackRepo),
+    _repoGunCmd(cmdRepo),
+    _repoGunCoverage(coverageRepo),
+    _statusCms(statusCms),
+    _streamGun(gunStream),
     currentOpStat(GunManagerService::NOT_AVAIL),
     currentTechStat(GunManagerService::OFFLINE)
 {
+    timer = new QTimer(this);
+
+    connect(_streamGun->getStreamGunStatus(), &GunFeedbackStatusStream::signalDataProcessed,
+            this, &GunManagerService::updateGunFeedbackStatus);
+    connect(_streamGun->getStreamGunBarrel(), &GunFeedbackBarrelStream::signalDataProcessed,
+            this, &GunManagerService::updateGunFeedbackBarrel);
+    connect(_streamGun->getStreamGunCoverage(), &GunCoverageStream::signalDataProcessed,
+            this, &GunManagerService::updateGunFeedbackCoverage);
+
+    connect(timer, &QTimer::timeout, this, &GunManagerService::onTimerTImeout);
+
+    timer->start(1000);
 }
 
 GunManagerService::TECHNICAL_STATUS GunManagerService::getCurrentTechStat() const
@@ -31,7 +50,7 @@ void GunManagerService::updateOpStatus()
     {
     case GunManagerService::ONLINE:
     {
-        bool remote = _feedbackRepository->GetStatus()->remote();
+        bool remote = _repoFeedback->GetStatus()->remote();
         if (remote)
         {
             switch (_modeService->getMode())
@@ -52,7 +71,7 @@ void GunManagerService::updateOpStatus()
             currentOpStat = OPERATIONAL_STATUS::NOT_AVAIL;
         }
     }
-        break;
+    break;
     default:
         currentOpStat = OPERATIONAL_STATUS::NOT_AVAIL;
         break;
@@ -93,42 +112,154 @@ void GunManagerService::resetOpStatus()
 
 const GunStatusCommandEntity* GunManagerService::getCurrentStatus() const
 {
-    return _statusService->getCurrentStatus();
+    return _repoGunCmd->GetStatus();
 }
 
 void GunManagerService::resetStatus()
 {
-    _statusService->setStatus(GunCommandStatusRequest());
+    _repoFeedback->SetStatus(GunStatusFeedbackEntity());
 }
 
 void GunManagerService::setStatusMount(bool on)
 {
-    _statusService->setStatusMount(on);
+    auto curStatus = _repoGunCmd->GetStatus();
+    _statusCms->setStatus(GunCommandStatusRequest(
+        on,
+        curStatus->single_shot(),
+        curStatus->fire(),
+        curStatus->proximity(),
+        curStatus->siren()
+        ));
 }
 
 void GunManagerService::setStatusSingleShot(bool on)
 {
-    _statusService->setStatusSingleShot(on);
+    auto curStatus = _repoGunCmd->GetStatus();
+    _statusCms->setStatus(GunCommandStatusRequest(
+        curStatus->mount(),
+        on,
+        curStatus->fire(),
+        curStatus->proximity(),
+        curStatus->siren()
+        ));
 }
 
 bool GunManagerService::getStatusSingleShot() const
 {
-   return  _statusService->getCurrentStatus()->single_shot();
+    return  _repoGunCmd->GetStatus()->single_shot();
 }
 
 void GunManagerService::setStatusFire(bool on)
 {
-    _statusService->setStatusFire(on);
+    auto curStatus = _repoGunCmd->GetStatus();
+    _statusCms->setStatus(GunCommandStatusRequest(
+        curStatus->mount(),
+        curStatus->single_shot(),
+        on,
+        curStatus->proximity(),
+        curStatus->siren()
+        ));
 }
 
 void GunManagerService::setStatusProxFuze(bool on)
 {
-    _statusService->setStatusProxFuze(on);
+    auto curStatus = _repoGunCmd->GetStatus();
+    _statusCms->setStatus(GunCommandStatusRequest(
+        curStatus->mount(),
+        curStatus->single_shot(),
+        curStatus->fire(),
+        on,
+        curStatus->siren()
+        ));
 }
 
 void GunManagerService::setStatusSiren(bool on)
 {
-    _statusService->setStatusSiren(on);
+    auto curStatus = _repoGunCmd->GetStatus();
+    _statusCms->setStatus(GunCommandStatusRequest(
+        curStatus->mount(),
+        curStatus->single_shot(),
+        curStatus->fire(),
+        curStatus->proximity(),
+        on
+        ));
+}
+
+void GunManagerService::updateGunCommandStatus(BaseResponse<GunCommandStatusResponse> resp, bool needConfirm)
+{
+    if(resp.getHttpCode() == ERROR_NO.first) {
+        _repoGunCmd->SetStatus(GunStatusCommandEntity(
+            resp.getData().getMount(),
+            resp.getData().getSingleShot(),
+            resp.getData().getFireOrder(),
+            resp.getData().getProxFuze(),
+            resp.getData().getSiren()
+            ));
+    }
+
+    emit OnStatusResponse(resp.getData(), needConfirm);
+}
+
+void GunManagerService::updateGunCommandBarrel(BaseResponse<GunCommandBarrelResponse> resp, bool needConfirm)
+{
+    if(resp.getHttpCode() == ERROR_NO.first) {
+        _repoGunCmd->SetBarrel(resp.getData().getAzimuth(), resp.getData().getElevation());
+    }
+
+    emit OnBarrelPositionResponse(resp.getData(), needConfirm);
+}
+
+void GunManagerService::updateGunFeedbackStatus(GunFeedbackStatusModel data)
+{
+    auto stream = _streamGun->getStreamGunStatus();
+    if (stream->check().getCode() == ERROR_NO.first) {
+        _repoFeedback->SetStatus(GunStatusFeedbackEntity(
+            data.getOpMode(),
+            data.getRemote(),
+            data.getMount(),
+            data.getBarrelTemperature(),
+            data.getGunReadyToStart(),
+            data.getGunReadyToFire(),
+            data.getFireMode(),
+            data.getBlindArc(),
+            data.getMissAlignment(),
+            data.getMagazine()
+            ));
+    }
+
+    emit signal_processedGunStatus(data);
+}
+
+void GunManagerService::updateGunFeedbackBarrel(GunFeedbackBarrelModel data)
+{
+    auto stream = _streamGun->getStreamGunBarrel();
+    if (stream->check().getCode() == ERROR_NO.first) {
+        _repoFeedback->SetBarrel(
+            data.getAzimuth(),
+            data.getElevation()
+            );
+    }
+
+    emit signal_processedGunBarrel(data);
+}
+
+void GunManagerService::updateGunFeedbackCoverage(GunCoverageModel data)
+{
+    auto stream = _streamGun->getStreamGunCoverage();
+    if (stream->check().getCode() == ERROR_NO.first) {
+        _repoGunCoverage->SetGunCoverage(GunCoverageEntity(
+            data.getMaxRange(),
+            data.getBlindArc(),
+            data.getOrientation()
+            ));
+    }
+
+    emit signal_processedGunCoverage(data);
+}
+
+void GunManagerService::onTimerTImeout()
+{
+    _streamGun->getStreamGunCoverage()->check();
 }
 
 GunBarrelModeEntity::MODE GunManagerService::getBarrelMode() const
@@ -138,7 +269,7 @@ GunBarrelModeEntity::MODE GunManagerService::getBarrelMode() const
 
 const GunBarrelEntity *GunManagerService::getCurrentBarrel() const
 {
-    return _feedbackRepository->GetBarrel();
+    return _repoFeedback->GetBarrel();
 }
 
 GunManagerService::OPERATIONAL_STATUS GunManagerService::getCurrentOpStat() const
@@ -149,7 +280,11 @@ GunManagerService::OPERATIONAL_STATUS GunManagerService::getCurrentOpStat() cons
 GunManagerService *GunManagerService::getInstance(QObject *parent,
                                                   GunCmsConfig *cmsConfig,
                                                   GunFeedbackRepository *feedbackRepo,
-                                                  GunCommandRepository *cmdRepo)
+                                                  GunCommandRepository *cmdRepo,
+                                                  GunCoverageRepository *coverageRepo,
+                                                  GunBarrelControlModeService *modeService,
+                                                  GunStream *gunStream
+                                                  )
 {
     if (gunManagerService == nullptr)
     {
@@ -163,26 +298,52 @@ GunManagerService *GunManagerService::getInstance(QObject *parent,
             throw ErrObjectCreation();
         }
 
-        GunCommandBarrelModeService *modeService = GunCommandBarrelModeService::getInstance(
-                    new HttpClientWrapper(),
-                    cmsConfig,
-                    cmdRepo);
-        GunCommandBarrelService *barrelService = GunCommandBarrelService::getInstance(
-                    new HttpClientWrapper(),
-                    cmsConfig,
-                    cmdRepo);
-        GunCommandStatusService *statusService = GunCommandStatusService::getInstance(
-                    new HttpClientWrapper(),
-                    cmsConfig,
-                    cmdRepo);
+        if (modeService == nullptr)
+        {
+            throw ErrObjectCreation();
+        }
 
-        gunManagerService = new GunManagerService(parent, cmsConfig, feedbackRepo, modeService, barrelService, statusService);
+        if (gunStream == nullptr)
+        {
+            throw ErrObjectCreation();
+        }
 
-        connect(modeService, &GunCommandBarrelModeService::signal_modeCheck, gunManagerService, &GunManagerService::OnBarrelModeCheck);
-        connect(modeService, &GunCommandBarrelModeService::signal_setModeResponse, gunManagerService, &GunManagerService::OnBarrelModeResponse);
-        connect(barrelService, &GunCommandBarrelService::signal_setBarrelResponse, gunManagerService, &GunManagerService::OnBarrelPositionResponse);
-        connect(statusService, &GunCommandStatusService::signal_setStatusResponse, gunManagerService, &GunManagerService::OnStatusResponse);
+        if (coverageRepo == nullptr)
+        {
+            throw ErrObjectCreation();
+        }
+
+        GunCmsCommandBarrel *cmsBarrel = GunCmsCommandBarrel::getInstance(
+            new HttpClientWrapper(),
+            cmsConfig
+            );
+        GunCmsCommandStatus *cmsStatus = GunCmsCommandStatus::getInstance(
+            new HttpClientWrapper(),
+            cmsConfig
+            );
+
+        gunManagerService = new GunManagerService(parent, cmsConfig, feedbackRepo, cmdRepo, coverageRepo, modeService, cmsBarrel, cmsStatus, gunStream);
+
+        connect(modeService, &GunBarrelControlModeService::signal_modeCheck, gunManagerService, &GunManagerService::OnBarrelModeCheck);
+        connect(modeService, &GunBarrelControlModeService::signal_processedResponse, gunManagerService, &GunManagerService::OnBarrelModeResponse);
+        connect(cmsBarrel, &GunCmsCommandBarrel::signal_setBarrelResponse, gunManagerService, &GunManagerService::updateGunCommandBarrel);
+        connect(cmsStatus, &GunCmsCommandStatus::signal_setStatusResponse, gunManagerService, &GunManagerService::updateGunCommandStatus);
     }
 
     return gunManagerService;
+}
+
+BaseError GunManagerService::getGunBarrelError() const
+{
+    return _streamGun->getStreamGunBarrel()->check();
+}
+
+BaseError GunManagerService::getGunStatusError() const
+{
+    return _streamGun->getStreamGunStatus()->check();
+}
+
+const GunCoverageEntity *GunManagerService::getCoverage() const
+{
+    return _repoGunCoverage->GetGunCoverage();
 }

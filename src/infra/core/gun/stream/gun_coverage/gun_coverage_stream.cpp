@@ -13,23 +13,18 @@ LOG4QT_DECLARE_STATIC_LOGGER(logger, GunCoverageStream)
 GunCoverageStream *GunCoverageStream::gunCoverageStream = nullptr;
 
 GunCoverageStream::GunCoverageStream(
-        TcpMessagingOpts *config,
-        GunCoverageRepository *repoGunCov
-        ): cfg(config), _repoGunCov(repoGunCov), currentErr(NoError())
+    TcpMessagingOpts *config): cfg(config), currentErr(NoError())
 {
     consumer = new TcpMessagingWrapper(this, config);
     connect(consumer, &TcpMessagingWrapper::signalForwardMessage, this, &GunCoverageStream::onDataReceived);
-
-    timer = new QTimer(this);
-    connect(timer, &QTimer::timeout, this, &GunCoverageStream::periodUpdate);
-    timer->start(1000);
 }
 
 void GunCoverageStream::onDataReceived(QByteArray data)
 {
+    GunCoverageModel model;
     try {
         QJsonObject respObj = Utils::byteArrayToJsonObject(data);
-        GunCoverageModel model(respObj["max_range"].toDouble(),respObj["blind_arc"].toDouble(),respObj["orientation"].toDouble());
+        model = GunCoverageModel::fromJsonObject(respObj);
 
 #ifdef USE_LOG4QT
         logger()->trace()<<Q_FUNC_INFO<<" -> Gun coverage. max range: "<<model.getMaxRange()
@@ -40,43 +35,33 @@ void GunCoverageStream::onDataReceived(QByteArray data)
         qDebug()<<Q_FUNC_INFO<<"data gun coverage: max range ->"<<model.getMaxRange()<<"blind arc ->"<<model.getBlindArc()
                <<"orientation ->"<<model.getOrientation();
 #endif
-
-        _repoGunCov->SetGunCoverage(GunCoverageEntity(
-                                        model.getMaxRange(),
-                                        model.getBlindArc(),
-                                        model.getOrientation()
-                                        ));
+        currentErr = NoError();
 
         emit signalDataProcessed(model);
-
-    }catch(ErrJsonParse &e) {
+    } catch(ErrJsonParse &e) {
 #ifdef USE_LOG4QT
         logger()->error()<<Q_FUNC_INFO<<" -> caught error: "<<e.getMessage();
 #else
         qWarning()<<Q_FUNC_INFO<<"caught error: "<<e.getMessage();
 #endif
+        currentErr = e;
     }  catch (...) {
 #ifdef USE_LOG4QT
         logger()->error()<<Q_FUNC_INFO<<" -> caught unkbnown error";
 #else
         qWarning()<<Q_FUNC_INFO<<"caught unkbnown error";
 #endif
+        currentErr = ErrUnknown();
     }
-}
-
-void GunCoverageStream::periodUpdate()
-{
-    check();
 }
 
 void GunCoverageStream::handleError(const QString &err)
 {
-
+    Q_UNUSED(err);
 }
 
 GunCoverageStream *GunCoverageStream::getInstance(
-        TcpMessagingOpts *config = nullptr,
-        GunCoverageRepository *repoGunCov = nullptr
+        TcpMessagingOpts *config = nullptr
         )
 {
     if(gunCoverageStream == nullptr)
@@ -86,11 +71,7 @@ GunCoverageStream *GunCoverageStream::getInstance(
             throw ErrObjectCreation();
         }
 
-        if(repoGunCov == nullptr) {
-            throw ErrObjectCreation();
-        }
-
-        gunCoverageStream = new GunCoverageStream(config, repoGunCov);
+        gunCoverageStream = new GunCoverageStream(config);
     }
 
     return gunCoverageStream;
@@ -106,11 +87,5 @@ BaseError GunCoverageStream::check()
 
     return currentErr;
 }
-
-const GunCoverageEntity *GunCoverageStream::GetCoverage() const
-{
-    return _repoGunCov->GetGunCoverage();
-}
-
 
 

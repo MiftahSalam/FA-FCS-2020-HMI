@@ -2,6 +2,7 @@
 #define DI_H
 
 #include "src/domain/weapon_assign/repository/weapon_assignment_repository.h"
+#include "src/infra/core/gun/cms/gun_cms.h"
 #include "src/infra/core/osd/cms/osd_cms.h"
 #include "src/infra/store/fire_triangle/fire_triangle_repository.h"
 #include "src/infra/store/gun/gun_repository.h"
@@ -14,7 +15,7 @@
 #include "src/infra/core/osd/stream/osd_stream.h"
 #include "src/usecase/osd/osd_service.h"
 #include "src/usecase/track/stream/track_stream.h"
-#include "src/usecase/gun/stream/gun_stream.h"
+#include "src/infra/core/gun/stream/gun_stream.h"
 #include "src/usecase/fire_triangle/stream/fire_triangle_stream.h"
 #include "src/usecase/weapon_assign/weapon_assign_service.h"
 #include "src/infra/store/engagement/engagement_repository.h"
@@ -49,6 +50,7 @@ public:
     WeaponAssignService *getServiceWeaponAssign() const;
     WeaponTrackAssignService *getServiceWeaponTrackAssign() const;
     GunFiringService *getServiceWeaponFiring() const;
+    GunBarrelControlModeService *getServiceGunMode() const;
 
 protected:
     DI();
@@ -67,7 +69,10 @@ private:
     EngagementRepository *repoEngagement;
 
     OSDCMS *serviceOSDCMS;
+    GunCMS *gunCmses;
+
     OSDService *serviceOSD;
+    GunBarrelControlModeService *serviceGunMode;
     GunManagerService *serviceGunManager;
     WeaponAssignService *serviceWeaponAssign;
     GunFiringService *serviceWeaponFiring;
