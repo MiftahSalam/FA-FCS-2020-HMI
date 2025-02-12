@@ -56,12 +56,13 @@ public:
 
 signals:
     void OnBarrelModeResponse(GunModeBarrelResponse response, bool needConfirm);
-    void OnBarrelPositionResponse(BaseResponse<GunCommandBarrelResponse> response, bool needConfirm);
-    void OnStatusResponse(GunCommandStatusResponse response);
+    void OnBarrelPositionResponse(GunCommandBarrelResponse response, bool needConfirm);
+    void OnStatusResponse(GunCommandStatusResponse response, bool needConfirm);
     void OnBarrelModeCheck();
 
 private slots:
-    void updateGunCommandStatus(BaseResponse<GunCommandStatusResponse> resp);
+    void updateGunCommandStatus(BaseResponse<GunCommandStatusResponse> resp, bool needConfirm);
+    void updateGunCommandBarrel(BaseResponse<GunCommandBarrelResponse> resp, bool needConfirm);
 
 protected:
     GunManagerService(

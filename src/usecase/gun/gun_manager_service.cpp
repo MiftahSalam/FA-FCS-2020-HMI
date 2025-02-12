@@ -168,7 +168,7 @@ void GunManagerService::setStatusSiren(bool on)
         ));
 }
 
-void GunManagerService::updateGunCommandStatus(BaseResponse<GunCommandStatusResponse> resp)
+void GunManagerService::updateGunCommandStatus(BaseResponse<GunCommandStatusResponse> resp, bool needConfirm)
 {
     if(resp.getHttpCode() == ERROR_NO.first) {
         _repoGunCmd->SetStatus(GunStatusCommandEntity(
@@ -180,7 +180,16 @@ void GunManagerService::updateGunCommandStatus(BaseResponse<GunCommandStatusResp
             ));
     }
 
-    emit OnStatusResponse(resp.getData());
+    emit OnStatusResponse(resp.getData(), needConfirm);
+}
+
+void GunManagerService::updateGunCommandBarrel(BaseResponse<GunCommandBarrelResponse> resp, bool needConfirm)
+{
+    if(resp.getHttpCode() == ERROR_NO.first) {
+        _repoGunCmd->SetBarrel(resp.getData().getAzimuth(), resp.getData().getElevation());
+    }
+
+    emit OnBarrelPositionResponse(resp.getData(), needConfirm);
 }
 
 GunBarrelModeEntity::MODE GunManagerService::getBarrelMode() const
@@ -222,20 +231,20 @@ GunManagerService *GunManagerService::getInstance(QObject *parent,
             throw ErrObjectCreation();
         }
 
-        GunCmsCommandBarrel *barrelService = GunCmsCommandBarrel::getInstance(
+        GunCmsCommandBarrel *cmsBarrel = GunCmsCommandBarrel::getInstance(
             new HttpClientWrapper(),
-            cmsConfig,
-            cmdRepo);
+            cmsConfig
+            );
         GunCmsCommandStatus *cmsStatus = GunCmsCommandStatus::getInstance(
             new HttpClientWrapper(),
             cmsConfig
             );
 
-        gunManagerService = new GunManagerService(parent, cmsConfig, feedbackRepo, cmdRepo, modeService, barrelService, cmsStatus);
+        gunManagerService = new GunManagerService(parent, cmsConfig, feedbackRepo, cmdRepo, modeService, cmsBarrel, cmsStatus);
 
         connect(modeService, &GunBarrelControlModeService::signal_modeCheck, gunManagerService, &GunManagerService::OnBarrelModeCheck);
         connect(modeService, &GunBarrelControlModeService::signal_processedResponse, gunManagerService, &GunManagerService::OnBarrelModeResponse);
-        connect(barrelService, &GunCmsCommandBarrel::signal_setBarrelResponse, gunManagerService, &GunManagerService::OnBarrelPositionResponse);
+        connect(cmsBarrel, &GunCmsCommandBarrel::signal_setBarrelResponse, gunManagerService, &GunManagerService::updateGunCommandBarrel);
         connect(cmsStatus, &GunCmsCommandStatus::signal_setStatusResponse, gunManagerService, &GunManagerService::updateGunCommandStatus);
     }
 

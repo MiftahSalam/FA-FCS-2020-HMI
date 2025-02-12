@@ -6,10 +6,11 @@
 #include "src/infra/core/base_response.h"
 #include "src/infra/core/gun/cms/barrel/gun_command_barrel_request.h"
 #include "src/infra/core/gun/cms/barrel/gun_command_barrel_response.h"
+#include "src/infra/http/i_cms_http.h"
 #include "src/shared/config/gun_cms_config.h"
 #include <QObject>
 
-class GunCmsCommandBarrel : public HttpClientWrapper
+class GunCmsCommandBarrel : public HttpClientWrapper, public ICmsHttp<GunCommandBarrelResponse, GunCommandBarrelRequest>
 {
     Q_OBJECT
 public:
@@ -17,8 +18,7 @@ public:
     void operator=(const GunCmsCommandBarrel&) = delete;
     static GunCmsCommandBarrel* getInstance(
             HttpClientWrapper *httpClient,
-            GunCmsConfig *cmsConfig = nullptr,
-            GunCommandRepository *repoGunCmd = nullptr
+            GunCmsConfig *cmsConfig = nullptr
             );
 
     void setBarrelWithConfirm(GunCommandBarrelRequest request, bool confirm);
@@ -29,8 +29,7 @@ signals:
 protected:
     GunCmsCommandBarrel(
             HttpClientWrapper *parent = nullptr,
-            GunCmsConfig *cmsConfig = nullptr,
-            GunCommandRepository *repoGunCmd = nullptr
+            GunCmsConfig *cmsConfig = nullptr
             );
 
 private slots:
@@ -39,11 +38,9 @@ private slots:
 private:
     static GunCmsCommandBarrel *instance;
     GunCmsConfig *cfgCms;
-    GunCommandRepository* _repoGunCmd;
-    bool latestConfirm;
 
-    BaseResponse<GunCommandBarrelResponse> toResponse(QByteArray raw);
-    BaseResponse<GunCommandBarrelResponse> errorResponse(QNetworkReply::NetworkError err);
+    BaseResponse<GunCommandBarrelResponse> toResponse(QNetworkReply::NetworkError err, QByteArray raw) override;
+    void set(GunCommandBarrelRequest request) override;
 };
 
 #endif // GunCommandBarrelService_H

@@ -55,7 +55,7 @@ void FrameGunControlBarrel::onModeChangeResponse(GunModeBarrelResponse resp, boo
 #else
     qDebug() << Q_FUNC_INFO << "resp code:" << resp.getHttpCode() << "resp msg:" << resp.getMessage();
     qDebug() << Q_FUNC_INFO << "needConfirm:" << needConfirm;
-    qDebug() << Q_FUNC_INFO << "resp code:" << "resp barrel mode manual: " << resp.getData().getManualMode();
+    qDebug() << Q_FUNC_INFO << "resp code:" << "resp barrel mode manual: " << resp.getManualMode();
 #endif
 
     if (resp.err().getCode() != 0)
@@ -91,25 +91,25 @@ void FrameGunControlBarrel::onModeChangeResponse(GunModeBarrelResponse resp, boo
     resetBarrel(needConfirm);
 }
 
-void FrameGunControlBarrel::onBarrelDataResponse(BaseResponse<GunCommandBarrelResponse> resp, bool needConfirm)
+void FrameGunControlBarrel::onBarrelDataResponse(GunCommandBarrelResponse resp, bool needConfirm)
 {
 #ifdef USE_LOG4QT
-    logger()->debug() << Q_FUNC_INFO << " -> resp code: " << resp.getHttpCode()
-                      << ", resp msg: " << resp.getMessage()
-                      << ", barrel az: " << resp.getData().getAzimuth()
-                      << ", barrel el: " << resp.getData().getElevation()
+    logger()->debug() << Q_FUNC_INFO << " -> resp code: " << resp.err().getCode()
+                      << ", resp msg: " << resp.err().getMessage()
+                      << ", barrel az: " << resp.getAzimuth()
+                      << ", barrel el: " << resp.getElevation()
                          ;
 #else
     qDebug() << Q_FUNC_INFO << "resp code:" << resp.getHttpCode() << "resp msg:" << resp.getMessage();
     qDebug() << Q_FUNC_INFO
-             << "resp data getAzimuth: " << resp.getData().getAzimuth()
-             << "resp data getElevation: " << resp.getData().getElevation();
+             << "resp data getAzimuth: " << resp.getAzimuth()
+             << "resp data getElevation: " << resp.getElevation();
 #endif
 
-    if (resp.getHttpCode() != 0)
+    if (resp.err().getCode() != 0)
     {
         if (needConfirm) {
-            QMessageBox::critical(this, "Fatal Error Barrel Control", QString("Failed to change manual data with error: %1").arg(resp.getMessage()));
+            QMessageBox::critical(this, "Fatal Error Barrel Control", QString("Failed to change manual data with error: %1").arg(resp.err().getMessage()));
         }
 
         return;
