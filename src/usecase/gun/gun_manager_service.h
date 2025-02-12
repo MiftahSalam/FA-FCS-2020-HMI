@@ -3,7 +3,7 @@
 
 #include "src/domain/gun/repository/gun_feedback_repository.h"
 #include "src/shared/config/gun_cms_config.h"
-#include "src/infra/core/gun/cms/barrel/gun_command_barrel_service.h"
+#include "src/infra/core/gun/cms/barrel/gun_cms_command_barrel.h"
 #include "src/infra/core/gun/cms/status/gun_cms_command_status.h"
 #include "src/usecase/gun/gun_barrel_control_mode_service.h"
 #include <QObject>
@@ -70,7 +70,7 @@ protected:
         GunFeedbackRepository *feedbackRepo = nullptr,
         GunCommandRepository *cmdRepo = nullptr,
         GunBarrelControlModeService *modeService = nullptr,
-        GunCommandBarrelService *barrelService = nullptr,
+        GunCmsCommandBarrel *barrelService = nullptr,
         GunCmsCommandStatus *statusCms = nullptr
         );
 
@@ -79,7 +79,7 @@ private:
 
     GunCmsConfig *_cmsConfig;
     GunBarrelControlModeService *_modeService;
-    GunCommandBarrelService *_barrelService;
+    GunCmsCommandBarrel *_barrelService;
     GunFeedbackRepository *_feedbackRepository;
     GunCmsCommandStatus *_statusCms;
     GunCommandRepository *_repoGunCmd;

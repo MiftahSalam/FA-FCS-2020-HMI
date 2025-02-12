@@ -1,4 +1,4 @@
-#include "gun_command_barrel_service.h"
+#include "gun_cms_command_barrel.h"
 #include "src/shared/common/errors/helper_err.h"
 #include "src/shared/common/errors/err_json_parse.h"
 #include "src/shared/common/errors/err_object_creation.h"
@@ -11,9 +11,9 @@ LOG4QT_DECLARE_STATIC_LOGGER(logger, GunCommandBarrelService)
 #include <QDebug>
 #endif
 
-GunCommandBarrelService* GunCommandBarrelService::instance = nullptr;
+GunCmsCommandBarrel* GunCmsCommandBarrel::instance = nullptr;
 
-GunCommandBarrelService::GunCommandBarrelService(
+GunCmsCommandBarrel::GunCmsCommandBarrel(
         HttpClientWrapper *parent,
         GunCmsConfig *cmsConfig,
         GunCommandRepository *repoGunCmd
@@ -28,7 +28,7 @@ GunCommandBarrelService::GunCommandBarrelService(
     }
 }
 
-void GunCommandBarrelService::onReplyFinished()
+void GunCmsCommandBarrel::onReplyFinished()
 {
     QNetworkReply *httpResponse = dynamic_cast<QNetworkReply *>(sender());
     QByteArray respRaw = httpResponse->readAll();
@@ -56,7 +56,7 @@ void GunCommandBarrelService::onReplyFinished()
     httpResponse->deleteLater();
 }
 
-GunCommandBarrelService *GunCommandBarrelService::getInstance(
+GunCmsCommandBarrel *GunCmsCommandBarrel::getInstance(
         HttpClientWrapper *httpClient = nullptr,
         GunCmsConfig *cmsConfig,
         GunCommandRepository *repoGunCmd
@@ -75,13 +75,13 @@ GunCommandBarrelService *GunCommandBarrelService::getInstance(
             throw ErrObjectCreation();
         }
 
-        instance = new GunCommandBarrelService(httpClient, cmsConfig, repoGunCmd);
+        instance = new GunCmsCommandBarrel(httpClient, cmsConfig, repoGunCmd);
     }
 
     return instance;
 }
 
-void GunCommandBarrelService::setBarrelWithConfirm(GunCommandBarrelRequest request, bool confirm)
+void GunCmsCommandBarrel::setBarrelWithConfirm(GunCommandBarrelRequest request, bool confirm)
 {
     latestConfirm = confirm;
 
@@ -89,10 +89,10 @@ void GunCommandBarrelService::setBarrelWithConfirm(GunCommandBarrelRequest reque
     httpReq.setHeader(QNetworkRequest::ContentTypeHeader, "application/json");
 
     auto httpResponse = httpClient.post(httpReq, request.toJSON());
-    connect(httpResponse, &QNetworkReply::finished, this, &GunCommandBarrelService::onReplyFinished);
+    connect(httpResponse, &QNetworkReply::finished, this, &GunCmsCommandBarrel::onReplyFinished);
 }
 
-BaseResponse<GunCommandBarrelResponse> GunCommandBarrelService::toResponse(QByteArray raw)
+BaseResponse<GunCommandBarrelResponse> GunCmsCommandBarrel::toResponse(QByteArray raw)
 {
     try {
         QJsonObject respObj = Utils::byteArrayToJsonObject(raw);
@@ -133,7 +133,7 @@ BaseResponse<GunCommandBarrelResponse> GunCommandBarrelService::toResponse(QByte
 
 }
 
-BaseResponse<GunCommandBarrelResponse> GunCommandBarrelService::errorResponse(QNetworkReply::NetworkError err)
+BaseResponse<GunCommandBarrelResponse> GunCmsCommandBarrel::errorResponse(QNetworkReply::NetworkError err)
 {
     GunCommandBarrelResponse model(-1000, 9000);
     try {

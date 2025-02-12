@@ -38,6 +38,7 @@ SOURCES += \
     src/domain/osd/entity/osd_wind_entity.cpp \
     src/domain/track/entity/track_base_entity.cpp \
     src/domain/weapon_assign/entity/weapon_assign_entity.cpp \
+    src/infra/core/gun/cms/barrel/gun_cms_command_barrel.cpp \
     src/infra/core/gun/cms/barrel/gun_command_barrel_request.cpp \
     src/infra/core/gun/cms/barrel/gun_command_barrel_response.cpp \
     src/infra/core/gun/cms/gun_base_model.cpp \
@@ -48,7 +49,6 @@ SOURCES += \
     src/infra/core/gun/cms/status/gun_cms_command_status.cpp \
     src/infra/core/gun/cms/status/gun_command_status_request.cpp \
     src/infra/core/gun/cms/status/gun_command_status_response.cpp \
-    src/infra/core/gun/cms/barrel/gun_command_barrel_service.cpp \
     src/infra/core/osd/cms/osd_cms.cpp \
     src/infra/core/osd/cms/input_mode/osd_cms_input_mode.cpp \
     src/infra/core/osd/cms/input_mode/osd_input_mode_request.cpp \
@@ -249,6 +249,7 @@ HEADERS += \
     src/domain/weapon_assign/repository/weapon_assignment_repository.h \
     src/infra/core/base_request.h \
     src/infra/core/base_response.h \
+    src/infra/core/gun/cms/barrel/gun_cms_command_barrel.h \
     src/infra/core/gun/cms/barrel/gun_command_barrel_request.h \
     src/infra/core/gun/cms/barrel/gun_command_barrel_response.h \
     src/infra/core/gun/cms/gun_base_model.h \
@@ -259,7 +260,6 @@ HEADERS += \
     src/infra/core/gun/cms/status/gun_cms_command_status.h \
     src/infra/core/gun/cms/status/gun_command_status_request.h \
     src/infra/core/gun/cms/status/gun_command_status_response.h \
-    src/infra/core/gun/cms/barrel/gun_command_barrel_service.h \
     src/infra/core/osd/cms/osd_cms.h \
     src/infra/core/osd/cms/input_mode/osd_cms_input_mode.h \
     src/infra/core/osd/cms/input_mode/osd_input_mode_request.h \
