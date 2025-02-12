@@ -18,7 +18,9 @@ GunBarrelControlModeService::GunBarrelControlModeService(
     previousMode = repoGunCmd->GetBarrelMode()->getMode();
 
     timer = new QTimer(this);
+
     connect(timer, &QTimer::timeout, this, &GunBarrelControlModeService::onTimerTimeout);
+    connect(_cmsGunMode, &GunCmsCommandBarrelMode::signal_setModeResponse, this, &GunBarrelControlModeService::onUpdateBarrelMode);
 
     timer->start(1000);
 }

@@ -107,8 +107,11 @@ BaseResponse<GunModeBarrelResponse> GunCmsCommandBarrelMode::toResponse(QNetwork
         int respCode = respObj["code"].toInt();
         QString respMsg = respObj["message"].toString();
         QJsonObject respData = respObj["data"].toObject();
+
         GunModeBarrelResponse model(respData["manual_mode"].toBool());
-        BaseResponse<GunModeBarrelResponse> resp(respCode, respMsg, model);
+        model.setErr(NoError());
+
+        BaseResponse<GunModeBarrelResponse> resp(respCode, respMsg, model);        
 
 #ifdef USE_LOG4QT
         logger()->debug()<<Q_FUNC_INFO<<" -> resp. http code: "<<resp.getHttpCode()
@@ -125,6 +128,8 @@ BaseResponse<GunModeBarrelResponse> GunCmsCommandBarrelMode::toResponse(QNetwork
 #else
         qWarning()<<Q_FUNC_INFO<<"caught error: "<<e.getMessage();
 #endif
+        model.setErr(e);
+
         return BaseResponse<GunModeBarrelResponse>(e.getCode(), e.getMessage(), model);
     }  catch (...) {
 #ifdef USE_LOG4QT
@@ -133,6 +138,8 @@ BaseResponse<GunModeBarrelResponse> GunCmsCommandBarrelMode::toResponse(QNetwork
         qWarning()<<Q_FUNC_INFO<<"caught unkbnown error";
 #endif
         ErrUnknown status;
+        model.setErr(status);
+
         return BaseResponse<GunModeBarrelResponse>(status.getCode(), status.getMessage(), model);
     }
 }
