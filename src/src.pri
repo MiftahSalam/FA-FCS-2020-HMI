@@ -1,3 +1,6 @@
 include(di/di.pri)
 include(domain/domain.pri)
 include(infra/infra.pri)
+include(model/model.pri)
+include(shared/shared.pri)
+include(usecase/usecase.pri)
